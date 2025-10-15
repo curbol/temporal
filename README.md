@@ -1,5 +1,7 @@
 # TEMPORAL
 
+WORK IN PROGRESS
+
 a 36/40-key (+ encoders) split ergonomic keyboard
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2025) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/thrly/tempest)
