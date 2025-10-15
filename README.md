@@ -41,9 +41,4 @@ TEMPORAL was designed to be used with ZMK. [You can find the ZMK-config reposito
 TEMPORAL is inspired by and takes influence from:
 
 - [TEMPEST](https://github.com/thrly/tempest) by thrly
-- [Temper](https://github.com/raeedcho/temper) by raeedcho
-- [Bad Temper](https://github.com/essFitt/Bad-Temper/tree/main) by essFitt
-- [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) by GEIST
-- [FORAGER](https://github.com/carrefinho/forager) by carrefinho
-- [Corne](https://github.com/foostan/crkbd) by foostan (and the [Typeractive](https://typeractive.xyz/) version)
-- also [Chocofi](https://github.com/pashutk/chocofi), [Sweep](https://github.com/davidphilipbarr/Sweep), and others.
+- [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST
