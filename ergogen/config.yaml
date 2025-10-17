@@ -1,19 +1,18 @@
-# Ergogen congig file for TEMPEST keyboard
+# Ergogen config file for TEMPORAL keyboard
 
-# TEMPEST, by oliver thurley - @thrly
-# https://github.com/thrly/tempest
-# v1 - spring 2025
-# v2 - summer 2025
+# TEMPORAL, by curtis bollinger - @curbol
+# https://github.com/curbol/temporal
+# v1 - fall 2025
 
-# invaluable ergogen help from https://flatfootfox.com/ergogen-part1-units-points/
+# ergogen help: https://flatfootfox.com/ergogen-part1-units-points/
 
 # NOTE: the mcu and display footprint files have been edited to alter drill size to 0.85mm. Build from the footprints on the github repo, not ergogen's web client.
 
 meta:
   engine: 4.1.0
-  version: 2.0
-  author: oliver thurley
-  url: https://github.com/thrly/tempest
+  version: 1.0
+  author: curtis bollinger
+  url: https://github.com/curbol/temporal
 
 units:
   # Proxy Spacing Variables
@@ -23,64 +22,69 @@ units:
   px: kx + 2
   py: ky + 2
 
-  # vertical offset of mcu area items
+  # Vertical offset of mcu area items
   voff: 7
 
-  # pinky splay angles
+  # Pinky splay angles
   spang: 8
   pinksprd: 0.5
 
-  standoff_size: 5 #size for standoff holes on pcb
+  standoff_size: 5 # Size for standoff holes on pcb
   screen_standoff_size: 2
 
+  # Top center
   hole1_x: -0.5 kx - 1
   hole1_y: -0.5 ky + 0.5
 
+  # Top right
   hole2_x: -0.52 kx
   hole2_y: -0.35 ky
+ 
+  # Right Thumb
+  hole3_x: 0.5 kx + 0.6
+  hole3_y: 0.0 ky - 0.5
 
-  hole3_x: 0.5 kx + 1
-  hole3_y: 0. ky - 0.5
+  # Left Thumb
+  hole4_x: -0 kx
+  hole4_y: -0.6 ky
 
-  hole4_x: 0.5 kx - 5
-  hole4_y: -0.5 ky - 2.1
-
+  # Far Left
   hole5_x: -0.5 kx - 0.6
   hole5_y: -0.6 ky + 1.5
 
-  wall_thickness: 1.2 # account for the thickness in 3D printed case/plate
-  print_fit_tolerance: 0.2 # give the case some overlap beyond pcb
+  wall_thickness: 1.2 # Account for the thickness in 3D printed case/plate
+  print_fit_tolerance: 0.2 # Give the case some overlap beyond pcb
 
-  # display correct choc sizing
+  # Display correct choc sizing
   $default_width: 18
   $default_height: 17
 
 points:
   zones:
-    matrix:
+    finger:
       anchor.shift: [50, -100] # Fix KiCad placement
       key:
-        padding: 1ky # is this extra spacing necessary or will 1 allow spacing for keycaps?
+        padding: 1ky
         spread: 1kx
       columns:
-        extra: # additional outer key, inspired by TOTEM
+        extra: # Additional outer keys, inspired by KLOR
           rows.bottom.skip: true
-          rows.top.skip: true
+          rows.top.skip: false
           key.splay: spang
           key.column_net: col_extra
         pinky:
-          key.stagger: 0.3ky
-          # key.splay: spang # comment this line out if using the 'extra' key above
+          key.stagger: 0.5ky
+          # key.splay: spang # Comment this line out if using the 'extra' key above
           key.column_net: col_pinky
         ring:
           key.stagger: 0.35ky
           key.splay: -spang/2
-          key.spread: 1kx + pinksprd # avoid collision on splayed col?
+          key.spread: 1kx + pinksprd # Avoid collision on splayed col?
           key.column_net: col_ring
         middle:
           key.stagger: 0.25ky
           key.splay: -spang/2
-          key.spread: 1kx + pinksprd # avoid collision on splayed col?
+          key.spread: 1kx + pinksprd # Avoid collision on splayed col?
           key.column_net: col_middle
         index:
           key.stagger: -0.2ky
@@ -101,65 +105,65 @@ points:
         padding: 1ky
         spread: 1kx
       anchor:
-        ref: matrix_index_bottom
-        shift: [0.4kx, -1.25ky] # this is slightly reduced in v2 from 0.5kx
+        ref: finger_middle_bottom
+        shift: [0.4kx, -1.3ky]
       columns:
+        encoder:
+          key.name: thumb_enc
+          key.column_net: col_ring
         near:
+          key.splay: -9
+          key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_near
           key.column_net: col_middle
         mid:
-          key.splay: -15
+          key.splay: -9
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_mid
           key.column_net: col_index
         far:
-          key.splay: -15
+          key.splay: -9
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_far
           key.column_net: col_inner
-          # # for 1.5 thumb key
-          # key.width: 1.5kx
-          # key.rotate: 90
       rows:
-        thumb-cluster:
+        main:
           row_net: row_thumb
 
 outlines:
-  # just the keys
+  # Just the keys
   raw:
     - what: rectangle
       where: true
       size: [px, py]
 
-  # keys without padding
   keys:
     - what: rectangle
       where: true
       size: [kx-0.5, ky-0.5]
 
-  # keys without padding
-  key-plug:
+  key_plugs:
     - what: rectangle
       where: true
       size: [13.8, 13.8]
 
-  mcu:
+  finger_section:
     - what: rectangle
-      where:
-        - ref: matrix_inner_top
-          shift: [19.5, -20 - voff] # v2 - Creates more space between inner key col and mcu (issue #4)
-      size: [22, 62]
+      where: 
+        - finger_pinky_top
+        - finger_pinky_home
+        - finger_ring_top
+        - finger_ring_home
+        - finger_ring_bottom
+      size: [px, py]
+      adjust:
+        shift: [0.5px, 0py]
 
-  # draw thumb cluster outline
-  thumb_outline:
+  thumb_section:
     - what: polygon
-      operation: stack
-      # bound: true
       points:
-        - ref: thumb_near
-          shift: [-0.5px, 0.75py]
-        - ref: matrix_inner_bottom
-          shift: [0.45px, -0.5py]
+        - ref: finger_inner_bottom
+          shift: [0.5px, -0.5py]
 
         - ref: thumb_far
           shift: [-0.5px, 0.5py]
@@ -172,30 +176,28 @@ outlines:
 
         - ref: thumb_near
           shift: [0.5px, -0.5py]
-        - ref: thumb_near
+
+        - ref: thumb_enc
+          shift: [0.5px, -0.5py]
+        - ref: thumb_enc
           shift: [-0.5px, -0.5py]
+        - ref: thumb_enc
+          shift: [-0.5px, 1py]
+        - ref: thumb_enc
+          shift: [0.5px, 1py]
 
-  # combine keys with thumb cluster
-  key_section: [raw, thumb_outline]
-  key_thumb_mcu: [key_section, mcu]
+  mcu_section:
+    - what: rectangle
+      where:
+        - ref: finger_inner_top
+          shift: [19.5, -20 - voff]
+      size: [22, 62]
 
-  top_plate_cutouts: [key-plug] #, mcu_key_shave]
-
-  top_plate:
-    - name: key_section
-      # expand: print_fit_tolerance + wall_thickness
-    - operation: subtract
-      name: top_plate_cutouts
-      fillet: 1
-
+  key_thumb_outline: [raw, finger_section, thumb_section]
+  key_thumb_mcu_outline: [key_thumb_outline, mcu_section]
   board_outline:
-    - name: key_thumb_mcu
-      expand: 0.1 # padding on outer edge or board
-      fillet: 1
-
-  back_plate:
-    - name: board_outline
-      expand: wall_thickness + print_fit_tolerance
+    - name: key_thumb_mcu_outline
+      expand: 0.1 # Padding on outer edge of board
       fillet: 1
 
   # Combination preview showing outline and keys.
@@ -204,8 +206,19 @@ outlines:
     - operation: subtract
       name: keys
 
+  top_plate:
+    - name: key_thumb_outline
+    - operation: subtract
+      name: key_plugs
+      fillet: 1
+
+  back_plate:
+    - name: board_outline
+      expand: wall_thickness + print_fit_tolerance
+      fillet: 1
+
 pcbs:
-  tempest-pcb:
+  temporal-pcb:
     template: kicad8
     outlines:
       main:
@@ -234,51 +247,66 @@ pcbs:
           include_tht: false
           reversible: true
         adjust:
-          # rotate: -90
-          # shift: [8.25,4.2]
           shift: [0, -5]
-          # resist: true
+
+      encoder:
+        what: ceoloide/rotary_encoder_ec11_ec12
+        where:
+          - ref: thumb_enc
+        params:
+          reversible: true
+          include_momentary_switch_pads: true
+          include_plated_mounting_holes: true
+          A: encoder_a
+          B: encoder_b
+          C: GND
+          S1: col_ring
+          S2: row_thumb
 
       mcu:
         what: ceoloide/mcu_nice_nano
         where:
-          - ref: matrix_inner_home
-            shift: [19.8, 10.8 - voff] # v2 - creates more space between mcu and key colums (issue #5) : v1:18.8
+          - ref: finger_inner_home
+            shift: [19.8, 10.8 - voff]
         params:
           reversible: true
           reverse_mount: true
           show_silk_labels: false
+          # Finger rows
           P4: row_top
           P5: row_home
           P6: row_bottom
           P7: row_thumb
+          # Finger columns
           P14: col_inner
           P15: col_index
           P18: col_middle
           P19: col_ring
           P20: col_pinky
           P21: col_extra
+          # Encoder (using available pins)
+          P0: encoder_a
+          P1: encoder_b
+          # SPI for nice!view
           P8: MOSI
           P9: SCK
           P10: CS
-          # TODO: these pins are all fucked up: reorganise them, use defaults for nice!view
 
-      # v2 - fixes display alignment and corrects connection with mcu... hopefully (fixes issues #6 and #7)
       display:
         what: ceoloide/display_nice_view
         params:
           reversible: true
           include_labels: false
         where:
-          - ref: matrix_inner_home
-            shift: [19.8, 7.5 - voff] # v1 = 18.8
+          - ref: finger_inner_home
+            shift: [19.8, 7.5 - voff]
 
       battery:
         what: ceoloide/battery_connector_jst_ph_2
         params:
           reversible: true
         where:
-          - ref: matrix_inner_home
+          - ref: finger_inner_home
             shift: [23.5, -14.5 - voff]
             rotate: -90
 
@@ -287,7 +315,7 @@ pcbs:
         params:
           reversible: true
         where:
-          - ref: matrix_inner_home
+          - ref: finger_inner_home
             shift: [27.9, -18.5 - voff]
             rotate: 0
 
@@ -296,46 +324,45 @@ pcbs:
         params:
           reversible: true
         where:
-          - ref: matrix_inner_home
+          - ref: finger_inner_home
             shift: [28.3, -10.2 - voff]
             rotate: -90
 
-      tempest:
+      temporal:
         what: ceoloide/utility_text
         where:
-          - ref: matrix_index_home
-            shift: [0, -0.5ky +1.45]
+          - ref: finger_middle_bottom
+            shift: [0, -0.65ky]
         params:
-          text: "TEMPEST"
+          text: "TEMPORAL"
           height: 2
           width: 2
           knockout: true
           reversible: true
 
-      ver:
-        what: ceoloide/utility_text
-        where:
-          - ref: matrix_index_home
-            shift: [0.5kx, -0.5ky +1.45]
-        params:
-          text: "v 2"
-          reversible: true
+      #ver:
+      #  what: ceoloide/utility_text
+      #  where:
+      #    - ref: finger_index_home
+      #      shift: [0.5kx, -0.5ky +1.45]
+      #  params:
+      #    text: "v 2"
+      #    reversible: true
 
-      thrly:
+      curbol:
         what: ceoloide/utility_text
         where:
           - ref: thumb_far
             shift: [0, -3]
-            # rotate: 30
         params:
-          text: "by thrly"
+          text: "by curbol"
           side: "B"
           reversible: true
 
       hole_1:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_middle_top
+          - ref: finger_middle_top
             shift: [hole1_x, hole1_y]
 
         params:
@@ -344,7 +371,7 @@ pcbs:
       hole_2:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_inner_top
+          - ref: finger_inner_top
             shift: [hole2_x, hole2_y]
         params:
           hole_size: standoff_size
@@ -360,7 +387,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_index_bottom
+          - ref: finger_index_bottom
             shift: [hole4_x, hole4_y]
         params:
           hole_size: standoff_size
@@ -368,17 +395,17 @@ pcbs:
       hole_5:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_ring_home
+          - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
 
-      ### mcu cover holes - v2 moves these
+      # MCU cover holes
       hole_screen_L:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_inner_bottom
+          - ref: finger_inner_bottom
             shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
         params:
           hole_size: screen_standoff_size
@@ -386,15 +413,15 @@ pcbs:
       hole_screen_R:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_inner_bottom
+          - ref: finger_inner_bottom
             shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
 
-  ## these are not used in v.1.1, but they might be useful down the road for better case building, or fabricating FR4 plates
-  ##### BACKPLATE PCB
-  tempest-back-plate:
+  # These are not currently used, but they might be useful down the road for better case building, or fabricating FR4 plates
+  # BACKPLATE
+  temporal-back-plate:
     template: kicad8
     outlines:
       main:
@@ -403,12 +430,12 @@ pcbs:
       hole_1:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_middle_top
+          - ref: finger_middle_top
             shift: [hole1_x, hole1_y]
       hole_2:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_inner_top
+          - ref: finger_inner_top
             shift: [hole2_x, hole2_y]
       hole_3:
         what: ceoloide/mounting_hole_npth
@@ -418,16 +445,16 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_index_bottom
+          - ref: finger_index_bottom
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_ring_home
+          - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  ###### TOPPLATE
-  tempest-top-plate:
+  # TOPPLATE
+  temporal-top-plate:
     template: kicad8
     outlines:
       main:
@@ -436,12 +463,12 @@ pcbs:
       hole_1:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_middle_top
+          - ref: finger_middle_top
             shift: [hole1_x, hole1_y]
       hole_2:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_inner_top
+          - ref: finger_inner_top
             shift: [hole2_x, hole2_y]
       hole_3:
         what: ceoloide/mounting_hole_npth
@@ -451,10 +478,10 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_index_bottom
+          - ref: finger_index_bottom
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: matrix_ring_home
+          - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
