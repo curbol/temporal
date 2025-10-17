@@ -1,8 +1,8 @@
 # TEMPORAL
 
-WORK IN PROGRESS (Files and images are not update yet)
+WORK IN PROGRESS (Files and images are not updated yet)
 
-This is a preview of the temporal design:
+Preview design:
 <img width="1280" height="821" alt="image" src="https://github.com/user-attachments/assets/ba894443-c53b-4ec9-a720-97510a52d473" />
 
 a 36/40-key (+ encoders) split ergonomic keyboard
