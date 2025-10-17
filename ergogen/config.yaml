@@ -39,13 +39,13 @@ units:
   # Top right
   hole2_x: -0.52 kx
   hole2_y: -0.35 ky
- 
+
   # Right Thumb
   hole3_x: 0.5 kx + 0.6
   hole3_y: 0.0 ky - 0.5
 
   # Left Thumb
-  hole4_x: -0 kx
+  hole4_x: 0kx - 0.5
   hole4_y: -0.6 ky
 
   # Far Left
@@ -149,7 +149,7 @@ outlines:
 
   finger_section:
     - what: rectangle
-      where: 
+      where:
         - finger_pinky_top
         - finger_pinky_home
         - finger_ring_top
