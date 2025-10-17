@@ -1,19 +1,20 @@
 # TEMPORAL
 
-WORK IN PROGRESS (Files and images are not updated yet)
+**WORK IN PROGRESS** (Files and images are not updated yet)
 
 Preview design:
-<img width="1280" height="821" alt="image" src="https://github.com/user-attachments/assets/ba894443-c53b-4ec9-a720-97510a52d473" />
+<img width="1280" height="821" alt="TEMPORAL keyboard preview" src="https://github.com/user-attachments/assets/ba894443-c53b-4ec9-a720-97510a52d473" />
 
-a 36/40-key (+ encoders) split ergonomic keyboard
+A 36-42 key split ergonomic keyboard based on [TEMPEST](https://github.com/thrly/tempest) by thrly. TEMPORAL features a revised layout with an additional snap-off pinky key and an additional thumb key with encoder support.
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2025) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/thrly/tempest)
 ![Tempest](images/tempest.jpg)
 
 ## Design
 
-- Five columns, three rows, three thumb keys
-  - Optional extra keys for 36 or 40-key configuration (snap-off pcb)
+- Five columns, three rows, four thumb keys per side
+  - Optional snap-off extra pinky column for 38-42 key configurations
+  - One thumb position can be either an encoder or standard switch
 - Column stagger and splay on the pinky and ring columns
 - EC12 Encoders
 - Powered by nice!nano / pro micro microcontroller
@@ -24,13 +25,13 @@ a 36/40-key (+ encoders) split ergonomic keyboard
 - Uses some components (JST plug, power switch, reset) from the Typeractive Corne design
 - Layout designed with [Ergogen](https://ergogen.ceoloide.com/) (see [config.yaml](./ergogen/config.yaml))
 - PCB designed with [KiCad](https://www.kicad.org/) (v 9)
-- Simple 3D-printable case for both 36 and 38-key layouts
+- Simple 3D-printable case supporting all configurations
 
 ![Tempest](images/tempest-half.jpg)
 
 ## Firmware
 
-TEMPORAL was designed to be used with ZMK. [You can find the ZMK-config repository and a keymap here.](https://github.com/thrly/tempest-zmk)
+TEMPORAL is designed to be used with ZMK. [You can find the ZMK-config repository and keymap here.](https://github.com/curbol/temporal-zmk)
 
 ## Build Guide
 
