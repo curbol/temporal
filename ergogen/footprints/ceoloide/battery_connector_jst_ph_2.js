@@ -304,12 +304,23 @@ module.exports = {
     )
         `
 
-    const reversible_traces = ` 
+    const reversible_traces = `
     (segment (start ${p.eaxy(-1, 1.8)}) (end ${p.eaxy(-1, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${local_nets[0].index}))
     (segment (start ${p.eaxy(-1, 1.8)}) (end ${p.eaxy(-1, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${local_nets[0].index}))
     (segment (start ${p.eaxy(1, 1.8)}) (end ${p.eaxy(1, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${local_nets[1].index}))
     (segment (start ${p.eaxy(1, 1.8)}) (end ${p.eaxy(1, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${local_nets[1].index}))
         `
+
+    // Vias to connect BAT_P and BAT_N pads between front and back
+    const reversible_vias = `
+    (via (at ${p.eaxy(-2, 2.816)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-2, 2.816)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(-2, 2.816)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_P.index}))
+
+    (via (at ${p.eaxy(2, 2.816)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(2, 2.816)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(2, 2.816)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    `
 
     const battery_connector_3dmodel = `
     (model ${p.battery_connector_3dmodel_filename}
@@ -357,7 +368,9 @@ module.exports = {
     if (p.reversible && p.include_traces) {
       final += reversible_traces;
     }
-
+    if (p.reversible && p.include_traces_vias) {
+      final += reversible_vias;
+    }
 
     return final;
   }
