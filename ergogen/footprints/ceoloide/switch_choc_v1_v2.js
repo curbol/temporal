@@ -515,7 +515,7 @@ module.exports = {
   )
     `
 
-    const via_y_center = -4.5;
+    const via_y_center = -5;
     const from_via_y = via_y_center;
     const to_via_y = via_y_center + p.via_separation;
 
