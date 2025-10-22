@@ -312,15 +312,14 @@ module.exports = {
         `
 
     // Vias to connect BAT_P and BAT_N pads between front and back
-    // Place vias to the left (negative x) with vertical offset to avoid overlap
     const reversible_vias = `
-    (via (at ${p.eaxy(-2.5, 2.0)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-2.5, 2.0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(-2.5, 2.0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_P.index}))
+    (via (at ${p.eaxy(0, 4)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(0, 4)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(0, 4)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_P.index}))
 
-    (via (at ${p.eaxy(-2.5, 3.6)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(-2.5, 3.6)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-2.5, 3.6)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    (via (at ${p.eaxy(0, 5.5)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
     `
 
     const battery_connector_3dmodel = `
