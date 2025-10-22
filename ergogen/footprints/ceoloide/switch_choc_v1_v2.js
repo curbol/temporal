@@ -43,6 +43,9 @@
 //    via_drill: default is 0.3
 //      allows to define the size of the drill. Not recommended below 0.3 (JLCPCB minimum),
 //      or above 0.4 (KiCad default), to avoid overlap or DRC errors 
+//    via_separation: default is 2.5
+//      allows to define the separation between the two vias that connect the switch pads
+//      in reversible footprints.
 //    locked_traces_vias: false
 //      sets the traces and vias as locked in KiCad. Locked objects may not be manipulated
 //      or moved, and cannot be selected unless the Locked Items option is enabled in the
@@ -188,6 +191,7 @@ module.exports = {
     trace_width: 0.2,
     via_size: 0.6,
     via_drill: 0.3,
+    via_separation: 2.5,
     locked_traces_vias: false,
     hotswap: true,
     include_plated_holes: false,
@@ -511,25 +515,29 @@ module.exports = {
   )
     `
 
+    const via_y_center = -3.475;
+    const from_via_y = via_y_center - (p.via_separation / 2);
+    const to_via_y = via_y_center + (p.via_separation / 2);
+
     const hotswap_routes_unplated = `
 	(segment
 		(start ${p.eaxy(3.275, -5.95)})
-		(end ${p.eaxy(1.2, -3.875)})
+		(end ${p.eaxy(1.2, from_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
 		(net ${p.from.index})
 	)
 	(segment
-		(start ${p.eaxy(1.2, -3.875)})
-		(end ${p.eaxy(0, -3.875)})
+		(start ${p.eaxy(1.2, from_via_y)})
+		(end ${p.eaxy(0, from_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
 		(net ${p.from.index})
 	)
 	(via
-		(at ${p.eaxy(0, -3.875)})
+		(at ${p.eaxy(0, from_via_y)})
 		(size ${p.via_size})
     (drill ${p.via_drill})
 		(layers "F.Cu" "B.Cu")
@@ -537,8 +545,8 @@ module.exports = {
 		(net ${p.from.index})
 	)
 	(segment
-		(start ${p.eaxy(-1.2, -3.875)})
-		(end ${p.eaxy(0, -3.875)})
+		(start ${p.eaxy(-1.2, from_via_y)})
+		(end ${p.eaxy(0, from_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "B.Cu")
@@ -546,7 +554,7 @@ module.exports = {
 	)
 	(segment
 		(start ${p.eaxy(-3.275, -5.95)})
-		(end ${p.eaxy(-1.2, -3.875)})
+		(end ${p.eaxy(-1.2, from_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "B.Cu")
@@ -561,8 +569,8 @@ module.exports = {
 		(net ${p.to.index})
 	)
 	(segment
-		(start ${p.eaxy(-0.975, -3.075)})
-		(end ${p.eaxy(0, -3.075)})
+		(start ${p.eaxy(-0.975, to_via_y)})
+		(end ${p.eaxy(0, to_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
@@ -578,14 +586,14 @@ module.exports = {
 	)
 	(segment
 		(start ${p.eaxy(-2.154, -1.896)})
-		(end ${p.eaxy(-0.975, -3.075)})
+		(end ${p.eaxy(-0.975, to_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
 		(net ${p.to.index})
 	)
 	(via
-		(at ${p.eaxy(0, -3.075)})
+		(at ${p.eaxy(0, to_via_y)})
 		(size ${p.via_size})
     (drill ${p.via_drill})
 		(layers "F.Cu" "B.Cu")
@@ -594,7 +602,7 @@ module.exports = {
 	)
 	(segment
 		(start ${p.eaxy(2.140166, -1.896)})
-		(end ${p.eaxy(0.961166, -3.075)})
+		(end ${p.eaxy(0.961166, to_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "B.Cu")
@@ -609,8 +617,8 @@ module.exports = {
 		(net ${p.to.index})
 	)
 	(segment
-		(start ${p.eaxy(0.961166, -3.075)})
-		(end ${p.eaxy(0, -3.075)})
+		(start ${p.eaxy(0.961166, to_via_y)})
+		(end ${p.eaxy(0, to_via_y)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "B.Cu")

@@ -358,18 +358,7 @@ module.exports = {
       final += reversible_traces;
     }
 
-    const reversible_vias = `
-    (segment (start ${p.eaxy(-1, 0)}) (end ${p.eaxy(-1, -2)}) (width ${p.trace_width}) (layer "F.Cu") (net ${local_nets[0].index}))
-    (segment (start ${p.eaxy(-1, 0)}) (end ${p.eaxy(-1, -2)}) (width ${p.trace_width}) (layer "B.Cu") (net ${local_nets[0].index}))
-    (via (at ${p.eaxy(-1, -2)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${local_nets[0].index}))
-    (segment (start ${p.eaxy(1, 0)}) (end ${p.eaxy(1, -2)}) (width ${p.trace_width}) (layer "F.Cu") (net ${local_nets[1].index}))
-    (segment (start ${p.eaxy(1, 0)}) (end ${p.eaxy(1, -2)}) (width ${p.trace_width}) (layer "B.Cu") (net ${local_nets[1].index}))
-    (via (at ${p.eaxy(1, -2)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${local_nets[1].index}))
-    `
 
-    if (p.reversible && p.include_traces_vias) {
-      final += reversible_vias;
-    }
     return final;
   }
 }

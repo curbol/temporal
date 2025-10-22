@@ -68,6 +68,7 @@ module.exports = {
     include_traces_vias: false,
     via_size: 0.6,
     via_drill: 0.3,
+    trace_width: 0.25,
     invert_behavior: true,
     include_silkscreen: true,
     include_courtyard: false,
@@ -269,16 +270,16 @@ module.exports = {
 
     const reversible_vias = `
     (via (at ${p.eaxy(-3.235, 2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.invert_behavior ? "" : p.from.str})
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width 0.25) (layer "F.Cu") ${p.invert_behavior ? "" : p.from.str})
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width 0.25) (layer "B.Cu") ${p.invert_behavior ? "" : p.from.str})
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") ${p.invert_behavior ? "" : p.from.str})
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") ${p.invert_behavior ? "" : p.from.str})
 
     (via (at ${p.eaxy(-3.235, -0.75)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width 0.25) (layer "F.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width 0.25) (layer "B.Cu") ${p.to.str})
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width ${p.trace_width}) (layer "F.Cu") ${p.to.str})
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width ${p.trace_width}) (layer "B.Cu") ${p.to.str})
 
     (via (at ${p.eaxy(-3.235, -2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.invert_behavior ? p.from.str : ""})
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width 0.25) (layer "F.Cu") ${p.invert_behavior ? p.from.str : ""})
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width 0.25) (layer "B.Cu") ${p.invert_behavior ? p.from.str : ""})
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") ${p.invert_behavior ? p.from.str : ""})
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") ${p.invert_behavior ? p.from.str : ""})
     `
 
     if (p.reversible && p.include_traces_vias) {
