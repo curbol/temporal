@@ -87,7 +87,10 @@ module.exports = {
     designator: 'RE',
     side: 'F',
     reversible: false,
-    include_momentary_switch_pads: true,
+    
+      smd_momentary_switch: false,
+      include_momentary_switch_pads: true,
+    
     include_plate_hole_marking: false,
     include_silkscreen: true,
     include_plated_mounting_holes: true,
@@ -129,6 +132,12 @@ module.exports = {
     const momentary_switch_pads = `
     (pad "S1" thru_hole oval (at -2.5 -7 ${p.r}) (size 1.6 1.1) (drill oval 1 0.5) (layers "*.Cu" "*.Mask") ${p.S1})
     (pad "S2" thru_hole oval (at 2.5 -7 ${p.r}) (size 1.6 1.1) (drill oval 1 0.5) (layers "*.Cu" "*.Mask") ${p.S2})
+    `
+    const momentary_switch_pads_smd = `
+    (pad "S1" smd roundrect (at -2.5 -7.45 ${p.r}) (size 1.6 2.0) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0) (chamfer_ratio 0.2) (chamfer bottom_left) ${p.S1})
+    (pad "S2" smd roundrect (at 2.5 -7.45 ${p.r}) (size 1.6 2.0) (layers "F.Cu" "F.Paste" "F.Mask") (roundrect_rratio 0) (chamfer_ratio 0.2) (chamfer bottom_right) ${p.S2})
+    (pad "S1" smd roundrect (at -2.5 -7.45 ${p.r}) (size 1.6 2.0) (layers "B.Cu" "B.Paste" "B.Mask") (roundrect_rratio 0) (chamfer_ratio 0.2) (chamfer bottom_left) ${p.S1})
+    (pad "S2" smd roundrect (at 2.5 -7.45 ${p.r}) (size 1.6 2.0) (layers "B.Cu" "B.Paste" "B.Mask") (roundrect_rratio 0) (chamfer_ratio 0.2) (chamfer bottom_right) ${p.S2})
     `
     const plated_mp = `
     (pad "" thru_hole roundrect
@@ -178,7 +187,11 @@ module.exports = {
 
     let final = common_top;
     if (p.include_momentary_switch_pads) {
-      final += momentary_switch_pads;
+      if (p.smd_momentary_switch) {
+        final += momentary_switch_pads_smd;
+      } else {
+        final += momentary_switch_pads;
+      }
     }
     if (p.include_plated_mounting_holes) {
       final += plated_mp;

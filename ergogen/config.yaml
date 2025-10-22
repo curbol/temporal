@@ -127,7 +127,7 @@ points:
           key.name: thumb_far
           key.column_net: col_inner
       rows:
-        main:
+        thumb:
           row_net: row_thumb
 
 outlines:
@@ -195,10 +195,13 @@ outlines:
 
   key_thumb_outline: [raw, finger_section, thumb_section]
   key_thumb_mcu_outline: [key_thumb_outline, mcu_section]
-  board_outline:
+  board_outline_raw:
     - name: key_thumb_mcu_outline
-      expand: 0.1 # Padding on outer edge of board
       fillet: 1
+
+  board_outline:
+    - name: board_outline_raw
+      expand: 0.1
 
   # Combination preview showing outline and keys.
   all_key_outline:
@@ -237,6 +240,9 @@ pcbs:
           reversible: true
           hotswap: true
           choc_v2_support: false
+          trace_width: 0.25
+          via_size: 0.8
+          via_drill: 0.4
 
       diode:
         what: ceoloide/diode_tht_sod123
@@ -246,6 +252,9 @@ pcbs:
           to: "{{row_net}}"
           include_tht: false
           reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
         adjust:
           shift: [0, -5]
 
@@ -256,6 +265,7 @@ pcbs:
         params:
           reversible: true
           include_momentary_switch_pads: true
+          smd_momentary_switch: true
           include_plated_mounting_holes: true
           A: encoder_a
           B: encoder_b
