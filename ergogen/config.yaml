@@ -315,6 +315,9 @@ pcbs:
         what: ceoloide/battery_connector_jst_ph_2
         params:
           reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
         where:
           - ref: finger_inner_home
             shift: [23.5, -14.5 - voff]
@@ -324,6 +327,9 @@ pcbs:
         what: ceoloide/power_switch_smd_side
         params:
           reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
         where:
           - ref: finger_inner_home
             shift: [27.9, -18.5 - voff]
@@ -333,6 +339,9 @@ pcbs:
         what: ceoloide/reset_switch_smd_side
         params:
           reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
         where:
           - ref: finger_inner_home
             shift: [28.3, -10.2 - voff]

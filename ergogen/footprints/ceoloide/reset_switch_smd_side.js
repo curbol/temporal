@@ -49,6 +49,9 @@ module.exports = {
     designator: 'RST',
     side: 'F',
     reversible: false,
+    include_traces_vias: false,
+    via_size: 0.6,
+    via_drill: 0.3,
     include_bosses: false,
     include_silkscreen: true,
     include_courtyard: false,
@@ -158,6 +161,28 @@ module.exports = {
     }
     if (p.reset_switch_3dmodel_filename) {
       final += reset_switch_3dmodel
+    }
+
+    const reversible_vias = `
+    (via (at ${p.eaxy(2.625, -2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.from.str})
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(2.625, -2.35)}) (width 0.25) (layer "F.Cu") ${p.from.str})
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(2.625, -2.35)}) (width 0.25) (layer "B.Cu") ${p.from.str})
+
+    (via (at ${p.eaxy(2.625, 2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.to.str})
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(2.625, 2.35)}) (width 0.25) (layer "F.Cu") ${p.to.str})
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(2.625, 2.35)}) (width 0.25) (layer "B.Cu") ${p.to.str})
+
+    (via (at ${p.eaxy(-2.625, -2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.from.str})
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-2.625, -2.35)}) (width 0.25) (layer "F.Cu") ${p.from.str})
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-2.625, -2.35)}) (width 0.25) (layer "B.Cu") ${p.from.str})
+
+    (via (at ${p.eaxy(-2.625, 2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.to.str})
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-2.625, 2.35)}) (width 0.25) (layer "F.Cu") ${p.to.str})
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-2.625, 2.35)}) (width 0.25) (layer "B.Cu") ${p.to.str})
+    `
+
+    if (p.reversible && p.include_traces_vias) {
+      final += reversible_vias;
     }
 
     final += common_end;

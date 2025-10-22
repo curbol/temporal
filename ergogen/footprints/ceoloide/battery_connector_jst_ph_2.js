@@ -58,6 +58,9 @@ module.exports = {
     designator: 'JST',
     side: 'F',
     reversible: false,
+    include_traces_vias: false,
+    via_size: 0.6,
+    via_drill: 0.3,
     include_traces: true,
     trace_width: 0.250,
     include_silkscreen: true,
@@ -353,6 +356,19 @@ module.exports = {
     final += standard_closing;
     if (p.reversible && p.include_traces) {
       final += reversible_traces;
+    }
+
+    const reversible_vias = `
+    (segment (start ${p.eaxy(-1, 0)}) (end ${p.eaxy(-1, -2)}) (width ${p.trace_width}) (layer "F.Cu") (net ${local_nets[0].index}))
+    (segment (start ${p.eaxy(-1, 0)}) (end ${p.eaxy(-1, -2)}) (width ${p.trace_width}) (layer "B.Cu") (net ${local_nets[0].index}))
+    (via (at ${p.eaxy(-1, -2)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${local_nets[0].index}))
+    (segment (start ${p.eaxy(1, 0)}) (end ${p.eaxy(1, -2)}) (width ${p.trace_width}) (layer "F.Cu") (net ${local_nets[1].index}))
+    (segment (start ${p.eaxy(1, 0)}) (end ${p.eaxy(1, -2)}) (width ${p.trace_width}) (layer "B.Cu") (net ${local_nets[1].index}))
+    (via (at ${p.eaxy(1, -2)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${local_nets[1].index}))
+    `
+
+    if (p.reversible && p.include_traces_vias) {
+      final += reversible_vias;
     }
     return final;
   }
