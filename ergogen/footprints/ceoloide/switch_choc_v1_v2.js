@@ -191,7 +191,7 @@ module.exports = {
     trace_width: 0.2,
     via_size: 0.6,
     via_drill: 0.3,
-    via_separation: 1.5,
+    via_separation: 1,
     locked_traces_vias: false,
     hotswap: true,
     include_plated_holes: false,
@@ -516,8 +516,8 @@ module.exports = {
     `
 
     const via_y_center = -3.475;
-    const from_via_y = via_y_center - (p.via_separation / 2);
-    const to_via_y = via_y_center + (p.via_separation / 2);
+    const from_via_y = via_y_center;
+    const to_via_y = via_y_center + p.via_separation;
 
     const hotswap_routes_unplated = `
 	(segment
