@@ -271,7 +271,7 @@ pcbs:
           B: encoder_b
           C: GND
           S1: col_ring
-          S2: row_thumb
+          S2: encoder_thumb
 
       mcu:
         what: ceoloide/mcu_nice_nano
