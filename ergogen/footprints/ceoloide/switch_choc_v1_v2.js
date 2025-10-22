@@ -191,7 +191,7 @@ module.exports = {
     trace_width: 0.2,
     via_size: 0.6,
     via_drill: 0.3,
-    via_separation: 2.5,
+    via_separation: 1.5,
     locked_traces_vias: false,
     hotswap: true,
     include_plated_holes: false,
@@ -227,7 +227,7 @@ module.exports = {
     keycap_3dmodel_xyz_scale: [1, 1, 1],
     from: undefined,
     to: undefined,
-    CENTERHOLE: { type: 'net', value: 'GND'},
+    CENTERHOLE: { type: 'net', value: 'GND' },
     LEFTSTAB: { type: 'net', value: 'D1' },
     RIGHTSTAB: { type: 'net', value: 'D2' }
   },
@@ -381,7 +381,7 @@ module.exports = {
       (pad "2" thru_hole circle (at 5 -3.75 ${195 + p.r}) (size 3.3 3.3) (drill 3) (layers "*.Cu" "*.Mask") ${p.to.str})
       ${'' /* Pads */}
       ${hotswap_back_pads_plated_reversible}
-      `:`
+      `: `
       (pad "2" thru_hole circle (at 5 -3.75 ${195 + p.r}) (size 3.3 3.3) (drill 3) (layers "*.Cu" "*.Mask") ${p.to.str})
       ${'' /* Pads */}
       ${hotswap_back_pads_plated}
@@ -423,7 +423,7 @@ module.exports = {
     (pad "1" thru_hole circle (at -5 -3.75 ${195 + p.r}) (size 3.3 3.3) (drill 3) (layers "*.Cu" "*.Mask") ${p.from.str})
     ${'' /* Pads */}
     ${hotswap_front_pads_plated_reversible}
-    `:`
+    `: `
     (pad "2" thru_hole circle (at -5 -3.75 ${195 + p.r}) (size 3.3 3.3) (drill 3) (layers "*.Cu" "*.Mask") ${p.to.str})
     ${'' /* Pads */}
     ${hotswap_front_pads_plated}
@@ -466,7 +466,7 @@ module.exports = {
     const solder_front = `
     (pad "1" thru_hole circle (at ${solder_offset_x_front}5 ${solder_offset_y}3.8 ${195 + p.r}) (size 2.032 2.032) (drill 1.27) (layers "*.Cu" "*.Mask") ${p.to.str})
     `
-    
+
     const solder_back = `
     (pad "1" thru_hole circle (at ${solder_offset_x_back}5 ${solder_offset_y}3.8 ${195 + p.r}) (size 2.032 2.032) (drill 1.27) (layers "*.Cu" "*.Mask") ${p.to.str})
     `
@@ -750,7 +750,7 @@ module.exports = {
     final += common_bottom
 
     if (p.reversible && p.hotswap && p.include_traces_vias && !p.include_plated_holes) {
-      if(p.hotswap_pads_same_side){
+      if (p.hotswap_pads_same_side) {
         final += hotswap_routes_same_side
       } else {
         final += hotswap_routes_unplated
