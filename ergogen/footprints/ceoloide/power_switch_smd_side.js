@@ -268,19 +268,28 @@ module.exports = {
       final += switch_3dmodel;
     }
 
-    const reversible_vias = `
-    (via (at ${p.eaxy(-3.235, 2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.invert_behavior ? "" : p.from.str})
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") ${p.invert_behavior ? "" : p.from.str})
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") ${p.invert_behavior ? "" : p.from.str})
+    // Pin 1 vias (only when not inverted - pin 1 has the "from" net)
+    const pin1_vias = !p.invert_behavior ? `
+    (via (at ${p.eaxy(-3.235, 2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.235, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    ` : '';
 
-    (via (at ${p.eaxy(-3.235, -0.75)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width ${p.trace_width}) (layer "F.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width ${p.trace_width}) (layer "B.Cu") ${p.to.str})
+    // Pin 2 vias (always has the "to" net)
+    const pin2_vias = `
+    (via (at ${p.eaxy(-3.235, -0.75)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.235, -0.75)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    `;
 
-    (via (at ${p.eaxy(-3.235, -2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.invert_behavior ? p.from.str : ""})
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") ${p.invert_behavior ? p.from.str : ""})
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") ${p.invert_behavior ? p.from.str : ""})
-    `
+    // Pin 3 vias (only when inverted - pin 3 has the "from" net)
+    const pin3_vias = p.invert_behavior ? `
+    (via (at ${p.eaxy(-3.235, -2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.235, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    ` : '';
+
+    const reversible_vias = pin1_vias + pin2_vias + pin3_vias;
 
     if (p.reversible && p.include_traces_vias) {
       final += reversible_vias;

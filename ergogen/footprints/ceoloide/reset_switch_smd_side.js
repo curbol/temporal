@@ -165,21 +165,21 @@ module.exports = {
     }
 
     const reversible_vias = `
-    (via (at ${p.eaxy(2.625, -2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.from.str})
-    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(2.625, -2.35)}) (width ${p.trace_width}) (layer "F.Cu") ${p.from.str})
-    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(2.625, -2.35)}) (width ${p.trace_width}) (layer "B.Cu") ${p.from.str})
+    (via (at ${p.eaxy(2.625, -2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(2.625, -2.35)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(2.625, -2.35)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
 
-    (via (at ${p.eaxy(2.625, 2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(2.625, 2.35)}) (width ${p.trace_width}) (layer "F.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(2.625, 2.35)}) (width ${p.trace_width}) (layer "B.Cu") ${p.to.str})
+    (via (at ${p.eaxy(2.625, 2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(2.625, 2.35)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(2.625, 2.35)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
 
-    (via (at ${p.eaxy(-2.625, -2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.from.str})
-    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-2.625, -2.35)}) (width ${p.trace_width}) (layer "F.Cu") ${p.from.str})
-    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-2.625, -2.35)}) (width ${p.trace_width}) (layer "B.Cu") ${p.from.str})
+    (via (at ${p.eaxy(-2.625, -2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-2.625, -2.35)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-2.625, -2.35)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
 
-    (via (at ${p.eaxy(-2.625, 2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-2.625, 2.35)}) (width ${p.trace_width}) (layer "F.Cu") ${p.to.str})
-    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-2.625, 2.35)}) (width ${p.trace_width}) (layer "B.Cu") ${p.to.str})
+    (via (at ${p.eaxy(-2.625, 2.35)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-2.625, 2.35)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-2.625, 2.35)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
     `
 
     if (p.reversible && p.include_traces_vias) {
