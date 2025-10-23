@@ -515,7 +515,7 @@ module.exports = {
   )
     `
 
-    const from_via_y = -3.8;
+    const from_via_y = -3.6;
     const to_via_y = from_via_y + p.via_separation;
 
     const hotswap_routes_unplated = `
