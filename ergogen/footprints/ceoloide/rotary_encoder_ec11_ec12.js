@@ -1,6 +1,6 @@
 /*
 Copyright (c) 2023 Marco Massarelli
-
+ 
 SPDX-License-Identifier: MIT
 
 To view a copy of this license, visit https://opensource.org/license/mit/
@@ -87,10 +87,10 @@ module.exports = {
     designator: 'RE',
     side: 'F',
     reversible: false,
-    
-      smd_momentary_switch: false,
-      include_momentary_switch_pads: true,
-    
+
+    smd_momentary_switch: false,
+    include_momentary_switch_pads: true,
+
     include_plate_hole_marking: false,
     include_silkscreen: true,
     include_plated_mounting_holes: true,
@@ -123,7 +123,7 @@ module.exports = {
       (at 0 -8.5)
       (layer "${p.side == 'B' ? 'F' : 'B'}.${p.include_silkscreen ? 'SilkS' : 'Fab'}")
       (effects (font (size 1 1) (thickness 0.15))${p.side == 'F' ? ' (justify mirror)' : ''})
-    )`:''}
+    )`: ''}
     (attr through_hole)
     (pad "A" thru_hole oval (at 2.5 ${p.encoder_pads_position} ${p.r}) (size 1.6 1.1) (drill oval 1 0.5) (layers "*.Cu" "*.Mask") ${p.A})
     (pad "B" thru_hole oval (at 0 ${p.encoder_pads_position} ${p.r}) (size 1.6 1.1) (drill oval 1 0.5) (layers "*.Cu" "*.Mask") ${p.B})
@@ -142,7 +142,7 @@ module.exports = {
     const plated_mp = `
     (pad "" thru_hole roundrect
       (at -${p.mounting_holes_position} 0 ${p.r - 90})
-      (size ${p.mounting_holes_height+0.3} ${p.mounting_holes_width+0.3})
+      (size ${p.mounting_holes_height + 0.3} ${p.mounting_holes_width + 0.3})
       (drill oval ${p.mounting_holes_height} ${p.mounting_holes_width})
       (layers "*.Cu" "*.Mask")
       (roundrect_rratio 0)
@@ -151,7 +151,7 @@ module.exports = {
     )
     (pad "" thru_hole roundrect
       (at ${p.mounting_holes_position} 0 ${p.r - 90})
-      (size ${p.mounting_holes_height+0.3} ${p.mounting_holes_width+0.3})
+      (size ${p.mounting_holes_height + 0.3} ${p.mounting_holes_width + 0.3})
       (drill oval ${p.mounting_holes_height} ${p.mounting_holes_width})
       (layers "*.Cu" "*.Mask")
       (roundrect_rratio 0)

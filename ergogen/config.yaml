@@ -266,7 +266,6 @@ pcbs:
           reversible: true
           include_momentary_switch_pads: true
           smd_momentary_switch: true
-          include_plated_mounting_holes: true
           A: encoder_a
           B: encoder_b
           C: GND
