@@ -234,24 +234,21 @@ module.exports = {
     const reversible_traces_vias = `
     ${''/* Connect "to" pad (RAW) - center position */}
     (via (at ${p.eaxy(0, 0)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(0, -0.75)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(0, -0.75)}) (end ${p.eaxy(0, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(0, 0.75)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(0, 0.75)}) (end ${p.eaxy(0, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(0, 0)}) (width 0.5) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(0, 0)}) (width 0.5) (layer "B.Cu") (net ${p.to.index}))
 
-    ${''/* Connect "from" pads (BAT_P) - top position */}
-    (via (at ${p.eaxy(0, 2.6)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(0, 2.25)}) (end ${p.eaxy(0, 2.6)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(0, 2.25)}) (end ${p.eaxy(0, 2.6)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
-
-    ${''/* Connect "from" pads (BAT_P) - bottom position */}
+    ${''/* Connect "from" pads (BAT_P) - only create vias/traces for the position that has active pads based on invert_behavior */}
+    ${p.invert_behavior ? `
+    ${''/* Bottom position active when invert_behavior is true */}
     (via (at ${p.eaxy(0, -2.6)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(0, -2.25)}) (end ${p.eaxy(0, -2.6)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(0, -2.25)}) (end ${p.eaxy(0, -2.6)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.6)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.6)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
+    ` : `
+    ${''/* Top position active when invert_behavior is false */}
+    (via (at ${p.eaxy(0, 2.6)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.6)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.6)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
+    `}
     `;
 
     let final = common_start;
