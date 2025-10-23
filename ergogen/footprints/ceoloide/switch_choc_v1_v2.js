@@ -43,7 +43,7 @@
 //    via_drill: default is 0.3
 //      allows to define the size of the drill. Not recommended below 0.3 (JLCPCB minimum),
 //      or above 0.4 (KiCad default), to avoid overlap or DRC errors 
-//    via_separation: default is 2.5
+//    via_separation: default is 1
 //      allows to define the separation between the two vias that connect the switch pads
 //      in reversible footprints.
 //    locked_traces_vias: false
@@ -515,9 +515,8 @@ module.exports = {
   )
     `
 
-    const via_y_center = -3;
-    const from_via_y = via_y_center;
-    const to_via_y = via_y_center + p.via_separation;
+    const to_via_y = -3.5;
+    const from_via_y = to_via_y + p.via_separation;
 
     const hotswap_routes_unplated = `
 	(segment
