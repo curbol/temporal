@@ -221,7 +221,7 @@ outlines:
       fillet: 1
 
 pcbs:
-  temporal-pcb:
+  TEMPORAL:
     template: kicad8
     outlines:
       main:
@@ -437,9 +437,7 @@ pcbs:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
 
-  # These are not currently used, but they might be useful down the road for better case building, or fabricating FR4 plates
-  # BACKPLATE
-  temporal-back-plate:
+  TEMPORAL-BACKPLATE:
     template: kicad8
     outlines:
       main:
@@ -471,8 +469,7 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  # TOPPLATE
-  temporal-top-plate:
+  TEMPORAL_TOPPLATE:
     template: kicad8
     outlines:
       main:
