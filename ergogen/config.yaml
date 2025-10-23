@@ -264,6 +264,7 @@ pcbs:
           - ref: thumb_enc
         params:
           reversible: true
+          include_plated_mounting_holes: false
           include_momentary_switch_pads: true
           smd_momentary_switch: true
           A: encoder_a
