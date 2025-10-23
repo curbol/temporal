@@ -30,6 +30,17 @@
 //      if true it will include silkscreen markings
 //    include_courtyard: default is false
 //      if true it will include the part courtyard
+//    include_traces_vias: default is false
+//      if true it will include traces and vias when reversible is true to connect front and
+//      back pads for easier routing
+//    via_size: default is 0.6
+//      allows to define the size of the via. Not recommended below 0.56 (JLCPCB minimum),
+//      or above 0.8 (KiCad default)
+//    via_drill: default is 0.3
+//      allows to define the size of the drill. Not recommended below 0.3 (JLCPCB minimum),
+//      or above 0.4 (KiCad default)
+//    trace_width: default is 0.25mm
+//      allows to override the trace width that connects the pads to vias
 //    reset_switch_3dmodel_filename: default is ''
 //      Allows you to specify the path to a 3D model STEP or WRL file to be
 //      used when rendering the PCB. Use the ${VAR_NAME} syntax to point to
@@ -52,6 +63,10 @@ module.exports = {
     include_bosses: false,
     include_silkscreen: true,
     include_courtyard: false,
+    include_traces_vias: false,
+    via_size: 0.6,
+    via_drill: 0.3,
+    trace_width: 0.25,
     reset_switch_3dmodel_filename: '',
     reset_switch_3dmodel_xyz_offset: [0, 0, 0],
     reset_switch_3dmodel_xyz_rotation: [0, 0, 0],
@@ -134,6 +149,29 @@ module.exports = {
   )
     `
 
+    // Vias and traces to connect front and back pads for reversible footprints
+    const reversible_traces_vias = `
+    ${''/* Connect "from" pads (GND) - left side */}
+    (via (at ${p.eaxy(-2.625, -0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-3.5, -0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-3.5, -0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+
+    ${''/* Connect "to" pads (RST) - left side */}
+    (via (at ${p.eaxy(-2.625, 0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-3.5, 0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-3.5, 0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+
+    ${''/* Connect "from" pads (GND) - right side */}
+    (via (at ${p.eaxy(2.625, -0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(3.5, -0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(3.5, -0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+
+    ${''/* Connect "to" pads (RST) - right side */}
+    (via (at ${p.eaxy(2.625, 0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(3.5, 0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(3.5, 0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    `
+
     let final = common_start;
     if (p.include_bosses) {
       final += bosses
@@ -161,6 +199,10 @@ module.exports = {
     }
 
     final += common_end;
+
+    if (p.reversible && p.include_traces_vias) {
+      final += reversible_traces_vias;
+    }
 
     return final;
   }

@@ -38,6 +38,17 @@
 //      connects Bat+ to RAW.
 //    include_courtyard: default is false
 //      if true it will include the courtyard around the component
+//    include_traces_vias: default is false
+//      if true it will include traces and vias when reversible is true to connect front and
+//      back pads for easier routing
+//    via_size: default is 0.6
+//      allows to define the size of the via. Not recommended below 0.56 (JLCPCB minimum),
+//      or above 0.8 (KiCad default)
+//    via_drill: default is 0.3
+//      allows to define the size of the drill. Not recommended below 0.3 (JLCPCB minimum),
+//      or above 0.4 (KiCad default)
+//    trace_width: default is 0.25mm
+//      allows to override the trace width that connects the pads to vias
 //    switch_3dmodel_filename: default is ''
 //      Allows you to specify the path to a 3D model STEP or WRL file to be
 //      used when rendering the PCB. Use the ${VAR_NAME} syntax to point to
@@ -68,6 +79,10 @@ module.exports = {
     invert_behavior: true,
     include_silkscreen: true,
     include_courtyard: false,
+    include_traces_vias: false,
+    via_size: 0.6,
+    via_drill: 0.3,
+    trace_width: 0.25,
     switch_3dmodel_filename: "",
     switch_3dmodel_xyz_offset: [0, 0, 0],
     switch_3dmodel_xyz_rotation: [0, 0, 0],
@@ -215,6 +230,24 @@ module.exports = {
     )
     `;
 
+    // Vias and traces to connect front and back pads for reversible footprints
+    const reversible_traces_vias = `
+    ${''/* Connect "to" pad (RAW) - center position */}
+    (via (at ${p.eaxy(-1.735, 0)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-1.735, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(-1.735, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+
+    ${''/* Connect "from" pads (BAT_P) - top position */}
+    (via (at ${p.eaxy(-1.735, 2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-2.6, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-2.6, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+
+    ${''/* Connect "from" pads (BAT_P) - bottom position */}
+    (via (at ${p.eaxy(-1.735, -2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-2.6, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-2.6, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    `;
+
     let final = common_start;
     if (p.side == "F" || p.reversible) {
       final += pads_front;
@@ -240,6 +273,11 @@ module.exports = {
     }
 
     final += common_end;
+
+    if (p.reversible && p.include_traces_vias) {
+      final += reversible_traces_vias;
+    }
+
     return final;
   },
 };
