@@ -150,26 +150,25 @@ module.exports = {
     `
 
     // Vias and traces to connect front and back pads for reversible footprints
+    // Using 2 vias total - one for GND, one for RST
     const reversible_traces_vias = `
-    ${''/* Connect "from" pads (GND) - left side */}
-    (via (at ${p.eaxy(-2.625, -0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-3.5, -0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(-3.5, -0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    ${''/* GND via - centered between GND pads */}
+    (via (at ${p.eaxy(0, -0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    ${''/* Front GND pads to via */}
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(0, -0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(0, -0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    ${''/* Back GND pads to via */}
+    (segment (start ${p.eaxy(-2.625, -0.85)}) (end ${p.eaxy(0, -0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(0, -0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
 
-    ${''/* Connect "to" pads (RST) - left side */}
-    (via (at ${p.eaxy(-2.625, 0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-3.5, 0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(-3.5, 0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
-
-    ${''/* Connect "from" pads (GND) - right side */}
-    (via (at ${p.eaxy(2.625, -0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(3.5, -0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(2.625, -0.85)}) (end ${p.eaxy(3.5, -0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
-
-    ${''/* Connect "to" pads (RST) - right side */}
-    (via (at ${p.eaxy(2.625, 0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(3.5, 0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(3.5, 0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    ${''/* RST via - centered between RST pads */}
+    (via (at ${p.eaxy(0, 0.85)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    ${''/* Front RST pads to via */}
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(0, 0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(0, 0.85)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    ${''/* Back RST pads to via */}
+    (segment (start ${p.eaxy(-2.625, 0.85)}) (end ${p.eaxy(0, 0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(2.625, 0.85)}) (end ${p.eaxy(0, 0.85)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
     `
 
     let final = common_start;

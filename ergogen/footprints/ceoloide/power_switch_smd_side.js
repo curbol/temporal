@@ -233,19 +233,21 @@ module.exports = {
     // Vias and traces to connect front and back pads for reversible footprints
     const reversible_traces_vias = `
     ${''/* Connect "to" pad (RAW) - center position */}
-    (via (at ${p.eaxy(-1.735, 0)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-1.735, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(-1.735, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    (via (at ${p.eaxy(-3.2, 0)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-3.2, -0.75)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-3.2, -0.75)}) (end ${p.eaxy(-3.2, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(-3.2, 0.75)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-3.2, 0.75)}) (end ${p.eaxy(-3.2, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
 
     ${''/* Connect "from" pads (BAT_P) - top position */}
-    (via (at ${p.eaxy(-1.735, 2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-2.6, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-2.6, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    (via (at ${p.eaxy(-3.2, 2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.2, 2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-3.2, 2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
 
     ${''/* Connect "from" pads (BAT_P) - bottom position */}
-    (via (at ${p.eaxy(-1.735, -2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-2.6, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-2.6, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    (via (at ${p.eaxy(-3.2, -2.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.2, -2.25)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-3.2, -2.25)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
     `;
 
     let final = common_start;
