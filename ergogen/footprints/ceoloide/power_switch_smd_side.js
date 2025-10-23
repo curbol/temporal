@@ -240,14 +240,14 @@ module.exports = {
     ${''/* Connect "from" pads (BAT_P) - only create vias/traces for the position that has active pads based on invert_behavior */}
     ${p.invert_behavior ? `
     ${''/* Bottom position active when invert_behavior is true */}
-    (via (at ${p.eaxy(0, -2.6)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.6)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.6)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
+    (via (at ${p.eaxy(0, -2.65)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.65)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(0, -2.65)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
     ` : `
     ${''/* Top position active when invert_behavior is false */}
-    (via (at ${p.eaxy(0, 2.6)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.6)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.6)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
+    (via (at ${p.eaxy(0, 2.65)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.65)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(0, 2.65)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
     `}
     `;
 
