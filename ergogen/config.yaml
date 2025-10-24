@@ -375,7 +375,6 @@ pcbs:
             shift: [0, -3]
         params:
           text: "by curbol"
-          side: "B"
           reversible: true
 
       hole_1:
