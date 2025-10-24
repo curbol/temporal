@@ -267,11 +267,11 @@ pcbs:
           include_plated_mounting_holes: false
           include_momentary_switch_pads: true
           smd_momentary_switch: true
-          A: encoder_a
-          B: encoder_b
-          C: GND
-          S1: col_ring
-          S2: encoder_thumb
+          A: encoder_a # Left pin
+          C: GND # Center pin
+          B: encoder_b # Right pin
+          S1: col_ring # Switch pin 1
+          S2: encoder_thumb # Switch pin 2
 
       mcu:
         what: ceoloide/mcu_nice_nano
