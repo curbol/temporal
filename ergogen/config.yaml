@@ -132,22 +132,22 @@ points:
 
 outlines:
   # Just the keys
-  raw:
+  _raw:
     - what: rectangle
       where: true
       size: [px, py]
 
-  keys:
+  _keys:
     - what: rectangle
       where: true
       size: [kx-0.5, ky-0.5]
 
-  key_plugs:
+  _key_plugs:
     - what: rectangle
       where: true
       size: [13.8, 13.8]
 
-  finger_section:
+  _finger_section:
     - what: rectangle
       where:
         - finger_pinky_top
@@ -159,7 +159,7 @@ outlines:
       adjust:
         shift: [0.5px, 0py]
 
-  thumb_section:
+  _thumb_section:
     - what: polygon
       points:
         - ref: finger_inner_bottom
@@ -186,33 +186,32 @@ outlines:
         - ref: thumb_enc
           shift: [0.5px, 1py]
 
-  mcu_section:
+  _mcu_section:
     - what: rectangle
       where:
         - ref: finger_inner_top
           shift: [19.5, -20 - voff]
       size: [22, 62]
 
-  key_thumb_outline: [raw, finger_section, thumb_section]
-  key_thumb_mcu_outline: [key_thumb_outline, mcu_section]
-  board_outline_raw:
-    - name: key_thumb_mcu_outline
+  _key_thumb_outline: [_raw, _finger_section, _thumb_section]
+  _key_thumb_mcu_outline: [_key_thumb_outline, _mcu_section]
+  _board_outline_fillet:
+    - name: _key_thumb_mcu_outline
       fillet: 1
 
   board_outline:
-    - name: board_outline_raw
+    - name: _board_outline_fillet
       expand: 0.1
 
-  # Combination preview showing outline and keys.
-  all_key_outline:
+  board_key_outline:
     - name: board_outline
     - operation: subtract
-      name: keys
+      name: _keys
 
   top_plate:
-    - name: key_thumb_outline
+    - name: _key_thumb_outline
     - operation: subtract
-      name: key_plugs
+      name: _key_plugs
       fillet: 1
 
   back_plate:
@@ -437,11 +436,11 @@ pcbs:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
 
-  TEMPORAL-BACKPLATE:
+  TEMPORAL_TOPPLATE:
     template: kicad8
     outlines:
       main:
-        outline: back_plate
+        outline: top_plate
     footprints:
       hole_1:
         what: ceoloide/mounting_hole_npth
@@ -469,11 +468,11 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  TEMPORAL_TOPPLATE:
+  TEMPORAL_BACKPLATE:
     template: kicad8
     outlines:
       main:
-        outline: top_plate
+        outline: back_plate
     footprints:
       hole_1:
         what: ceoloide/mounting_hole_npth
