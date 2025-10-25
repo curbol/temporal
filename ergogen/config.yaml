@@ -67,14 +67,12 @@ points:
         padding: 1ky
         spread: 1kx
       columns:
-        extra: # Additional outer keys, inspired by KLOR
+        extra:
           rows.bottom.skip: true
-          rows.top.skip: false
           key.splay: spang
           key.column_net: col_extra
         pinky:
           key.stagger: 0.5ky
-          # key.splay: spang # Comment this line out if using the 'extra' key above
           key.column_net: col_pinky
         ring:
           key.stagger: 0.35ky
@@ -159,6 +157,53 @@ outlines:
       adjust:
         shift: [0.5px, 0py]
 
+  _break_section:
+    - what: rectangle
+      where:
+        ref: finger_extra_top
+        shift: [0.5px - 2.62, 0.5py + 0.5]
+        rotate: 45
+      size: [1.25, 3]
+      fillet: 0.6
+    - what: rectangle
+      where:
+        ref: finger_extra_top
+        shift: [0.5px - 2, 0.5py - 2.2]
+      size: [1.25, 4]
+      fillet: 0.6
+    - what: rectangle
+      where:
+        ref: finger_extra_top
+        shift: [0.5px - 2, 0py - 0.75]
+      size: [1.25, 4.5]
+      fillet: 0.6
+
+    - what: rectangle
+      where:
+        ref: finger_extra_home
+        shift: [0.5px - 2.62, -0.5py - 0.5]
+        rotate: -45
+      size: [1.25, 3]
+      fillet: 0.6
+    - what: rectangle
+      where:
+        ref: finger_extra_home
+        shift: [0.5px - 2, 0.5py - 1.5]
+      size: [1.25, 4.5]
+      fillet: 0.6
+    - what: rectangle
+      where:
+        ref: finger_extra_home
+        shift: [0.5px - 2, 0py - 0.3]
+      size: [1.25, 4.6]
+      fillet: 0.6
+    - what: rectangle
+      where:
+        ref: finger_extra_home
+        shift: [0.5px - 2, -0.5py + 1.5]
+      size: [1.25, 3.2]
+      fillet: 0.6
+
   _thumb_section:
     - what: polygon
       points:
@@ -195,18 +240,19 @@ outlines:
 
   _key_thumb_outline: [_raw, _finger_section, _thumb_section]
   _key_thumb_mcu_outline: [_key_thumb_outline, _mcu_section]
-  _board_outline_fillet:
+
+  _board_break_outline:
     - name: _key_thumb_mcu_outline
+    - operation: subtract
+      name: _break_section
+
+  _board_fillet_outline:
+    - name: _board_break_outline
       fillet: 1
 
   board_outline:
-    - name: _board_outline_fillet
+    - name: _board_fillet_outline
       expand: 0.1
-
-  board_key_outline:
-    - name: board_outline
-    - operation: subtract
-      name: _keys
 
   top_plate:
     - name: _key_thumb_outline
