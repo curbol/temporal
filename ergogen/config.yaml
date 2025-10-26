@@ -298,7 +298,7 @@ outlines:
       fillet: 1
 
 pcbs:
-  TEMPORAL:
+  temporal:
     template: kicad8
     outlines:
       main:
@@ -514,7 +514,7 @@ pcbs:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
 
-  TEMPORAL_TOPPLATE:
+  temporal_topplate:
     template: kicad8
     outlines:
       main:
@@ -546,7 +546,7 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  TEMPORAL_BACKPLATE:
+  temporal_backplate:
     template: kicad8
     outlines:
       main:
@@ -578,7 +578,7 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  TEMPORAL_TOPPLATE_SMALL:
+  temporal_topplate_small:
     template: kicad8
     outlines:
       main:
@@ -610,7 +610,7 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  TEMPORAL_BACKPLATE_SMALL:
+  temporal_backplate_small:
     template: kicad8
     outlines:
       main:
