@@ -129,23 +129,26 @@ points:
           row_net: row_thumb
 
 outlines:
-  # Just the keys
-  _raw:
+  _keys:
     - what: rectangle
       where: true
       size: [px, py]
 
-  _keys:
+  _extra:
     - what: rectangle
-      where: true
-      size: [kx-0.5, ky-0.5]
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      size: [1px, 1.5py]
+      adjust:
+        shift: [-0.1px, 0py]
 
   _key_plugs:
     - what: rectangle
       where: true
       size: [13.8, 13.8]
 
-  _finger_section:
+  _finger_fill:
     - what: rectangle
       where:
         - finger_pinky_top
@@ -157,7 +160,7 @@ outlines:
       adjust:
         shift: [0.5px, 0py]
 
-  _break_section:
+  _break:
     - what: rectangle
       where:
         ref: finger_extra_top
@@ -204,7 +207,7 @@ outlines:
       size: [1.25, 3.2]
       fillet: 0.6
 
-  _thumb_section:
+  _thumb:
     - what: polygon
       points:
         - ref: finger_inner_bottom
@@ -231,37 +234,66 @@ outlines:
         - ref: thumb_enc
           shift: [0.5px, 1py]
 
-  _mcu_section:
+  _mcu:
     - what: rectangle
       where:
         - ref: finger_inner_top
           shift: [19.5, -20 - voff]
       size: [22, 62]
 
-  _key_thumb_outline: [_raw, _finger_section, _thumb_section]
-  _key_thumb_mcu_outline: [_key_thumb_outline, _mcu_section]
+  _key_fill: [_keys, _finger_fill, _thumb]
 
-  _board_break_outline:
-    - name: _key_thumb_mcu_outline
+  # Full Board
+  _board_raw:
+    - name: _key_fill
+    - name: _mcu
     - operation: subtract
-      name: _break_section
+      name: _break
 
-  _board_fillet_outline:
-    - name: _board_break_outline
+  _board_fillet:
+    - name: _board_raw
       fillet: 1
 
-  board_outline:
-    - name: _board_fillet_outline
+  board:
+    - name: _board_fillet
       expand: 0.1
 
   top_plate:
-    - name: _key_thumb_outline
+    - name: _key_fill
     - operation: subtract
       name: _key_plugs
       fillet: 1
 
   back_plate:
-    - name: board_outline
+    - name: board
+      expand: wall_thickness + print_fit_tolerance
+      fillet: 1
+
+  # Small board
+  _board_small_raw:
+    - name: _key_fill
+    - name: _mcu
+    - operation: subtract
+      name: _extra
+
+  _board_small_fillet:
+    - name: _board_small_raw
+      fillet: 1
+
+  board_small:
+    - name: _board_small_fillet
+      expand: 0.1
+
+  top_plate_small:
+    - name: _key_fill
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _extra
+      fillet: 1
+
+  back_plate_small:
+    - name: board_small
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
 
@@ -270,7 +302,7 @@ pcbs:
     template: kicad8
     outlines:
       main:
-        outline: board_outline
+        outline: board
     footprints:
       choc_hotswap:
         what: ceoloide/switch_choc_v1_v2
@@ -545,3 +577,68 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
+
+  TEMPORAL_TOPPLATE_SMALL:
+    template: kicad8
+    outlines:
+      main:
+        outline: top_plate_small
+    footprints:
+      hole_1:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_middle_top
+            shift: [hole1_x, hole1_y]
+      hole_2:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_top
+            shift: [hole2_x, hole2_y]
+      hole_3:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: thumb_mid
+            shift: [hole3_x, hole3_y]
+      hole_4:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_index_bottom
+            shift: [hole4_x, hole4_y]
+      hole_5:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_ring_home
+            shift: [hole5_x, hole5_y]
+
+  TEMPORAL_BACKPLATE_SMALL:
+    template: kicad8
+    outlines:
+      main:
+        outline: back_plate_small
+    footprints:
+      hole_1:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_middle_top
+            shift: [hole1_x, hole1_y]
+      hole_2:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_top
+            shift: [hole2_x, hole2_y]
+      hole_3:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: thumb_mid
+            shift: [hole3_x, hole3_y]
+      hole_4:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_index_bottom
+            shift: [hole4_x, hole4_y]
+      hole_5:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_ring_home
+            shift: [hole5_x, hole5_y]
+
