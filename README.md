@@ -35,7 +35,7 @@ TEMPORAL is designed to be used with ZMK. [You can find the ZMK-config repositor
 
 ## Build Guide
 
-[Details on the build and case can be found here.](/build-guide.md)
+[Details on the build and case can be found here.](/docs/build-guide.md)
 ![TEMPEST pcb](images/tempest-pcb.png)
 
 ![Tempest](images/tempest-alt.jpg)
