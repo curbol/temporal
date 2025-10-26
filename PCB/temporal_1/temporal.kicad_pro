@@ -60,20 +60,20 @@
       ],
       "drc_exclusions": [
         [
-          "clearance|159592203|84530666|718a3a4f-b479-40ab-b1d6-fae95aadfdcb|cd63990c-1bf1-42a3-b896-8b8ac860c932",
-          "This is close by design"
+          "clearance|159976203|85130666|073a9041-952a-4f86-8524-70e00683656a|ce3b3ae5-2aad-4657-8b03-2620f894de21",
+          ""
         ],
         [
-          "clearance|159592203|84530666|ce3b3ae5-2aad-4657-8b03-2620f894de21|073a9041-952a-4f86-8524-70e00683656a",
-          "This is close by design"
+          "clearance|159976203|85130666|cd63990c-1bf1-42a3-b896-8b8ac860c932|718a3a4f-b479-40ab-b1d6-fae95aadfdcb",
+          ""
         ],
         [
-          "clearance|159592203|86530666|507833c2-9a5f-40e9-9f93-9dcc40ff73a0|5e627874-56ff-4819-af54-af1e101f5ac8",
-          "This is close by design"
+          "clearance|159976203|87130666|5e627874-56ff-4819-af54-af1e101f5ac8|507833c2-9a5f-40e9-9f93-9dcc40ff73a0",
+          ""
         ],
         [
-          "clearance|159592203|86530666|ea1814ee-b95c-4ae8-86a4-ca0ba5caf58f|94e61b7c-8dc6-46e1-bfbe-adcc74fe3752",
-          "This is close by design"
+          "clearance|159976203|87130666|94e61b7c-8dc6-46e1-bfbe-adcc74fe3752|ea1814ee-b95c-4ae8-86a4-ca0ba5caf58f",
+          ""
         ]
       ],
       "meta": {
@@ -260,7 +260,7 @@
     "pinned_symbol_libs": []
   },
   "meta": {
-    "filename": "TEMPORAL.kicad_pro",
+    "filename": "temporal.kicad_pro",
     "version": 3
   },
   "net_settings": {
@@ -282,34 +282,6 @@
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6
-      },
-      {
-        "clearance": 0.2,
-        "diff_pair_gap": 0.25,
-        "diff_pair_width": 0.2,
-        "microvia_diameter": 0.3,
-        "microvia_drill": 0.1,
-        "name": "Battery",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 1,
-        "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.5,
-        "via_diameter": 0.8,
-        "via_drill": 0.4
-      },
-      {
-        "clearance": 0.2,
-        "diff_pair_gap": 0.25,
-        "diff_pair_width": 0.2,
-        "microvia_diameter": 0.3,
-        "microvia_drill": 0.1,
-        "name": "Power",
-        "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 0,
-        "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.4,
-        "via_diameter": 0.8,
-        "via_drill": 0.4
       }
     ],
     "meta": {
