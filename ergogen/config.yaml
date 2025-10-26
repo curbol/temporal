@@ -55,6 +55,10 @@ units:
   wall_thickness: 1.2 # Account for the thickness in 3D printed case/plate
   print_fit_tolerance: 0.2 # Give the case some overlap beyond pcb
 
+  # Breakoff
+  cut_w: 1.2
+  cut_hoff: 2
+
   # Display correct choc sizing
   $default_width: 18
   $default_height: 17
@@ -160,52 +164,58 @@ outlines:
       adjust:
         shift: [0.5px, 0py]
 
-  _break:
-    - what: rectangle
-      where:
-        ref: finger_extra_top
-        shift: [0.5px - 2.62, 0.5py + 0.5]
-        rotate: 45
-      size: [1.25, 3]
-      fillet: 0.6
-    - what: rectangle
-      where:
-        ref: finger_extra_top
-        shift: [0.5px - 2, 0.5py - 2.2]
-      size: [1.25, 4]
-      fillet: 0.6
-    - what: rectangle
-      where:
-        ref: finger_extra_top
-        shift: [0.5px - 2, 0py - 0.75]
-      size: [1.25, 4.5]
-      fillet: 0.6
+  _break_cut:
+    - what: polygon
+      fillet: 2
+      points:
+        - ref: finger_extra_top
+          shift: [0.5px - cut_w / 2 - cut_hoff, 0.5py]
 
+        - ref: finger_extra_top
+          shift: [0px, 0.75py - cut_w * 1.25]
+        - ref: finger_extra_top
+          shift: [0px, 0.75py]
+
+        - ref: finger_extra_top
+          shift: [0.5px + cut_w / 2 - cut_hoff, 0.5py + cut_w / 2]
+        - ref: finger_extra_home
+          shift: [0.5px + cut_w / 2 - cut_hoff, -0.5py - cut_w / 2]
+
+        - ref: finger_extra_home
+          shift: [0px, -0.75py]
+        - ref: finger_extra_home
+          shift: [0px, -0.75py + cut_w * 1.25]
+
+        - ref: finger_extra_home
+          shift: [0.5px - cut_w / 2 - cut_hoff, -0.5py]
+
+  _break_bridges:
+    - what: rectangle
+      where:
+        ref: finger_extra_top
+        shift: [0.5px - cut_hoff, 0.5py - 5.5]
+      size: [cut_w * 2, 4]
+    - what: rectangle
+      where:
+        ref: finger_extra_top
+        shift: [0.5px - cut_hoff, -0.5py + 5]
+      size: [cut_w * 2, 4]
     - what: rectangle
       where:
         ref: finger_extra_home
-        shift: [0.5px - 2.62, -0.5py - 0.5]
-        rotate: -45
-      size: [1.25, 3]
-      fillet: 0.6
+        shift: [0.5px - cut_hoff, 0.5py - 5.5]
+      size: [cut_w * 2, 4]
     - what: rectangle
       where:
         ref: finger_extra_home
-        shift: [0.5px - 2, 0.5py - 1.5]
-      size: [1.25, 4.5]
-      fillet: 0.6
-    - what: rectangle
-      where:
-        ref: finger_extra_home
-        shift: [0.5px - 2, 0py - 0.3]
-      size: [1.25, 4.6]
-      fillet: 0.6
-    - what: rectangle
-      where:
-        ref: finger_extra_home
-        shift: [0.5px - 2, -0.5py + 1.5]
-      size: [1.25, 3.2]
-      fillet: 0.6
+        shift: [0.5px - cut_hoff, -0.5py + 5]
+      size: [cut_w * 2, 4]
+
+  _break:
+    - name: _break_cut
+    - operation: subtract
+      name: _break_bridges
+      fillet: .5
 
   _thumb:
     - what: polygon
