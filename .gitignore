@@ -11,3 +11,4 @@ ergogen/cases/
 pcb/temporal_1/*-backups/
 pcb/temporal_1/fp-info-cache
 pcb/temporal_1/*.kicad_prl
+pcb/temporal_1/~*.lck
