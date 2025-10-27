@@ -307,6 +307,28 @@ outlines:
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
 
+  # MCU Cover with nice!view cutout
+  _mcu_cover_base:
+    - what: rectangle
+      where:
+        - ref: finger_inner_top
+          shift: [19.5, -20 - voff]
+      size: [22, 62]
+
+  _display_cutout:
+    - what: rectangle
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 7.5 - voff]
+      size: [38, 16]
+
+  mcu_cover:
+    - name: _mcu_cover_base
+      fillet: 1
+    - operation: subtract
+      name: _display_cutout
+      fillet: 0.5
+
 pcbs:
   temporal:
     template: kicad8
@@ -651,4 +673,27 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
+
+  temporal_mcu_cover:
+    template: kicad8
+    outlines:
+      main:
+        outline: mcu_cover
+    footprints:
+      hole_screen_L:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_bottom
+            shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
+        params:
+          hole_size: screen_standoff_size
+          hole_drill: screen_standoff_size
+      hole_screen_R:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_bottom
+            shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
+        params:
+          hole_size: screen_standoff_size
+          hole_drill: screen_standoff_size
 
