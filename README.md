@@ -3,7 +3,8 @@
 **WORK IN PROGRESS** (Files and images are not updated yet)
 
 Preview design:
-<img width="1351" height="869" alt="image" src="https://github.com/user-attachments/assets/b74d4346-0a3b-4eca-9a45-1359d5be917b" />
+<img width="1649" height="1067" alt="image" src="https://github.com/user-attachments/assets/b65a0838-cac9-4117-b53e-7bb658d3d93b" />
+
 
 
 A 36-42 key split ergonomic keyboard based on [TEMPEST](https://github.com/thrly/tempest) by thrly. TEMPORAL features a revised layout with an additional snap-off pinky key and an additional thumb key with encoder support.
