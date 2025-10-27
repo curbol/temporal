@@ -218,11 +218,16 @@ outlines:
       fillet: .5
 
   _thumb:
+    - what: rectangle
+      where:
+        - finger_inner_bottom
+      size: [px, py]
+      adjust:
+        shift: [0px, -0.5py]
     - what: polygon
       points:
-        - ref: finger_inner_bottom
-          shift: [0.5px, -0.5py]
-
+        - ref: thumb_far
+          shift: [-1.5px, 0.5py]
         - ref: thumb_far
           shift: [-0.5px, 0.5py]
         - ref: thumb_far
@@ -247,9 +252,36 @@ outlines:
   _mcu:
     - what: rectangle
       where:
-        - ref: finger_inner_top
-          shift: [19.5, -20 - voff]
+        - ref: finger_inner_home
+          shift: [19.5, -3 - voff]
       size: [22, 62]
+
+  _display:
+    - what: rectangle # Display
+      where:
+        ref: finger_inner_home
+        shift: [19.8, 6.75 - voff]
+      size: [10.8, 25.3]
+      fillet: 0.5
+
+  _mcu_cover_holes:
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
+
+  _board_holes:
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
 
   _key_fill: [_keys, _finger_fill, _thumb]
 
@@ -275,9 +307,24 @@ outlines:
       fillet: 1
 
   back_plate:
+    - name: _key_fill
+    - name: _mcu
+      fillet: 1
+
+  case:
     - name: board
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
+
+  mcu_cover:
+    - name: _mcu
+    - operation: subtract
+      name: _display
+    - operation: subtract
+      name: _key_fill
+      fillet: 1
+    - operation: subtract
+      name: _mcu_cover_holes
 
   # Small board
   _board_small_raw:
@@ -303,31 +350,16 @@ outlines:
       fillet: 1
 
   back_plate_small:
+    - name: _key_fill
+    - name: _mcu
+    - operation: subtract
+      name: _extra
+      fillet: 1
+
+  case_small:
     - name: board_small
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
-
-  # MCU Cover with nice!view cutout
-  _mcu_cover_base:
-    - what: rectangle
-      where:
-        - ref: finger_inner_top
-          shift: [19.5, -20 - voff]
-      size: [22, 62]
-
-  _display_cutout:
-    - what: rectangle
-      where:
-        - ref: finger_inner_home
-          shift: [19.8, 7.5 - voff]
-      size: [38, 16]
-
-  mcu_cover:
-    - name: _mcu_cover_base
-      fillet: 1
-    - operation: subtract
-      name: _display_cutout
-      fillet: 0.5
 
 pcbs:
   temporal:
@@ -696,4 +728,3 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
-
