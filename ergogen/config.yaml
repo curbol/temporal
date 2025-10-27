@@ -253,8 +253,8 @@ outlines:
     - what: rectangle
       where:
         - ref: finger_inner_home
-          shift: [19.5, -3 - voff]
-      size: [22, 62]
+          shift: [20, -3 - voff]
+      size: [21, 62]
 
   _display:
     - what: rectangle # Display
@@ -275,13 +275,6 @@ outlines:
       where:
         - ref: finger_inner_bottom
           shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
-
-  _board_holes:
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
 
   _key_fill: [_keys, _finger_fill, _thumb]
 
