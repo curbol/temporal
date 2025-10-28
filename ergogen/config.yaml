@@ -236,10 +236,8 @@ outlines:
           shift: [0.5px, -0.5py]
         - ref: thumb_far
           shift: [-0.5px, -0.5075py]
-
         - ref: thumb_near
           shift: [0.5px, -0.5py]
-
         - ref: thumb_enc
           shift: [0.5px, -0.5py]
         - ref: thumb_enc
@@ -248,6 +246,31 @@ outlines:
           shift: [-0.5px, 1py]
         - ref: thumb_enc
           shift: [0.5px, 1py]
+
+  _hotswap_socket:
+    - what: rectangle # Center
+      size: [2.7, 5]
+      adjust:
+        rotate: 42
+        shift: [2, 5]
+    - what: rectangle # Upper Left Big
+      size: [4.1, 4.6]
+      adjust:
+        shift: [0, 5.9]
+    - what: rectangle # Upper Left Small
+      size: [2.6, 2.6]
+      adjust:
+        shift: [-3.3, 5.9]
+    - what: rectangle # Lower Right Big
+      size: [4.6, 4.7]
+      adjust:
+        shift: [4.75, 3.85]
+    - what: rectangle # Lower Right Small
+      size: [2.6, 2.6]
+      expand: 0.1
+      fillet: 0.3
+      adjust:
+        shift: [8.3, 3.825]
 
   _mcu:
     - what: rectangle
@@ -276,6 +299,33 @@ outlines:
         - ref: finger_inner_bottom
           shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
 
+  _board_holes:
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_inner_top
+          shift: [hole2_x, hole2_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_index_bottom
+          shift: [hole4_x, hole4_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
+
   _key_fill: [_keys, _finger_fill, _thumb]
 
   # Full Board
@@ -298,16 +348,23 @@ outlines:
     - operation: subtract
       name: _key_plugs
       fillet: 1
+    - operation: subtract
+      name: _board_holes
 
   back_plate:
     - name: _key_fill
     - name: _mcu
       fillet: 1
+    - operation: subtract
+      name: _board_holes
 
   case:
     - name: board
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
+    - operation: subtract
+      where: true
+      name: _hotswap_socket
 
   mcu_cover:
     - name: _mcu
@@ -341,6 +398,8 @@ outlines:
     - operation: subtract
       name: _extra
       fillet: 1
+    - operation: subtract
+      name: _board_holes
 
   back_plate_small:
     - name: _key_fill
@@ -348,11 +407,16 @@ outlines:
     - operation: subtract
       name: _extra
       fillet: 1
+    - operation: subtract
+      name: _board_holes
 
   case_small:
     - name: board_small
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
+    - operation: subtract
+      where: true
+      name: _hotswap_socket
 
 pcbs:
   temporal:

@@ -309,7 +309,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "../../pcb/temporal_1/production/",
+      "plot": "../../pcb/temporal_1/gerbers/",
       "pos_files": "../../pcb/temporal_1/gerbers/",
       "specctra_dsn": "",
       "step": "",
