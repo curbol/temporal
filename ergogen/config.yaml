@@ -801,3 +801,36 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
+
+  cases:
+    temporal_case:
+      - what: outline
+        name: case
+        extrude: 1.6
+        shift: [0, 0, 0]
+      - what: outline
+        name: case
+        extrude: 6
+        shift: [0, 0, 1.6]
+        operation: add
+      - what: outline
+        name: board
+        extrude: 6
+        shift: [0, 0, 1.6]
+        operation: subtract
+
+    temporal_case_small:
+      - what: outline
+        name: case_small
+        extrude: 1.6
+        shift: [0, 0, 0]
+      - what: outline
+        name: case_small
+        extrude: 6
+        shift: [0, 0, 1.6]
+        operation: add
+      - what: outline
+        name: board_small
+        extrude: 6
+        shift: [0, 0, 1.6]
+        operation: subtract
