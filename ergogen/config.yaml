@@ -188,7 +188,6 @@ outlines:
 
         - ref: finger_extra_home
           shift: [0.5px - cut_w / 2 - cut_hoff, -0.5py]
-
   _break_bridges:
     - what: rectangle
       where:
@@ -210,7 +209,6 @@ outlines:
         ref: finger_extra_home
         shift: [0.5px - cut_hoff, -0.5py + 5]
       size: [cut_w * 2, 4]
-
   _break:
     - name: _break_cut
     - operation: subtract
@@ -247,6 +245,8 @@ outlines:
         - ref: thumb_enc
           shift: [0.5px, 1py]
 
+  _key_fill: [_keys, _finger_fill, _thumb]
+
   _hotswap_socket:
     - what: rectangle # Center
       size: [2.7, 5]
@@ -256,21 +256,42 @@ outlines:
     - what: rectangle # Upper Left Big
       size: [4.1, 4.6]
       adjust:
-        shift: [0, 5.9]
+        shift: [0, 5.95]
     - what: rectangle # Upper Left Small
       size: [2.6, 2.6]
       adjust:
-        shift: [-3.3, 5.9]
+        shift: [-3.3, 5.95]
     - what: rectangle # Lower Right Big
       size: [4.6, 4.7]
       adjust:
         shift: [4.75, 3.85]
     - what: rectangle # Lower Right Small
       size: [2.6, 2.6]
-      expand: 0.1
-      fillet: 0.3
+      expand: 0.3
       adjust:
-        shift: [8.3, 3.825]
+        shift: [8.3, 3.735]
+  _diode:
+    - what: rectangle
+      size: [4.2, 1.2]
+      adjust:
+        shift: [0, -5]
+    - what: rectangle
+      size: [2.8, 1.7]
+      expand: 0.3
+      adjust:
+        shift: [0, -5]
+  _bottom_cutouts:
+    - name: _hotswap_socket
+      where: true
+    - name: _diode
+      where: true
+      fillet: 0.3
+  _bottom_cutouts_small:
+    - name: _bottom_cutouts
+    - operation: subtract
+      name: _extra
+      adjust:
+        shift: [0.1px, 0py]
 
   _mcu:
     - what: rectangle
@@ -278,7 +299,6 @@ outlines:
         - ref: finger_inner_home
           shift: [20, -3 - voff]
       size: [21, 62]
-
   _display:
     - what: rectangle # Display
       where:
@@ -286,7 +306,6 @@ outlines:
         shift: [19.8, 6.75 - voff]
       size: [10.8, 25.3]
       fillet: 0.5
-
   _mcu_cover_holes:
     - what: circle
       radius: screen_standoff_size / 2
@@ -326,19 +345,26 @@ outlines:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
 
-  _key_fill: [_keys, _finger_fill, _thumb]
-
-  # Full Board
   _board_raw:
     - name: _key_fill
     - name: _mcu
     - operation: subtract
       name: _break
-
   _board_fillet:
     - name: _board_raw
       fillet: 1
+  _board_small_raw:
+    - name: _key_fill
+    - name: _mcu
+    - operation: subtract
+      name: _extra
+  _board_small_fillet:
+    - name: _board_small_raw
+      fillet: 1
 
+  # ----------
+  # Full Board
+  # ----------
   board:
     - name: _board_fillet
       expand: 0.1
@@ -363,8 +389,7 @@ outlines:
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
     - operation: subtract
-      where: true
-      name: _hotswap_socket
+      name: _bottom_cutouts
 
   mcu_cover:
     - name: _mcu
@@ -376,17 +401,9 @@ outlines:
     - operation: subtract
       name: _mcu_cover_holes
 
-  # Small board
-  _board_small_raw:
-    - name: _key_fill
-    - name: _mcu
-    - operation: subtract
-      name: _extra
-
-  _board_small_fillet:
-    - name: _board_small_raw
-      fillet: 1
-
+  # -----------
+  # Small Board
+  # -----------
   board_small:
     - name: _board_small_fillet
       expand: 0.1
@@ -415,8 +432,7 @@ outlines:
       expand: wall_thickness + print_fit_tolerance
       fillet: 1
     - operation: subtract
-      where: true
-      name: _hotswap_socket
+      name: _bottom_cutouts_small
 
 pcbs:
   temporal:
