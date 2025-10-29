@@ -25,10 +25,16 @@ units:
   # Vertical offset of mcu area items
   voff: 7
 
-  # Pinky splay angles
-  spang: 8
-  pinksprd: 0.5
+  # Finger splay
+  finger_splay: 8
+  finger_spread: 0.5
+  thumb_splay: 9
 
+  # Tumb arc calculation
+  thumb_angle_rad: thumb_splay * 3.1415926535 / 180
+  thumb_arc_radius: 0.985kx / (2 * tan(thumb_angle_rad / 2))
+
+  # Standoffs
   standoff_size: 5 # Size for standoff holes on pcb
   screen_standoff_size: 2
 
@@ -80,20 +86,20 @@ points:
       columns:
         extra:
           rows.bottom.skip: true
-          key.splay: spang
+          key.splay: finger_splay
           key.column_net: col_extra
         pinky:
           key.stagger: 0.5ky
           key.column_net: col_pinky
         ring:
           key.stagger: 0.35ky
-          key.splay: -spang/2
-          key.spread: 1kx + pinksprd # Avoid collision on splayed col?
+          key.splay: -finger_splay/2
+          key.spread: 1kx + finger_spread # Avoid collision on splayed col?
           key.column_net: col_ring
         middle:
           key.stagger: 0.25ky
-          key.splay: -spang/2
-          key.spread: 1kx + pinksprd # Avoid collision on splayed col?
+          key.splay: -finger_splay/2
+          key.spread: 1kx + finger_spread # Avoid collision on splayed col?
           key.column_net: col_middle
         index:
           key.stagger: -0.2ky
@@ -121,17 +127,17 @@ points:
           key.name: thumb_enc
           key.column_net: col_ring
         near:
-          key.splay: -9
+          key.splay: -thumb_splay
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_near
           key.column_net: col_middle
         mid:
-          key.splay: -9
+          key.splay: -thumb_splay
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_mid
           key.column_net: col_index
         far:
-          key.splay: -9
+          key.splay: -thumb_splay
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_far
           key.column_net: col_inner
@@ -222,13 +228,14 @@ outlines:
       fillet: .5
 
   _thumb:
-    - what: rectangle
+    - what: rectangle # Fill gap with finger keys
       where:
+        - finger_index_bottom
         - finger_inner_bottom
       size: [px, py]
       adjust:
         shift: [0px, -0.5py]
-    - what: polygon
+    - what: polygon # Main thumb area
       points:
         - ref: thumb_far
           shift: [-1.5px, 0.5py]
@@ -250,6 +257,22 @@ outlines:
           shift: [-0.5px, 1py]
         - ref: thumb_enc
           shift: [0.5px, 1py]
+    # - what: polygon # Fill concave
+    #   points:
+    #     - ref: thumb_far
+    #       shift: [0px, 0py]
+    #     - ref: thumb_far
+    #       shift: [0px, -0.5py]
+    #     - ref: thumb_enc
+    #       shift: [0px, -0.5py]
+    #     - ref: thumb_enc
+    #       shift: [0px, 0py]
+    # - what: circle # Smooth concave cutout
+    #   operation: subtract
+    #   where:
+    #     ref: thumb_enc
+    #     shift: [0, -0.5py -thumb_arc_radius]
+    #   radius: thumb_arc_radius
 
   _key_fill: [_keys, _finger_fill, _thumb]
 
@@ -410,10 +433,6 @@ outlines:
     - name: board
     - operation: subtract
       name: _board_holes
-  back_plate:
-    - name: board
-    - operation: subtract
-      name: _board_holes
 
   case_inner:
     - name: board
@@ -432,10 +451,6 @@ outlines:
       fillet: 1
 
   top_plate_small:
-    - name: board_small
-    - operation: subtract
-      name: _board_holes
-  back_plate_small:
     - name: board_small
     - operation: subtract
       name: _board_holes
@@ -716,7 +731,7 @@ pcbs:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
 
-  temporal_topplate:
+  temporal_top_plate:
     template: kicad8
     outlines:
       main:
@@ -748,75 +763,11 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
-  temporal_backplate:
-    template: kicad8
-    outlines:
-      main:
-        outline: back_plate
-    footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_index_bottom
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
-
-  temporal_topplate_small:
+  temporal_top_plate_small:
     template: kicad8
     outlines:
       main:
         outline: top_plate_small
-    footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_index_bottom
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
-
-  temporal_backplate_small:
-    template: kicad8
-    outlines:
-      main:
-        outline: back_plate_small
     footprints:
       hole_1:
         what: ceoloide/mounting_hole_npth
