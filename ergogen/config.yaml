@@ -52,9 +52,6 @@ units:
   hole5_x: -0.5 kx - 0.6
   hole5_y: -0.6 ky + 1.5
 
-  wall_thickness: 1.2 # Account for the thickness in 3D printed case/plate
-  print_fit_tolerance: 0.2 # Give the case some overlap beyond pcb
-
   # Breakoff
   cut_w: 1.2
   cut_hoff: 2
@@ -63,6 +60,15 @@ units:
   $default_width: 18
   $default_height: 17
 
+  # Case
+  case_thickness: 2
+  case_height: 6 # Does not include bottom
+  side_cut_width: 18
+  side_cut_radius: 1.5
+
+# ------------
+# Points
+# ------------
 points:
   zones:
     finger:
@@ -132,6 +138,9 @@ points:
         thumb:
           row_net: row_thumb
 
+# ------------
+# Outlines
+# ------------
 outlines:
   _keys:
     - what: rectangle
@@ -143,7 +152,7 @@ outlines:
       where:
         - finger_extra_top
         - finger_extra_home
-      size: [1px, 1.5py]
+      size: [1px, 3py]
       adjust:
         shift: [-0.1px, 0py]
 
@@ -170,22 +179,18 @@ outlines:
       points:
         - ref: finger_extra_top
           shift: [0.5px - cut_w / 2 - cut_hoff, 0.5py]
-
         - ref: finger_extra_top
           shift: [0px, 0.75py - cut_w * 1.25]
         - ref: finger_extra_top
           shift: [0px, 0.75py]
-
         - ref: finger_extra_top
           shift: [0.5px + cut_w / 2 - cut_hoff, 0.5py + cut_w / 2]
         - ref: finger_extra_home
           shift: [0.5px + cut_w / 2 - cut_hoff, -0.5py - cut_w / 2]
-
         - ref: finger_extra_home
           shift: [0px, -0.75py]
         - ref: finger_extra_home
           shift: [0px, -0.75py + cut_w * 1.25]
-
         - ref: finger_extra_home
           shift: [0.5px - cut_w / 2 - cut_hoff, -0.5py]
   _break_bridges:
@@ -247,7 +252,7 @@ outlines:
 
   _key_fill: [_keys, _finger_fill, _thumb]
 
-  _hotswap_socket:
+  _socket:
     - what: rectangle # Center
       size: [2.7, 5]
       adjust:
@@ -280,20 +285,29 @@ outlines:
       expand: 0.3
       adjust:
         shift: [0, -5]
-  _bottom_cutouts:
-    - name: _hotswap_socket
+
+  _socket_cutouts:
+    - name: _socket
       where: true
+      fillet: 0.3
+  _diode_cutouts:
     - name: _diode
       where: true
       fillet: 0.3
-  _bottom_cutouts_small:
-    - name: _bottom_cutouts
+  _socket_cutouts_small:
+    - name: _socket_cutouts
+    - operation: subtract
+      name: _extra
+      adjust:
+        shift: [0.1px, 0py]
+  _diode_cutouts_small:
+    - name: _diode_cutouts
     - operation: subtract
       name: _extra
       adjust:
         shift: [0.1px, 0py]
 
-  _mcu:
+  _mcu_area:
     - what: rectangle
       where:
         - ref: finger_inner_home
@@ -345,54 +359,110 @@ outlines:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
 
-  _board_raw:
-    - name: _key_fill
-    - name: _mcu
-    - operation: subtract
-      name: _break
-  _board_fillet:
-    - name: _board_raw
-      fillet: 1
-  _board_small_raw:
-    - name: _key_fill
-    - name: _mcu
-    - operation: subtract
-      name: _extra
-  _board_small_fillet:
-    - name: _board_small_raw
-      fillet: 1
+  _case_cutout_template:
+    - what: circle
+      radius: side_cut_radius
+      adjust:
+        shift: [-(side_cut_width / 2) + side_cut_radius, -side_cut_radius]
+    - what: circle
+      radius: side_cut_radius
+      adjust:
+        shift: [(side_cut_width / 2) - side_cut_radius, -side_cut_radius]
+    - what: rectangle
+      size: [side_cut_width - side_cut_radius * 2, side_cut_radius * 4]
+      adjust:
+        shift: [0, 0]
+    - what: rectangle
+      size: [side_cut_width + side_cut_radius * 2, side_cut_radius * 2]
+      adjust:
+        shift: [0, 0]
+    - what: circle
+      radius: side_cut_radius
+      adjust:
+        shift: [-(side_cut_width / 2) - side_cut_radius, side_cut_radius]
+    - what: circle
+      radius: side_cut_radius
+      adjust:
+        shift: [(side_cut_width / 2) + side_cut_radius, side_cut_radius]
+    - what: circle
+      operation: subtract
+      radius: side_cut_radius
+      adjust:
+        shift: [-(side_cut_width / 2) - side_cut_radius, -side_cut_radius]
+    - what: circle
+      operation: subtract
+      radius: side_cut_radius
+      adjust:
+        shift: [(side_cut_width / 2) + side_cut_radius, -side_cut_radius]
+  power_reset_cutout:
+    - name: _case_cutout_template
+      where:
+        - ref: finger_inner_home
+          shift: [27.9, -14.85 - voff]
+          rotate: 90
+  usbc_cutout:
+    - name: _case_cutout_template
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 25.8 - voff]
+          rotate: 180
 
-  # ----------
   # Full Board
-  # ----------
   board:
-    - name: _board_fillet
-      expand: 0.1
+    - name: _key_fill
+    - name: _mcu_area
+      fillet: 1
 
   top_plate:
-    - name: _key_fill
-    - operation: subtract
-      name: _key_plugs
-      fillet: 1
-    - operation: subtract
-      name: _board_holes
-
-  back_plate:
-    - name: _key_fill
-    - name: _mcu
-      fillet: 1
-    - operation: subtract
-      name: _board_holes
-
-  case:
     - name: board
-      expand: wall_thickness + print_fit_tolerance
-      fillet: 1
     - operation: subtract
-      name: _bottom_cutouts
+      name: _board_holes
+  back_plate:
+    - name: board
+    - operation: subtract
+      name: _board_holes
+
+  case_inner:
+    - name: board
+      expand: 0.1
+  case_outer:
+    - name: case_inner
+      expand: case_thickness
+      fillet: 1
+
+  # Small Board
+  board_small:
+    - name: _key_fill
+    - name: _mcu_area
+    - operation: subtract
+      name: _extra
+      fillet: 1
+
+  top_plate_small:
+    - name: board_small
+    - operation: subtract
+      name: _board_holes
+  back_plate_small:
+    - name: board_small
+    - operation: subtract
+      name: _board_holes
+
+  case_inner_small:
+    - name: board_small
+      expand: 0.1
+  case_outer_small:
+    - name: case_inner_small
+      expand: case_thickness
+      fillet: 1
+
+  # Common
+  pcb:
+    - name: board
+    - operation: subtract
+      name: _break
 
   mcu_cover:
-    - name: _mcu
+    - name: _mcu_area
     - operation: subtract
       name: _display
     - operation: subtract
@@ -401,45 +471,50 @@ outlines:
     - operation: subtract
       name: _mcu_cover_holes
 
-  # -----------
-  # Small Board
-  # -----------
-  board_small:
-    - name: _board_small_fillet
-      expand: 0.1
+# ------------
+# Cases
+# ------------
+cases:
+  temporal_case:
+    - what: outline # Bottom
+      name: case_outer
+      extrude: case_thickness + case_height
+      shift: [0, 0, -case_thickness]
+    - what: outline # Bottom socket cutouts
+      name: _socket_cutouts
+      extrude: case_thickness * 2
+      shift: [0, 0, -case_thickness * 1.5]
+      operation: subtract
+    - what: outline # Bottom diode cutouts (diodes are 1.15mm tall)
+      name: _diode_cutouts
+      extrude: case_thickness * 2
+      shift: [0, 0, -1.3]
+      operation: subtract
+    - what: outline # Walls (cutout inner part)
+      name: case_inner
+      extrude: case_height * 2
+      shift: [0, 0, 0]
+      operation: subtract
+    - what: outline # Wall power and reset cutouts
+      name: power_reset_cutout
+      extrude: case_thickness * 10
+      shift: [0, 0, case_height]
+      rotate: [0, 90, 0]
+    - what: outline # Wall USB-C cutout
+      name: usbc_cutout
+      extrude: case_thickness * 10
+      shift: [0, 0, case_height]
+      rotate: [90, 0, 0]
 
-  top_plate_small:
-    - name: _key_fill
-    - operation: subtract
-      name: _key_plugs
-    - operation: subtract
-      name: _extra
-      fillet: 1
-    - operation: subtract
-      name: _board_holes
-
-  back_plate_small:
-    - name: _key_fill
-    - name: _mcu
-    - operation: subtract
-      name: _extra
-      fillet: 1
-    - operation: subtract
-      name: _board_holes
-
-  case_small:
-    - name: board_small
-      expand: wall_thickness + print_fit_tolerance
-      fillet: 1
-    - operation: subtract
-      name: _bottom_cutouts_small
-
+# ------------
+# PCBs
+# ------------
 pcbs:
   temporal:
     template: kicad8
     outlines:
       main:
-        outline: board
+        outline: pcb
     footprints:
       choc_hotswap:
         what: ceoloide/switch_choc_v1_v2
@@ -457,7 +532,6 @@ pcbs:
           trace_width: 0.25
           via_size: 0.8
           via_drill: 0.4
-
       diode:
         what: ceoloide/diode_tht_sod123
         where: true
@@ -471,7 +545,6 @@ pcbs:
           via_drill: 0.4
         adjust:
           shift: [0, -5]
-
       encoder:
         what: ceoloide/rotary_encoder_ec11_ec12
         where:
@@ -515,7 +588,6 @@ pcbs:
           P8: MOSI
           P9: SCK
           P10: CS
-
       display:
         what: ceoloide/display_nice_view
         params:
@@ -548,7 +620,6 @@ pcbs:
           - ref: finger_inner_home
             shift: [27.9, -18.5 - voff]
             rotate: 0
-
       reset:
         what: ceoloide/reset_switch_smd_side
         params:
@@ -572,7 +643,6 @@ pcbs:
           width: 2
           knockout: true
           reversible: true
-
       #ver:
       #  what: ceoloide/utility_text
       #  where:
@@ -801,36 +871,3 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
-
-  cases:
-    temporal_case:
-      - what: outline
-        name: case
-        extrude: 1.6
-        shift: [0, 0, 0]
-      - what: outline
-        name: case
-        extrude: 6
-        shift: [0, 0, 1.6]
-        operation: add
-      - what: outline
-        name: board
-        extrude: 6
-        shift: [0, 0, 1.6]
-        operation: subtract
-
-    temporal_case_small:
-      - what: outline
-        name: case_small
-        extrude: 1.6
-        shift: [0, 0, 0]
-      - what: outline
-        name: case_small
-        extrude: 6
-        shift: [0, 0, 1.6]
-        operation: add
-      - what: outline
-        name: board_small
-        extrude: 6
-        shift: [0, 0, 1.6]
-        operation: subtract
