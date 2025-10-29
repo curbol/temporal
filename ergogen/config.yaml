@@ -4,9 +4,7 @@
 # https://github.com/curbol/temporal
 # v1 - fall 2025
 
-# ergogen help: https://flatfootfox.com/ergogen-part1-units-points/
-
-# NOTE: the mcu and display footprint files have been edited to alter drill size to 0.85mm. Build from the footprints on the github repo, not ergogen's web client.
+# ergogen docs: https://docs.ergogen.xyz/config-overview
 
 meta:
   engine: 4.1.0
@@ -29,10 +27,6 @@ units:
   finger_splay: 8
   finger_spread: 0.5
   thumb_splay: 9
-
-  # Tumb arc calculation
-  thumb_angle_rad: thumb_splay * 3.1415926535 / 180
-  thumb_arc_radius: 0.985kx / (2 * tan(thumb_angle_rad / 2))
 
   # Standoffs
   standoff_size: 5 # Size for standoff holes on pcb
@@ -257,22 +251,6 @@ outlines:
           shift: [-0.5px, 1py]
         - ref: thumb_enc
           shift: [0.5px, 1py]
-    # - what: polygon # Fill concave
-    #   points:
-    #     - ref: thumb_far
-    #       shift: [0px, 0py]
-    #     - ref: thumb_far
-    #       shift: [0px, -0.5py]
-    #     - ref: thumb_enc
-    #       shift: [0px, -0.5py]
-    #     - ref: thumb_enc
-    #       shift: [0px, 0py]
-    # - what: circle # Smooth concave cutout
-    #   operation: subtract
-    #   where:
-    #     ref: thumb_enc
-    #     shift: [0, -0.5py -thumb_arc_radius]
-    #   radius: thumb_arc_radius
 
   _key_fill: [_keys, _finger_fill, _thumb]
 
