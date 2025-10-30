@@ -287,6 +287,39 @@ outlines:
       expand: 0.3
       adjust:
         shift: [0, -5]
+  _choc_posts:
+    - what: circle # Center
+      radius: 3.4 / 2
+    - what: circle # Left
+      radius: 1.9 / 2
+      adjust:
+        shift: [-5.5, 0]
+    - what: circle # Right
+      radius: 1.9 / 2
+      adjust:
+        shift: [5.5, 0]
+  _mcu_pins:
+    - what: rectangle # Left
+      size: [2.7, 30.5]
+      adjust:
+        shift: [-7.62, -1.27]
+    - what: rectangle # Right
+      size: [2.7, 30.5]
+      adjust:
+        shift: [7.62, -1.27]
+  _encoder_pins:
+    - what: circle # Left
+      radius: 1.0 / 2
+      adjust:
+        shift: [-2.5, 7.5]
+    - what: circle # Center
+      radius: 1.0 / 2
+      adjust:
+        shift: [0, 7.5]
+    - what: circle # Right
+      radius: 1.0 / 2
+      adjust:
+        shift: [2.5, 7.5]
 
   _socket_cutouts:
     - name: _socket
@@ -296,6 +329,19 @@ outlines:
     - name: _diode
       where: true
       fillet: 0.3
+  _choc_posts_cutouts:
+    - name: _choc_posts
+      where: true
+  _mcu_pins_cutouts:
+    - name: _mcu_pins
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 10.8 - voff]
+      fillet: 0.3
+  _encoder_pins_cutouts:
+    - name: _encoder_pins
+      where:
+        - ref: thumb_enc
   _socket_cutouts_small:
     - name: _socket_cutouts
     - operation: subtract
@@ -456,6 +502,12 @@ outlines:
       fillet: 1
     - operation: subtract
       name: _mcu_cover_holes
+    - operation: subtract
+      name: _choc_posts_cutouts
+    - operation: subtract
+      name: _mcu_pins_cutouts
+    - operation: subtract
+      name: _encoder_pins_cutouts
 
 # ------------
 # Cases
@@ -466,17 +518,32 @@ cases:
       name: case_outer
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - what: outline # Bottom socket cutouts (sockets are 1.85 tall)
+    - what: outline # Socket cutouts (1.85mm)
       operation: subtract
       name: _socket_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-    - what: outline # Bottom diode cutouts (diodes are 1.15mm tall)
+    - what: outline # Diode cutouts (1.15mm)
       operation: subtract
       name: _diode_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1.2]
-    - what: outline # Walls (cutout inner part)
+    - what: outline # Choc switch post cutouts (2.65mm through 1.6mm PCB = 1.25mm)
+      operation: subtract
+      name: _choc_posts_cutouts
+      extrude: 2
+      shift: [0, 0, -1.3]
+    - what: outline # MCU pin cutouts
+      operation: subtract
+      name: _mcu_pins_cutouts
+      extrude: 1
+      shift: [0, 0, -1]
+    - what: outline # Encoder pin cutouts
+      operation: subtract
+      name: _encoder_pins_cutouts
+      extrude: 1
+      shift: [0, 0, -1]
+    - what: outline # Walls
       operation: subtract
       name: case_inner
       extrude: wall_height * 2
@@ -487,7 +554,7 @@ cases:
       extrude: 20
       shift: [0, 10, wall_height]
       rotate: [90, 0, 0]
-    - what: outline # Wall power and reset cutouts
+    - what: outline # Power and reset cutouts
       operation: subtract
       name: _power_reset_cutout
       extrude: 10
