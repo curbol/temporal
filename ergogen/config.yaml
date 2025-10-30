@@ -13,6 +13,9 @@ meta:
   url: https://github.com/curbol/temporal
 
 units:
+  # Display correct choc sizing
+  $default_width: 18
+  $default_height: 17
   # Proxy Spacing Variables
   kx: cx #choc spaced
   ky: cy
@@ -56,28 +59,20 @@ units:
   cut_w: 1.2
   cut_hoff: 2
 
-  # Display correct choc sizing
-  $default_width: 18
-  $default_height: 17
-
   # Case
   bottom_thickness: 1.85
   wall_thickness: 1.2
-  wall_height: 4 # Does not include bottom
+  wall_height: 3.9 # Does not include bottom
   side_cut_width: 15
   side_cut_radius: 1.5
 
   # M2 heat-set insert posts
-  m2_insert_outer_diameter: 4.5
-  m2_insert_height: wall_height
-
-  # MCU cover screw head cutouts
-  mcu_screw_head_diameter: 4
-  mcu_screw_head_depth: 2
+  m2_insert_inner_diameter: 3.2
+  m2_insert_outer_diameter: 4.8
+  m2_insert_post_height: 1.6 + 0.9 # PCB thickness + Choc gap under top-plate
 
   # M2 nut recesses for MCU cover standoffs
-  m2_nut_width: 4.25 # (4mm + tolerance)
-  m2_nut_recess_depth: 1.8
+  m2_nut_width: 4.2 # (4mm + tolerance)
 
 # ------------
 # Points
@@ -266,6 +261,58 @@ outlines:
 
   _key_fill: [_keys, _finger_fill, _thumb]
 
+  _mcu_area:
+    - what: rectangle
+      where:
+        - ref: finger_inner_home
+          shift: [20, -3 - voff]
+      size: [21, 62]
+  _display:
+    - what: rectangle # Display
+      where:
+        ref: finger_inner_home
+        shift: [19.8, 6.75 - voff]
+      size: [10.8, 25.3]
+      fillet: 0.5
+
+  _mcu_cover_holes:
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
+  _board_holes:
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_inner_top
+          shift: [hole2_x, hole2_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_index_bottom
+          shift: [hole4_x, hole4_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
+
   _socket:
     - what: rectangle # Center
       size: [2.7, 5]
@@ -354,132 +401,39 @@ outlines:
   _choc_posts_cutouts:
     - name: _choc_posts
       where: true
+  _encoder_pins_cutouts:
+    - name: _encoder_pins
+      where:
+        - ref: thumb_enc
   _mcu_pins_cutouts:
     - name: _mcu_pins
       where:
         - ref: finger_inner_home
           shift: [19.8, 10.8 - voff]
       fillet: 0.9
-  _encoder_pins_cutouts:
-    - name: _encoder_pins
-      where:
-        - ref: thumb_enc
-
-  _mcu_area:
-    - what: rectangle
-      where:
-        - ref: finger_inner_home
-          shift: [20, -3 - voff]
-      size: [21, 62]
-  _display:
-    - what: rectangle # Display
-      where:
-        ref: finger_inner_home
-        shift: [19.8, 6.75 - voff]
-      size: [10.8, 25.3]
-      fillet: 0.5
-
-  _board_holes:
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_inner_top
-          shift: [hole2_x, hole2_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: thumb_mid
-          shift: [hole3_x, hole3_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_index_bottom
-          shift: [hole4_x, hole4_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_ring_home
-          shift: [hole5_x, hole5_y]
-  _mcu_cover_holes:
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
-
-  _mcu_screw_head_cutouts:
-    - what: circle
-      radius: mcu_screw_head_diameter / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
-    - what: circle
-      radius: mcu_screw_head_diameter / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
-
-  _mcu_nut_recesses:
+  _mcu_cover_nut_cutout:
     - what: polygon
-      points:
-        - [m2_nut_width / 2, 0]
-        - [m2_nut_width / 4, m2_nut_width * 0.433] # sin(60°) ≈ 0.866, half = 0.433
-        - [-m2_nut_width / 4, m2_nut_width * 0.433]
-        - [-m2_nut_width / 2, 0]
-        - [-m2_nut_width / 4, -m2_nut_width * 0.433]
-        - [m2_nut_width / 4, -m2_nut_width * 0.433]
       where:
         - ref: finger_inner_bottom
           shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
-    - what: polygon
       points:
-        - [m2_nut_width / 2, 0]
-        - [m2_nut_width / 4, m2_nut_width * 0.433]
-        - [-m2_nut_width / 4, m2_nut_width * 0.433]
-        - [-m2_nut_width / 2, 0]
-        - [-m2_nut_width / 4, -m2_nut_width * 0.433]
-        - [m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 2, 0]
+        - shift: [m2_nut_width / 4, m2_nut_width * 0.433] # sin(60°) ≈ 0.866, half = 0.433
+        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
+        - shift: [-m2_nut_width / 2, 0]
+        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
+    - what: polygon
       where:
         - ref: finger_inner_bottom
           shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
-
-  _m2_insert_posts:
-    - what: circle
-      radius: m2_insert_outer_diameter / 2
-      where:
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
-    - what: circle
-      radius: m2_insert_outer_diameter / 2
-      where:
-        - ref: finger_inner_top
-          shift: [hole2_x, hole2_y]
-    - what: circle
-      radius: m2_insert_outer_diameter / 2
-      where:
-        - ref: thumb_mid
-          shift: [hole3_x, hole3_y]
-    - what: circle
-      radius: m2_insert_outer_diameter / 2
-      where:
-        - ref: finger_index_bottom
-          shift: [hole4_x, hole4_y]
-    - what: circle
-      radius: m2_insert_outer_diameter / 2
-      where:
-        - ref: finger_ring_home
-          shift: [hole5_x, hole5_y]
-
+      points:
+        - shift: [m2_nut_width / 2, 0]
+        - shift: [m2_nut_width / 4, m2_nut_width * 0.433]
+        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
+        - shift: [-m2_nut_width / 2, 0]
+        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
   _case_cutout_template:
     - what: circle
       radius: side_cut_radius
@@ -519,6 +473,55 @@ outlines:
         - ref: finger_inner_home
           shift: [27.5 + side_cut_radius * 2, -14.95 - voff]
           rotate: 90
+
+  _m2_insert_outer_post:
+    - what: circle
+      radius: m2_insert_outer_diameter / 2
+  _m2_insert_outer_posts:
+    - name: _m2_insert_outer_post
+      where:
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - name: _m2_insert_outer_post
+      where:
+        - ref: finger_inner_top
+          shift: [hole2_x, hole2_y]
+    - name: _m2_insert_outer_post
+      where:
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - name: _m2_insert_outer_post
+      where:
+        - ref: finger_index_bottom
+          shift: [hole4_x, hole4_y]
+    - name: _m2_insert_outer_post
+      where:
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
+  _m2_insert_inner_post:
+    - what: circle
+      radius: m2_insert_inner_diameter / 2
+  _m2_insert_inner_posts:
+    - name: _m2_insert_inner_post
+      where:
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - name: _m2_insert_inner_post
+      where:
+        - ref: finger_inner_top
+          shift: [hole2_x, hole2_y]
+    - name: _m2_insert_inner_post
+      where:
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - name: _m2_insert_inner_post
+      where:
+        - ref: finger_index_bottom
+          shift: [hole4_x, hole4_y]
+    - name: _m2_insert_inner_post
+      where:
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
 
   # Full Board
   board:
@@ -602,13 +605,14 @@ cases:
       name: case_outer
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - what: outline # M2 heat-set insert posts
-      name: _m2_insert_posts
-      extrude: wall_height
-      shift: [0, 0, 0]
     - what: outline # Socket cutouts (1.85mm). Cut all the way through.
       operation: subtract
       name: _socket_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # MCU cover M2 nut recesses
+      operation: subtract
+      name: _mcu_cover_nut_cutout
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline # Diode cutouts (1.15mm)
@@ -621,31 +625,30 @@ cases:
       name: _choc_posts_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1.3]
-    - what: outline # MCU pin cutouts
-      operation: subtract
-      name: _mcu_pins_cutouts
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -1]
     - what: outline # Encoder pin cutouts
       operation: subtract
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
-    - what: outline # MCU cover screw head cutouts
+    - what: outline # MCU pin cutouts
       operation: subtract
-      name: _mcu_screw_head_cutouts
-      extrude: mcu_screw_head_depth
-      shift: [0, 0, -bottom_thickness]
-    - what: outline # MCU cover M2 nut recesses
-      operation: subtract
-      name: _mcu_nut_recesses
-      extrude: m2_nut_recess_depth
-      shift: [0, 0, -bottom_thickness]
+      name: _mcu_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
     - what: outline # Walls
       operation: subtract
       name: case_inner
       extrude: wall_height * 2
       shift: [0, 0, 0]
+    - what: outline # M2 heat-set insert posts
+      name: _m2_insert_outer_posts
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _m2_insert_inner_posts
+      extrude: 4
+      shift: [0, 0, m2_insert_post_height - 4]
     - what: outline # Wall USB-C cutout
       operation: subtract
       name: _usbc_cutout
@@ -671,7 +674,7 @@ cases:
       name: temporal
     - what: case
       name: top_plate
-      shift: [0, 0, 1.6 + 0.9]
+      shift: [0, 0, m2_insert_post_height]
     - what: case
       name: mcu_cover
       shift: [0, 0, 1.6 + 10]
@@ -680,13 +683,14 @@ cases:
       name: case_outer_small
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - what: outline # M2 heat-set insert posts
-      name: _m2_insert_posts
-      extrude: wall_height
-      shift: [0, 0, 0]
     - what: outline # Socket cutouts (1.85mm). Cut all the way through.
       operation: subtract
       name: _socket_cutouts_small
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # MCU cover M2 nut recesses
+      operation: subtract
+      name: _mcu_cover_nut_cutout
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline # Diode cutouts (1.15mm)
@@ -699,31 +703,30 @@ cases:
       name: _choc_posts_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1.3]
-    - what: outline # MCU pin cutouts
-      operation: subtract
-      name: _mcu_pins_cutouts
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -1]
     - what: outline # Encoder pin cutouts
       operation: subtract
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
-    - what: outline # MCU cover screw head cutouts
+    - what: outline # MCU pin cutouts
       operation: subtract
-      name: _mcu_screw_head_cutouts
-      extrude: mcu_screw_head_depth
-      shift: [0, 0, -bottom_thickness]
-    - what: outline # MCU cover M2 nut recesses
-      operation: subtract
-      name: _mcu_nut_recesses
-      extrude: m2_nut_recess_depth
-      shift: [0, 0, -bottom_thickness]
+      name: _mcu_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
     - what: outline # Walls
       operation: subtract
       name: case_inner_small
       extrude: wall_height * 2
       shift: [0, 0, 0]
+    - what: outline # M2 heat-set insert posts
+      name: _m2_insert_outer_posts
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _m2_insert_inner_posts
+      extrude: 4
+      shift: [0, 0, m2_insert_post_height - 4]
     - what: outline # Wall USB-C cutout
       operation: subtract
       name: _usbc_cutout
@@ -745,7 +748,7 @@ cases:
       name: temporal_small
     - what: case
       name: top_plate_small
-      shift: [0, 0, 1.6 + 0.9]
+      shift: [0, 0, m2_insert_post_height]
     - what: case
       name: mcu_cover
       shift: [0, 0, 1.6 + 10]
