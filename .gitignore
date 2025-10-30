@@ -5,7 +5,6 @@
 ergogen/outlines/
 ergogen/pcbs/
 ergogen/demo.svg
-ergogen/cases/
 
 # KiCad
 pcb/temporal_1/*-backups/
