@@ -61,9 +61,9 @@ units:
   $default_height: 17
 
   # Case
-  bottom_thickness: 1.9
+  bottom_thickness: 1.85
   wall_thickness: 1.2
-  wall_height: 6 # Does not include bottom
+  wall_height: 4 # Does not include bottom
   side_cut_width: 15
   side_cut_radius: 1.5
 
@@ -289,42 +289,52 @@ outlines:
         shift: [0, -5]
   _choc_posts:
     - what: circle # Center
-      radius: 3.4 / 2
+      radius: 2
     - what: circle # Left
-      radius: 1.9 / 2
+      radius: 1.25
       adjust:
         shift: [-5.5, 0]
     - what: circle # Right
-      radius: 1.9 / 2
+      radius: 1.25
       adjust:
         shift: [5.5, 0]
+    - what: rectangle # Bridge to socket cutout
+      size: [2.5, 2.5]
+      adjust:
+        shift: [5.5, 1.25]
   _mcu_pins:
     - what: rectangle # Left
-      size: [2.7, 30.5]
+      size: [2.3, 30.3]
       adjust:
         shift: [-7.62, -1.27]
     - what: rectangle # Right
-      size: [2.7, 30.5]
+      size: [2.3, 30.3]
       adjust:
         shift: [7.62, -1.27]
   _encoder_pins:
-    - what: circle # Left
-      radius: 1.0 / 2
+    - what: circle
+      radius: 0.8
       adjust:
-        shift: [-2.5, 7.5]
-    - what: circle # Center
-      radius: 1.0 / 2
+        shift: [-2.75, -7.5]
+    - what: rectangle
+      size: [5.5, 1.6]
       adjust:
-        shift: [0, 7.5]
-    - what: circle # Right
-      radius: 1.0 / 2
+        shift: [0, -7.5]
+    - what: circle
+      radius: 0.8
       adjust:
-        shift: [2.5, 7.5]
+        shift: [2.75, -7.5]
 
   _socket_cutouts:
     - name: _socket
       where: true
       fillet: 0.3
+  _socket_cutouts_small:
+    - name: _socket_cutouts
+    - operation: subtract
+      name: _extra
+      adjust:
+        shift: [0.1px, 0py]
   _diode_cutouts:
     - name: _diode
       where: true
@@ -337,23 +347,11 @@ outlines:
       where:
         - ref: finger_inner_home
           shift: [19.8, 10.8 - voff]
-      fillet: 0.3
+      fillet: 0.9
   _encoder_pins_cutouts:
     - name: _encoder_pins
       where:
         - ref: thumb_enc
-  _socket_cutouts_small:
-    - name: _socket_cutouts
-    - operation: subtract
-      name: _extra
-      adjust:
-        shift: [0.1px, 0py]
-  _diode_cutouts_small:
-    - name: _diode_cutouts
-    - operation: subtract
-      name: _extra
-      adjust:
-        shift: [0.1px, 0py]
 
   _mcu_area:
     - what: rectangle
@@ -368,17 +366,6 @@ outlines:
         shift: [19.8, 6.75 - voff]
       size: [10.8, 25.3]
       fillet: 0.5
-  _mcu_cover_holes:
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
 
   _board_holes:
     - what: circle
@@ -406,6 +393,17 @@ outlines:
       where:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
+  _mcu_cover_holes:
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [0.5 kx + 4 + 0, -0.5 ky - 0]
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [0.5 kx + 4 + 14, -0.5 ky - 6.5 - 0]
 
   _case_cutout_template:
     - what: circle
@@ -454,6 +452,13 @@ outlines:
       fillet: 1
 
   top_plate:
+    - name: _key_fill
+      fillet: 1
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _board_holes
+  back_plate:
     - name: board
     - operation: subtract
       name: _board_holes
@@ -475,6 +480,15 @@ outlines:
       fillet: 1
 
   top_plate_small:
+    - name: _key_fill
+    - operation: subtract
+      name: _extra
+      fillet: 1
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _board_holes
+  back_plate_small:
     - name: board_small
     - operation: subtract
       name: _board_holes
@@ -493,6 +507,7 @@ outlines:
     - operation: subtract
       name: _break
       fillet: 1
+
   mcu_cover:
     - name: _mcu_area
     - operation: subtract
@@ -502,12 +517,6 @@ outlines:
       fillet: 1
     - operation: subtract
       name: _mcu_cover_holes
-    - operation: subtract
-      name: _choc_posts_cutouts
-    - operation: subtract
-      name: _mcu_pins_cutouts
-    - operation: subtract
-      name: _encoder_pins_cutouts
 
 # ------------
 # Cases
@@ -518,7 +527,7 @@ cases:
       name: case_outer
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - what: outline # Socket cutouts (1.85mm)
+    - what: outline # Socket cutouts (1.85mm). Cut all the way through.
       operation: subtract
       name: _socket_cutouts
       extrude: bottom_thickness * 2
@@ -531,17 +540,17 @@ cases:
     - what: outline # Choc switch post cutouts (2.65mm through 1.6mm PCB = 1.25mm)
       operation: subtract
       name: _choc_posts_cutouts
-      extrude: 2
+      extrude: bottom_thickness * 2
       shift: [0, 0, -1.3]
     - what: outline # MCU pin cutouts
       operation: subtract
       name: _mcu_pins_cutouts
-      extrude: 1
+      extrude: bottom_thickness * 2
       shift: [0, 0, -1]
     - what: outline # Encoder pin cutouts
       operation: subtract
       name: _encoder_pins_cutouts
-      extrude: 1
+      extrude: bottom_thickness * 2
       shift: [0, 0, -1]
     - what: outline # Walls
       operation: subtract
@@ -560,6 +569,86 @@ cases:
       extrude: 10
       shift: [-5, 0, wall_height]
       rotate: [0, 90, 0]
+    # TODO: Add cutouts for mcu screw heads
+    # TODO: Add posts for M2 heat set inserts
+    # TODO: Make walls taller around MCU?
+  top_plate:
+    - what: outline
+      name: top_plate
+      extrude: 1.2
+  mcu_cover:
+    - what: outline
+      name: mcu_cover
+      extrude: 1.2
+  render:
+    - what: case
+      name: temporal
+    - what: case
+      name: top_plate
+      shift: [0, 0, 1.6 + 0.9]
+    - what: case
+      name: mcu_cover
+      shift: [0, 0, 1.6 + 10]
+  temporal_small:
+    - what: outline # Bottom
+      name: case_outer_small
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+    - what: outline # Socket cutouts (1.85mm). Cut all the way through.
+      operation: subtract
+      name: _socket_cutouts_small
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # Diode cutouts (1.15mm)
+      operation: subtract
+      name: _diode_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.2]
+    - what: outline # Choc switch post cutouts (2.65mm through 1.6mm PCB = 1.25mm)
+      operation: subtract
+      name: _choc_posts_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.3]
+    - what: outline # MCU pin cutouts
+      operation: subtract
+      name: _mcu_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Encoder pin cutouts
+      operation: subtract
+      name: _encoder_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Walls
+      operation: subtract
+      name: case_inner_small
+      extrude: wall_height * 2
+      shift: [0, 0, 0]
+    - what: outline # Wall USB-C cutout
+      operation: subtract
+      name: _usbc_cutout
+      extrude: 20
+      shift: [0, 10, wall_height]
+      rotate: [90, 0, 0]
+    - what: outline # Power and reset cutouts
+      operation: subtract
+      name: _power_reset_cutout
+      extrude: 10
+      shift: [-5, 0, wall_height]
+      rotate: [0, 90, 0]
+  top_plate_small:
+    - what: outline
+      name: top_plate_small
+      extrude: 1.2
+  render_small:
+    - what: case
+      name: temporal_small
+    - what: case
+      name: top_plate_small
+      shift: [0, 0, 1.6 + 0.9]
+    - what: case
+      name: mcu_cover
+      shift: [0, 0, 1.6 + 10]
 
 # ------------
 # PCBs
