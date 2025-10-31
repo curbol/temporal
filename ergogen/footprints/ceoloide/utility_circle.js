@@ -31,24 +31,31 @@ module.exports = {
   body: (p) => {
     const generate_circle = (side, layer, diameter, width, style) => {
       const radius = diameter / 2;
-      const gr_circle = `
-    (gr_circle
-      (center ${p.x} ${p.y})
-      (end ${p.x + radius} ${p.y})
+      const fp_circle = `
+    (fp_circle
+      (center 0 0)
+      (end ${radius} 0)
       (stroke (width ${width}) (type ${style}))
+      (fill none)
       (layer "${side}.${layer}")
     )
         `;
-      return gr_circle;
+      return fp_circle;
     };
 
-    let final = "";
+    let final = `
+  (footprint "utility_circle" (layer "F.Cu")
+    ${p.at}
+  `;
+
     if (p.reversible) {
       final += generate_circle("F", p.layer, p.diameter, p.width, p.style);
       final += generate_circle("B", p.layer, p.diameter, p.width, p.style);
     } else {
       final += generate_circle(p.side, p.layer, p.diameter, p.width, p.style);
     }
+
+    final += "\n  )";
     return final;
   },
 };
