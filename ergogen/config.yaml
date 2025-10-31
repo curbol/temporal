@@ -1131,15 +1131,15 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      # magnet_circle:
-      #   what: ceoloide/utility_circle
-      #   where:
-      #     - ref: finger_middle_home
-      #       shift: [-0.3kx, 0.2ky]
-      #   params:
-      #     diameter: 60
-      #     width: 0.15
-      #     reversible: true
+      magnet_circle:
+        what: ceoloide/utility_circle
+        where:
+          - ref: finger_index_bottom
+            shift: [0.5kx, 0.38ky]
+        params:
+          diameter: 60
+          width: 0.5
+          reversible: true
 
   temporal_top_plate_small:
     template: kicad8
@@ -1216,15 +1216,15 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      # magnet_circle:
-      #   what: ceoloide/utility_circle
-      #   where:
-      #     - ref: finger_middle_home
-      #       shift: [-0.3kx, 0.2ky]
-      #   params:
-      #     diameter: 60
-      #     width: 0.15
-      #     reversible: true
+      magnet_circle:
+        what: ceoloide/utility_circle
+        where:
+          - ref: finger_index_bottom
+            shift: [0.5kx, 0.38ky]
+        params:
+          diameter: 60
+          width: 0.5
+          reversible: true
 
   temporal_mcu_cover:
     template: kicad8

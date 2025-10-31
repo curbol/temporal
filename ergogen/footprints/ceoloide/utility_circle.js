@@ -15,6 +15,8 @@
 //      the diameter of the circle in mm
 //    width: default is 0.15
 //      set the width of the circle stroke
+//    style: default is "solid"
+//      stroke style: solid, dash, dot, dash_dot, dash_dot_dot, or default
 
 module.exports = {
   params: {
@@ -24,15 +26,16 @@ module.exports = {
     reversible: false,
     diameter: 60,
     width: 0.15,
+    style: "solid",
   },
   body: (p) => {
-    const generate_circle = (side, layer, diameter, width) => {
+    const generate_circle = (side, layer, diameter, width, style) => {
       const radius = diameter / 2;
       const gr_circle = `
     (gr_circle
       (center ${p.x} ${p.y})
       (end ${p.x + radius} ${p.y})
-      (stroke (width ${width}) (type solid))
+      (stroke (width ${width}) (type ${style}))
       (layer "${side}.${layer}")
     )
         `;
@@ -41,10 +44,10 @@ module.exports = {
 
     let final = "";
     if (p.reversible) {
-      final += generate_circle("F", p.layer, p.diameter, p.width);
-      final += generate_circle("B", p.layer, p.diameter, p.width);
+      final += generate_circle("F", p.layer, p.diameter, p.width, p.style);
+      final += generate_circle("B", p.layer, p.diameter, p.width, p.style);
     } else {
-      final += generate_circle(p.side, p.layer, p.diameter, p.width);
+      final += generate_circle(p.side, p.layer, p.diameter, p.width, p.style);
     }
     return final;
   },
