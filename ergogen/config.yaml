@@ -374,14 +374,56 @@ outlines:
       adjust:
         shift: [5.5, 1.25]
   _mcu_pins:
+    - what: circle # Left top
+      radius: 1.15
+      adjust:
+        shift: [-7.62, 13.89]
     - what: rectangle # Left
       size: [2.3, 30.3]
       adjust:
         shift: [-7.62, -1.27]
+    - what: circle # Left bottom
+      radius: 1.15
+      adjust:
+        shift: [-7.62, -16.43]
+    - what: circle # Right top
+      radius: 1.15
+      adjust:
+        shift: [7.62, 13.89]
     - what: rectangle # Right
       size: [2.3, 30.3]
       adjust:
         shift: [7.62, -1.27]
+    - what: circle # Right bottom
+      radius: 1.15
+      adjust:
+        shift: [7.62, -16.43]
+  _display_pins:
+    - what: circle
+      radius: 0.8
+      adjust:
+        shift: [-2.54, -11]
+    - what: rectangle
+      size: [5.08, 1.6]
+      adjust:
+        shift: [0, -11]
+    - what: circle
+      radius: 0.8
+      adjust:
+        shift: [2.54, -11]
+  _battery_pins:
+    - what: circle
+      radius: 0.6
+      adjust:
+        shift: [0, -1]
+    - what: rectangle
+      size: [1.2, 2]
+      adjust:
+        shift: [0, 0]
+    - what: circle
+      radius: 0.6
+      adjust:
+        shift: [0, 1]
   _encoder_pins:
     - what: circle
       radius: 0.8
@@ -422,7 +464,17 @@ outlines:
       where:
         - ref: finger_inner_home
           shift: [19.8, 10.8 - voff]
-      fillet: 0.9
+  _display_pins_cutouts:
+    - name: _display_pins
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 7.5 - voff]
+  _battery_pins_cutouts:
+    - name: _battery_pins
+      where:
+        - ref: finger_inner_home
+          shift: [23.5, -14.5 - voff]
+      rotate: -90
   _mcu_cover_nut_cutout:
     - what: polygon
       where:
@@ -643,6 +695,16 @@ cases:
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
+    - what: outline # Display pin cutouts
+      operation: subtract
+      name: _display_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Battery pin cutouts
+      operation: subtract
+      name: _battery_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
     - what: outline # Walls
       operation: subtract
       name: case_inner
@@ -721,6 +783,16 @@ cases:
     - what: outline # MCU pin cutouts
       operation: subtract
       name: _mcu_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Display pin cutouts
+      operation: subtract
+      name: _display_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Battery pin cutouts
+      operation: subtract
+      name: _battery_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
     - what: outline # Walls
