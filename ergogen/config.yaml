@@ -572,14 +572,14 @@ outlines:
   _keys_area_fillet:
     - name: _keys_fill
       fillet: 1
+  _keys_area:
+    - name: _keys_area_fillet
+      expand: 0.1
   _keys_area_fillet_small:
     - name: _keys_fill
     - operation: subtract
       name: _extra
       fillet: 1
-  _keys_area:
-    - name: _keys_area_fillet
-      expand: 0.1
   _keys_area_small:
     - name: _keys_area_fillet_small
       expand: 0.1
@@ -588,15 +588,15 @@ outlines:
     - name: _keys_fill
     - name: _mcu_area
       fillet: 1
+  _board:
+    - name: _board_fillet
+      expand: 0.1
   _board_fillet_small:
     - name: _keys_fill
     - name: _mcu_area
     - operation: subtract
       name: _extra
       fillet: 1
-  _board:
-    - name: _board_fillet
-      expand: 0.1
   _board_small:
     - name: _board_fillet_small
       expand: 0.1
@@ -605,7 +605,8 @@ outlines:
   case_inner:
     - name: _board
   case_outer:
-    - name: case_inner
+    - name: _keys_fill
+    - name: _mcu_area
       fillet: wall_thickness
       expand: wall_thickness
 
@@ -624,7 +625,10 @@ outlines:
   case_inner_small:
     - name: _board_small
   case_outer_small:
-    - name: case_inner_small
+    - name: _keys_fill
+    - name: _mcu_area
+    - operation: subtract
+      name: _extra
       expand: wall_thickness
       fillet: wall_thickness
 
@@ -1084,11 +1088,75 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
+  temporal_back_plate:
+    template: kicad8
+    outlines:
+      main:
+        outline: back_plate
+    footprints:
+      hole_1:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_middle_top
+            shift: [hole1_x, hole1_y]
+      hole_2:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_top
+            shift: [hole2_x, hole2_y]
+      hole_3:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: thumb_mid
+            shift: [hole3_x, hole3_y]
+      hole_4:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_index_bottom
+            shift: [hole4_x, hole4_y]
+      hole_5:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_ring_home
+            shift: [hole5_x, hole5_y]
+
   temporal_top_plate_small:
     template: kicad8
     outlines:
       main:
         outline: top_plate_small
+    footprints:
+      hole_1:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_middle_top
+            shift: [hole1_x, hole1_y]
+      hole_2:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_top
+            shift: [hole2_x, hole2_y]
+      hole_3:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: thumb_mid
+            shift: [hole3_x, hole3_y]
+      hole_4:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_index_bottom
+            shift: [hole4_x, hole4_y]
+      hole_5:
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_ring_home
+            shift: [hole5_x, hole5_y]
+
+  temporal_back_plate_small:
+    template: kicad8
+    outlines:
+      main:
+        outline: back_plate_small
     footprints:
       hole_1:
         what: ceoloide/mounting_hole_npth
