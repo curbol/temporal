@@ -259,7 +259,10 @@ outlines:
         - ref: thumb_enc
           shift: [0.5px, 1py]
 
-  _key_fill: [_keys, _finger_fill, _thumb]
+  _key_fill:
+    - name: _keys
+    - name: _finger_fill
+    - name: _thumb
 
   _mcu_area:
     - what: rectangle
@@ -274,6 +277,15 @@ outlines:
         shift: [19.8, 6.75 - voff]
       size: [10.8, 25.3]
       fillet: 0.5
+
+  _board_raw:
+    - name: _key_fill
+    - name: _mcu_area
+  _board_raw_small:
+    - name: _key_fill
+    - name: _mcu_area
+    - operation: subtract
+      name: _extra
 
   _mcu_cover_holes:
     - what: circle
@@ -525,8 +537,7 @@ outlines:
 
   # Full Board
   board:
-    - name: _key_fill
-    - name: _mcu_area
+    - name: _board_raw
       fillet: 1
 
   top_plate:
@@ -545,16 +556,13 @@ outlines:
     - name: board
       expand: 0.1
   case_outer:
-    - name: case_inner
-      expand: wall_thickness
-      fillet: 1
+    - name: _board_raw
+      expand: 0.1 + wall_thickness
+      fillet: 0.1 + wall_thickness
 
   # Small Board
   board_small:
-    - name: _key_fill
-    - name: _mcu_area
-    - operation: subtract
-      name: _extra
+    - name: _board_raw_small
       fillet: 1
 
   top_plate_small:
@@ -575,13 +583,13 @@ outlines:
     - name: board_small
       expand: 0.1
   case_outer_small:
-    - name: case_inner_small
-      expand: wall_thickness
-      fillet: 1
+    - name: _board_raw_small
+      expand: 0.1 + wall_thickness
+      fillet: 0.1 + wall_thickness
 
   # Common
   pcb:
-    - name: board
+    - name: _board_raw
     - operation: subtract
       name: _break
       fillet: 1
@@ -661,6 +669,8 @@ cases:
       extrude: 10
       shift: [-5, 0, wall_height]
       rotate: [0, 90, 0]
+      # TODO: Add cutout for display pins
+      # TODO: Add cutout for battery pins
   top_plate:
     - what: outline
       name: top_plate
