@@ -742,11 +742,11 @@ cases:
   top_plate:
     - what: outline
       name: top_plate
-      extrude: 1.2
+      extrude: 1.3
   mcu_cover:
     - what: outline
       name: mcu_cover
-      extrude: 1.2
+      extrude: 1.3
   render:
     - what: case
       name: temporal
@@ -830,7 +830,7 @@ cases:
   top_plate_small:
     - what: outline
       name: top_plate_small
-      extrude: 1.2
+      extrude: 1.3
   render_small:
     - what: case
       name: temporal_small
@@ -1088,6 +1088,18 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
+      temporal:
+        what: ceoloide/utility_text
+        where:
+          - ref: finger_middle_bottom
+            shift: [0, -0.65ky]
+        params:
+          text: "TEMPORAL"
+          height: 2
+          width: 2
+          knockout: true
+          reversible: true
+
   temporal_back_plate:
     template: kicad8
     outlines:
@@ -1119,6 +1131,15 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
+      # magnet_circle:
+      #   what: ceoloide/utility_circle
+      #   where:
+      #     - ref: finger_middle_home
+      #       shift: [-0.3kx, 0.2ky]
+      #   params:
+      #     diameter: 60
+      #     width: 0.15
+      #     reversible: true
 
   temporal_top_plate_small:
     template: kicad8
@@ -1152,6 +1173,18 @@ pcbs:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
 
+      temporal:
+        what: ceoloide/utility_text
+        where:
+          - ref: finger_middle_bottom
+            shift: [0, -0.65ky]
+        params:
+          text: "TEMPORAL"
+          height: 2
+          width: 2
+          knockout: true
+          reversible: true
+
   temporal_back_plate_small:
     template: kicad8
     outlines:
@@ -1183,6 +1216,15 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
+      # magnet_circle:
+      #   what: ceoloide/utility_circle
+      #   where:
+      #     - ref: finger_middle_home
+      #       shift: [-0.3kx, 0.2ky]
+      #   params:
+      #     diameter: 60
+      #     width: 0.15
+      #     reversible: true
 
   temporal_mcu_cover:
     template: kicad8
