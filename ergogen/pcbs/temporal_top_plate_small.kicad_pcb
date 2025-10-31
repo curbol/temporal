@@ -173,6 +173,35 @@
     )
   )
   
+
+    (gr_text "TEMPORAL"
+      (at 102.2922031 86.1306663 0)
+      (layer "F.SilkS" knockout)
+      (effects
+        (font 
+          (size 2 2)
+          (thickness 0.15)
+          
+          
+        )
+        
+      )
+    )
+        
+    (gr_text "TEMPORAL"
+      (at 102.2922031 86.1306663 0)
+      (layer "B.SilkS" knockout)
+      (effects
+        (font 
+          (size 2 2)
+          (thickness 0.15)
+          
+          
+        )
+        (justify  mirror)
+      )
+    )
+        
   (gr_line (start 59.06550309428083 99.83673699088484) (end 76.89032819428083 97.33162109088484) (layer Edge.Cuts) (stroke (width 0.15) (type default)))
 (gr_arc (start 76.89032819731354 97.33162111029648) (mid 77.61573689731354 96.90432281029648) (end 77.82653269731354 96.08923581029649) (layer Edge.Cuts) (stroke (width 0.15) (type default)))
 (gr_line (start 77.82653269731352 96.08923581029637) (end 77.20737789731352 91.68372021029637) (layer Edge.Cuts) (stroke (width 0.15) (type default)))

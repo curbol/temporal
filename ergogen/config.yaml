@@ -1139,6 +1139,7 @@ pcbs:
         params:
           diameter: 60
           width: 0.5
+          style: dash
           reversible: true
 
   temporal_top_plate_small:
@@ -1224,6 +1225,7 @@ pcbs:
         params:
           diameter: 60
           width: 0.5
+          style: dash
           reversible: true
 
   temporal_mcu_cover:

@@ -173,6 +173,27 @@
     )
   )
   
+
+  (footprint "utility_circle" (layer "F.Cu")
+    (at 129.2922032 72.02066630000002 0)
+  
+    (fp_circle
+      (center 0 0)
+      (end 30 0)
+      (stroke (width 0.5) (type dash))
+      (fill none)
+      (layer "F.SilkS")
+    )
+        
+    (fp_circle
+      (center 0 0)
+      (end 30 0)
+      (stroke (width 0.5) (type dash))
+      (fill none)
+      (layer "B.SilkS")
+    )
+        
+  )
   (gr_line (start 40.05770649442187 93.92457419086503) (end 55.90199559442187 91.69780449086502) (layer Edge.Cuts) (stroke (width 0.15) (type default)))
 (gr_arc (start 56.918492639227196 92.46379001018967) (mid 56.5688848392272 91.87027381018967) (end 55.9019955392272 91.69780451018967) (layer Edge.Cuts) (stroke (width 0.15) (type default)))
 (gr_line (start 56.91849263922721 92.46379001018971) (end 57.82311773922721 98.9005325101897) (layer Edge.Cuts) (stroke (width 0.15) (type default)))
