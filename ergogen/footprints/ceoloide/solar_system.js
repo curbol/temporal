@@ -77,8 +77,9 @@ module.exports = {
         const orbit_radius = outer_radius * orbit;
         const scaled_planet_dia = planet_dia * p.planet_scale;
         const angle_rad = (angle * Math.PI) / 180;
-        const planet_x = orbit_radius * Math.cos(angle_rad);
-        const planet_y = orbit_radius * Math.sin(angle_rad);
+        // Round to avoid floating-point precision errors
+        const planet_x = Math.round(orbit_radius * Math.cos(angle_rad) * 1000000) / 1000000;
+        const planet_y = Math.round(orbit_radius * Math.sin(angle_rad) * 1000000) / 1000000;
         result += generate_circle(side, p.layer, planet_x, planet_y, scaled_planet_dia, "solid", p.line_width);
       });
 
