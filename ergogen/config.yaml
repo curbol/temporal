@@ -1059,7 +1059,7 @@ pcbs:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
 
-  temporal_top_plate:
+  top_plate:
     template: kicad8
     outlines:
       main:
@@ -1103,7 +1103,7 @@ pcbs:
           knockout: true
           reversible: true
 
-  temporal_back_plate:
+  back_plate:
     template: kicad8
     outlines:
       main:
@@ -1146,7 +1146,7 @@ pcbs:
           orbit_style: dot
           reversible: true
 
-  temporal_top_plate_small:
+  top_plate_small:
     template: kicad8
     outlines:
       main:
@@ -1190,7 +1190,7 @@ pcbs:
           knockout: true
           reversible: true
 
-  temporal_back_plate_small:
+  back_plate_small:
     template: kicad8
     outlines:
       main:
@@ -1233,7 +1233,7 @@ pcbs:
           orbit_style: dot
           reversible: true
 
-  temporal_mcu_cover:
+  mcu_cover:
     template: kicad8
     outlines:
       main:
