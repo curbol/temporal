@@ -27,8 +27,8 @@ deps:
 
 # Generate keyboard PCBs and cases
 gen:
-	npm run gen
 	$(MAKE) clean
+	npm run gen
 	$(MAKE) convert
 	$(MAKE) mirror
 	$(MAKE) gerbers
