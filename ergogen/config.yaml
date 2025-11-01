@@ -35,6 +35,9 @@ units:
   standoff_size: 5 # Size for standoff holes on pcb
   screen_standoff_size: 2
 
+  # Solar system graphic scale
+  planet_scale: 1.0
+
   # Top center
   hole1_x: -0.5 kx - 1
   hole1_y: -0.5 ky + 0.5
@@ -1131,25 +1134,16 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      magnet_circle:
-        what: ceoloide/utility_circle
+      solar_system:
+        what: ceoloide/solar_system
         where:
           - ref: finger_index_bottom
             shift: [0.5kx, 0.38ky]
         params:
           diameter: 60
-          width: 0.6
-          style: dot # solid, dash, dot, dash_dot, dash_dot_dot, default
-          reversible: true
-      magnet_circle_center:
-        what: ceoloide/utility_circle
-        where:
-          - ref: finger_index_bottom
-            shift: [0.5kx, 0.38ky]
-        params:
-          diameter: 0.6
-          width: 3
-          style: solid
+          planet_scale: planet_scale
+          line_width: 0.15
+          orbit_style: dot
           reversible: true
 
   temporal_top_plate_small:
@@ -1227,25 +1221,16 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      magnet_circle:
-        what: ceoloide/utility_circle
+      solar_system:
+        what: ceoloide/solar_system
         where:
           - ref: finger_index_bottom
             shift: [0.5kx, 0.38ky]
         params:
           diameter: 60
-          width: 0.6
-          style: dot # solid, dash, dot, dash_dot, dash_dot_dot, default
-          reversible: true
-      magnet_circle_center:
-        what: ceoloide/utility_circle
-        where:
-          - ref: finger_index_bottom
-            shift: [0.5kx, 0.38ky]
-        params:
-          diameter: 0.6
-          width: 3
-          style: solid
+          planet_scale: planet_scale
+          line_width: 0.15
+          orbit_style: dot
           reversible: true
 
   temporal_mcu_cover:
