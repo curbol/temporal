@@ -1,8 +1,12 @@
 # macOS
 **/.DS_Store
 
-# Ergogen generated files
-ergogen/demo.svg
+# Node
+node_modules/
+
+# Gerbers (keep only zips)
+gerbers/*
+!gerbers/*.zip
 
 # KiCad
 pcb/**/*-backups/
