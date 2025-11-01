@@ -1135,11 +1135,11 @@ pcbs:
         what: ceoloide/solar_system
         where:
           - ref: finger_index_bottom
-            shift: [0.5kx, 0.38ky]
+            shift: [0.56kx, 0.356ky]
         params:
-          diameter: 60
+          diameter: 65.1
           planet_scale: 1
-          line_width: 0.1
+          line_width: 0.15
           orbit_style: dot
           reversible: true
 
@@ -1222,11 +1222,11 @@ pcbs:
         what: ceoloide/solar_system
         where:
           - ref: finger_index_bottom
-            shift: [0.5kx, 0.38ky]
+            shift: [0.56kx, 0.356ky]
         params:
-          diameter: 60
+          diameter: 65.1
           planet_scale: 1
-          line_width: 0.1
+          line_width: 0.15
           orbit_style: dot
           reversible: true
 
