@@ -48,14 +48,14 @@ module.exports = {
 
     const sun_diameter = 5.0 * p.planet_scale;
 
-    const generate_circle = (side, layer, x, y, diameter, style, width) => {
+    const generate_circle = (side, layer, x, y, diameter, style, width, fill = 'none') => {
       const radius = diameter / 2;
       return `
     (fp_circle
       (center ${x} ${y})
       (end ${x + radius} ${y})
       (stroke (width ${width}) (type ${style}))
-      (fill none)
+      (fill ${fill})
       (layer "${side}.${layer}")
     )`;
     };
@@ -66,11 +66,11 @@ module.exports = {
       // Draw orbital rings
       planets.forEach(([name, orbit, angle, planet_dia]) => {
         const orbit_radius = outer_radius * orbit;
-        result += generate_circle(side, p.layer, 0, 0, orbit_radius * 2, p.orbit_style, p.line_width);
+        result += generate_circle(side, p.layer, 0, 0, orbit_radius * 2, p.orbit_style, p.line_width, 'none');
       });
 
       // Draw sun
-      result += generate_circle(side, p.layer, 0, 0, sun_diameter, "solid", p.line_width);
+      result += generate_circle(side, p.layer, 0, 0, sun_diameter, "solid", p.line_width, 'solid');
 
       // Draw planets
       planets.forEach(([name, orbit, angle, planet_dia]) => {
@@ -80,7 +80,7 @@ module.exports = {
         // Round to avoid floating-point precision errors
         const planet_x = Math.round(orbit_radius * Math.cos(angle_rad) * 1000000) / 1000000;
         const planet_y = Math.round(orbit_radius * Math.sin(angle_rad) * 1000000) / 1000000;
-        result += generate_circle(side, p.layer, planet_x, planet_y, scaled_planet_dia, "solid", p.line_width);
+        result += generate_circle(side, p.layer, planet_x, planet_y, scaled_planet_dia, "solid", p.line_width, 'solid');
       });
 
       return result;
