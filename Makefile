@@ -64,20 +64,24 @@ gerbers:
 			mkdir -p $(GERBERS_DIR)/$$pcb_name; \
 			kicad-cli pcb export gerbers --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb"; \
 			kicad-cli pcb export drill --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb"; \
+		fi \
+	done
+	@if [ -f $(PCB_DIR)/temporal.kicad_pcb ]; then \
+		echo "Processing manual temporal PCB..."; \
+		rm -rf $(GERBERS_DIR)/temporal; \
+		mkdir -p $(GERBERS_DIR)/temporal; \
+		kicad-cli pcb export gerbers --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb"; \
+		kicad-cli pcb export drill --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb"; \
+	fi
+	@echo "Zipping gerbers..."
+	@for dir in $(GERBERS_DIR)/*/; do \
+		if [ -d "$$dir" ]; then \
+			pcb_name=$$(basename "$$dir"); \
 			echo "Zipping $$pcb_name..."; \
 			cd $(GERBERS_DIR) && zip -r $$pcb_name.zip $$pcb_name/ && cd ..; \
 			rm -rf $(GERBERS_DIR)/$$pcb_name; \
 		fi \
 	done
-	@if [ -f $(PCB_DIR)/temporal.kicad_pcb ]; then \
-		echo "Processing manual temporal PCB..."; \
-		mkdir -p $(GERBERS_DIR)/temporal; \
-		kicad-cli pcb export gerbers --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb"; \
-		kicad-cli pcb export drill --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb"; \
-		echo "Zipping temporal..."; \
-		cd $(GERBERS_DIR) && zip -r temporal.zip temporal/ && cd ..; \
-		rm -rf $(GERBERS_DIR)/temporal; \
-	fi
 	@echo "Gerbers zipped in $(GERBERS_DIR)/"
 
 # Clean generated output
