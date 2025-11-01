@@ -35,9 +35,6 @@ units:
   standoff_size: 5 # Size for standoff holes on pcb
   screen_standoff_size: 2
 
-  # Solar system graphic scale
-  planet_scale: 1.0
-
   # Top center
   hole1_x: -0.5 kx - 1
   hole1_y: -0.5 ky + 0.5
@@ -64,7 +61,7 @@ units:
 
   # Case
   bottom_thickness: 1.85
-  wall_thickness: 1.2
+  wall_thickness: 0.1 + 1.2
   wall_height: 3.9 # Does not include bottom
   side_cut_width: 15
   side_cut_radius: 1.5
@@ -610,7 +607,7 @@ outlines:
   case_outer:
     - name: _keys_fill
     - name: _mcu_area
-      fillet: wall_thickness
+      fillet: 1
       expand: wall_thickness
 
   top_plate:
@@ -632,8 +629,8 @@ outlines:
     - name: _mcu_area
     - operation: subtract
       name: _extra
+      fillet: 1
       expand: wall_thickness
-      fillet: wall_thickness
 
   top_plate_small:
     - name: _keys_area_small
@@ -1141,8 +1138,8 @@ pcbs:
             shift: [0.5kx, 0.38ky]
         params:
           diameter: 60
-          planet_scale: planet_scale
-          line_width: 0.15
+          planet_scale: 1
+          line_width: 0.1
           orbit_style: dot
           reversible: true
 
@@ -1228,8 +1225,8 @@ pcbs:
             shift: [0.5kx, 0.38ky]
         params:
           diameter: 60
-          planet_scale: planet_scale
-          line_width: 0.15
+          planet_scale: 1
+          line_width: 0.1
           orbit_style: dot
           reversible: true
 
