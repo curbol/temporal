@@ -28,8 +28,10 @@ deps:
 # Generate keyboard PCBs and cases
 gen:
 	npm run gen
+	$(MAKE) clean
 	$(MAKE) convert
 	$(MAKE) mirror
+	$(MAKE) gerbers
 
 # Convert JSCAD files to STL
 convert:
