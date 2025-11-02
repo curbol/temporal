@@ -61,15 +61,16 @@ units:
 
   # Case
   bottom_thickness: 1.85
-  wall_thickness: 0.1 + 1.2
-  wall_height: 3.9 # Does not include bottom
+  wall_thickness: 1.2
+  wall_height: 1.6 + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
   side_cut_width: 15
   side_cut_radius: 1.5
 
   # M2 heat-set insert posts
-  m2_insert_inner_diameter: 3.2
-  m2_insert_outer_diameter: 4.8
+  m2_insert_inner_diameter: 2.7
+  m2_insert_outer_diameter: 4.9
   m2_insert_post_height: 1.6 + 0.9 # PCB thickness + Choc gap under top-plate
+  m2_insert_hole_depth: 3.95 # Max = bottom_thickness + m2_insert_post_height
 
   # M2 nut recesses for MCU cover standoffs
   m2_nut_width: 4.2 # (4mm + tolerance)
@@ -608,7 +609,7 @@ outlines:
     - name: _keys_fill
     - name: _mcu_area
       fillet: 1
-      expand: wall_thickness
+      expand: 0.1 + wall_thickness
 
   top_plate:
     - name: _keys_area
@@ -630,7 +631,7 @@ outlines:
     - operation: subtract
       name: _extra
       fillet: 1
-      expand: wall_thickness
+      expand: 0.1 + wall_thickness
 
   top_plate_small:
     - name: _keys_area_small
@@ -678,7 +679,7 @@ cases:
       name: _socket_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-    - what: outline # MCU cover M2 nut recesses
+    - what: outline # MCU cover M2 nut cutouts
       operation: subtract
       name: _mcu_cover_nut_cutout
       extrude: bottom_thickness * 2
@@ -725,8 +726,8 @@ cases:
     - what: outline
       operation: subtract
       name: _m2_insert_inner_posts
-      extrude: 4
-      shift: [0, 0, m2_insert_post_height - 4]
+      extrude: m2_insert_hole_depth + 1
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
     - what: outline # Wall USB-C cutout
       operation: subtract
       name: _usbc_cutout
@@ -766,7 +767,7 @@ cases:
       name: _socket_cutouts_small
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-    - what: outline # MCU cover M2 nut recesses
+    - what: outline # MCU cover M2 nut cutouts
       operation: subtract
       name: _mcu_cover_nut_cutout
       extrude: bottom_thickness * 2
@@ -813,8 +814,8 @@ cases:
     - what: outline
       operation: subtract
       name: _m2_insert_inner_posts
-      extrude: 4
-      shift: [0, 0, m2_insert_post_height - 4]
+      extrude: m2_insert_hole_depth + 1
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
     - what: outline # Wall USB-C cutout
       operation: subtract
       name: _usbc_cutout
