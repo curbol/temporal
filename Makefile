@@ -1,9 +1,9 @@
 # Directory variables
 ERGOGEN_DIR := ergogen
 OUTPUT_DIR := $(ERGOGEN_DIR)/output
-CASES_DIR := $(OUTPUT_DIR)/cases
 PCBS_DIR := $(OUTPUT_DIR)/pcbs
 PCB_DIR := pcb
+CASES_DIR := cases
 GERBERS_DIR := gerbers
 MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
 
@@ -87,4 +87,5 @@ gerbers:
 # Clean generated output
 clean:
 	rm -rf $(OUTPUT_DIR)
+	rm -rf $(CASES_DIR)
 	rm -rf $(GERBERS_DIR)
