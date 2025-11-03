@@ -260,37 +260,37 @@ function _battery_pins_cutouts_extrude_3_7_outline_fn(){
 }
 
 
-function case_inner_extrude_7_8_outline_fn(){
+function case_inner_extrude_7_800000000000001_outline_fn(){
     return new CSG.Path2D([[40.0577065,-93.9245742],[55.9019956,-91.6978045]]).appendArc([56.9184926,-92.46379],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([57.8231177,-98.9005325]).appendArc([59.0655031,-99.836737],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([76.8903282,-97.3316211]).appendArc([77.8265327,-96.0892358],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([77.2073779,-91.6837202]).appendArc([78.0358384,-90.6606568],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([98.4292812,-89.2346084]).appendArc([99.3922031,-90.1324062],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([99.3922031,-105.6806663]).appendArc([100.4922031,-106.7806663],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([118.3347998,-106.7806663]).appendArc([118.4755909,-106.7917468],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([135.9430492,-109.5583205]).appendArc([136.0803735,-109.591289],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([152.0451791,-114.7785688]).appendArc([152.1699314,-114.829723],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([168.9321111,-123.2205878]).appendArc([170.4046121,-122.736337],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([178.1256737,-107.5829002]).appendArc([177.6449562,-106.1034034],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([169.3836116,-101.8940381]).appendArc([168.8922031,-101.0921323],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([168.8922031,-44.0306663]).appendArc([167.7922031,-42.9306663],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([149.2922031,-42.9306663]).appendArc([148.3922031,-42.0306663],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([148.3922031,-38.5306663]).appendArc([147.2922031,-37.4306663],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([131.2922032,-37.4306663]).appendArc([130.3922032,-36.5306663],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([130.3922032,-35.9806663]).appendArc([129.2922032,-34.8806663],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([113.2922031,-34.8806663]).appendArc([112.3922031,-33.9806663],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([112.3922031,-32.5806663]).appendArc([111.2922031,-31.4806663],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([93.2922031,-31.4806663]).appendArc([92.1922031,-32.5806663],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([92.1922031,-35.5015747]).appendArc([91.3549839,-36.3993823],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([72.1142745,-37.7448238]).appendArc([71.0936758,-38.9187285],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([71.416304,-43.5325287]).appendArc([70.643762,-44.4866919],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([51.6614942,-47.1544757]).appendArc([50.7252897,-48.396861],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([51.6299148,-54.8336033]).appendArc([50.8639293,-55.8501004],{"radius":0.9,"clockwise":true,"large":false}).appendPoint([35.0196403,-58.0768701]).appendArc([34.0834358,-59.3192554],{"radius":1.1,"clockwise":false,"large":false}).appendPoint([38.8153212,-92.9883697]).appendArc([40.0577065,-93.9245742],{"radius":1.1,"clockwise":false,"large":false}).close().innerToCAG()
-.extrude({ offset: [0, 0, 7.8] });
+.extrude({ offset: [0, 0, 7.800000000000001] });
 }
 
 
 function _m2_insert_outer_posts_extrude_2_5_outline_fn(){
-    return CAG.circle({"center":[73.9781395,-73.0006887],"radius":2.4})
+    return CAG.circle({"center":[73.9781395,-73.0006887],"radius":2.45})
 .union(
-    CAG.circle({"center":[119.7922032,-88.6806663],"radius":2.4})
+    CAG.circle({"center":[119.7922032,-88.6806663],"radius":2.45})
 ).union(
-    CAG.circle({"center":[156.4323804,-106.6357507],"radius":2.4})
+    CAG.circle({"center":[156.4323804,-106.6357507],"radius":2.45})
 ).union(
-    CAG.circle({"center":[128.9322031,-52.9806663],"radius":2.4})
+    CAG.circle({"center":[128.9322031,-52.9806663],"radius":2.45})
 ).union(
-    CAG.circle({"center":[92.2922031,-49.0806663],"radius":2.4})
+    CAG.circle({"center":[92.2922031,-49.0806663],"radius":2.45})
 ).extrude({ offset: [0, 0, 2.5] });
 }
 
 
-function _m2_insert_inner_posts_extrude_4_outline_fn(){
-    return CAG.circle({"center":[73.9781395,-73.0006887],"radius":1.6})
+function _m2_insert_inner_posts_extrude_4_95_outline_fn(){
+    return CAG.circle({"center":[73.9781395,-73.0006887],"radius":1.35})
 .union(
-    CAG.circle({"center":[119.7922032,-88.6806663],"radius":1.6})
+    CAG.circle({"center":[119.7922032,-88.6806663],"radius":1.35})
 ).union(
-    CAG.circle({"center":[156.4323804,-106.6357507],"radius":1.6})
+    CAG.circle({"center":[156.4323804,-106.6357507],"radius":1.35})
 ).union(
-    CAG.circle({"center":[128.9322031,-52.9806663],"radius":1.6})
+    CAG.circle({"center":[128.9322031,-52.9806663],"radius":1.35})
 ).union(
-    CAG.circle({"center":[92.2922031,-49.0806663],"radius":1.6})
-).extrude({ offset: [0, 0, 4] });
+    CAG.circle({"center":[92.2922031,-49.0806663],"radius":1.35})
+).extrude({ offset: [0, 0, 4.95] });
 }
 
 
@@ -456,7 +456,7 @@ function _power_reset_cutout_extrude_10_outline_fn(){
             
 
                 // creating part 9 of case temporal
-                let temporal__part_9 = case_inner_extrude_7_8_outline_fn();
+                let temporal__part_9 = case_inner_extrude_7_800000000000001_outline_fn();
 
                 // make sure that rotations are relative
                 let temporal__part_9_bounds = temporal__part_9.getBounds();
@@ -488,7 +488,7 @@ function _power_reset_cutout_extrude_10_outline_fn(){
             
 
                 // creating part 11 of case temporal
-                let temporal__part_11 = _m2_insert_inner_posts_extrude_4_outline_fn();
+                let temporal__part_11 = _m2_insert_inner_posts_extrude_4_95_outline_fn();
 
                 // make sure that rotations are relative
                 let temporal__part_11_bounds = temporal__part_11.getBounds();
@@ -498,7 +498,7 @@ function _power_reset_cutout_extrude_10_outline_fn(){
                 temporal__part_11 = rotate([0,0,0], temporal__part_11);
                 temporal__part_11 = translate([temporal__part_11_x, temporal__part_11_y, 0], temporal__part_11);
 
-                temporal__part_11 = translate([0,0,-1.5], temporal__part_11);
+                temporal__part_11 = translate([0,0,-1.4500000000000002], temporal__part_11);
                 result = result.subtract(temporal__part_11);
                 
             
@@ -514,7 +514,7 @@ function _power_reset_cutout_extrude_10_outline_fn(){
                 temporal__part_12 = rotate([90,0,0], temporal__part_12);
                 temporal__part_12 = translate([temporal__part_12_x, temporal__part_12_y, 0], temporal__part_12);
 
-                temporal__part_12 = translate([0,10,3.9], temporal__part_12);
+                temporal__part_12 = translate([0,10,3.9000000000000004], temporal__part_12);
                 result = result.subtract(temporal__part_12);
                 
             
@@ -530,7 +530,7 @@ function _power_reset_cutout_extrude_10_outline_fn(){
                 temporal__part_13 = rotate([0,90,0], temporal__part_13);
                 temporal__part_13 = translate([temporal__part_13_x, temporal__part_13_y, 0], temporal__part_13);
 
-                temporal__part_13 = translate([-5,0,3.9], temporal__part_13);
+                temporal__part_13 = translate([-5,0,3.9000000000000004], temporal__part_13);
                 result = result.subtract(temporal__part_13);
                 
             
