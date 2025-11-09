@@ -20,7 +20,7 @@ units:
   kx: cx #choc spaced
   ky: cy
   # Padding Variables
-  pad: 2
+  pad: 2.151
   px: kx + pad
   py: ky + pad
 
@@ -67,6 +67,10 @@ units:
   # Breakoff
   cut_w: 1.3
   cut_hoff: 2
+
+  # Board
+  base_fillet: 4
+  base_expand: 0.5
 
   # Case
   bottom_thickness: 1.85
@@ -140,29 +144,29 @@ points:
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_enc
           key.column_net: col_pinky
-        nearest:
+        near:
           key.splay: -finger_splay_1 - finger_splay_2
           key.spread: thumb_spread
           key.origin: [-0.5kx, -0.5ky]
-          key.name: thumb_nearest
-          key.column_net: col_ring
-        near:
-          key.splay: -thumb_splay
-          key.spread: thumb_spread
-          key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_near
-          key.column_net: col_middle
+          key.column_net: col_ring
         mid:
           key.splay: -thumb_splay
           key.spread: thumb_spread
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_mid
-          key.column_net: col_index
+          key.column_net: col_middle
         far:
           key.splay: -thumb_splay
           key.spread: thumb_spread
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_far
+          key.column_net: col_index
+        extra:
+          key.splay: -thumb_splay
+          key.spread: thumb_spread
+          key.origin: [-0.5kx, -0.5ky]
+          key.name: thumb_extra
           key.column_net: col_inner
       rows:
         thumb:
@@ -172,28 +176,66 @@ points:
 # Outlines
 # ------------
 outlines:
-  _keys:
-    - what: rectangle
-      where: true
-      size: [px, py]
-
-  _key_plugs:
-    - what: rectangle
-      where: true
-      size: [13.8, 13.8]
-
-  _finger_fill:
+  _extra:
     - what: rectangle
       where:
-        - finger_pinky_top
-        - finger_pinky_home
-        - finger_pinky_bottom
-        - finger_ring_top
-        - finger_ring_home
-        - finger_index_top
-      size: [px, py]
+        - finger_extra_top
+        - finger_extra_home
+      size: [1px, 3py]
       adjust:
-        shift: [1kx, 0ky]
+        shift: [-pad, 0]
+
+  _mcu_area:
+    - what: rectangle
+      where:
+        - ref: finger_inner_home
+          shift: [19.4, -5 - voff]
+      size: [21.7, 66.8]
+  _display:
+    - what: rectangle
+      where:
+        ref: finger_inner_home
+        shift: [19.8, 6.75 - voff]
+      size: [10.8, 25.3]
+      fillet: 0.5
+
+  _mcu_cover_holes:
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole1_x, mcu_hole1_y]
+    - what: circle
+      radius: screen_standoff_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole2_x, mcu_hole2_y]
+  _board_holes:
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_inner_top
+          shift: [hole2_x, hole2_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_index_bottom
+          shift: [hole4_x, hole4_y]
+    - what: circle
+      radius: 2.2 / 2
+      where:
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
 
   _break_cut:
     - what: polygon
@@ -241,128 +283,6 @@ outlines:
     - operation: subtract
       name: _break_bridges
       fillet: .5
-
-  _thumb:
-    - what: rectangle
-      where:
-        - thumb_enc
-        - thumb_nearest
-        - thumb_near
-        - thumb_mid
-        - thumb_far
-      size: [px, py]
-    - what: rectangle # Fill gap with finger keys
-      where:
-        - finger_inner_bottom
-      size: [px, py]
-      adjust:
-        shift: [0px, -0.5py]
-    - what: rectangle # Create sharper angle with finger keys
-      where:
-        - thumb_mid
-      size: [px, py]
-      adjust:
-        shift: [-0.5px, 0py]
-    - what: polygon # Main thumb area
-      points:
-        - ref: thumb_enc
-          shift: [-0.5px, 1.75py]
-        - ref: thumb_nearest
-          shift: [0.5px, 1.75py]
-        - ref: thumb_near
-          shift: [0.5px, 0.5py]
-        - ref: thumb_mid
-          shift: [-0.5px, 0.5py]
-        - ref: thumb_mid
-          shift: [0.561px, 0.5py]
-        - ref: thumb_far
-          shift: [0.5px, 0.5py]
-        - ref: thumb_far
-          shift: [0.5px, -0.5py]
-        - ref: thumb_far
-          shift: [-0.5px, -0.5py]
-        - ref: thumb_mid
-          shift: [-0.5px, -0.5py]
-        - ref: thumb_near
-          shift: [-0.5px, -0.5py]
-        - ref: thumb_nearest
-          shift: [-0.5px, -0.5py]
-        - ref: thumb_enc
-          shift: [-0.5px, -0.5py]
-
-  _thumb_fill:
-    - what: rectangle
-      where:
-        - thumb_far
-      size: [px, py]
-      adjust:
-        shift: [-0.5px, 0py]
-
-  _extra:
-    - what: rectangle
-      where:
-        - finger_extra_top
-        - finger_extra_home
-      size: [1px, 3py]
-      adjust:
-        shift: [-pad, 0]
-
-  _keys_fill:
-    - name: _keys
-    - name: _finger_fill
-    - name: _thumb
-
-  _mcu_area:
-    - what: rectangle
-      where:
-        - ref: finger_inner_home
-          shift: [19.4, -3 - voff]
-      size: [21, 62]
-  _display:
-    - what: rectangle
-      where:
-        ref: finger_inner_home
-        shift: [19.8, 6.75 - voff]
-      size: [10.8, 25.3]
-      fillet: 0.5
-
-  _mcu_cover_holes:
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [mcu_hole1_x, mcu_hole1_y]
-    - what: circle
-      radius: screen_standoff_size / 2
-      where:
-        - ref: finger_inner_bottom
-          shift: [mcu_hole2_x, mcu_hole2_y]
-  _board_holes:
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_inner_top
-          shift: [hole2_x, hole2_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: thumb_mid
-          shift: [hole3_x, hole3_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_index_bottom
-          shift: [hole4_x, hole4_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
-        - ref: finger_ring_home
-          shift: [hole5_x, hole5_y]
 
   _socket:
     - what: rectangle # Center
@@ -618,47 +538,107 @@ outlines:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
 
-  _keys_area_fillet:
-    - name: _keys_fill
-      fillet: 1
-  _keys_area:
-    - name: _keys_area_fillet
-      expand: 0.1
-  _keys_area_fillet_small:
-    - name: _keys_fill
-    - operation: subtract
-      name: _extra
-      fillet: 1
-  _keys_area_small:
-    - name: _keys_area_fillet_small
-      expand: 0.1
+  _keys:
+    - what: rectangle
+      where: true
+      size: [px, py]
 
-  _board_raw:
-    - name: _keys_fill
+  _key_plugs:
+    - what: rectangle
+      where: true
+      size: [13.8, 13.8]
+
+  _thumb:
+    - what: rectangle # Fill gap with finger keys
+      where:
+        - thumb_enc
+        - thumb_near
+        - thumb_mid
+        - thumb_far
+        - thumb_extra
+      size: [px, py]
+    - what: rectangle # Fill gap with finger keys
+      where:
+        - finger_inner_bottom
+      size: [px, py]
+      adjust:
+        shift: [0px, -0.5py]
+    - what: polygon # Main thumb area
+      points:
+        - ref: thumb_enc
+          shift: [-0.5px, 1.75py]
+        - ref: thumb_near
+          shift: [0.5px, 1.75py]
+        - ref: thumb_mid
+          shift: [0.5px, 0.5py]
+        - ref: thumb_far
+          shift: [-0.75px, 0.5py]
+        - ref: thumb_far
+          shift: [0.561px, 0.5py]
+        - ref: thumb_extra
+          shift: [0.5px, 0.5py]
+        - ref: thumb_extra
+          shift: [0.5px, -0.5py]
+        - ref: thumb_extra
+          shift: [-0.5px, -0.5py]
+        - ref: thumb_far
+          shift: [-0.5px, -0.5py]
+        - ref: thumb_mid
+          shift: [-0.5px, -0.5py]
+        - ref: thumb_near
+          shift: [-0.5px, -0.5py]
+        - ref: thumb_enc
+          shift: [-0.5px, -0.5py]
+      fillet: 15
+
+  _thumb_fill:
     - name: _mcu_area
-    - name: _thumb_fill
-  _board_fillet:
-    - name: _board_raw
-      fillet: 1
-  _board:
-    - name: _board_fillet
-      expand: 0.1
-  _board_fillet_small:
-    - name: _board_raw
+    - what: rectangle
+      where:
+        - thumb_extra
+      size: [2px, py]
+      adjust:
+        shift: [-1px, 0.00001py]
+      fillet: 10
+
+  _finger_fill:
+    - what: rectangle
+      where:
+        - finger_pinky_top
+        - finger_pinky_home
+        - finger_pinky_bottom
+        - finger_ring_top
+        - finger_ring_home
+        - finger_index_top
+      size: [px, py]
+      adjust:
+        shift: [1kx, 0ky]
+
+  _keys_area_raw:
+    - name: _keys
+    - name: _finger_fill
+    - name: _thumb
+  _keys_area:
+    - name: _keys_area_raw
+      fillet: base_fillet
+  _keys_area_small:
+    - name: _keys_area_raw
     - operation: subtract
       name: _extra
-      fillet: 1
-  _board_small:
-    - name: _board_fillet_small
-      expand: 0.1
+      fillet: base_fillet
+
+  _board:
+    - name: _mcu_area
+    - name: _keys_area_raw
+    - name: _thumb_fill
 
   # Full Board
   case_inner:
     - name: _board
+      fillet: base_fillet
   case_outer:
-    - name: _board_raw
-      fillet: 1
-      expand: 0.1 + wall_thickness
+    - name: case_inner
+      expand: wall_thickness
 
   top_plate:
     - name: _keys_area
@@ -667,19 +647,19 @@ outlines:
     - operation: subtract
       name: _board_holes
   back_plate:
-    - name: _board
+    - name: case_inner
     - operation: subtract
       name: _board_holes
 
   # Small Board
   case_inner_small:
-    - name: _board_small
-  case_outer_small:
-    - name: _board_raw
+    - name: _board
     - operation: subtract
       name: _extra
-      fillet: 1
-      expand: 0.1 + wall_thickness
+      fillet: base_fillet
+  case_outer_small:
+    - name: case_inner_small
+      expand: wall_thickness
 
   top_plate_small:
     - name: _keys_area_small
@@ -688,27 +668,31 @@ outlines:
     - operation: subtract
       name: _board_holes
   back_plate_small:
-    - name: _board_small
+    - name: case_inner_small
     - operation: subtract
       name: _board_holes
 
   # Common
-  _pcb_fillet:
-    - name: _board_raw
+  pcb:
+    - name: case_inner
     - operation: subtract
       name: _break
-      fillet: 1
-  pcb:
-    - name: _pcb_fillet
-      expand: 0.1
+      fillet: 0.1
 
   mcu_cover:
     - name: _mcu_area
     - operation: subtract
       name: _keys_area
+    - what: rectangle
+      operation: subtract
+      where:
+        - thumb_far
+      size: [2px, py]
+      adjust:
+        shift: [1px, 0.00001py]
     - operation: subtract
       name: _display
-      fillet: 1
+      fillet: base_fillet / 2
     - operation: subtract
       name: _mcu_cover_holes
 
@@ -941,7 +925,7 @@ pcbs:
           C: GND # Center pin
           B: encoder_b # Right pin
           S1: col_pinky # Switch pin 1
-          S2: row_thumb # Switch pin 2
+          S2: encoder_thumb # Switch pin 2
 
       mcu:
         what: ceoloide/mcu_nice_nano
@@ -1018,22 +1002,13 @@ pcbs:
       temporal:
         what: ceoloide/utility_text
         where:
-          - ref: finger_middle_bottom
-            shift: [0, -0.65ky]
+          - ref: finger_inner_top
+            shift: [0, 0.58ky]
         params:
           text: "TEMPORAL"
-          height: 2
-          width: 2
-          knockout: true
+          height: 1.5
+          width: 2.25
           reversible: true
-      #ver:
-      #  what: ceoloide/utility_text
-      #  where:
-      #    - ref: finger_index_home
-      #      shift: [0.5kx, -0.5ky +1.45]
-      #  params:
-      #    text: "v 2"
-      #    reversible: true
 
       curbol:
         what: ceoloide/utility_text
@@ -1135,17 +1110,15 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-
       temporal:
         what: ceoloide/utility_text
         where:
-          - ref: finger_middle_bottom
-            shift: [0, -0.65ky]
+          - ref: finger_inner_top
+            shift: [0, 0.58ky]
         params:
           text: "TEMPORAL"
-          height: 2
-          width: 2
-          knockout: true
+          height: 1.5
+          width: 2.25
           reversible: true
 
   back_plate:
@@ -1179,17 +1152,6 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      solar_system:
-        what: ceoloide/solar_system
-        where:
-          - ref: finger_index_bottom
-            shift: [0.56kx, 0.356ky]
-        params:
-          diameter: 65.1
-          planet_scale: 1
-          line_width: 0.15
-          orbit_style: dot
-          reversible: true
 
   top_plate_small:
     template: kicad8
@@ -1222,17 +1184,15 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-
       temporal:
         what: ceoloide/utility_text
         where:
-          - ref: finger_middle_bottom
-            shift: [0, -0.65ky]
+          - ref: finger_inner_top
+            shift: [0, 0.58ky]
         params:
           text: "TEMPORAL"
-          height: 2
-          width: 2
-          knockout: true
+          height: 1.5
+          width: 2.25
           reversible: true
 
   back_plate_small:
@@ -1266,17 +1226,6 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      solar_system:
-        what: ceoloide/solar_system
-        where:
-          - ref: finger_index_bottom
-            shift: [0.56kx, 0.356ky]
-        params:
-          diameter: 65.1
-          planet_scale: 1
-          line_width: 0.15
-          orbit_style: dot
-          reversible: true
 
   mcu_cover:
     template: kicad8
@@ -1300,4 +1249,3 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
-
