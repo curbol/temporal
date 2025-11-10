@@ -50,7 +50,7 @@ units:
   hole3_y: 0.0 ky - 0.5
 
   # Thumb left
-  hole4_x: 0.5 kx + 0.65
+  hole4_x: 0.5 kx + 1
   hole4_y: 0.0 ky - 0.5
 
   # Far left
@@ -226,12 +226,12 @@ outlines:
     - what: circle
       radius: 2.2 / 2
       where:
-        - ref: thumb_mid
+        - ref: thumb_far
           shift: [hole3_x, hole3_y]
     - what: circle
       radius: 2.2 / 2
       where:
-        - ref: thumb_enc
+        - ref: thumb_near
           shift: [hole4_x, hole4_y]
     - what: circle
       radius: 2.2 / 2
@@ -505,11 +505,11 @@ outlines:
           shift: [hole2_x, hole2_y]
     - name: _m2_insert_outer_post
       where:
-        - ref: thumb_mid
+        - ref: thumb_far
           shift: [hole3_x, hole3_y]
     - name: _m2_insert_outer_post
       where:
-        - ref: thumb_enc
+        - ref: thumb_near
           shift: [hole4_x, hole4_y]
     - name: _m2_insert_outer_post
       where:
@@ -529,11 +529,11 @@ outlines:
           shift: [hole2_x, hole2_y]
     - name: _m2_insert_inner_post
       where:
-        - ref: thumb_mid
+        - ref: thumb_far
           shift: [hole3_x, hole3_y]
     - name: _m2_insert_inner_post
       where:
-        - ref: thumb_enc
+        - ref: thumb_near
           shift: [hole4_x, hole4_y]
     - name: _m2_insert_inner_post
       where:
@@ -1041,7 +1041,7 @@ pcbs:
       hole_3:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_mid
+          - ref: thumb_far
             shift: [hole3_x, hole3_y]
         params:
           hole_size: standoff_size
@@ -1049,7 +1049,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_enc
+          - ref: thumb_near
             shift: [hole4_x, hole4_y]
         params:
           hole_size: standoff_size
@@ -1100,12 +1100,12 @@ pcbs:
       hole_3:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_mid
+          - ref: thumb_far
             shift: [hole3_x, hole3_y]
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_enc
+          - ref: thumb_near
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1142,12 +1142,12 @@ pcbs:
       hole_3:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_mid
+          - ref: thumb_far
             shift: [hole3_x, hole3_y]
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_enc
+          - ref: thumb_near
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1174,12 +1174,12 @@ pcbs:
       hole_3:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_mid
+          - ref: thumb_far
             shift: [hole3_x, hole3_y]
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_enc
+          - ref: thumb_near
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1216,12 +1216,12 @@ pcbs:
       hole_3:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_mid
+          - ref: thumb_far
             shift: [hole3_x, hole3_y]
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: thumb_enc
+          - ref: thumb_near
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
