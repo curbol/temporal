@@ -37,25 +37,25 @@ units:
   standoff_size: 5 # Size for standoff holes on pcb
   screen_standoff_size: 2
 
-  # Top center
+  # Top left
   hole1_x: -0.5 kx - 1
-  hole1_y: -0.5 ky + 0.5
+  hole1_y: -1 ky - 1
 
   # Top right
   hole2_x: -0.52 kx
   hole2_y: -0.35 ky
 
-  # Right Thumb
-  hole3_x: 0.5 kx + 0.6
+  # Thumb right
+  hole3_x: 0.5 kx + 1
   hole3_y: 0.0 ky - 0.5
 
-  # Left Thumb
-  hole4_x: 0kx - 0.5
-  hole4_y: -0.6 ky
+  # Thumb left
+  hole4_x: 0.5 kx + 0.65
+  hole4_y: 0.0 ky - 0.5
 
-  # Far Left
-  hole5_x: -0.5 kx - 0.6
-  hole5_y: -0.6 ky + 1.5
+  # Far left
+  hole5_x: -0.5 kx - 0.425
+  hole5_y: -1.25 ky - 0.175
 
   # MCU Cover Holes
   mcu_hole1_x: 0.5kx + 4
@@ -64,9 +64,11 @@ units:
   mcu_hole2_x: 0.5kx + 18
   mcu_hole2_y: -0.5ky - voff - 1.08
 
-  # Breakoff
-  cut_w: 1.3
-  cut_hoff: 2
+  # Extra Breakoff
+  cut_w: 0.5
+  cut_hoff: pad + cut_w / 2
+  cut_stretch: 4
+  cut_entry: 1py
 
   # Board
   base_fillet: 4
@@ -229,7 +231,7 @@ outlines:
     - what: circle
       radius: 2.2 / 2
       where:
-        - ref: finger_index_bottom
+        - ref: thumb_enc
           shift: [hole4_x, hole4_y]
     - what: circle
       radius: 2.2 / 2
@@ -239,29 +241,29 @@ outlines:
 
   _break_cut:
     - what: polygon
-      fillet: 2
       points:
         - ref: finger_extra_top
-          shift: [0.5px - cut_w / 2 - cut_hoff, 0.5py]
+          shift: [0.5px - cut_w / 2 - cut_hoff, cut_stretch + 0.5py]
         - ref: finger_extra_top
-          shift: [0px, 0.75py - cut_w * 1.25]
+          shift: [0px, cut_stretch + cut_entry - cut_w * 1.25]
         - ref: finger_extra_top
-          shift: [0px, 0.75py]
+          shift: [0px, cut_stretch + cut_entry]
         - ref: finger_extra_top
-          shift: [0.5px + cut_w / 2 - cut_hoff, 0.5py + cut_w / 2]
+          shift: [0.5px + cut_w / 2 - cut_hoff, cut_stretch + 0.5py + cut_w / 2]
         - ref: finger_extra_home
-          shift: [0.5px + cut_w / 2 - cut_hoff, -0.5py - cut_w / 2]
+          shift:
+            [0.5px + cut_w / 2 - cut_hoff, -cut_stretch - 0.5py - cut_w / 2]
         - ref: finger_extra_home
-          shift: [0px, -0.75py]
+          shift: [0px, -cut_stretch - cut_entry]
         - ref: finger_extra_home
-          shift: [0px, -0.75py + cut_w * 1.25]
+          shift: [0px, -cut_stretch - cut_entry + cut_w * 1.25]
         - ref: finger_extra_home
-          shift: [0.5px - cut_w / 2 - cut_hoff, -0.5py]
+          shift: [0.5px - cut_w / 2 - cut_hoff, -cut_stretch - 0.5py]
   _break_bridges:
     - what: rectangle
       where:
         ref: finger_extra_top
-        shift: [0.5px - cut_hoff, 0.5py - 5.5]
+        shift: [0.5px - cut_hoff, 0.5py - 5.75]
       size: [cut_w * 2, 4]
     - what: rectangle
       where:
@@ -271,7 +273,7 @@ outlines:
     - what: rectangle
       where:
         ref: finger_extra_home
-        shift: [0.5px - cut_hoff, 0.5py - 5.5]
+        shift: [0.5px - cut_hoff, 0.5py - 5.75]
       size: [cut_w * 2, 4]
     - what: rectangle
       where:
@@ -282,7 +284,7 @@ outlines:
     - name: _break_cut
     - operation: subtract
       name: _break_bridges
-      fillet: .5
+      fillet: cut_w / 2 - 0.01
 
   _socket:
     - what: rectangle # Center
@@ -507,7 +509,7 @@ outlines:
           shift: [hole3_x, hole3_y]
     - name: _m2_insert_outer_post
       where:
-        - ref: finger_index_bottom
+        - ref: thumb_enc
           shift: [hole4_x, hole4_y]
     - name: _m2_insert_outer_post
       where:
@@ -531,7 +533,7 @@ outlines:
           shift: [hole3_x, hole3_y]
     - name: _m2_insert_inner_post
       where:
-        - ref: finger_index_bottom
+        - ref: thumb_enc
           shift: [hole4_x, hole4_y]
     - name: _m2_insert_inner_post
       where:
@@ -677,7 +679,7 @@ outlines:
     - name: case_inner
     - operation: subtract
       name: _break
-      fillet: 0.1
+      fillet: 0.4
 
   mcu_cover:
     - name: _mcu_area
@@ -759,13 +761,13 @@ cases:
       name: _m2_insert_inner_posts
       extrude: m2_insert_hole_depth + 1
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
-    - what: outline # Wall USB-C cutout
+    - what: outline # Wall usb-c cutout
       operation: subtract
       name: _usbc_cutout
       extrude: 20
       shift: [0, 10, wall_height]
       rotate: [90, 0, 0]
-    - what: outline # Power and reset cutouts
+    - what: outline # Wall power and reset cutouts
       operation: subtract
       name: _power_reset_cutout
       extrude: 10
@@ -779,7 +781,7 @@ cases:
     - what: outline
       name: mcu_cover
       extrude: 1.3
-  render:
+  combined:
     - what: case
       name: temporal
     - what: case
@@ -863,7 +865,7 @@ cases:
     - what: outline
       name: top_plate_small
       extrude: 1.3
-  render_small:
+  combined_small:
     - what: case
       name: temporal_small
     - what: case
@@ -1007,7 +1009,7 @@ pcbs:
         params:
           text: "TEMPORAL"
           height: 1.5
-          width: 2.25
+          width: 1.8
           reversible: true
 
       curbol:
@@ -1047,7 +1049,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: finger_index_bottom
+          - ref: thumb_enc
             shift: [hole4_x, hole4_y]
         params:
           hole_size: standoff_size
@@ -1103,7 +1105,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: finger_index_bottom
+          - ref: thumb_enc
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1118,7 +1120,7 @@ pcbs:
         params:
           text: "TEMPORAL"
           height: 1.5
-          width: 2.25
+          width: 1.8
           reversible: true
 
   back_plate:
@@ -1145,7 +1147,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: finger_index_bottom
+          - ref: thumb_enc
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1177,7 +1179,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: finger_index_bottom
+          - ref: thumb_enc
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1192,7 +1194,7 @@ pcbs:
         params:
           text: "TEMPORAL"
           height: 1.5
-          width: 2.25
+          width: 1.8
           reversible: true
 
   back_plate_small:
@@ -1219,7 +1221,7 @@ pcbs:
       hole_4:
         what: ceoloide/mounting_hole_npth
         where:
-          - ref: finger_index_bottom
+          - ref: thumb_enc
             shift: [hole4_x, hole4_y]
       hole_5:
         what: ceoloide/mounting_hole_npth
@@ -1249,3 +1251,4 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
+
