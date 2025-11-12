@@ -428,29 +428,6 @@ outlines:
         - ref: finger_inner_home
           shift: [23.5, -14.5 - voff]
 
-  _mcu_cover_nut_cutout:
-    - what: polygon
-      where:
-        - ref: finger_inner_bottom
-          shift: [mcu_hole1_x, mcu_hole1_y]
-      points:
-        - shift: [m2_nut_width / 2, 0]
-        - shift: [m2_nut_width / 4, m2_nut_width * 0.433] # sin(60°) ≈ 0.866, half = 0.433
-        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
-        - shift: [-m2_nut_width / 2, 0]
-        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
-        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
-    - what: polygon
-      where:
-        - ref: finger_inner_bottom
-          shift: [mcu_hole2_x, mcu_hole2_y]
-      points:
-        - shift: [m2_nut_width / 2, 0]
-        - shift: [m2_nut_width / 4, m2_nut_width * 0.433]
-        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
-        - shift: [-m2_nut_width / 2, 0]
-        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
-        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
   _case_cutout_template:
     - what: circle
       radius: side_cut_radius
@@ -491,6 +468,29 @@ outlines:
           shift: [27.5 + side_cut_radius * 2, -14.95 - voff]
           rotate: 90
 
+  _mcu_cover_nut_cutout:
+    - what: polygon
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole1_x, mcu_hole1_y]
+      points:
+        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 4, m2_nut_width * 0.433] # sin(60°) ≈ 0.866, half = 0.433
+        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
+        - shift: [-m2_nut_width / 2, 0]
+        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
+    - what: polygon
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole2_x, mcu_hole2_y]
+      points:
+        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 4, m2_nut_width * 0.433]
+        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
+        - shift: [-m2_nut_width / 2, 0]
+        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
+        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
   _m2_insert_outer_post:
     - what: circle
       radius: m2_insert_outer_diameter / 2
@@ -629,15 +629,18 @@ outlines:
       name: _extra
       fillet: base_fillet
 
-  _board:
+  _board_raw:
     - name: _mcu_area
     - name: _keys_area_raw
     - name: _thumb_fill
+  _board:
+    - name: _board_raw
+      fillet: base_fillet
 
   # Full Board
   case_inner:
     - name: _board
-      fillet: base_fillet
+      expand: 0.1
   case_outer:
     - name: case_inner
       expand: wall_thickness
@@ -649,16 +652,16 @@ outlines:
     - operation: subtract
       name: _board_holes
   back_plate:
-    - name: case_inner
+    - name: _board
     - operation: subtract
       name: _board_holes
 
   # Small Board
   case_inner_small:
     - name: _board
+      expand: 0.1
     - operation: subtract
       name: _extra
-      fillet: base_fillet
   case_outer_small:
     - name: case_inner_small
       expand: wall_thickness
@@ -670,19 +673,25 @@ outlines:
     - operation: subtract
       name: _board_holes
   back_plate_small:
-    - name: case_inner_small
+    - name: _board
+    - operation: subtract
+      name: _extra
     - operation: subtract
       name: _board_holes
 
   # Common
   pcb:
-    - name: case_inner
+    - name: _board
     - operation: subtract
       name: _break
       fillet: 0.4
 
   mcu_cover:
     - name: _mcu_area
+      fillet: base_fillet
+    - name: _mcu_area
+      adjust:
+        shift: [-0.25kx, 0ky]
     - operation: subtract
       name: _keys_area
     - what: rectangle
@@ -694,7 +703,7 @@ outlines:
         shift: [1px, 0.00001py]
     - operation: subtract
       name: _display
-      fillet: base_fillet / 2
+      fillet: 1
     - operation: subtract
       name: _mcu_cover_holes
 
