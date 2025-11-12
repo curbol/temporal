@@ -3,9 +3,9 @@ function top_plate_extrude_1_3_outline_fn(){
 .subtract(
     CAG.circle({"center":[73.5558933,-78.6000269],"radius":1.1})
 .union(
-    CAG.circle({"center":[104.4990997,-92.8475969],"radius":1.1})
+    CAG.circle({"center":[124.1004389,-92.8649774],"radius":1.1})
 ).union(
-    CAG.circle({"center":[143.3735818,-98.0551328],"radius":1.1})
+    CAG.circle({"center":[160.6466974,-108.0566941],"radius":1.1})
 ).union(
     CAG.circle({"center":[127.1216205,-46.3345974],"radius":1.1})
 ).union(

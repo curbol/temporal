@@ -1,5 +1,5 @@
 function mcu_cover_extrude_1_3_outline_fn(){
-    return new CSG.Path2D([[166.7316205,-96.4713179],[166.7316205,-41.4845974]]).appendArc([164.7316205,-39.4845974],{"radius":2,"clockwise":false,"large":false}).appendPoint([148.5571205,-39.4845974]).appendArc([146.5571205,-41.4845974],{"radius":2,"clockwise":false,"large":false}).appendPoint([146.5571205,-85.9784867]).appendArc([148.5571205,-89.4425883],{"radius":4,"clockwise":false,"large":false}).appendPoint([157.0241934,-94.3310551]).appendPoint([163.7316205,-98.2033687]).appendArc([166.7316205,-96.4713179],{"radius":2,"clockwise":false,"large":false}).close().innerToCAG()
+    return new CSG.Path2D([[166.7316205,-98.2033687],[166.7316205,-43.4845974]]).appendArc([162.7316205,-39.4845974],{"radius":4,"clockwise":false,"large":false}).appendPoint([147.5571205,-39.4845974]).appendArc([146.5571205,-40.4845974],{"radius":1,"clockwise":false,"large":false}).appendPoint([146.5571205,-85.9784867]).appendArc([148.5571205,-89.4425883],{"radius":4,"clockwise":false,"large":false}).appendPoint([157.0241934,-94.3310551]).appendPoint([165.2316205,-99.0693941]).appendArc([166.7316205,-98.2033687],{"radius":1,"clockwise":false,"large":false}).close().innerToCAG()
 .subtract(
     CAG.circle({"center":[163.4816205,-94.4645974],"radius":1})
 .union(

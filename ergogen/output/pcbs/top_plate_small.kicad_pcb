@@ -11,7 +11,7 @@
   (paper "A3")
   (title_block
     (title "top_plate_small")
-    (date "2025-11-10")
+    (date "2025-11-12")
     (rev "1")
     (company "curtis bollinger")
   )
@@ -122,15 +122,15 @@
 
   (footprint "ceoloide:mounting_hole_npth"
     (layer "F.Cu")
-    (at 143.3735818 98.05513279999998 -15)
+    (at 160.64669740000002 108.05669409999999 -30)
     (property "Reference" "MH3"
-      (at 0 2.55 -15)
+      (at 0 2.55 -30)
       (layer "F.SilkS")
       hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (pad "" np_thru_hole circle
-      (at 0 0 -15)
+      (at 0 0 -30)
       (size 2.2 2.2)
       (drill 2.2)
       (layers "*.Cu" "*.Mask")
@@ -140,15 +140,15 @@
 
   (footprint "ceoloide:mounting_hole_npth"
     (layer "F.Cu")
-    (at 104.4990997 92.84759689999998 10)
+    (at 124.10043890000001 92.86497739999999 0)
     (property "Reference" "MH4"
-      (at 0 2.55 10)
+      (at 0 2.55 0)
       (layer "F.SilkS")
       hide
       (effects (font (size 1 1) (thickness 0.15)))
     )
     (pad "" np_thru_hole circle
-      (at 0 0 10)
+      (at 0 0 0)
       (size 2.2 2.2)
       (drill 2.2)
       (layers "*.Cu" "*.Mask")
@@ -322,8 +322,8 @@
 (gr_line (start 168.025137 105.00537709999998) (end 158.26706339999998 114.76345069999998) (layer Edge.Cuts) (stroke (width 0.15) (type default)))
 (gr_circle (center 90.4816205 47.33459739999999) (end 91.5816205 47.33459739999999) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
 (gr_circle (center 127.12162050000002 46.33459739999999) (end 128.22162050000003 46.33459739999999) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
-(gr_circle (center 143.3735818 98.05513279999998) (end 144.4735818 98.05513279999998) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
-(gr_circle (center 104.4990997 92.84759689999998) (end 105.5990997 92.84759689999998) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
+(gr_circle (center 160.64669740000002 108.05669409999999) (end 161.74669740000002 108.05669409999999) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
+(gr_circle (center 124.10043890000001 92.86497739999999) (end 125.20043890000001 92.86497739999999) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
 (gr_circle (center 73.55589330000001 78.6000269) (end 74.6558933 78.6000269) (layer Edge.Cuts) (stroke (width 0.15) (type default)) (fill none))
 
 )
