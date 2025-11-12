@@ -78,7 +78,7 @@ units:
   case_expand: 0.1
   bottom_thickness: 1.85
   wall_height: 1.6 + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
-  wall_thickness: 1.2
+  wall_thickness: 1.21 # Note: Small changes affact the curves on case_outer. Seems finicky.
   side_cut_width: 15
   side_cut_radius: 1.5
 
@@ -560,20 +560,13 @@ outlines:
         - thumb_far
         - thumb_extra
       size: [px, py]
-    - what: rectangle # Fill gap with finger keys
-      where:
-        - finger_inner_bottom
-      size: [px, py]
-      adjust:
-        shift: [0px, -0.5py]
     - what: polygon # Main thumb area
+      fillet: 15
       points:
         - ref: thumb_enc
           shift: [-0.5px, 1.75py]
         - ref: thumb_near
           shift: [0.5px, 1.75py]
-        - ref: thumb_mid
-          shift: [0.5px, 0.5py]
         - ref: thumb_far
           shift: [-0.75px, 0.5py]
         - ref: thumb_far
@@ -581,20 +574,25 @@ outlines:
         - ref: thumb_extra
           shift: [0.5px, 0.5py]
         - ref: thumb_extra
-          shift: [0.5px, -0.5py]
+          shift: [0.5px, 0py]
         - ref: thumb_extra
-          shift: [-0.5px, -0.5py]
+          shift: [-0.5px, 0py]
         - ref: thumb_far
-          shift: [-0.5px, -0.5py]
+          shift: [-0.5px, 0py]
         - ref: thumb_mid
-          shift: [-0.5px, -0.5py]
+          shift: [-0.5px, 0py]
         - ref: thumb_near
-          shift: [-0.5px, -0.5py]
+          shift: [-0.5px, 0py]
         - ref: thumb_enc
-          shift: [-0.5px, -0.5py]
-      fillet: 15
+          shift: [-0.5px, 0py]
+    - what: rectangle # Fill gap with finger keys
+      where:
+        - finger_inner_bottom
+      size: [px, py]
+      adjust:
+        shift: [0px, -0.5py]
 
-  _thumb_fill:
+  _thumb_smooth: # Smooth curve from thmub to mcu area
     - name: _mcu_area
     - what: rectangle
       where:
@@ -633,7 +631,7 @@ outlines:
   _board_raw:
     - name: _mcu_area
     - name: _keys_area_raw
-    - name: _thumb_fill
+    - name: _thumb_smooth
   _board_raw_small:
     - name: _board_raw
     - operation: subtract
