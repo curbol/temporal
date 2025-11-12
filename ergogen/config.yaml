@@ -69,15 +69,16 @@ units:
   cut_hoff: pad + cut_w / 2
   cut_stretch: 4
   cut_entry: 1py
+  cut_fillet: cut_w / 2 - 0.01
 
   # Board
-  base_fillet: 4
-  base_expand: 0.5
+  base_fillet: 2.5
 
   # Case
+  case_expand: 0.1
   bottom_thickness: 1.85
-  wall_thickness: 1.2
   wall_height: 1.6 + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
+  wall_thickness: 1.2
   side_cut_width: 15
   side_cut_radius: 1.5
 
@@ -138,7 +139,7 @@ points:
         spread: 1kx
       anchor:
         ref: finger_index_bottom
-        shift: [-1.22kx, -1.39ky]
+        shift: [-1.225kx, -1.39ky]
       columns:
         encoder:
           key.splay: finger_splay_1 + finger_splay_2
@@ -199,7 +200,6 @@ outlines:
         ref: finger_inner_home
         shift: [19.8, 6.75 - voff]
       size: [10.8, 25.3]
-      fillet: 0.5
 
   _mcu_cover_holes:
     - what: circle
@@ -284,7 +284,7 @@ outlines:
     - name: _break_cut
     - operation: subtract
       name: _break_bridges
-      fillet: cut_w / 2 - 0.01
+      fillet: cut_fillet
 
   _socket:
     - what: rectangle # Center
@@ -549,6 +549,7 @@ outlines:
     - what: rectangle
       where: true
       size: [13.8, 13.8]
+      fillet: 0.25
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
@@ -633,18 +634,12 @@ outlines:
     - name: _mcu_area
     - name: _keys_area_raw
     - name: _thumb_fill
-  _board:
+  _board_raw_small:
     - name: _board_raw
-      fillet: base_fillet
+    - operation: subtract
+      name: _extra
 
   # Full Board
-  case_inner:
-    - name: _board
-      expand: 0.1
-  case_outer:
-    - name: case_inner
-      expand: wall_thickness
-
   top_plate:
     - name: _keys_area
     - operation: subtract
@@ -652,20 +647,27 @@ outlines:
     - operation: subtract
       name: _board_holes
   back_plate:
-    - name: _board
+    - name: _board_raw
+      fillet: base_fillet
     - operation: subtract
       name: _board_holes
 
-  # Small Board
-  case_inner_small:
-    - name: _board
-      expand: 0.1
-    - operation: subtract
-      name: _extra
-  case_outer_small:
-    - name: case_inner_small
-      expand: wall_thickness
+  _case_inner_1:
+    - name: _board_raw
+      fillet: base_fillet
+  case_inner:
+    - name: _case_inner_1
+      expand: case_expand
+      joints: 1
+  _case_outer_1: # Need to do hacky stuff to get expand and fillet working together
+    - name: _board_raw
+      expand: case_expand + wall_thickness
+      joints: 1
+  case_outer:
+    - name: _case_outer_1
+      fillet: base_fillet
 
+  # Small Board
   top_plate_small:
     - name: _keys_area_small
     - operation: subtract
@@ -673,25 +675,36 @@ outlines:
     - operation: subtract
       name: _board_holes
   back_plate_small:
-    - name: _board
-    - operation: subtract
-      name: _extra
+    - name: _board_raw_small
+      fillet: base_fillet
     - operation: subtract
       name: _board_holes
 
+  _case_inner_small_1:
+    - name: _board_raw_small
+      fillet: base_fillet
+  case_inner_small:
+    - name: _case_inner_small_1
+      expand: case_expand
+      joints: 1
+  _case_outer_small_1:
+    - name: _board_raw_small
+      expand: case_expand + wall_thickness
+      joints: 1
+  case_outer_small:
+    - name: _case_outer_small_1
+      fillet: base_fillet
+
   # Common
   pcb:
-    - name: _board
+    - name: _board_raw
+      fillet: base_fillet
     - operation: subtract
       name: _break
-      fillet: 0.4
+      fillet: cut_fillet
 
   mcu_cover:
     - name: _mcu_area
-      fillet: base_fillet
-    - name: _mcu_area
-      adjust:
-        shift: [-0.25kx, 0ky]
     - operation: subtract
       name: _keys_area
     - what: rectangle
@@ -700,10 +713,11 @@ outlines:
         - thumb_far
       size: [2px, py]
       adjust:
-        shift: [1px, 0.00001py]
+        shift: [1px, 0.00001]
+      fillet: base_fillet
     - operation: subtract
       name: _display
-      fillet: 1
+      fillet: cut_fillet
     - operation: subtract
       name: _mcu_cover_holes
 
