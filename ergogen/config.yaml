@@ -69,7 +69,7 @@ units:
   cut_hoff: pad + cut_w / 2
   cut_stretch: 4
   cut_entry: 1py
-  cut_fillet: cut_w / 2 - 0.01
+  cut_fillet: 0.2
 
   # Board
   base_fillet: 2.5
@@ -187,6 +187,13 @@ outlines:
       size: [1px, 3py]
       adjust:
         shift: [-pad, 0]
+  _extra_thumb:
+    - what: rectangle
+      where:
+        - thumb_extra
+      size: [1px, 2py]
+      adjust:
+        shift: [pad, 0]
 
   _mcu_area:
     - what: rectangle
@@ -238,53 +245,6 @@ outlines:
       where:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
-
-  _break_cut:
-    - what: polygon
-      points:
-        - ref: finger_extra_top
-          shift: [0.5px - cut_w / 2 - cut_hoff, cut_stretch + 0.5py]
-        - ref: finger_extra_top
-          shift: [0px, cut_stretch + cut_entry - cut_w * 1.25]
-        - ref: finger_extra_top
-          shift: [0px, cut_stretch + cut_entry]
-        - ref: finger_extra_top
-          shift: [0.5px + cut_w / 2 - cut_hoff, cut_stretch + 0.5py + cut_w / 2]
-        - ref: finger_extra_home
-          shift:
-            [0.5px + cut_w / 2 - cut_hoff, -cut_stretch - 0.5py - cut_w / 2]
-        - ref: finger_extra_home
-          shift: [0px, -cut_stretch - cut_entry]
-        - ref: finger_extra_home
-          shift: [0px, -cut_stretch - cut_entry + cut_w * 1.25]
-        - ref: finger_extra_home
-          shift: [0.5px - cut_w / 2 - cut_hoff, -cut_stretch - 0.5py]
-  _break_bridges:
-    - what: rectangle
-      where:
-        ref: finger_extra_top
-        shift: [0.5px - cut_hoff, 0.5py - 5.75]
-      size: [cut_w * 2, 4]
-    - what: rectangle
-      where:
-        ref: finger_extra_top
-        shift: [0.5px - cut_hoff, -0.5py + 5]
-      size: [cut_w * 2, 4]
-    - what: rectangle
-      where:
-        ref: finger_extra_home
-        shift: [0.5px - cut_hoff, 0.5py - 5.75]
-      size: [cut_w * 2, 4]
-    - what: rectangle
-      where:
-        ref: finger_extra_home
-        shift: [0.5px - cut_hoff, -0.5py + 5]
-      size: [cut_w * 2, 4]
-  _break:
-    - name: _break_cut
-    - operation: subtract
-      name: _break_bridges
-      fillet: cut_fillet
 
   _socket:
     - what: rectangle # Center
@@ -636,6 +596,48 @@ outlines:
     - name: _board_raw
     - operation: subtract
       name: _extra
+  _board_raw_38:
+    - name: _board_raw
+    - operation: subtract
+      name: _extra
+    - operation: subtract
+      name: _extra_thumb
+
+  _break_cut_inner:
+    - name: _board_raw_38
+      fillet: base_fillet
+  _break_cut:
+    - name: _break_cut_inner
+      expand: cut_w
+      joints: 1
+    - operation: subtract
+      name: _break_cut_inner
+  _break_bridge:
+    - what: rectangle
+      adjust:
+        shift: [0, 0.5py - 5.75]
+      size: [cut_w * 2, 4]
+    - what: rectangle
+      adjust:
+        shift: [0, -0.5py + 5]
+      size: [cut_w * 2, 4]
+  _break_bridges:
+    - name: _break_bridge
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      adjust:
+        shift: [0.5px - cut_hoff, 0]
+    - name: _break_bridge
+      where:
+        - thumb_extra
+      adjust:
+        shift: [-0.5px + cut_hoff, 0]
+  _break:
+    - name: _break_cut
+    - operation: subtract
+      name: _break_bridges
+      fillet: cut_fillet
 
   # Full Board
   top_plate:
