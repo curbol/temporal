@@ -66,10 +66,7 @@ units:
 
   # Extra Breakoff
   cut_w: 0.5
-  cut_hoff: pad + cut_w / 2
-  cut_stretch: 4
-  cut_entry: 1py
-  cut_fillet: 0.2
+  cut_fillet: 0.24
 
   # Board
   base_fillet: 2.5
@@ -179,22 +176,6 @@ points:
 # Outlines
 # ------------
 outlines:
-  _extra_pinky:
-    - what: rectangle
-      where:
-        - finger_extra_top
-        - finger_extra_home
-      size: [1px, 3py]
-      adjust:
-        shift: [-pad, 0]
-  _extra_thumb:
-    - what: rectangle
-      where:
-        - thumb_extra
-      size: [1px, 2py]
-      adjust:
-        shift: [pad, 0]
-
   _mcu_area:
     - what: rectangle
       where:
@@ -339,15 +320,15 @@ outlines:
         shift: [-1.85, 0]
   _encoder_pins:
     - what: circle
-      radius: 0.8
+      radius: 0.6
       adjust:
         shift: [-2.75, -7.5]
     - what: rectangle
-      size: [5.5, 1.6]
+      size: [5.5, 1.2]
       adjust:
         shift: [0, -7.5]
     - what: circle
-      radius: 0.8
+      radius: 0.6
       adjust:
         shift: [2.75, -7.5]
 
@@ -362,10 +343,21 @@ outlines:
   _choc_posts_cutouts:
     - name: _choc_posts
       where: true
+  _encoder_posts_cutouts:
+    - name: _choc_posts
+      where:
+        - thumb_enc
   _encoder_pins_cutouts:
     - name: _encoder_pins
       where:
+        - thumb_enc
+  _encoder_pins_plate_cutouts:
+    - name: _encoder_pins_cutouts
+    - what: rectangle
+      size: [6.7, 1.2]
+      where:
         - ref: thumb_enc
+          shift: [0, -6.9]
   _mcu_pins_cutouts:
     - name: _mcu_pins
       where:
@@ -494,6 +486,33 @@ outlines:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
 
+  _extra_pinky:
+    - what: rectangle
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      size: [1px, 3py]
+      adjust:
+        shift: [-pad, 0]
+  _extra_thumb:
+    - what: rectangle # Remove key
+      where:
+        - thumb_far
+      size: [2px, 2py]
+      adjust:
+        shift: [0.5px + 1px, 0]
+    - what: rectangle # Remove fillet by mcu area
+      where:
+        - ref: finger_inner_home
+          shift: [19.4 + 21.7, -15 - voff]
+      size: [21.7, 66.8]
+    - what: rectangle # Remove fillet under thumb_far
+      where:
+        - thumb_far
+      size: [px, py]
+      adjust:
+        shift: [0.5px, -1py]
+
   _thumb:
     - what: rectangle # Fill gap with finger keys
       where:
@@ -567,6 +586,7 @@ outlines:
       where: true
       size: [13.8, 13.8]
       fillet: 0.25
+    - name: _encoder_pins_plate_cutouts
 
   _keys_area_44:
     - name: _keys
@@ -611,6 +631,12 @@ outlines:
       joints: 1
     - operation: subtract
       name: _break_cut_inner
+    - what: rectangle
+      size: [cut_w, 1py]
+      where:
+        - thumb_far
+      adjust:
+        shift: [0.5px + cut_w / 2, 0.5py]
   _break_bridge:
     - what: rectangle
       adjust:
@@ -626,17 +652,16 @@ outlines:
         - finger_extra_top
         - finger_extra_home
       adjust:
-        shift: [0.5px - cut_hoff, 0]
+        shift: [0.5px - pad - cut_w / 2, 0]
     - name: _break_bridge
       where:
-        - thumb_extra
+        - thumb_far
       adjust:
-        shift: [-0.5px + cut_hoff, 0]
+        shift: [0.5px + cut_w / 2, 0]
   _break:
     - name: _break_cut
     - operation: subtract
       name: _break_bridges
-      fillet: cut_fillet
 
   # Board 44
   _case_inner_44_1:
@@ -776,7 +801,7 @@ outlines:
     - operation: subtract
       name: _mcu_cover_holes
 
-  preview_44:
+  _preview_44:
     - name: _case_outer_44
     - name: _case_inner_44
       operation: subtract
@@ -784,7 +809,7 @@ outlines:
     - name: mcu_cover
       adjust:
         shift: [0.0001, 0]
-  preview_42:
+  _preview_42:
     - name: _case_outer_42
     - name: _case_inner_42
       operation: subtract
@@ -792,7 +817,7 @@ outlines:
     - name: mcu_cover
       adjust:
         shift: [0.0001, 0]
-  preview_40:
+  _preview_40:
     - name: _case_outer_40
     - name: _case_inner_40
       operation: subtract
@@ -800,7 +825,7 @@ outlines:
     - name: mcu_cover
       adjust:
         shift: [0.0001, 0]
-  preview_38:
+  _preview_38:
     - name: _case_outer_38
     - name: _case_inner_38
       operation: subtract
@@ -808,6 +833,19 @@ outlines:
     - name: mcu_cover
       adjust:
         shift: [0.0001, 0]
+  preview:
+    - name: _preview_44
+      adjust:
+        shift: [-4px, 3py]
+    - name: _preview_42
+      adjust:
+        shift: [4px, 3py]
+    - name: _preview_40
+      adjust:
+        shift: [-4px, -3py]
+    - name: _preview_38
+      adjust:
+        shift: [4px, -3py]
 
 # ------------
 # Cases
@@ -834,10 +872,14 @@ cases:
       name: _choc_posts_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1.3]
-    - what: outline # Encoder pin cutouts
+    - what: outline # Choc switch post cutouts (3.5mm through 1.6mm PCB = 1.9mm)
+      name: _encoder_posts_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # Encoder pin cutouts (3.5mm, but can trim)
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1]
+      shift: [0, 0, -1.4]
     - what: outline # MCU pin cutouts
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
