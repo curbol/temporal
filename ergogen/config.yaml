@@ -13,6 +13,9 @@ meta:
   url: https://github.com/curbol/temporal
 
 units:
+  # Math
+  sqrt_3: 1.73205080757
+
   # Display correct choc sizing
   $default_width: 18
   $default_height: 17
@@ -459,29 +462,26 @@ outlines:
           shift: [27.5 + side_cut_radius * 2, -14.95 - voff]
           rotate: 90
 
-  _mcu_cover_nut_cutout:
+  _m2_nut:
     - what: polygon
+      adjust:
+        shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+      points:
+        - shift: [m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
+        - shift: [-m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
+        - shift: [-m2_nut_width / sqrt_3, 0]
+        - shift: [-m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+        - shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+        - shift: [m2_nut_width / sqrt_3, 0]
+  _mcu_cover_nut_cutout:
+    - name: _m2_nut
       where:
         - ref: finger_inner_bottom
           shift: [mcu_hole1_x, mcu_hole1_y]
-      points:
-        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
-        - shift: [m2_nut_width / 4, m2_nut_width * 0.433] # sin(60°) ≈ 0.866, half = 0.433
-        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
-        - shift: [-m2_nut_width / 2, 0]
-        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
-        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
-    - what: polygon
+    - name: _m2_nut
       where:
         - ref: finger_inner_bottom
           shift: [mcu_hole2_x, mcu_hole2_y]
-      points:
-        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
-        - shift: [m2_nut_width / 4, m2_nut_width * 0.433]
-        - shift: [-m2_nut_width / 4, m2_nut_width * 0.433]
-        - shift: [-m2_nut_width / 2, 0]
-        - shift: [-m2_nut_width / 4, -m2_nut_width * 0.433]
-        - shift: [m2_nut_width / 4, -m2_nut_width * 0.433]
   _m2_insert_outer_post:
     - what: circle
       radius: m2_insert_outer_diameter / 2
