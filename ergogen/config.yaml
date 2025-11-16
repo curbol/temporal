@@ -176,6 +176,33 @@ points:
 # Outlines
 # ------------
 outlines:
+  _extra_pinky:
+    - what: rectangle
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      size: [1px, 3py]
+      adjust:
+        shift: [-pad, 0]
+  _extra_thumb:
+    - what: rectangle # Remove key
+      where:
+        - thumb_far
+      size: [2px, 2py]
+      adjust:
+        shift: [0.5px + 1px, 0]
+    - what: rectangle # Remove fillet by mcu area
+      where:
+        - ref: finger_inner_home
+          shift: [19.4 + 21.7, -15 - voff]
+      size: [21.7, 66.8]
+    - what: rectangle # Remove fillet under thumb_far
+      where:
+        - thumb_far
+      size: [px, py]
+      adjust:
+        shift: [0.5px, -1py]
+
   _mcu_area:
     - what: rectangle
       where:
@@ -250,6 +277,7 @@ outlines:
       expand: 0.3
       adjust:
         shift: [8.3, 3.735]
+      fillet: 0.3
   _diode:
     - what: rectangle
       size: [4.2, 1.2]
@@ -260,6 +288,7 @@ outlines:
       expand: 0.3
       adjust:
         shift: [0, -5]
+      fillet: 0.3
   _choc_posts:
     - what: circle # Center
       radius: 2
@@ -332,14 +361,29 @@ outlines:
       adjust:
         shift: [2.75, -7.5]
 
-  _socket_cutouts:
+  _socket_cutouts_38:
     - name: _socket
       where: true
-      fillet: 0.3
+    - operation: subtract
+      name: _extra_pinky
+      adjust:
+        shift: [3, 0]
+    - operation: subtract
+      name: _extra_thumb
+      adjust:
+        shift: [3, 0]
+  _socket_cutouts_pinky:
+    - name: _socket
+      where:
+        - finger_extra_top
+        - finger_extra_home
+  _socket_cutouts_thumb:
+    - name: _socket
+      where:
+        - thumb_extra
   _diode_cutouts:
     - name: _diode
       where: true
-      fillet: 0.3
   _choc_posts_cutouts:
     - name: _choc_posts
       where: true
@@ -358,6 +402,7 @@ outlines:
       where:
         - ref: thumb_enc
           shift: [0, -6.9]
+      expand: -0.2
   _mcu_pins_cutouts:
     - name: _mcu_pins
       where:
@@ -486,33 +531,6 @@ outlines:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
 
-  _extra_pinky:
-    - what: rectangle
-      where:
-        - finger_extra_top
-        - finger_extra_home
-      size: [1px, 3py]
-      adjust:
-        shift: [-pad, 0]
-  _extra_thumb:
-    - what: rectangle # Remove key
-      where:
-        - thumb_far
-      size: [2px, 2py]
-      adjust:
-        shift: [0.5px + 1px, 0]
-    - what: rectangle # Remove fillet by mcu area
-      where:
-        - ref: finger_inner_home
-          shift: [19.4 + 21.7, -15 - voff]
-      size: [21.7, 66.8]
-    - what: rectangle # Remove fillet under thumb_far
-      where:
-        - thumb_far
-      size: [px, py]
-      adjust:
-        shift: [0.5px, -1py]
-
   _thumb:
     - what: rectangle # Fill gap with finger keys
       where:
@@ -631,7 +649,7 @@ outlines:
       joints: 1
     - operation: subtract
       name: _break_cut_inner
-    - what: rectangle
+    - what: rectangle # Make top of thumb break straight so fillet works
       size: [cut_w, 1py]
       where:
         - thumb_far
@@ -808,7 +826,7 @@ outlines:
     - name: _top_plate_44
     - name: mcu_cover
       adjust:
-        shift: [0.0001, 0]
+        shift: [0.01, 0]
   _preview_42:
     - name: _case_outer_42
     - name: _case_inner_42
@@ -816,7 +834,7 @@ outlines:
     - name: _top_plate_42
     - name: mcu_cover
       adjust:
-        shift: [0.0001, 0]
+        shift: [0.01, 0]
   _preview_40:
     - name: _case_outer_40
     - name: _case_inner_40
@@ -824,7 +842,7 @@ outlines:
     - name: _top_plate_40
     - name: mcu_cover
       adjust:
-        shift: [0.0001, 0]
+        shift: [0.01, 0]
   _preview_38:
     - name: _case_outer_38
     - name: _case_inner_38
@@ -832,7 +850,7 @@ outlines:
     - name: _top_plate_38
     - name: mcu_cover
       adjust:
-        shift: [0.0001, 0]
+        shift: [0.01, 0]
   preview:
     - name: _preview_44
       adjust:
@@ -857,7 +875,7 @@ cases:
       extrude: 1.3
   _bottom_cutouts:
     - what: outline # Socket cutouts (1.85mm). Cut all the way through.
-      name: _socket_cutouts
+      name: _socket_cutouts_38
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline # MCU cover M2 nut cutouts
@@ -892,6 +910,16 @@ cases:
       name: _battery_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
+  _bottom_cutouts_pinky:
+    - what: outline # Socket cutouts
+      name: _socket_cutouts_pinky
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _bottom_cutouts_thumb:
+    - what: outline # Socket cutouts
+      name: _socket_cutouts_thumb
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
   _wall_cutouts:
     - what: outline # Wall usb-c cutout
       name: _usbc_cutout
@@ -921,6 +949,12 @@ cases:
     - what: case
       operation: subtract
       name: _bottom_cutouts
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_pinky
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_thumb
     - what: outline # Walls
       operation: subtract
       name: _case_inner_44
@@ -943,6 +977,9 @@ cases:
     - what: case
       operation: subtract
       name: _bottom_cutouts
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_pinky
     - what: outline # Walls
       operation: subtract
       name: _case_inner_42
@@ -965,6 +1002,9 @@ cases:
     - what: case
       operation: subtract
       name: _bottom_cutouts
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_thumb
     - what: outline # Walls
       operation: subtract
       name: _case_inner_40
