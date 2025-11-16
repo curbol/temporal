@@ -4,13 +4,16 @@
 # Node
 node_modules/
 
+# Ergogen
+ergogen/output/*
+
 # Gerbers (keep only zips)
 gerbers/*
 !gerbers/*.zip
 
 # KiCad
-pcb/**/*-backups/
-pcb/**/fp-info-cache
-pcb/**/*.kicad_prl
-pcb/**/~*.lck
-pcb/**/_autosave-*
+pcbs/**/*-backups/
+pcbs/**/fp-info-cache
+pcbs/**/*.kicad_prl
+pcbs/**/~*.lck
+pcbs/**/_autosave-*
