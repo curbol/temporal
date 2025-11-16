@@ -214,7 +214,7 @@ outlines:
       where:
         ref: finger_inner_home
         shift: [19.8, 6.75 - voff]
-      size: [10.8, 25.3]
+      size: [11, 25.5] # (10.8 x 25.3) + some buffer
 
   _mcu_cover_holes:
     - what: circle
