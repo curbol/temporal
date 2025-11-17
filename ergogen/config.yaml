@@ -1189,10 +1189,9 @@ pcbs:
       neuron:
         what: ceoloide/neuron
         where:
-          - ref: finger_inner_home
-            shift: [19.8, 0]
+          - ref: finger_ring_bottom
+            shift: [8, 4]
         params:
-          side: F
           reversible: true
 
       hole_1:
