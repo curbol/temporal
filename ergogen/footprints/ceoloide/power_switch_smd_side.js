@@ -82,7 +82,7 @@ module.exports = {
     include_traces_vias: false,
     via_size: 0.6,
     via_drill: 0.3,
-    trace_width: 0.25,
+    trace_width: 0.375,
     switch_3dmodel_filename: "",
     switch_3dmodel_xyz_offset: [0, 0, 0],
     switch_3dmodel_xyz_rotation: [0, 0, 0],

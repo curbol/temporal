@@ -62,7 +62,7 @@ module.exports = {
     via_size: 0.6,
     via_drill: 0.3,
     include_traces: true,
-    trace_width: 0.250,
+    trace_width: 0.5,
     include_silkscreen: true,
     include_fabrication: true,
     include_courtyard: true,

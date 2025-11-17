@@ -110,8 +110,8 @@ module.exports = {
     invert_jumpers_position: false,
     only_required_jumpers: false,
     use_rectangular_jumpers: false,
-    via_size: 0.8, // JLCPC min is 0.56 for 1-2 layer boards, KiCad defaults to 0.8
-    via_drill: 0.4, // JLCPC min is 0.3 for 1-2 layer boards, KiCad defaults to 0.4
+    via_size: 0.6, // JLCPC min is 0.56 for 1-2 layer boards, KiCad defaults to 0.8
+    via_drill: 0.3, // JLCPC min is 0.3 for 1-2 layer boards, KiCad defaults to 0.4
 
     show_instructions: true,
     show_silk_labels: true,

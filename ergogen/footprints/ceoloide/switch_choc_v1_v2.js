@@ -188,7 +188,7 @@ module.exports = {
     reversible: false,
     hotswap_pads_same_side: false,
     include_traces_vias: true,
-    trace_width: 0.2,
+    trace_width: 0.25,
     via_size: 0.6,
     via_drill: 0.3,
     via_separation: 1,
