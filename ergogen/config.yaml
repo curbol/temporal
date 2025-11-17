@@ -658,12 +658,12 @@ outlines:
   _break_bridge:
     - what: rectangle
       adjust:
-        shift: [0, 0.5py - 5.75]
-      size: [cut_w * 2, 4]
+        shift: [0, 0.25py - 1]
+      size: [cut_w * 2, 3.7]
     - what: rectangle
       adjust:
-        shift: [0, -0.5py + 5]
-      size: [cut_w * 2, 4]
+        shift: [0, -0.25py]
+      size: [cut_w * 2, 3.7]
   _break_bridges:
     - name: _break_bridge
       where:
