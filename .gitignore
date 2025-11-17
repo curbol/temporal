@@ -5,7 +5,7 @@
 node_modules/
 
 # Ergogen
-ergogen/output/*
+ergogen/output/**/*
 
 # Gerbers (keep only zips)
 gerbers/*
