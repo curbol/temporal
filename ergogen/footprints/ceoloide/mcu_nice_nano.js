@@ -118,6 +118,12 @@ module.exports = {
     show_silk_labels_on_both_sides: false,
     show_via_labels: true,
 
+    label_font_face: "",
+    label_font_size: 1,
+    label_font_thickness: 0.15,
+    via_label_font_size: 0.5,
+    via_label_font_thickness: 0.08,
+
     mcu_3dmodel_filename: "",
     mcu_3dmodel_xyz_offset: [0, 0, 0],
     mcu_3dmodel_xyz_rotation: [0, 0, 0],
@@ -204,6 +210,13 @@ module.exports = {
       }
 
       return label;
+    };
+
+    const get_font_str = (is_via_label) => {
+      const size = is_via_label ? p.via_label_font_size : p.label_font_size;
+      const thickness = is_via_label ? p.via_label_font_thickness : p.label_font_thickness;
+      const face = p.label_font_face != "" ? ` (face "${p.label_font_face}")` : "";
+      return `(font${face} (size ${size} ${size}) (thickness ${thickness}))`;
     };
 
     const gen_traces_row = (row_num) => {
@@ -542,7 +555,7 @@ module.exports = {
                   : 2.04
                 : 4.47
             } ${-12.7 + row_offset_y} ${p.r}) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${get_font_str(false)})
     )
             `;
           }
@@ -560,7 +573,7 @@ module.exports = {
                   : 2.04
                 : 4.47
             } ${-12.7 + row_offset_y} ${p.r}) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${get_font_str(false)})
     )
             `;
           }
@@ -581,7 +594,7 @@ module.exports = {
                   : 2.04
                 : 4.47
             } ${-12.7 + row_offset_y} ${p.r}) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
+      (effects ${get_font_str(false)} (justify mirror))
     )
             `;
           }
@@ -599,7 +612,7 @@ module.exports = {
                   : 2.04
                 : 4.47
             } ${-12.7 + row_offset_y} ${p.r}) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
+      (effects ${get_font_str(false)} (justify mirror))
     )
             `;
           }
@@ -616,24 +629,24 @@ module.exports = {
     (fp_text user "${via_label_left}" (at -3.262 ${-13.5 + row_offset_y} ${
           p.r
         }) (layer "F.Fab")
-      (effects (font (size 0.5 0.5) (thickness 0.08)))
+      (effects ${get_font_str(true)})
     )
     (fp_text user "${via_label_right}" (at 3.262 ${-13.5 + row_offset_y} ${
           p.r
         }) (layer "F.Fab")
-      (effects (font (size 0.5 0.5) (thickness 0.08)))
+      (effects ${get_font_str(true)})
     )
 
     ${"" /* Via Labels - Back */}
     (fp_text user "${via_label_left}" (at -3.262 ${-13.5 + row_offset_y} ${
           180 + p.r
         }) (layer "B.Fab")
-      (effects (font (size 0.5 0.5) (thickness 0.08)) (justify mirror))
+      (effects ${get_font_str(true)} (justify mirror))
     )
     (fp_text user "${via_label_right}" (at 3.262 ${-13.5 + row_offset_y} ${
           180 + p.r
         }) (layer "B.Fab")
-      (effects (font (size 0.5 0.5) (thickness 0.08)) (justify mirror))
+      (effects ${get_font_str(true)} (justify mirror))
     )
           `;
       }
@@ -722,7 +735,7 @@ module.exports = {
       (at 0 -15 ${p.r})
       (layer "${p.side}.SilkS")
       ${p.ref_hide}
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${get_font_str(false)})
     )
     (attr exclude_from_pos_files exclude_from_bom)
 
@@ -743,12 +756,12 @@ module.exports = {
     (fp_text user "R hand back side (M${
       !p.reverse_mount ? "↑" : "↓"
     })" (at 0 -15.245 ${p.r}) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${get_font_str(false)})
     )
     (fp_text user "L hand back side (M${
       !p.reverse_mount ? "↑" : "↓"
     })" (at 0 -15.245 ${p.r}) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
+      (effects ${get_font_str(false)} (justify mirror))
     )
     `;
 
