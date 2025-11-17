@@ -2,13 +2,6 @@
 
 This directory contains the KiCad PCB design files for the Temporal keyboard.
 
-## Files
-
-- `temporal/` - Main KiCad project directory
-  - `temporal.kicad_pcb` - PCB layout
-  - `temporal.kicad_pro` - KiCad project file
-  - `temporal.kicad_prl` - Project local settings
-
 ## Manufacturing Specifications
 
 ### Vias
@@ -27,7 +20,3 @@ This directory contains the KiCad PCB design files for the Temporal keyboard.
 ### Clearance
 
 - **Minimum clearance:** 0.2mm
-
-## Notes
-
-These specifications are suitable for most PCB manufacturers. If you encounter manufacturing issues, consult with your fabrication house as they may have different minimum capabilities.
