@@ -1105,6 +1105,7 @@ pcbs:
           reversible: true
           reverse_mount: true
           show_silk_labels: false
+          label_font_face: "Maple Mono NF SemiBold"
           # Finger rows
           P4: row_top
           P5: row_home
@@ -1177,6 +1178,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.8
+          face: "Maple Mono NF SemiBold"
           reversible: true
       curbol:
         what: ceoloide/utility_text
@@ -1185,12 +1187,13 @@ pcbs:
             shift: [0, -3]
         params:
           text: "by curbol"
+          face: "Maple Mono NF SemiBold"
           reversible: true
       neuron:
         what: ceoloide/neuron
         where:
           - ref: finger_ring_bottom
-            shift: [8, 4]
+            shift: [9.5, -10.5]
         params:
           reversible: true
 
@@ -1294,6 +1297,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.8
+          face: "Maple Mono NF SemiBold"
           reversible: true
 
   back_plate_44:
@@ -1368,6 +1372,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.8
+          face: "Maple Mono NF SemiBold"
           reversible: true
 
   back_plate_42:
@@ -1442,6 +1447,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.8
+          face: "Maple Mono NF SemiBold"
           reversible: true
 
   back_plate_40:
@@ -1516,6 +1522,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.8
+          face: "Maple Mono NF SemiBold"
           reversible: true
 
   back_plate_38:
