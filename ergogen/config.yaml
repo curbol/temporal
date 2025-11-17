@@ -1169,7 +1169,7 @@ pcbs:
             shift: [28.3, -10.2 - voff]
             rotate: -90
 
-      temporal:
+      temporal: &temporal_text
         what: ceoloide/utility_text
         where:
           - ref: finger_inner_top
@@ -1288,17 +1288,7 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      temporal:
-        what: ceoloide/utility_text
-        where:
-          - ref: finger_inner_top
-            shift: [0, 0.58ky]
-        params:
-          text: "TEMPORAL"
-          height: 1.5
-          width: 1.8
-          face: "Maple Mono NF SemiBold"
-          reversible: true
+      temporal: *temporal_text
 
   back_plate_44:
     template: kicad8
@@ -1363,17 +1353,7 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      temporal:
-        what: ceoloide/utility_text
-        where:
-          - ref: finger_inner_top
-            shift: [0, 0.58ky]
-        params:
-          text: "TEMPORAL"
-          height: 1.5
-          width: 1.8
-          face: "Maple Mono NF SemiBold"
-          reversible: true
+      temporal: *temporal_text
 
   back_plate_42:
     template: kicad8
@@ -1438,17 +1418,7 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      temporal:
-        what: ceoloide/utility_text
-        where:
-          - ref: finger_inner_top
-            shift: [0, 0.58ky]
-        params:
-          text: "TEMPORAL"
-          height: 1.5
-          width: 1.8
-          face: "Maple Mono NF SemiBold"
-          reversible: true
+      temporal: *temporal_text
 
   back_plate_40:
     template: kicad8
@@ -1513,17 +1483,7 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
-      temporal:
-        what: ceoloide/utility_text
-        where:
-          - ref: finger_inner_top
-            shift: [0, 0.58ky]
-        params:
-          text: "TEMPORAL"
-          height: 1.5
-          width: 1.8
-          face: "Maple Mono NF SemiBold"
-          reversible: true
+      temporal: *temporal_text
 
   back_plate_38:
     template: kicad8
