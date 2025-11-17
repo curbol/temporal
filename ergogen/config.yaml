@@ -1180,6 +1180,13 @@ pcbs:
           width: 1.8
           face: "Maple Mono NF SemiBold"
           reversible: true
+      neuron: &neuron
+        what: ceoloide/neuron
+        where:
+          - ref: finger_ring_bottom
+            shift: [9.5, -10.5]
+        params:
+          reversible: true
       curbol:
         what: ceoloide/utility_text
         where:
@@ -1189,15 +1196,8 @@ pcbs:
           text: "by curbol"
           face: "Maple Mono NF SemiBold"
           reversible: true
-      neuron:
-        what: ceoloide/neuron
-        where:
-          - ref: finger_ring_bottom
-            shift: [9.5, -10.5]
-        params:
-          reversible: true
 
-      hole_1:
+      hole_1: &hole_1
         what: ceoloide/mounting_hole_npth
         where:
           - ref: finger_middle_top
@@ -1206,7 +1206,7 @@ pcbs:
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
-      hole_2:
+      hole_2: &hole_2
         what: ceoloide/mounting_hole_npth
         where:
           - ref: finger_inner_top
@@ -1214,7 +1214,7 @@ pcbs:
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
-      hole_3:
+      hole_3: &hole_3
         what: ceoloide/mounting_hole_npth
         where:
           - ref: thumb_mid
@@ -1222,7 +1222,7 @@ pcbs:
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
-      hole_4:
+      hole_4: &hole_4
         what: ceoloide/mounting_hole_npth
         where:
           - ref: thumb_enc
@@ -1230,7 +1230,7 @@ pcbs:
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
-      hole_5:
+      hole_5: &hole_5
         what: ceoloide/mounting_hole_npth
         where:
           - ref: finger_ring_home
@@ -1240,7 +1240,7 @@ pcbs:
           hole_drill: standoff_size
 
       # MCU cover holes
-      hole_screen_L:
+      mcu_hole_L: &mcu_hole_L
         what: ceoloide/mounting_hole_npth
         where:
           - ref: finger_inner_bottom
@@ -1248,7 +1248,7 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
-      hole_screen_R:
+      mcu_hole_R: &mcu_hole_R
         what: ceoloide/mounting_hole_npth
         where:
           - ref: finger_inner_bottom
@@ -1263,32 +1263,13 @@ pcbs:
       main:
         outline: _top_plate_44
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
       temporal: *temporal_text
+      neuron: *neuron
 
   back_plate_44:
     template: kicad8
@@ -1296,31 +1277,11 @@ pcbs:
       main:
         outline: _back_plate_44
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
 
   top_plate_42:
     template: kicad8
@@ -1328,32 +1289,13 @@ pcbs:
       main:
         outline: _top_plate_42
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
       temporal: *temporal_text
+      neuron: *neuron
 
   back_plate_42:
     template: kicad8
@@ -1361,31 +1303,11 @@ pcbs:
       main:
         outline: _back_plate_42
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
 
   top_plate_40:
     template: kicad8
@@ -1393,32 +1315,13 @@ pcbs:
       main:
         outline: _top_plate_40
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
       temporal: *temporal_text
+      neuron: *neuron
 
   back_plate_40:
     template: kicad8
@@ -1426,31 +1329,11 @@ pcbs:
       main:
         outline: _back_plate_40
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
 
   top_plate_38:
     template: kicad8
@@ -1458,32 +1341,13 @@ pcbs:
       main:
         outline: _top_plate_38
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
       temporal: *temporal_text
+      neuron: *neuron
 
   back_plate_38:
     template: kicad8
@@ -1491,31 +1355,11 @@ pcbs:
       main:
         outline: _back_plate_38
     footprints:
-      hole_1:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-      hole_2:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
-      hole_3:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
-      hole_4:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
-      hole_5:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
 
   mcu_cover:
     template: kicad8
@@ -1523,19 +1367,5 @@ pcbs:
       main:
         outline: mcu_cover
     footprints:
-      hole_screen_L:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_bottom
-            shift: [mcu_hole1_x, mcu_hole1_y]
-        params:
-          hole_size: screen_standoff_size
-          hole_drill: screen_standoff_size
-      hole_screen_R:
-        what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_bottom
-            shift: [mcu_hole2_x, mcu_hole2_y]
-        params:
-          hole_size: screen_standoff_size
-          hole_drill: screen_standoff_size
+      mcu_hole_L: *mcu_hole_L
+      mcu_hole_R: *mcu_hole_R
