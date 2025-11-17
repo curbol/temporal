@@ -1178,7 +1178,6 @@ pcbs:
           height: 1.5
           width: 1.8
           reversible: true
-
       curbol:
         what: ceoloide/utility_text
         where:
@@ -1186,6 +1185,14 @@ pcbs:
             shift: [0, -3]
         params:
           text: "by curbol"
+          reversible: true
+      neuron:
+        what: ceoloide/neuron
+        where:
+          - ref: finger_inner_home
+            shift: [19.8, 0]
+        params:
+          side: F
           reversible: true
 
       hole_1:
@@ -1566,4 +1573,3 @@ pcbs:
         params:
           hole_size: screen_standoff_size
           hole_drill: screen_standoff_size
-
