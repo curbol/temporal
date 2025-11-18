@@ -1282,6 +1282,13 @@ pcbs:
       hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
+      brain: &brain
+        what: ceoloide/brain
+        where:
+          - ref: finger_middle_bottom
+            shift: [0, 0]
+        params:
+          reversible: true
 
   top_plate_42:
     template: kicad8
@@ -1308,6 +1315,7 @@ pcbs:
       hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
+      brain: *brain
 
   top_plate_40:
     template: kicad8
@@ -1334,6 +1342,7 @@ pcbs:
       hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
+      brain: *brain
 
   top_plate_38:
     template: kicad8
@@ -1360,6 +1369,7 @@ pcbs:
       hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
+      brain: *brain
 
   mcu_cover:
     template: kicad8
