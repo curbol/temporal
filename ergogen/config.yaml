@@ -1187,6 +1187,7 @@ pcbs:
             shift: [9.5, -10.5]
         params:
           reversible: true
+          add_keepout: true
       curbol:
         what: ceoloide/utility_text
         where:
@@ -1289,6 +1290,7 @@ pcbs:
             shift: [0, 0]
         params:
           reversible: true
+          add_keepout: true
 
   top_plate_42:
     template: kicad8
