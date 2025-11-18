@@ -42,7 +42,6 @@ To generate PCBs and cases from the Ergogen design:
 ### Prerequisites
 
 - Node.js and npm
-- Python 3
 - OpenSCAD (for case generation)
 - KiCad 9 (for PCB editing and Gerber export)
 

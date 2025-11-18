@@ -6,6 +6,10 @@
     "gen": "cd ergogen && ergogen . -o output",
     "convert": "mkdir -p cases && cd ergogen/output/cases && for f in *.jscad; do npx @jscad/cli@1 \"$f\" -of stla -o $INIT_CWD/cases/$(basename \"$f\" .jscad).stl; done"
   },
+  "dependencies": {
+    "glob": "^10.3.10",
+    "js-yaml": "^4.1.0"
+  },
   "devDependencies": {
     "ergogen": "^4.1.0",
     "@jscad/cli": "^1.10.0"

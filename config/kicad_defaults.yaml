@@ -1,6 +1,6 @@
 # KiCad Project Defaults Configuration
 # This file contains all default values for KiCad PCB projects
-# Used by scripts/setup_kicad_project.py to generate .kicad_pro files
+# Used by scripts/setup_kicad_project.js to generate .kicad_pro files
 
 # Net Class Defaults
 # See pcbs/README.md for manufacturing specifications

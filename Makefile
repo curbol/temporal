@@ -12,7 +12,6 @@ MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
 # Install all dependencies
 deps:
 	npm install
-	pip3 install -r requirements.txt
 	@if ! command -v openscad >/dev/null 2>&1; then \
 		echo "Installing OpenSCAD..."; \
 		brew install --cask openscad; \
@@ -31,11 +30,11 @@ gen:
 	$(MAKE) clean
 	npm run gen
 	@echo "Post-processing PCB files..."
-	python3 scripts/fix_edge_cuts.py
-	python3 scripts/add_ground_planes.py
+	node scripts/fix_edge_cuts.js
+	node scripts/add_ground_planes.js
 	bash scripts/copy_pcb_if_missing.sh
 	@echo "Setting up KiCad project files with defaults..."
-	python3 scripts/setup_kicad_project.py
+	node scripts/setup_kicad_project.js
 	$(MAKE) convert
 	$(MAKE) mirror
 	$(MAKE) gerbers
