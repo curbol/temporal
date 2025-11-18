@@ -29,6 +29,10 @@ deps:
 gen:
 	$(MAKE) clean
 	npm run gen
+	@echo "Post-processing PCB files..."
+	python3 scripts/fix_edge_cuts.py
+	python3 scripts/add_ground_planes.py
+	bash scripts/copy_pcb_if_missing.sh
 	$(MAKE) convert
 	$(MAKE) mirror
 	$(MAKE) gerbers
