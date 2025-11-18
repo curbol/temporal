@@ -33,6 +33,8 @@ gen:
 	python3 scripts/fix_edge_cuts.py
 	python3 scripts/add_ground_planes.py
 	bash scripts/copy_pcb_if_missing.sh
+	@echo "Setting up KiCad project files with defaults..."
+	python3 scripts/setup_kicad_project.py
 	$(MAKE) convert
 	$(MAKE) mirror
 	$(MAKE) gerbers

@@ -10,6 +10,22 @@ import re
 import sys
 import uuid
 from pathlib import Path
+import yaml
+
+
+def load_defaults_config():
+    """Load defaults from YAML config file."""
+    config_path = Path(__file__).parent.parent / "config" / "kicad_defaults.yaml"
+
+    if not config_path.exists():
+        print(f"Warning: Config file not found at {config_path}")
+        print("Using fallback hardcoded defaults")
+        return None
+
+    with open(config_path, 'r') as f:
+        config = yaml.safe_load(f)
+
+    return config
 
 
 def generate_uuid():
@@ -65,7 +81,7 @@ def calculate_bounding_box(content, margin=2.0):
     return bounding_box
 
 
-def create_zone_definition(net_number, net_name, layer, points, tstamp):
+def create_zone_definition(net_number, net_name, layer, points, tstamp, zone_config=None):
     """
     Create a KiCad zone definition with hatch fill pattern.
 
@@ -75,7 +91,40 @@ def create_zone_definition(net_number, net_name, layer, points, tstamp):
     - layer: Layer name (e.g., "F.Cu" or "B.Cu")
     - points: List of (x, y) coordinate tuples for polygon
     - tstamp: UUID for the zone
+    - zone_config: Dict with zone settings (clearance, thermal_gap, etc.)
     """
+    # Default values (fallback if config not provided)
+    defaults = {
+        'clearance': 0.2,
+        'min_thickness': 0.2,
+        'thermal_gap': 0.254,
+        'thermal_bridge_width': 0.4,
+        'smoothing_radius': 0.5,
+        'hatch_thickness': 0.5,
+        'hatch_gap': 0.5,
+        'hatch_smoothing_level': 0
+    }
+
+    # Use config values if provided, otherwise use defaults
+    if zone_config:
+        clearance = zone_config.get('clearance', defaults['clearance'])
+        min_thickness = zone_config.get('min_thickness', defaults['min_thickness'])
+        thermal_gap = zone_config.get('thermal_gap', defaults['thermal_gap'])
+        thermal_bridge_width = zone_config.get('thermal_bridge_width', defaults['thermal_bridge_width'])
+        radius = zone_config.get('smoothing_radius', defaults['smoothing_radius'])
+        hatch_thickness = zone_config.get('hatch_thickness', defaults['hatch_thickness'])
+        hatch_gap = zone_config.get('hatch_gap', defaults['hatch_gap'])
+        hatch_smoothing_level = zone_config.get('hatch_smoothing_level', defaults['hatch_smoothing_level'])
+    else:
+        clearance = defaults['clearance']
+        min_thickness = defaults['min_thickness']
+        thermal_gap = defaults['thermal_gap']
+        thermal_bridge_width = defaults['thermal_bridge_width']
+        radius = defaults['smoothing_radius']
+        hatch_thickness = defaults['hatch_thickness']
+        hatch_gap = defaults['hatch_gap']
+        hatch_smoothing_level = defaults['hatch_smoothing_level']
+
     # Format polygon points
     pts_str = "\n".join([f"        (xy {x} {y})" for x, y in points])
 
@@ -87,20 +136,20 @@ def create_zone_definition(net_number, net_name, layer, points, tstamp):
     (hatch edge 0.5)
     (priority 0)
     (connect_pads
-      (clearance 0.2)
+      (clearance {clearance})
     )
-    (min_thickness 0.2)
+    (min_thickness {min_thickness})
     (filled_areas_thickness no)
     (fill yes
       (mode hatch)
-      (thermal_gap 0.254)
-      (thermal_bridge_width 0.4)
+      (thermal_gap {thermal_gap})
+      (thermal_bridge_width {thermal_bridge_width})
       (smoothing fillet)
-      (radius 0.5)
-      (hatch_thickness 0.5)
-      (hatch_gap 0.5)
+      (radius {radius})
+      (hatch_thickness {hatch_thickness})
+      (hatch_gap {hatch_gap})
       (hatch_orientation 45)
-      (hatch_smoothing_level 1)
+      (hatch_smoothing_level {hatch_smoothing_level})
       (hatch_smoothing_value 0.1)
       (hatch_border_algorithm hatch_thickness)
       (hatch_min_hole_area 0.3)
@@ -175,7 +224,7 @@ def zones_already_exist(content):
     return bool(zone_pattern.search(content))
 
 
-def process_pcb_file(filepath):
+def process_pcb_file(filepath, zone_config=None):
     """Add GND zones to a KiCad PCB file."""
     print(f"Processing {filepath}...")
 
@@ -210,10 +259,10 @@ def process_pcb_file(filepath):
 
     # Generate zones for F.Cu and B.Cu
     front_zone = create_zone_definition(
-        net_number, net_name, "F.Cu", points, generate_uuid()
+        net_number, net_name, "F.Cu", points, generate_uuid(), zone_config
     )
     back_zone = create_zone_definition(
-        net_number, net_name, "B.Cu", points, generate_uuid()
+        net_number, net_name, "B.Cu", points, generate_uuid(), zone_config
     )
 
     # Find the insertion point (before the closing parenthesis)
@@ -234,13 +283,34 @@ def process_pcb_file(filepath):
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(modified_content)
 
+    # Display zone settings
+    if zone_config:
+        clearance = zone_config.get('clearance', 0.2)
+        thermal_gap = zone_config.get('thermal_gap', 0.254)
+        thermal_bridge = zone_config.get('thermal_bridge_width', 0.4)
+    else:
+        clearance = 0.2
+        thermal_gap = 0.254
+        thermal_bridge = 0.4
+
     print(f"  ✓ Added GND zones to F.Cu and B.Cu")
-    print(f"     Clearance: 0.2mm, Thermal gap: 0.254mm, Bridge: 0.4mm")
+    print(f"     Clearance: {clearance}mm, Thermal gap: {thermal_gap}mm, Bridge: {thermal_bridge}mm")
     return True
 
 
 def main():
     """Process all PCB files in ergogen output directory."""
+    # Load zone configuration from YAML
+    config = load_defaults_config()
+    zone_config = config.get('zones', {}) if config else None
+
+    if zone_config:
+        print(f"Loaded zone settings from config/kicad_defaults.yaml")
+        print(f"  Clearance: {zone_config.get('clearance', 0.2)}mm")
+        print(f"  Thermal gap: {zone_config.get('thermal_gap', 0.254)}mm")
+        print(f"  Thermal bridge: {zone_config.get('thermal_bridge_width', 0.4)}mm")
+        print()
+
     output_dir = Path("ergogen/output/pcbs")
 
     if not output_dir.exists():
@@ -256,7 +326,7 @@ def main():
 
     processed = 0
     for pcb_file in pcb_files:
-        if process_pcb_file(pcb_file):
+        if process_pcb_file(pcb_file, zone_config):
             processed += 1
 
     print(f"\n✓ Added GND zones to {processed}/{len(pcb_files)} PCB files")
