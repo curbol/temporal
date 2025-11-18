@@ -6899,6 +6899,7 @@ module.exports = {
     let keepout_zone = '';
     if (p.add_keepout) {
       const pos = parseAt(p.at);
+      pos.r = p.r;  // Use Ergogen's rotation parameter directly
       const transformed_points = transformPolygon(polygon_points, pos);
 
       keepout_zone = `
