@@ -9,14 +9,59 @@
 //      the side on which to place the footprint, either F or B
 //    reversible: default is false
 //      if true, adds mirrored version on opposite side
+//    add_keepout: default is false
+//      if true, adds keepout zone to prevent copper pour over artwork
 
 module.exports = {
   params: {
     designator: "G",
     side: "F",
     reversible: false,
+    add_keepout: false,
   },
   body: (p) => {
+    // Simple UUID generator for keepout zones
+    const generate_uuid = (seed) => {
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+      }
+      const hex = Math.abs(hash).toString(16).padStart(32, '0');
+      return `${hex.substr(0,8)}-${hex.substr(4,4)}-${hex.substr(8,4)}-${hex.substr(12,4)}-${hex.substr(16,12)}`;
+    };
+
+    // Parse position and rotation from p.at
+    const parseAt = (at_str) => {
+      const match = at_str.match(/\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
+      if (!match) return { x: 0, y: 0, r: 0 };
+      return {
+        x: parseFloat(match[1]),
+        y: parseFloat(match[2]),
+        r: match[3] ? parseFloat(match[3]) : 0
+      };
+    };
+
+    // Transform polygon coordinates from footprint-relative to absolute
+    const transformPolygon = (polygon_str, pos) => {
+      const cos_r = Math.cos(pos.r * Math.PI / 180);
+      const sin_r = Math.sin(pos.r * Math.PI / 180);
+
+      return polygon_str.replace(/\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g, (match, x_str, y_str) => {
+        const x = parseFloat(x_str);
+        const y = parseFloat(y_str);
+
+        // Apply rotation then translation
+        const x_rot = x * cos_r - y * sin_r;
+        const y_rot = x * sin_r + y * cos_r;
+        const x_final = x_rot + pos.x;
+        const y_final = y_rot + pos.y;
+
+        return `(xy ${x_final} ${y_final})`;
+      });
+    };
+
     // Define the polygon points for the brain shape
     const polygon_points = `
       (xy 77.50002225202753 63.03993912823887)
@@ -6848,6 +6893,39 @@ module.exports = {
       (effects (font (size 1.524 1.524) (thickness 0.3048)))
     )`;
 
+    // Generate keepout zone if requested
+    let keepout_zone = '';
+    if (p.add_keepout) {
+      const pos = parseAt(p.at);
+      const transformed_points = transformPolygon(polygon_points, pos);
+
+      keepout_zone = `
+    (zone
+      (net 0)
+      (net_name "")
+      (layers "F.Cu" "B.Cu")
+      (uuid "${generate_uuid(p.ref + '-brain-keepout')}")
+      (hatch edge 0.508)
+      (connect_pads (clearance 0))
+      (min_thickness 0.254)
+      (filled_areas_thickness no)
+      (keepout
+        (tracks not_allowed)
+        (vias not_allowed)
+        (pads not_allowed)
+        (copperpour not_allowed)
+        (footprints allowed)
+      )
+      (placement (enabled no) (sheetname ""))
+      (fill (thermal_gap 0.508) (thermal_bridge_width 0.508))
+      (polygon
+        (pts
+${transformed_points}
+        )
+      )
+    )`;
+    }
+
     // Add polygons based on reversible setting
     if (p.reversible) {
       footprint += front_poly + back_poly;
@@ -6858,6 +6936,6 @@ module.exports = {
     footprint += `
   )`;
 
-    return footprint;
+    return footprint + keepout_zone;
   },
 };
