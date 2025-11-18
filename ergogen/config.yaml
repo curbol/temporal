@@ -38,7 +38,6 @@ units:
 
   # Standoffs
   standoff_size: 5 # Size for standoff holes on pcb
-  screen_standoff_size: 2
 
   # Top left
   hole1_x: -0.5 kx - 1
@@ -73,19 +72,23 @@ units:
 
   # Board
   base_fillet: 2.5
+  pcb_thickness: 1.6
+  top_plate_thickness: 1.3
+  mcu_pin_spacing: 7.62 # Distance between MCU pin rows
 
   # Case
   case_expand: 0.1
   bottom_thickness: 1.85
-  wall_height: 1.6 + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
+  wall_height: pcb_thickness + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
   wall_thickness: 1.21 # Note: Small changes affact the curves on case_outer. Seems finicky.
   side_cut_width: 15
   side_cut_radius: 1.5
 
   # M2 heat-set insert posts
+  m2_size: 2
   m2_insert_inner_diameter: 2.7
   m2_insert_outer_diameter: 4.9
-  m2_insert_post_height: 1.6 + 0.9 # PCB thickness + Choc gap under top-plate
+  m2_insert_post_height: pcb_thickness + 0.9 # PCB thickness + Choc gap under top-plate
   m2_insert_hole_depth: 3.95 # Max = bottom_thickness + m2_insert_post_height
 
   # M2 nut recesses for MCU cover standoffs
@@ -221,39 +224,27 @@ outlines:
 
   _mcu_cover_holes:
     - what: circle
-      radius: screen_standoff_size / 2
+      radius: m2_size / 2
       where:
         - ref: finger_inner_bottom
           shift: [mcu_hole1_x, mcu_hole1_y]
     - what: circle
-      radius: screen_standoff_size / 2
+      radius: m2_size / 2
       where:
         - ref: finger_inner_bottom
           shift: [mcu_hole2_x, mcu_hole2_y]
-  _board_holes:
+  _plate_holes:
     - what: circle
-      radius: 2.2 / 2
-      where:
+      radius: m2_size / 2 + 0.1
+      where: &hole_locations
         - ref: finger_middle_top
           shift: [hole1_x, hole1_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
         - ref: finger_inner_top
           shift: [hole2_x, hole2_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
         - ref: thumb_mid
           shift: [hole3_x, hole3_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
         - ref: thumb_enc
           shift: [hole4_x, hole4_y]
-    - what: circle
-      radius: 2.2 / 2
-      where:
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
 
@@ -323,10 +314,10 @@ outlines:
   _mcu_pins:
     - name: _mcu_pins_trench
       adjust:
-        shift: [-7.62, 0]
+        shift: [-mcu_pin_spacing, 0]
     - name: _mcu_pins_trench
       adjust:
-        shift: [7.62, 0]
+        shift: [mcu_pin_spacing, 0]
   _display_pins:
     - what: circle
       radius: 1.2
@@ -487,49 +478,13 @@ outlines:
       radius: m2_insert_outer_diameter / 2
   _m2_insert_outer_posts:
     - name: _m2_insert_outer_post
-      where:
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
-    - name: _m2_insert_outer_post
-      where:
-        - ref: finger_inner_top
-          shift: [hole2_x, hole2_y]
-    - name: _m2_insert_outer_post
-      where:
-        - ref: thumb_mid
-          shift: [hole3_x, hole3_y]
-    - name: _m2_insert_outer_post
-      where:
-        - ref: thumb_enc
-          shift: [hole4_x, hole4_y]
-    - name: _m2_insert_outer_post
-      where:
-        - ref: finger_ring_home
-          shift: [hole5_x, hole5_y]
+      where: *hole_locations
   _m2_insert_inner_post:
     - what: circle
       radius: m2_insert_inner_diameter / 2
   _m2_insert_inner_posts:
     - name: _m2_insert_inner_post
-      where:
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
-    - name: _m2_insert_inner_post
-      where:
-        - ref: finger_inner_top
-          shift: [hole2_x, hole2_y]
-    - name: _m2_insert_inner_post
-      where:
-        - ref: thumb_mid
-          shift: [hole3_x, hole3_y]
-    - name: _m2_insert_inner_post
-      where:
-        - ref: thumb_enc
-          shift: [hole4_x, hole4_y]
-    - name: _m2_insert_inner_post
-      where:
-        - ref: finger_ring_home
-          shift: [hole5_x, hole5_y]
+      where: *hole_locations
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
@@ -572,7 +527,7 @@ outlines:
       adjust:
         shift: [0px, -0.5py]
 
-  _thumb_smooth: # Smooth curve from thmub to mcu area
+  _thumb_smooth: # Smooth curve from thumb to mcu area
     - name: _mcu_area
     - what: rectangle
       where:
@@ -702,12 +657,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
   _back_plate_44:
     - name: _board_44
       fillet: base_fillet
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
 
   # Board 42
   _case_inner_42_1:
@@ -730,12 +685,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
   _back_plate_42:
     - name: _board_42
       fillet: base_fillet
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
 
   # Board 40
   _case_inner_40_1:
@@ -758,12 +713,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
   _back_plate_40:
     - name: _board_40
       fillet: base_fillet
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
 
   # Board 38
   _case_inner_38_1:
@@ -786,12 +741,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
   _back_plate_38:
     - name: _board_38
       fillet: base_fillet
     - operation: subtract
-      name: _board_holes
+      name: _plate_holes
 
   # Common
   pcb:
@@ -872,7 +827,7 @@ cases:
   mcu_cover:
     - what: outline
       name: mcu_cover
-      extrude: 1.3
+      extrude: top_plate_thickness
   _bottom_cutouts:
     - what: outline # Socket cutouts (1.85mm). Cut all the way through.
       name: _socket_cutouts_38
@@ -968,7 +923,7 @@ cases:
   top_plate_44:
     - what: outline
       name: _top_plate_44
-      extrude: 1.3
+      extrude: top_plate_thickness
   temporal_42:
     - what: outline # Bottom
       name: _case_outer_42
@@ -993,7 +948,7 @@ cases:
   top_plate_42:
     - what: outline
       name: _top_plate_42
-      extrude: 1.3
+      extrude: top_plate_thickness
   temporal_40:
     - what: outline # Bottom
       name: _case_outer_40
@@ -1018,7 +973,7 @@ cases:
   top_plate_40:
     - what: outline
       name: _top_plate_40
-      extrude: 1.3
+      extrude: top_plate_thickness
   temporal_38:
     - what: outline # Bottom
       name: _case_outer_38
@@ -1040,7 +995,7 @@ cases:
   top_plate_38:
     - what: outline
       name: _top_plate_38
-      extrude: 1.3
+      extrude: top_plate_thickness
 
 # ------------
 # PCBs
@@ -1247,16 +1202,16 @@ pcbs:
           - ref: finger_inner_bottom
             shift: [mcu_hole1_x, mcu_hole1_y]
         params:
-          hole_size: screen_standoff_size
-          hole_drill: screen_standoff_size
+          hole_size: m2_size
+          hole_drill: m2_size
       mcu_hole_R: &mcu_hole_R
         what: ceoloide/mounting_hole_npth
         where:
           - ref: finger_inner_bottom
             shift: [mcu_hole2_x, mcu_hole2_y]
         params:
-          hole_size: screen_standoff_size
-          hole_drill: screen_standoff_size
+          hole_size: m2_size
+          hole_drill: m2_size
 
   top_plate_44:
     template: kicad8
