@@ -320,20 +320,54 @@ def get_base_project_structure(project_name):
     }
 
 
+def create_net_class(name, config, is_default=False):
+    """Create a net class structure from config."""
+    return {
+        "bus_width": 12,
+        "clearance": config.get('clearance', 0.2),
+        "diff_pair_gap": config.get('diff_pair_gap', 0.25),
+        "diff_pair_via_gap": config.get('diff_pair_gap', 0.25),
+        "diff_pair_width": config.get('diff_pair_width', 0.2),
+        "line_style": 0,
+        "microvia_diameter": config.get('microvia_diameter', 0.3),
+        "microvia_drill": config.get('microvia_drill', 0.1),
+        "name": name,
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 2147483647 if is_default else 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": config.get('track_width', 0.25),
+        "via_diameter": config.get('via_diameter', 0.6),
+        "via_drill": config.get('via_drill', 0.3),
+        "wire_width": 6
+    }
+
+
 def apply_defaults_to_project(project_data, config):
     """Apply defaults from config to project data."""
 
-    # Apply net class defaults
-    net_class = config.get('net_class', {})
+    # Apply default net class
+    net_class_default = config.get('net_class_default', {})
     default_class = project_data['net_settings']['classes'][0]
-    default_class['track_width'] = net_class.get('track_width', 0.2)
-    default_class['via_diameter'] = net_class.get('via_diameter', 0.6)
-    default_class['via_drill'] = net_class.get('via_drill', 0.3)
-    default_class['clearance'] = net_class.get('clearance', 0.2)
-    default_class['diff_pair_width'] = net_class.get('diff_pair_width', 0.2)
-    default_class['diff_pair_gap'] = net_class.get('diff_pair_gap', 0.25)
-    default_class['microvia_diameter'] = net_class.get('microvia_diameter', 0.3)
-    default_class['microvia_drill'] = net_class.get('microvia_drill', 0.1)
+    default_class['track_width'] = net_class_default.get('track_width', 0.25)
+    default_class['via_diameter'] = net_class_default.get('via_diameter', 0.6)
+    default_class['via_drill'] = net_class_default.get('via_drill', 0.3)
+    default_class['clearance'] = net_class_default.get('clearance', 0.2)
+    default_class['diff_pair_width'] = net_class_default.get('diff_pair_width', 0.2)
+    default_class['diff_pair_gap'] = net_class_default.get('diff_pair_gap', 0.25)
+    default_class['microvia_diameter'] = net_class_default.get('microvia_diameter', 0.3)
+    default_class['microvia_drill'] = net_class_default.get('microvia_drill', 0.1)
+
+    # Add additional net classes (Power, Battery, etc.)
+    additional_classes = config.get('net_classes', [])
+    if additional_classes:
+        # Remove existing custom classes (keep only Default)
+        project_data['net_settings']['classes'] = [default_class]
+
+        # Add new custom classes
+        for net_class_config in additional_classes:
+            name = net_class_config.get('name', 'Unknown')
+            new_class = create_net_class(name, net_class_config, is_default=False)
+            project_data['net_settings']['classes'].append(new_class)
 
     # Apply design rules
     rules = config.get('design_rules', {})

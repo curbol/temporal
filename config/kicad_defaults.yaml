@@ -2,9 +2,11 @@
 # This file contains all default values for KiCad PCB projects
 # Used by scripts/setup_kicad_project.py to generate .kicad_pro files
 
-# Net Class Defaults (applied to "Default" net class)
+# Net Class Defaults
 # See pcbs/README.md for manufacturing specifications
-net_class:
+
+# Default net class (applied to most signals)
+net_class_default:
   track_width: 0.25       # Default trace width for signals in mm (see README)
   via_diameter: 0.6       # Via outer diameter in mm
   via_drill: 0.3          # Via drill/hole diameter in mm
@@ -14,9 +16,27 @@ net_class:
   microvia_diameter: 0.3  # Microvia outer diameter in mm
   microvia_drill: 0.1     # Microvia drill diameter in mm
 
-  # Note: For custom trace widths, create additional net classes in KiCad:
-  # - Power (VCC/GND): 0.375mm
-  # - Battery: 0.5mm
+# Additional net classes for different trace widths
+net_classes:
+  - name: "Power"
+    track_width: 0.375    # Power (VCC/GND) traces in mm (see README)
+    via_diameter: 0.6
+    via_drill: 0.3
+    clearance: 0.2
+    diff_pair_width: 0.2
+    diff_pair_gap: 0.25
+    microvia_diameter: 0.3
+    microvia_drill: 0.1
+
+  - name: "Battery"
+    track_width: 0.5      # Battery traces in mm (see README)
+    via_diameter: 0.6
+    via_drill: 0.3
+    clearance: 0.2
+    diff_pair_width: 0.2
+    diff_pair_gap: 0.25
+    microvia_diameter: 0.3
+    microvia_drill: 0.1
 
 # Design Rules (minimum values enforced by DRC)
 design_rules:
