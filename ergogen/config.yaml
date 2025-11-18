@@ -1285,7 +1285,7 @@ pcbs:
       brain: &brain
         what: ceoloide/brain
         where:
-          - ref: finger_middle_bottom
+          - ref: finger_pinky_top
             shift: [0, 0]
         params:
           reversible: true

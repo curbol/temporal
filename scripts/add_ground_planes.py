@@ -92,6 +92,7 @@ def create_zone_definition(net_number, net_name, layer, points, tstamp):
     (min_thickness 0.2)
     (filled_areas_thickness no)
     (fill yes
+      (mode hatch)
       (thermal_gap 0.254)
       (thermal_bridge_width 0.4)
       (smoothing fillet)
