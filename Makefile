@@ -12,6 +12,7 @@ MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
 # Install all dependencies
 deps:
 	npm install
+	pip3 install -r requirements.txt
 	@if ! command -v openscad >/dev/null 2>&1; then \
 		echo "Installing OpenSCAD..."; \
 		brew install --cask openscad; \

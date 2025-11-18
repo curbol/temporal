@@ -14,7 +14,6 @@ If no path is provided, processes all .kicad_pcb files in pcbs/ directory.
 import json
 import sys
 from pathlib import Path
-import yaml
 
 
 def load_defaults_config():
@@ -23,6 +22,13 @@ def load_defaults_config():
 
     if not config_path.exists():
         print(f"Error: Config file not found at {config_path}")
+        sys.exit(1)
+
+    try:
+        import yaml
+    except ImportError:
+        print(f"Error: PyYAML not installed")
+        print(f"Install with: pip3 install -r requirements.txt")
         sys.exit(1)
 
     with open(config_path, 'r') as f:

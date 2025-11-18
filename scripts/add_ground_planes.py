@@ -10,7 +10,6 @@ import re
 import sys
 import uuid
 from pathlib import Path
-import yaml
 
 
 def load_defaults_config():
@@ -19,6 +18,13 @@ def load_defaults_config():
 
     if not config_path.exists():
         print(f"Warning: Config file not found at {config_path}")
+        print("Using fallback hardcoded defaults")
+        return None
+
+    try:
+        import yaml
+    except ImportError:
+        print(f"Warning: PyYAML not installed. Install with: pip3 install -r requirements.txt")
         print("Using fallback hardcoded defaults")
         return None
 

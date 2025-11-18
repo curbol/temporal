@@ -1,0 +1,4 @@
+# Python dependencies for Temporal keyboard project
+
+# Required for KiCad configuration scripts
+PyYAML>=6.0
