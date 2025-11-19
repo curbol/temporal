@@ -236,17 +236,29 @@ outlines:
   _plate_holes:
     - what: circle
       radius: m2_size / 2 + 0.1
-      where: &plate_holes
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
-        - ref: finger_inner_top
-          shift: [hole2_x, hole2_y]
-        - ref: thumb_mid
-          shift: [hole3_x, hole3_y]
-        - ref: thumb_enc
-          shift: [hole4_x, hole4_y]
-        - ref: finger_ring_home
-          shift: [hole5_x, hole5_y]
+      where:
+        ref: finger_middle_top
+        shift: [hole1_x, hole1_y]
+    - what: circle
+      radius: m2_size / 2 + 0.1
+      where:
+        ref: finger_inner_top
+        shift: [hole2_x, hole2_y]
+    - what: circle
+      radius: m2_size / 2 + 0.1
+      where:
+        ref: thumb_mid
+        shift: [hole3_x, hole3_y]
+    - what: circle
+      radius: m2_size / 2 + 0.1
+      where:
+        ref: thumb_enc
+        shift: [hole4_x, hole4_y]
+    - what: circle
+      radius: m2_size / 2 + 0.1
+      where:
+        ref: finger_ring_home
+        shift: [hole5_x, hole5_y]
 
   _socket:
     - what: rectangle # Center
@@ -478,13 +490,49 @@ outlines:
       radius: m2_insert_outer_diameter / 2
   _m2_insert_outer_posts:
     - name: _m2_insert_outer_post
-      where: *plate_holes
+      where:
+        ref: finger_middle_top
+        shift: [hole1_x, hole1_y]
+    - name: _m2_insert_outer_post
+      where:
+        ref: finger_inner_top
+        shift: [hole2_x, hole2_y]
+    - name: _m2_insert_outer_post
+      where:
+        ref: thumb_mid
+        shift: [hole3_x, hole3_y]
+    - name: _m2_insert_outer_post
+      where:
+        ref: thumb_enc
+        shift: [hole4_x, hole4_y]
+    - name: _m2_insert_outer_post
+      where:
+        ref: finger_ring_home
+        shift: [hole5_x, hole5_y]
   _m2_insert_inner_post:
     - what: circle
       radius: m2_insert_inner_diameter / 2
   _m2_insert_inner_posts:
     - name: _m2_insert_inner_post
-      where: *plate_holes
+      where:
+        ref: finger_middle_top
+        shift: [hole1_x, hole1_y]
+    - name: _m2_insert_inner_post
+      where:
+        ref: finger_inner_top
+        shift: [hole2_x, hole2_y]
+    - name: _m2_insert_inner_post
+      where:
+        ref: thumb_mid
+        shift: [hole3_x, hole3_y]
+    - name: _m2_insert_inner_post
+      where:
+        ref: thumb_enc
+        shift: [hole4_x, hole4_y]
+    - name: _m2_insert_inner_post
+      where:
+        ref: finger_ring_home
+        shift: [hole5_x, hole5_y]
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
