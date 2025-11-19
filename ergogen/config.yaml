@@ -1134,6 +1134,7 @@ pcbs:
           height: 1.5
           width: 1.8
           face: "Maple Mono NF SemiBold"
+          knockout: true
           reversible: true
       neuron: &neuron
         what: ceoloide/neuron
@@ -1151,6 +1152,7 @@ pcbs:
         params:
           text: "by curbol"
           face: "Maple Mono NF SemiBold"
+          knockout: true
           reversible: true
 
       hole_1: &hole_1
