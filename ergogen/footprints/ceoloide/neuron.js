@@ -1266,12 +1266,14 @@ module.exports = {
 
     // Add keepout zone if requested (as part of the footprint)
     if (p.add_keepout) {
-      // Parse footprint position and rotation from p.at
+      // Parse footprint position from p.at
       const pos = parseAt(p.at);
+      // Use Ergogen's rotation parameter directly
+      const rotation = p.r || pos.r;
 
       // Transform polygon to absolute board coordinates
       // Zones use absolute coordinates even when embedded in footprints
-      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, pos.r);
+      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
 
       footprint += `
     (zone
