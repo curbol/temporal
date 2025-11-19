@@ -3,6 +3,7 @@
 A 36-44 key split ergonomic keyboard with wireless support and encoder integration. TEMPORAL is inspired by [TEMPEST](https://github.com/thrly/tempest) by thrly, featuring a revised layout with configurable pinky columns and encoder thumb key options.
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2025)
+![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
 ## Design
 
@@ -60,6 +61,13 @@ PCB defaults (trace widths, via sizes, clearances, net classes) are centralized 
 ## Build Guide
 
 See [docs/build-guide.md](/docs/build-guide.md) for assembly instructions and ordering information.
+
+For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
+
+### Where to Buy Components
+
+- [Typeractive](https://typeractive.xyz/) - nice!nano, nice!view, switches, sockets, encoders, and other components
+- [KEEBD](https://keebd.com/) - Alternative source for keyboard components
 
 ## Influences
 
