@@ -35,6 +35,39 @@ A 36-42 key split ergonomic keyboard based on [TEMPEST](https://github.com/thrly
 
 TEMPORAL is designed to be used with ZMK. [You can find the ZMK-config repository and keymap here.](https://github.com/curbol/temporal-zmk)
 
+## Development
+
+To generate PCBs and cases from the Ergogen design:
+
+### Prerequisites
+
+- Node.js and npm
+- OpenSCAD (for case generation)
+- KiCad 9 (for PCB editing and Gerber export)
+
+### Setup
+
+1. Install dependencies:
+```bash
+make deps
+```
+
+2. Generate PCBs and cases:
+```bash
+make gen
+```
+
+This will:
+- Run Ergogen to generate PCB and case files
+- Post-process PCBs (fix edge cuts, add ground planes)
+- Configure KiCad project files with defaults from `config/kicad_defaults.yaml`
+- Generate STL case files
+- Export Gerbers for manufacturing
+
+### Configuration
+
+PCB defaults (trace widths, via sizes, clearances, net classes) are centralized in `config/kicad_defaults.yaml`. See `pcbs/README.md` for manufacturing specifications.
+
 ## Build Guide
 
 [Details on the build and case can be found here.](/docs/build-guide.md)
