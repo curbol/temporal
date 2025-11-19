@@ -95,7 +95,7 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
     hatch_thickness: 0.5,
     hatch_gap: 0.5,
     hatch_orientation: 45,
-    hatch_smoothing_level: 0
+    hatch_smoothing_level: 1
   };
 
   // Use config values if provided, otherwise use defaults

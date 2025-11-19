@@ -74,7 +74,7 @@ zones:
   hatch_thickness: 0.5      # Hatch pattern line thickness in mm
   hatch_gap: 0.5            # Hatch pattern spacing in mm
   hatch_orientation: 45     # Hatch pattern orientation in degrees
-  hatch_smoothing_level: 0  # Hatch smoothing (0=none, 1=light, 2=heavy)
+  hatch_smoothing_level: 1  # Hatch smoothing (0=none, 1=light, 2=heavy)
 
 # PCB File Settings
 pcb_settings:
