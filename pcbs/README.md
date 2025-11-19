@@ -1,8 +1,21 @@
 # PCBs
 
-This directory contains the KiCad PCB design files for the Temporal keyboard.
+This directory contains the KiCad PCB design files for TEMPORAL.
+
+## Files
+
+- `temporal/temporal.kicad_pcb` - KiCad PCB design file
+- `temporal/temporal.kicad_pro` - KiCad project file
 
 ## Manufacturing Specifications
+
+These specifications are configured in [`config/kicad_defaults.yaml`](/config/kicad_defaults.yaml) and automatically applied during the build process.
+
+### PCB Requirements
+
+- **Material:** FR-4, 1.6mm thickness
+- **Surface finish:** LeadFree HASL recommended
+- **Minimum clearance:** 0.2mm
 
 ### Vias
 
@@ -11,12 +24,14 @@ This directory contains the KiCad PCB design files for the Temporal keyboard.
 
 ### Trace Widths
 
-| Type | Width |
-|------|-------|
-| Signals | 0.25mm |
-| Power (VCC/GND) | 0.375mm |
-| Battery | 0.5mm |
+| Net Class | Width | Purpose |
+|-----------|-------|---------|
+| Signal | 0.25mm | General signal traces |
+| Power | 0.375mm | VCC/GND power distribution |
+| Battery | 0.5mm | Battery power lines |
 
-### Clearance
+## Ordering
 
-- **Minimum clearance:** 0.2mm
+Ready-to-manufacture Gerber files are available at [`gerbers/temporal.zip`](/gerbers/temporal.zip).
+
+Compatible with JLCPCB, PCBWay, and other PCB manufacturers.

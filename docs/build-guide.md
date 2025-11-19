@@ -1,10 +1,13 @@
 # Build Guide
 
-The build for the TEMPEST is simple and broadly follows the same steps outlined in [Typeractive's Corne build](https://docs.typeractive.xyz/build-guides/corne-wireless). Theirs is well-written and documented, so read that for now.
+The TEMPORAL build process is straightforward and follows similar steps to [Typeractive's Corne wireless build guide](https://docs.typeractive.xyz/build-guides/corne-wireless), which provides excellent reference documentation.
 
-Some important notes, however:
+## Key Configuration
 
-Before starting your build, decide if you want the 'extra' outer keys or want the simple 5-column 36-key configuration. If removing the extra keys, simply snap them off the pcb. You may find the break-off points are sharp, so file/sand them down. **WARNING**: the dust from this is toxic, wear a mask and do it outside.
+Before starting your build, decide on your key configuration (36, 38, 40, 42, or 44 keys). The outer pinky columns can be snapped off the PCB if not needed.
+
+> [!WARNING]
+> When removing keys, the break-off points may be sharp - file or sand them smooth. PCB dust is toxic, so wear a mask and work in a well-ventilated area or outside.
 
 > [!IMPORTANT]
 > Microcontroller should be placed **facing DOWN** (i.e. facing the board).
@@ -15,35 +18,34 @@ Before starting your build, decide if you want the 'extra' outer keys or want th
 > [!IMPORTANT]
 > Ensure that you solder the jumper pads for microcontroller, display, and battery plug closed **on the BACK side of the board** (i.e. the same side you're soldering your hotswap switch plugs and diodes).
 
-![TEMPEST keyboard](images/tempest.jpg)
-
 ## Case
 
-Files for a simple 3D-printed case included [here](/case/). Reccomended print in Matte PLA, with 0.12 layer height. Infill is not really relevant as the walls are thin.
+3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for all key configurations (36, 38, 40, 42, 44).
+
+### Printing Recommendations
+
+- Material: Matte PLA
+- Layer height: 0.12mm
+- Infill: Not critical (walls are thin)
 
 > [!TIP]
-> Alternatively, use the back-plate and top-plate exports from ergogen to order FR-4 plates along with your PCB. You can also use the DXF exports to design your own 3D-printed case/plates easily.
-
-## Ergogen
-
-The ergogen YAML and footprints are contained in the [ergogen](/ergogen/) directory. With the ergogen cli tool installed, use `ergogen .` to build. See [here](https://docs.ergogen.xyz/usage) for guidance.
-
-Ergogen was used mainly as a layout tool for the keys and wiring nets. Some of the footprints for things like MCU, switches, plugs, etc. may have been manually tweaked in the KiCad PCB editor, so don't expect the Ergogen render to be completely the same as the final PCB version.
-
-> [!NOTE]
-> Some of the ergogen/ceoloide footprint files used here have been modified slightly from the [originals](https://github.com/ceoloide/ergogen-footprints). Run locally, not on the ergogen web app.
+> Alternatively, use the Gerber files in [`gerbers/`](/gerbers/) to order FR-4 switch plates along with your PCB. Files are provided for top plates, back plates, and MCU covers for all configurations.
 
 ## Ordering the PCB
 
-Use [tempest_v2_gerbers.zip](./tempest-v2-gerbers.zip) for PCB fabrication (i.e. JLPCB, PCBWay).
+Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
 
-### Suggested fabrication options
+### Recommended Fabrication Options
 
-- FR-4 PCB, 1.6 mm
-- LeadFree HASL
+- Material: FR-4, 1.6mm thickness
+- Surface finish: LeadFree HASL
+- See [`pcbs/README.md`](/pcbs/README.md) for detailed manufacturing specifications
 
-Latest [KiCad_PCB file](./tempest-pcb-v-2.kicad_pcb) is included, or files can be generated using Ergogen.
+The KiCad PCB source files are located at [`pcbs/temporal/temporal.kicad_pcb`](/pcbs/temporal/temporal.kicad_pcb).
 
-![TEMPEST PCB Image](images/tempest-pcb.png)
+## Development
 
-> Tempest PCB v2
+For developers wanting to modify the design, see the main [README.md](../README.md#development) for instructions on using Ergogen and the build system.
+
+> [!NOTE]
+> Ergogen is used primarily as a layout tool for key positions and wiring nets. Some footprints (MCU, switches, connectors) may have been manually adjusted in KiCad, so the Ergogen output may differ slightly from the final PCB.
