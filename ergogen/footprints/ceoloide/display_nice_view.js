@@ -178,47 +178,31 @@ module.exports = {
     `;
 
     const front_jumpers = `
-    (pad "14" smd rect (at -5.08 ${14.05 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_top[0].str
-    })
-    (pad "15" smd rect (at -2.54 ${14.05 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_top[1].str
-    })
-    (pad "16" smd rect (at 2.54 ${14.05 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_top[3].str
-    })
-    (pad "17" smd rect (at 5.08 ${14.05 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_top[4].str
-    })
+    (pad "14" smd rect (at -5.08 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[0].str
+      })
+    (pad "15" smd rect (at -2.54 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[1].str
+      })
+    (pad "16" smd rect (at 2.54 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[3].str
+      })
+    (pad "17" smd rect (at 5.08 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[4].str
+      })
 
-    (pad "10" smd rect (at -5.08 ${14.95 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_bottom[0].str
-    })
-    (pad "11" smd rect (at -2.54 ${14.95 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_bottom[1].str
-    })
-    (pad "12" smd rect (at 2.54 ${14.95 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_bottom[3].str
-    })
-    (pad "13" smd rect (at 5.08 ${14.95 + jumpers_offset} ${
-      90 + p.r
-    }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-      jumpers_front_bottom[4].str
-    })
+    (pad "10" smd rect (at -5.08 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[0].str
+      })
+    (pad "11" smd rect (at -2.54 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[1].str
+      })
+    (pad "12" smd rect (at 2.54 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[3].str
+      })
+    (pad "13" smd rect (at 5.08 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[4].str
+      })
     `;
 
     const back_silkscreen = `
@@ -236,131 +220,90 @@ module.exports = {
     `;
 
     const back_jumpers = `
-    (pad "24" smd rect (at 5.08 ${14.05 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_top[0].str
-    })
-    (pad "25" smd rect (at 2.54 ${14.05 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_top[1].str
-    })
-    (pad "26" smd rect (at -2.54 ${14.05 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_top[3].str
-    })
-    (pad "27" smd rect (at -5.08 ${14.05 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_top[4].str
-    })
+    (pad "24" smd rect (at 5.08 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[0].str
+      })
+    (pad "25" smd rect (at 2.54 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[1].str
+      })
+    (pad "26" smd rect (at -2.54 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[3].str
+      })
+    (pad "27" smd rect (at -5.08 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[4].str
+      })
 
-    (pad "20" smd rect (at 5.08 ${14.95 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_bottom[0].str
-    })
-    (pad "21" smd rect (at 2.54 ${14.95 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_bottom[1].str
-    })
-    (pad "22" smd rect (at -2.54 ${14.95 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_bottom[3].str
-    })
-    (pad "23" smd rect (at -5.08 ${14.95 + jumpers_offset} ${
-      270 + p.r
-    }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-      jumpers_back_bottom[4].str
-    })
+    (pad "20" smd rect (at 5.08 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[0].str
+      })
+    (pad "21" smd rect (at 2.54 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[1].str
+      })
+    (pad "22" smd rect (at -2.54 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[3].str
+      })
+    (pad "23" smd rect (at -5.08 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[4].str
+      })
     `;
 
     const silkscreen_labels_front = `
-    (fp_text user "${dst_nets[0].name}" (at -5.08 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "right" : "left"
+    (fp_text user "${dst_nets[0].name}" (at -5.08 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "F.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
-    (fp_text user "${dst_nets[1].name}" (at -2.48 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "right" : "left"
+    (fp_text user "${dst_nets[1].name}" (at -2.48 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "F.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
-    (fp_text user "${dst_nets[2].name}" (at 0.15 ${14.75 + label_vcc_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "right" : "left"
+    (fp_text user "${dst_nets[2].name}" (at 0.15 ${14.75 + label_vcc_offset} ${90 + p.r
+      }) (unlocked yes) (layer "F.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
-    (fp_text user "${dst_nets[3].name}" (at 2.62 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "right" : "left"
+    (fp_text user "${dst_nets[3].name}" (at 2.62 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "F.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
-    (fp_text user "${dst_nets[4].name}" (at 5.12 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "right" : "left"
+    (fp_text user "${dst_nets[4].name}" (at 5.12 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "F.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
     `;
 
     const silkscreen_labels_back = `
-    (fp_text user "${
-      p.reversible ? dst_nets[0].name : dst_nets[4].name
-    }" (at 5.22 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "left" : "right"
+    (fp_text user "${p.reversible ? dst_nets[0].name : dst_nets[4].name
+      }" (at 5.22 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "B.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
-    (fp_text user "${
-      p.reversible ? dst_nets[1].name : dst_nets[3].name
-    }" (at 2.72 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "left" : "right"
+    (fp_text user "${p.reversible ? dst_nets[1].name : dst_nets[3].name
+      }" (at 2.72 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "B.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
-    (fp_text user "${
-      p.reversible ? dst_nets[2].name : dst_nets[2].name
-    }" (at 0.15 ${14.75 + label_vcc_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "left" : "right"
+    (fp_text user "${p.reversible ? dst_nets[2].name : dst_nets[2].name
+      }" (at 0.15 ${14.75 + label_vcc_offset} ${90 + p.r
+      }) (unlocked yes) (layer "B.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
-    (fp_text user "${
-      p.reversible ? dst_nets[3].name : dst_nets[1].name
-    }" (at -2.38 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "left" : "right"
+    (fp_text user "${p.reversible ? dst_nets[3].name : dst_nets[1].name
+      }" (at -2.38 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "B.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
-    (fp_text user "${
-      p.reversible ? dst_nets[4].name : dst_nets[0].name
-    }" (at -4.98 ${14.75 + labels_offset} ${
-      90 + p.r
-    }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${
-        !p.invert_labels_position ? "left" : "right"
+    (fp_text user "${p.reversible ? dst_nets[4].name : dst_nets[0].name
+      }" (at -4.98 ${14.75 + labels_offset} ${90 + p.r
+      }) (unlocked yes) (layer "B.SilkS")
+      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
     `;
@@ -390,31 +333,21 @@ module.exports = {
     `;
 
     const bottom = `
-    (pad "1" thru_hole oval (at -5.08 16.7 ${
-      270 + p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-      socket_nets[0].str
-    })
-    (pad "2" thru_hole oval (at -2.54 16.7 ${
-      270 + p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-      socket_nets[1].str
-    })
-    (pad "3" thru_hole oval (at 0 16.7 ${
-      270 + p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-      socket_nets[2].str
-    })
-    (pad "4" thru_hole oval (at 2.54 16.7 ${
-      270 + p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-      socket_nets[3].str
-    })
-    (pad "5" thru_hole circle (at 5.08 16.7 ${
-      270 + p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-      socket_nets[4].str
-    })
+    (pad "1" thru_hole oval (at -5.08 16.7 ${270 + p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${socket_nets[0].str
+      })
+    (pad "2" thru_hole oval (at -2.54 16.7 ${270 + p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${socket_nets[1].str
+      })
+    (pad "3" thru_hole oval (at 0 16.7 ${270 + p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${socket_nets[2].str
+      })
+    (pad "4" thru_hole oval (at 2.54 16.7 ${270 + p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${socket_nets[3].str
+      })
+    (pad "5" thru_hole circle (at 5.08 16.7 ${270 + p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${socket_nets[4].str
+      })
 
     (fp_line (start 5.4 13.4) (end 5.4 -11.9) (layer Dwgs.User) (stroke (width 0.15) (type solid)))
     (fp_line (start -5.4 13.4) (end -5.4 -11.9) (layer Dwgs.User) (stroke (width 0.15) (type solid)))
@@ -432,78 +365,62 @@ module.exports = {
   (segment (start ${p.eaxy(-5.08, 16.7)}) (end ${p.eaxy(
       -5.08,
       18.45
-    )}) (width ${p.signal_trace_width}) (layer "F.Cu") (net ${
-      socket_nets[0].index
-    }))
+    )}) (width ${p.signal_trace_width}) (layer "F.Cu") (net ${socket_nets[0].index
+      }))
   (segment (start ${p.eaxy(-2.54, 16.7)}) (end ${p.eaxy(
-      -2.54,
-      18.45
-    )}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${
-      socket_nets[1].index
-    }))
-  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 18.45)}) (width ${
-      p.signal_trace_width
-    }) (layer "F.Cu") (net ${socket_nets[3].index}))
-  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 18.45)}) (width ${
-      p.signal_trace_width
-    }) (layer "F.Cu") (net ${socket_nets[4].index}))
+        -2.54,
+        18.45
+      )}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${socket_nets[1].index
+      }))
+  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 18.45)}) (width ${p.signal_trace_width
+      }) (layer "F.Cu") (net ${socket_nets[3].index}))
+  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 18.45)}) (width ${p.signal_trace_width
+      }) (layer "F.Cu") (net ${socket_nets[4].index}))
   (segment (start ${p.eaxy(-5.08, 16.7)}) (end ${p.eaxy(
-      -5.08,
-      18.45
-    )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${
-      socket_nets[0].index
-    }))
+        -5.08,
+        18.45
+      )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${socket_nets[0].index
+      }))
   (segment (start ${p.eaxy(-2.54, 16.7)}) (end ${p.eaxy(
-      -2.54,
-      18.45
-    )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${
-      socket_nets[1].index
-    }))
-  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 18.45)}) (width ${
-      p.gnd_trace_width
-    }) (layer "B.Cu") (net ${socket_nets[3].index}))
-  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 18.45)}) (width ${
-      p.signal_trace_width
-    }) (layer "B.Cu") (net ${socket_nets[4].index}))
+        -2.54,
+        18.45
+      )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${socket_nets[1].index
+      }))
+  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 18.45)}) (width ${p.gnd_trace_width
+      }) (layer "B.Cu") (net ${socket_nets[3].index}))
+  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 18.45)}) (width ${p.signal_trace_width
+      }) (layer "B.Cu") (net ${socket_nets[4].index}))
     `;
 
     const traces_top = `
   (segment (start ${p.eaxy(-5.08, 16.7)}) (end ${p.eaxy(
       -5.08,
       14.95
-    )}) (width ${p.signal_trace_width}) (layer "F.Cu") (net ${
-      socket_nets[0].index
-    }))
+    )}) (width ${p.signal_trace_width}) (layer "F.Cu") (net ${socket_nets[0].index
+      }))
   (segment (start ${p.eaxy(-2.54, 16.7)}) (end ${p.eaxy(
-      -2.54,
-      14.95
-    )}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${
-      socket_nets[1].index
-    }))
-  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 14.95)}) (width ${
-      p.signal_trace_width
-    }) (layer "F.Cu") (net ${socket_nets[3].index}))
-  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 14.95)}) (width ${
-      p.signal_trace_width
-    }) (layer "F.Cu") (net ${socket_nets[4].index}))
+        -2.54,
+        14.95
+      )}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${socket_nets[1].index
+      }))
+  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 14.95)}) (width ${p.signal_trace_width
+      }) (layer "F.Cu") (net ${socket_nets[3].index}))
+  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 14.95)}) (width ${p.signal_trace_width
+      }) (layer "F.Cu") (net ${socket_nets[4].index}))
   (segment (start ${p.eaxy(-5.08, 16.7)}) (end ${p.eaxy(
-      -5.08,
-      14.95
-    )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${
-      socket_nets[0].index
-    }))
+        -5.08,
+        14.95
+      )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${socket_nets[0].index
+      }))
   (segment (start ${p.eaxy(-2.54, 16.7)}) (end ${p.eaxy(
-      -2.54,
-      14.95
-    )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${
-      socket_nets[1].index
-    }))
-  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 14.95)}) (width ${
-      p.gnd_trace_width
-    }) (layer "B.Cu") (net ${socket_nets[3].index}))
-  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 14.95)}) (width ${
-      p.signal_trace_width
-    }) (layer "B.Cu") (net ${socket_nets[4].index}))
+        -2.54,
+        14.95
+      )}) (width ${p.signal_trace_width}) (layer "B.Cu") (net ${socket_nets[1].index
+      }))
+  (segment (start ${p.eaxy(2.54, 16.7)}) (end ${p.eaxy(2.54, 14.95)}) (width ${p.gnd_trace_width
+      }) (layer "B.Cu") (net ${socket_nets[3].index}))
+  (segment (start ${p.eaxy(5.08, 16.7)}) (end ${p.eaxy(5.08, 14.95)}) (width ${p.signal_trace_width
+      }) (layer "B.Cu") (net ${socket_nets[4].index}))
     `;
 
     let final = top;

@@ -29,7 +29,7 @@ module.exports = {
         hash = hash & hash; // Convert to 32-bit integer
       }
       const hex = Math.abs(hash).toString(16).padStart(32, '0');
-      return `${hex.substr(0,8)}-${hex.substr(4,4)}-${hex.substr(8,4)}-${hex.substr(12,4)}-${hex.substr(16,12)}`;
+      return `${hex.substr(0, 8)}-${hex.substr(4, 4)}-${hex.substr(8, 4)}-${hex.substr(12, 4)}-${hex.substr(16, 12)}`;
     };
 
     // Parse position and rotation from p.at string

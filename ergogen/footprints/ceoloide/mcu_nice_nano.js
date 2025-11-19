@@ -222,13 +222,13 @@ module.exports = {
     const gen_traces_row = (row_num) => {
       const traces = `
   (segment (start ${p.eaxy(
-    p.use_rectangular_jumpers ? 4.58 : 4.775,
-    -12.7 + row_num * 2.54
-  )}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+        p.use_rectangular_jumpers ? 4.58 : 4.775,
+        -12.7 + row_num * 2.54
+      )}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
   (segment (start ${p.eaxy(
-    p.use_rectangular_jumpers ? -4.58 : -4.775,
-    -12.7 + row_num * 2.54
-  )}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+        p.use_rectangular_jumpers ? -4.58 : -4.775,
+        -12.7 + row_num * 2.54
+      )}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
 
   (segment (start ${p.eaxy(-7.62, -12.7 + row_num * 2.54)}) (end ${p.eaxy(
         -5.5,
@@ -248,9 +248,9 @@ module.exports = {
       )}) (width 0.25) (layer "B.Cu"))
 
   (segment (start ${p.eaxy(
-    -2.604695,
-    0.23 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        -2.604695,
+        0.23 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         3.17,
         0.23 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
@@ -259,23 +259,23 @@ module.exports = {
         0 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
-    -3.700305,
-    0.725 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        -3.700305,
+        0.725 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         -3.099695,
         0.725 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
-    -4.425305,
-    0 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        -4.425305,
+        0 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         -3.700305,
         0.725 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
-    -3.099695,
-    0.725 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        -3.099695,
+        0.725 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         -2.604695,
         0.23 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
@@ -285,9 +285,9 @@ module.exports = {
         0 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
-    2.594695,
-    -0.22 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        2.594695,
+        -0.22 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         -3.18,
         -0.22 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
@@ -296,16 +296,16 @@ module.exports = {
         -0.725 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
-    3.700305,
-    -0.725 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        3.700305,
+        -0.725 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         3.099695,
         -0.725 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
-    3.099695,
-    -0.725 + row_num * 2.54 - 12.7
-  )}) (end ${p.eaxy(
+        3.099695,
+        -0.725 + row_num * 2.54 - 12.7
+      )}) (end ${p.eaxy(
         2.594695,
         -0.22 + row_num * 2.54 - 12.7
       )}) (width 0.25) (layer "B.Cu"))
@@ -360,84 +360,62 @@ module.exports = {
 
       let socket_row_base = `
     ${"" /* Socket Holes */}
-    (pad "${socket_hole_num_left}" thru_hole circle (at -7.62 ${
-        -12.7 + row_offset_y
-      } ${p.r}) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-        p.reversible && (row_num < 4 || !p.only_required_jumpers)
+    (pad "${socket_hole_num_left}" thru_hole circle (at -7.62 ${-12.7 + row_offset_y
+        } ${p.r}) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.reversible && (row_num < 4 || !p.only_required_jumpers)
           ? p.local_net(socket_hole_num_left).str
           : net_left
-      })
-    (pad "${socket_hole_num_right}" thru_hole circle (at 7.62 ${
-        -12.7 + row_offset_y
-      } ${p.r}) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${
-        p.reversible && (row_num < 4 || !p.only_required_jumpers)
+        })
+    (pad "${socket_hole_num_right}" thru_hole circle (at 7.62 ${-12.7 + row_offset_y
+        } ${p.r}) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.reversible && (row_num < 4 || !p.only_required_jumpers)
           ? p.local_net(socket_hole_num_right).str
           : net_right
-      })
+        })
       `;
       let socket_row_vias = `
     ${"" /* Inside VIAS */}
-    (pad "${via_num_left}" thru_hole circle (at -3.4 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size ${p.via_size} ${p.via_size}) (drill ${
-        p.via_drill
-      }) (layers "*.Cu" "*.Mask") ${net_left})
-    (pad "${via_num_right}" thru_hole circle (at 3.4 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size ${p.via_size} ${p.via_size}) (drill ${
-        p.via_drill
-      }) (layers "*.Cu" "*.Mask") ${net_right})
+    (pad "${via_num_left}" thru_hole circle (at -3.4 ${-12.7 + row_offset_y} ${p.r
+        }) (size ${p.via_size} ${p.via_size}) (drill ${p.via_drill
+        }) (layers "*.Cu" "*.Mask") ${net_left})
+    (pad "${via_num_right}" thru_hole circle (at 3.4 ${-12.7 + row_offset_y} ${p.r
+        }) (size ${p.via_size} ${p.via_size}) (drill ${p.via_drill
+        }) (layers "*.Cu" "*.Mask") ${net_right})
       `;
 
       let socket_row_rectangular_jumpers = `
     ${"" /* Jumper Pads - Front Left */}
-    (pad "${socket_hole_num_left}" smd rect (at -5.48 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-        p.local_net(socket_hole_num_left).str
-      })
-    (pad "${via_num_left}" smd rect (at -4.58 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_left})
+    (pad "${socket_hole_num_left}" smd rect (at -5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${p.local_net(socket_hole_num_left).str
+        })
+    (pad "${via_num_left}" smd rect (at -4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_left})
 
     ${"" /* Jumper Pads - Front Right */}
-    (pad "${via_num_right}" smd rect (at 4.58 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_right})
-    (pad "${socket_hole_num_right}" smd rect (at 5.48 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-        p.local_net(socket_hole_num_right).str
-      })
+    (pad "${via_num_right}" smd rect (at 4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_right})
+    (pad "${socket_hole_num_right}" smd rect (at 5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "F.Cu" "F.Paste" "F.Mask") ${p.local_net(socket_hole_num_right).str
+        })
 
     ${"" /* Jumper Pads - Back Left */}
-    (pad "${socket_hole_num_left}" smd rect (at -5.48 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-        p.local_net(socket_hole_num_left).str
-      })
-    (pad "${via_num_right}" smd rect (at -4.58 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_right})
+    (pad "${socket_hole_num_left}" smd rect (at -5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${p.local_net(socket_hole_num_left).str
+        })
+    (pad "${via_num_right}" smd rect (at -4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_right})
 
     ${"" /* Jumper Pads - Back Right */}
-    (pad "${via_num_left}" smd rect (at 4.58 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_left})
-    (pad "${socket_hole_num_right}" smd rect (at 5.48 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-        p.local_net(socket_hole_num_right).str
-      })
+    (pad "${via_num_left}" smd rect (at 4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_left})
+    (pad "${socket_hole_num_right}" smd rect (at 5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${p.local_net(socket_hole_num_right).str
+        })
         `;
 
       let socket_row_chevron_jumpers = `
     ${"" /* Jumper Pads - Front Left */}
-    (pad "${socket_hole_num_left}" smd custom (at -5.5 ${
-        -12.7 + row_offset_y
-      } ${p.r}) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-        p.local_net(socket_hole_num_left).str
-      }
+    (pad "${socket_hole_num_left}" smd custom (at -5.5 ${-12.7 + row_offset_y
+        } ${p.r}) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${p.local_net(socket_hole_num_left).str
+        }
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -445,9 +423,8 @@ module.exports = {
           (xy -0.5 -0.625) (xy -0.25 -0.625) (xy 0.25 0) (xy -0.25 0.625) (xy -0.5 0.625)
       ) (width 0) (fill yes))
     ))
-    (pad "${via_num_left}" smd custom (at -4.775 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_left}
+    (pad "${via_num_left}" smd custom (at -4.775 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_left}
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -457,9 +434,8 @@ module.exports = {
     ))
 
     ${"" /* Jumper Pads - Front Right */}
-    (pad "${via_num_right}" smd custom (at 4.775 ${-12.7 + row_offset_y} ${
-        180 + p.r
-      }) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_right}
+    (pad "${via_num_right}" smd custom (at 4.775 ${-12.7 + row_offset_y} ${180 + p.r
+        }) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${net_right}
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -467,11 +443,9 @@ module.exports = {
           (xy -0.65 -0.625) (xy 0.5 -0.625) (xy 0.5 0.625) (xy -0.65 0.625) (xy -0.15 0)
       ) (width 0) (fill yes))
     ))
-    (pad "${socket_hole_num_right}" smd custom (at 5.5 ${
-        -12.7 + row_offset_y
-      } ${180 + p.r}) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${
-        p.local_net(socket_hole_num_right).str
-      }
+    (pad "${socket_hole_num_right}" smd custom (at 5.5 ${-12.7 + row_offset_y
+        } ${180 + p.r}) (size 0.2 0.2) (layers "F.Cu" "F.Paste" "F.Mask") ${p.local_net(socket_hole_num_right).str
+        }
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -481,11 +455,9 @@ module.exports = {
     ))
 
     ${"" /* Jumper Pads - Back Left */}
-    (pad "${socket_hole_num_left}" smd custom (at -5.5 ${
-        -12.7 + row_offset_y
-      } ${p.r}) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-        p.local_net(socket_hole_num_left).str
-      }
+    (pad "${socket_hole_num_left}" smd custom (at -5.5 ${-12.7 + row_offset_y
+        } ${p.r}) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${p.local_net(socket_hole_num_left).str
+        }
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -494,9 +466,8 @@ module.exports = {
       ) (width 0) (fill yes))
     ))
 
-    (pad "${via_num_right}" smd custom (at -4.775 ${-12.7 + row_offset_y} ${
-        p.r
-      }) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_right}
+    (pad "${via_num_right}" smd custom (at -4.775 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_right}
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -506,9 +477,8 @@ module.exports = {
     ))
 
     ${"" /* Jumper Pads - Back Right */}
-    (pad "${via_num_left}" smd custom (at 4.775 ${-12.7 + row_offset_y} ${
-        180 + p.r
-      }) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_left}
+    (pad "${via_num_left}" smd custom (at 4.775 ${-12.7 + row_offset_y} ${180 + p.r
+        }) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${net_left}
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -516,11 +486,9 @@ module.exports = {
           (xy -0.65 0.625) (xy 0.5 0.625) (xy 0.5 -0.625) (xy -0.65 -0.625) (xy -0.15 0)
       ) (width 0) (fill yes))
     ))
-    (pad "${socket_hole_num_right}" smd custom (at 5.5 ${
-        -12.7 + row_offset_y
-      } ${180 + p.r}) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${
-        p.local_net(socket_hole_num_right).str
-      }
+    (pad "${socket_hole_num_right}" smd custom (at 5.5 ${-12.7 + row_offset_y
+        } ${180 + p.r}) (size 0.2 0.2) (layers "B.Cu" "B.Paste" "B.Mask") ${p.local_net(socket_hole_num_right).str
+        }
       (zone_connect 2)
       (options (clearance outline) (anchor rect))
       (primitives
@@ -548,13 +516,12 @@ module.exports = {
             (p.include_extra_pins && !p.only_required_jumpers && p.reversible)
           ) {
             socket_row += `
-    (fp_text user "${net_silk_front_left}" (at -${
-              p.reversible && (row_num < 4 || !p.only_required_jumpers)
+    (fp_text user "${net_silk_front_left}" (at -${p.reversible && (row_num < 4 || !p.only_required_jumpers)
                 ? net_silk_front_left.length > 2
                   ? 1.45
                   : 2.04
                 : 4.47
-            } ${-12.7 + row_offset_y} ${p.r}) (layer "F.SilkS")
+              } ${-12.7 + row_offset_y} ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
             `;
@@ -566,13 +533,12 @@ module.exports = {
             (p.include_extra_pins && !p.only_required_jumpers && p.reversible)
           ) {
             socket_row += `
-    (fp_text user "${net_silk_front_right}" (at ${
-              p.reversible && (row_num < 4 || !p.only_required_jumpers)
+    (fp_text user "${net_silk_front_right}" (at ${p.reversible && (row_num < 4 || !p.only_required_jumpers)
                 ? net_silk_front_right.length > 2
                   ? 1.45
                   : 2.04
                 : 4.47
-            } ${-12.7 + row_offset_y} ${p.r}) (layer "F.SilkS")
+              } ${-12.7 + row_offset_y} ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
             `;
@@ -587,13 +553,12 @@ module.exports = {
             (p.include_extra_pins && !p.only_required_jumpers && p.reversible)
           ) {
             socket_row += `
-    (fp_text user "${net_silk_back_left}" (at ${p.reversible ? "-" : ""}${
-              p.reversible && (row_num < 4 || !p.only_required_jumpers)
+    (fp_text user "${net_silk_back_left}" (at ${p.reversible ? "-" : ""}${p.reversible && (row_num < 4 || !p.only_required_jumpers)
                 ? net_silk_back_left.length > 2
                   ? 1.45
                   : 2.04
                 : 4.47
-            } ${-12.7 + row_offset_y} ${p.r}) (layer "B.SilkS")
+              } ${-12.7 + row_offset_y} ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
             `;
@@ -605,13 +570,12 @@ module.exports = {
             (p.include_extra_pins && !p.only_required_jumpers && p.reversible)
           ) {
             socket_row += `
-    (fp_text user "${net_silk_back_right}" (at ${p.reversible ? "" : "-"}${
-              p.reversible && (row_num < 4 || !p.only_required_jumpers)
+    (fp_text user "${net_silk_back_right}" (at ${p.reversible ? "" : "-"}${p.reversible && (row_num < 4 || !p.only_required_jumpers)
                 ? net_silk_back_right.length > 2
                   ? 1.45
                   : 2.04
                 : 4.47
-            } ${-12.7 + row_offset_y} ${p.r}) (layer "B.SilkS")
+              } ${-12.7 + row_offset_y} ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
             `;
@@ -626,26 +590,22 @@ module.exports = {
       ) {
         socket_row += `
     ${"" /* Via Labels - Front */}
-    (fp_text user "${via_label_left}" (at -3.262 ${-13.5 + row_offset_y} ${
-          p.r
-        }) (layer "F.Fab")
+    (fp_text user "${via_label_left}" (at -3.262 ${-13.5 + row_offset_y} ${p.r
+          }) (layer "F.Fab")
       (effects ${get_font_str(true)})
     )
-    (fp_text user "${via_label_right}" (at 3.262 ${-13.5 + row_offset_y} ${
-          p.r
-        }) (layer "F.Fab")
+    (fp_text user "${via_label_right}" (at 3.262 ${-13.5 + row_offset_y} ${p.r
+          }) (layer "F.Fab")
       (effects ${get_font_str(true)})
     )
 
     ${"" /* Via Labels - Back */}
-    (fp_text user "${via_label_left}" (at -3.262 ${-13.5 + row_offset_y} ${
-          180 + p.r
-        }) (layer "B.Fab")
+    (fp_text user "${via_label_left}" (at -3.262 ${-13.5 + row_offset_y} ${180 + p.r
+          }) (layer "B.Fab")
       (effects ${get_font_str(true)} (justify mirror))
     )
-    (fp_text user "${via_label_right}" (at 3.262 ${-13.5 + row_offset_y} ${
-          180 + p.r
-        }) (layer "B.Fab")
+    (fp_text user "${via_label_right}" (at 3.262 ${-13.5 + row_offset_y} ${180 + p.r
+          }) (layer "B.Fab")
       (effects ${get_font_str(true)} (justify mirror))
     )
           `;
@@ -701,9 +661,8 @@ module.exports = {
     (fp_line (start -8.95 -14.03) (end -6.29 -14.03) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
     (fp_line (start -8.95 -14.03) (end -8.95 16.57) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
     (fp_line (start -8.95 16.57) (end -6.29 16.57) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
-    (fp_line (start ${invert_pins ? "" : "-"}6.29 -11.43) (end ${
-            invert_pins ? "" : "-"
-          }8.95 -11.43) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
+    (fp_line (start ${invert_pins ? "" : "-"}6.29 -11.43) (end ${invert_pins ? "" : "-"
+            }8.95 -11.43) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
             `;
         }
         if (p.reversible || p.show_silk_labels_on_both_sides || p.side == "B") {
@@ -716,11 +675,9 @@ module.exports = {
     (fp_line (start 8.95 -14.03) (end 8.95 16.57) (layer "B.SilkS") (stroke (width 0.12) (type solid)))
     (fp_line (start 8.95 16.57) (end 6.29 16.57) (layer "B.SilkS") (stroke (width 0.12) (type solid)))
     (fp_line (start 6.29 -14.03) (end 6.29 16.57) (layer "B.SilkS") (stroke (width 0.12) (type solid)))
-    (fp_line (start ${
-      invert_pins ? (p.reversible ? "-" : "") : p.reversible ? "" : "-"
-    }8.95 -11.43) (end ${
-            invert_pins ? (p.reversible ? "-" : "") : p.reversible ? "" : "-"
-          }6.29 -11.43) (layer "B.SilkS") (stroke (width 0.12) (type solid)))
+    (fp_line (start ${invert_pins ? (p.reversible ? "-" : "") : p.reversible ? "" : "-"
+            }8.95 -11.43) (end ${invert_pins ? (p.reversible ? "-" : "") : p.reversible ? "" : "-"
+            }6.29 -11.43) (layer "B.SilkS") (stroke (width 0.12) (type solid)))
           `;
         }
       }
@@ -753,14 +710,12 @@ module.exports = {
     `;
 
     const instructions = `
-    (fp_text user "R hand back side (M${
-      !p.reverse_mount ? "↑" : "↓"
-    })" (at 0 -15.245 ${p.r}) (layer "F.SilkS")
+    (fp_text user "R hand back side (M${!p.reverse_mount ? "↑" : "↓"
+      })" (at 0 -15.245 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "L hand back side (M${
-      !p.reverse_mount ? "↑" : "↓"
-    })" (at 0 -15.245 ${p.r}) (layer "B.SilkS")
+    (fp_text user "L hand back side (M${!p.reverse_mount ? "↑" : "↓"
+      })" (at 0 -15.245 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
     `;
@@ -769,23 +724,18 @@ module.exports = {
     const traces = gen_traces();
 
     const extra_pins = `
-    (pad "25" thru_hole circle (at ${invert_pins ? "" : "-"}5.08 10.16 ${
-      p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P101})
-    (pad "26" thru_hole circle (at ${invert_pins ? "" : "-"}2.54 10.16 ${
-      p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P102})
-    (pad "27" thru_hole circle (at 0 10.16 ${
-      p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P107})
+    (pad "25" thru_hole circle (at ${invert_pins ? "" : "-"}5.08 10.16 ${p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P101})
+    (pad "26" thru_hole circle (at ${invert_pins ? "" : "-"}2.54 10.16 ${p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P102})
+    (pad "27" thru_hole circle (at 0 10.16 ${p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P107})
     `;
     const extra_pins_reversible = `
-    (pad "28" thru_hole circle (at ${invert_pins ? "-" : ""}5.08 10.16 ${
-      p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P101})
-    (pad "29" thru_hole circle (at ${invert_pins ? "-" : ""}2.54 10.16 ${
-      p.r
-    }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P102})
+    (pad "28" thru_hole circle (at ${invert_pins ? "-" : ""}5.08 10.16 ${p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P101})
+    (pad "29" thru_hole circle (at ${invert_pins ? "-" : ""}2.54 10.16 ${p.r
+      }) (size 1.7 1.7) (drill 0.85) (layers "*.Cu" "*.Mask") ${p.P102})
     `;
 
     const mcu_3dmodel = `
@@ -800,17 +750,15 @@ module.exports = {
     ${"" /* Controller*/}
     ${common_top}
     ${socket_rows}
-    ${
-      p.include_extra_pins &&
-      (!p.reversible || (p.reversible && p.only_required_jumpers))
+    ${p.include_extra_pins &&
+        (!p.reversible || (p.reversible && p.only_required_jumpers))
         ? extra_pins
         : ""
-    }
-    ${
-      p.include_extra_pins && p.reversible && p.only_required_jumpers
+      }
+    ${p.include_extra_pins && p.reversible && p.only_required_jumpers
         ? extra_pins_reversible
         : ""
-    }
+      }
     ${p.reversible && p.show_instructions ? instructions : ""}
     ${p.mcu_3dmodel_filename ? mcu_3dmodel : ""}
   )

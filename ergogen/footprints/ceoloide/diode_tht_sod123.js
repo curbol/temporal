@@ -144,7 +144,7 @@ module.exports = {
       (pad "1" smd rect (at -1.65 0 ${p.r}) (size 0.9 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${p.to.str})
       (pad "2" smd rect (at 1.65 0 ${p.r}) (size 0.9 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${p.from.str})
         `
-      
+
     const reversible_tht_pads = `
       (pad "1" thru_hole rect (at -1.65 0 ${p.r}) (size 0.9 1.2) (drill 0.3) (layers "*.Cu" "*.Paste" "*.Mask") ${p.to.str})
       (pad "2" thru_hole rect (at 1.65 0 ${p.r}) (size 0.9 1.2) (drill 0.3) (layers "*.Cu" "*.Paste" "*.Mask") ${p.from.str})
@@ -198,20 +198,20 @@ module.exports = {
     const smd_pad_traces = `
     (segment
       (start ${p.eaxy(1.65, 0)})
-      (end ${p.eaxy(1.65 + 1*p.trace_distance, 0)})
+      (end ${p.eaxy(1.65 + 1 * p.trace_distance, 0)})
       (width ${p.trace_width})
       (layer "F.Cu")
       (net ${p.from.index})
     )
     (via
-      (at ${p.eaxy(1.65 + 1*p.trace_distance, 0)})
+      (at ${p.eaxy(1.65 + 1 * p.trace_distance, 0)})
       (size ${p.via_size})
       (drill ${p.via_drill})
       (layers "F.Cu" "B.Cu")
       (net ${p.from.index})
     )
     (segment
-      (start ${p.eaxy(1.65 + 1*p.trace_distance, 0)})
+      (start ${p.eaxy(1.65 + 1 * p.trace_distance, 0)})
       (end ${p.eaxy(1.65, 0)})
       (width ${p.trace_width})
       (layer "B.Cu")
@@ -219,20 +219,20 @@ module.exports = {
     )
     (segment
       (start ${p.eaxy(-1.65, 0)})
-      (end ${p.eaxy(-1.65 - 1*p.trace_distance, 0)})
+      (end ${p.eaxy(-1.65 - 1 * p.trace_distance, 0)})
       (width ${p.trace_width})
       (layer "F.Cu")
       (net ${p.to.index})
     )
     (via
-      (at ${p.eaxy(-1.65 - 1*p.trace_distance, 0)})
+      (at ${p.eaxy(-1.65 - 1 * p.trace_distance, 0)})
       (size ${p.via_size})
       (drill ${p.via_drill})
       (layers "F.Cu" "B.Cu")
       (net ${p.to.index})
     )
     (segment
-      (start ${p.eaxy(-1.65 - 1*p.trace_distance, 0)})
+      (start ${p.eaxy(-1.65 - 1 * p.trace_distance, 0)})
       (end ${p.eaxy(-1.65, 0)})
       (width ${p.trace_width})
       (layer "B.Cu")
@@ -244,13 +244,13 @@ module.exports = {
 
     if (p.side == "F" || p.reversible) {
       final += front_silk;
-      if(!p.include_thru_hole_smd_pads) {
+      if (!p.include_thru_hole_smd_pads) {
         final += front_smd_pads;
       }
     }
     if (p.side == "B" || p.reversible) {
       final += back_silk;
-      if(!p.include_thru_hole_smd_pads) {
+      if (!p.include_thru_hole_smd_pads) {
         final += back_smd_pads;
       }
     }
@@ -269,7 +269,7 @@ module.exports = {
     final += standard_closing;
 
     if (p.reversible && p.include_traces_vias) {
-      if(p.include_tht) {
+      if (p.include_tht) {
         final += tht_traces;
       } else if (!p.include_tht && !p.include_thru_hole_smd_pads) {
         final += smd_pad_traces;
