@@ -32,36 +32,6 @@ module.exports = {
       return `${hex.substr(0,8)}-${hex.substr(8,4)}-${hex.substr(12,4)}-${hex.substr(16,4)}-${hex.substr(20,12)}`;
     };
 
-    // Parse position and rotation from p.at
-    const parseAt = (at_str) => {
-      const match = at_str.match(/\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
-      if (!match) return { x: 0, y: 0, r: 0 };
-      return {
-        x: parseFloat(match[1]),
-        y: parseFloat(match[2]),
-        r: match[3] ? parseFloat(match[3]) : 0
-      };
-    };
-
-    // Transform polygon coordinates from footprint-relative to absolute
-    const transformPolygon = (polygon_str, pos) => {
-      const cos_r = Math.cos(pos.r * Math.PI / 180);
-      const sin_r = Math.sin(pos.r * Math.PI / 180);
-
-      return polygon_str.replace(/\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g, (match, x_str, y_str) => {
-        const x = parseFloat(x_str);
-        const y = parseFloat(y_str);
-
-        // Apply rotation then translation
-        const x_rot = x * cos_r - y * sin_r;
-        const y_rot = x * sin_r + y * cos_r;
-        const x_final = x_rot + pos.x;
-        const y_final = y_rot + pos.y;
-
-        return `(xy ${x_final} ${y_final})`;
-      });
-    };
-
     // Define the polygon points for the neuron shape
     const polygon_points = `
       (xy -14.004100849374993 10.652003688541667)
@@ -1263,38 +1233,35 @@ module.exports = {
       footprint += front_poly;
     }
 
+    // Add keepout zone if requested (as part of the footprint)
+    if (p.add_keepout) {
+      // Use footprint-relative coordinates (no transformation needed)
+      // The zone will rotate with the footprint automatically
+      footprint += `
+    (zone
+      (net 0)
+      (net_name "")
+      (layers "F.Cu" "B.Cu")
+      (uuid "${generate_uuid(p.ref + '-neuron-keepout')}")
+      (hatch edge 0.508)
+      (keepout
+        (tracks not_allowed)
+        (vias not_allowed)
+        (pads not_allowed)
+        (copperpour not_allowed)
+        (footprints allowed)
+      )
+      (polygon
+        (pts
+${polygon_points}
+        )
+      )
+    )`;
+    }
+
     footprint += `
   )`;
 
-    // Add keepout zone if requested
-    let keepout_zone = '';
-    if (p.add_keepout) {
-      const pos = parseAt(p.at);
-      pos.r = p.r;  // Use Ergogen's rotation parameter directly
-      const transformed_points = transformPolygon(polygon_points, pos);
-
-      keepout_zone = `
-  (zone
-    (net 0)
-    (net_name "")
-    (layers "F.Cu" "B.Cu")
-    (uuid "${generate_uuid(p.ref + '-neuron-keepout')}")
-    (hatch edge 0.508)
-    (keepout
-      (tracks not_allowed)
-      (vias not_allowed)
-      (pads not_allowed)
-      (copperpour not_allowed)
-      (footprints allowed)
-    )
-    (polygon
-      (pts
-${transformed_points}
-      )
-    )
-  )`;
-    }
-
-    return footprint + keepout_zone;
+    return footprint;
   },
 };

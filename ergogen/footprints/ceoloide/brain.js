@@ -32,36 +32,6 @@ module.exports = {
       return `${hex.substr(0,8)}-${hex.substr(4,4)}-${hex.substr(8,4)}-${hex.substr(12,4)}-${hex.substr(16,12)}`;
     };
 
-    // Parse position and rotation from p.at
-    const parseAt = (at_str) => {
-      const match = at_str.match(/\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
-      if (!match) return { x: 0, y: 0, r: 0 };
-      return {
-        x: parseFloat(match[1]),
-        y: parseFloat(match[2]),
-        r: match[3] ? parseFloat(match[3]) : 0
-      };
-    };
-
-    // Transform polygon coordinates from footprint-relative to absolute
-    const transformPolygon = (polygon_str, pos) => {
-      const cos_r = Math.cos(pos.r * Math.PI / 180);
-      const sin_r = Math.sin(pos.r * Math.PI / 180);
-
-      return polygon_str.replace(/\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g, (match, x_str, y_str) => {
-        const x = parseFloat(x_str);
-        const y = parseFloat(y_str);
-
-        // Apply rotation then translation
-        const x_rot = x * cos_r - y * sin_r;
-        const y_rot = x * sin_r + y * cos_r;
-        const x_final = x_rot + pos.x;
-        const y_final = y_rot + pos.y;
-
-        return `(xy ${x_final} ${y_final})`;
-      });
-    };
-
     // Define the polygon points for the brain shape
     const polygon_points = `
       
@@ -6895,14 +6865,18 @@ module.exports = {
       (effects (font (size 1.524 1.524) (thickness 0.3048)))
     )`;
 
-    // Generate keepout zone if requested
-    let keepout_zone = '';
-    if (p.add_keepout) {
-      const pos = parseAt(p.at);
-      pos.r = p.r;  // Use Ergogen's rotation parameter directly
-      const transformed_points = transformPolygon(polygon_points, pos);
+    // Add polygons based on reversible setting
+    if (p.reversible) {
+      footprint += front_poly + back_poly;
+    } else {
+      footprint += front_poly;
+    }
 
-      keepout_zone = `
+    // Add keepout zone if requested (as part of the footprint)
+    if (p.add_keepout) {
+      // Use footprint-relative coordinates (no transformation needed)
+      // The zone will rotate with the footprint automatically
+      footprint += `
     (zone
       (net 0)
       (net_name "")
@@ -6923,22 +6897,15 @@ module.exports = {
       (fill (thermal_gap 0.508) (thermal_bridge_width 0.508))
       (polygon
         (pts
-${transformed_points}
+${polygon_points}
         )
       )
     )`;
     }
 
-    // Add polygons based on reversible setting
-    if (p.reversible) {
-      footprint += front_poly + back_poly;
-    } else {
-      footprint += front_poly;
-    }
-
     footprint += `
   )`;
 
-    return footprint + keepout_zone;
+    return footprint;
   },
 };
