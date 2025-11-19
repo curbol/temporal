@@ -1275,12 +1275,11 @@ module.exports = {
       console.log(`[NEURON DEBUG] ref: ${p.ref}`);
       console.log(`[NEURON DEBUG] p.at: ${p.at}`);
       console.log(`[NEURON DEBUG] p.r: ${p.r}`);
-      console.log(`[NEURON DEBUG] pos.x: ${pos.x}, pos.y: ${pos.y}, pos.r: ${pos.r}`);
-      console.log(`[NEURON DEBUG] final rotation: ${rotation}`);
+      console.log(`[NEURON DEBUG] Using footprint-relative coordinates (KiCad will apply rotation)`);
 
-      // Transform polygon to absolute board coordinates
-      // Zones use absolute coordinates even when embedded in footprints
-      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
+      // Use footprint-relative coordinates - KiCad will apply the footprint's rotation
+      // This is the same as the silkscreen polygons
+      const zone_points = polygon_points;
 
       footprint += `
     (zone
@@ -1298,7 +1297,7 @@ module.exports = {
       )
       (polygon
         (pts
-${transformed_points}
+${zone_points}
         )
       )
     )`;

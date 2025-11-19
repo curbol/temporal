@@ -6914,12 +6914,11 @@ module.exports = {
       console.log(`[BRAIN DEBUG] ref: ${p.ref}`);
       console.log(`[BRAIN DEBUG] p.at: ${p.at}`);
       console.log(`[BRAIN DEBUG] p.r: ${p.r}`);
-      console.log(`[BRAIN DEBUG] pos.x: ${pos.x}, pos.y: ${pos.y}, pos.r: ${pos.r}`);
-      console.log(`[BRAIN DEBUG] final rotation: ${rotation}`);
+      console.log(`[BRAIN DEBUG] Using footprint-relative coordinates (KiCad will apply rotation)`);
 
-      // Transform polygon to absolute board coordinates
-      // Zones use absolute coordinates even when embedded in footprints
-      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
+      // Use footprint-relative coordinates - KiCad will apply the footprint's rotation
+      // This is the same as the silkscreen polygons
+      const zone_points = polygon_points;
 
       footprint += `
     (zone
@@ -6942,7 +6941,7 @@ module.exports = {
       (fill (thermal_gap 0.508) (thermal_bridge_width 0.508))
       (polygon
         (pts
-${transformed_points}
+${zone_points}
         )
       )
     )`;
