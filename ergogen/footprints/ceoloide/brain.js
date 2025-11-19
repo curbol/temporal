@@ -6928,11 +6928,11 @@ module.exports = {
       console.log(`[BRAIN DEBUG] ref: ${p.ref}`);
       console.log(`[BRAIN DEBUG] p.at: ${p.at}`);
       console.log(`[BRAIN DEBUG] p.r: ${p.r}`);
-      console.log(`[BRAIN DEBUG] Translating to position (${pos.x}, ${pos.y}) - KiCad will apply rotation ${rotation}°`);
+      console.log(`[BRAIN DEBUG] Applying full transform: rotate ${rotation}° then translate to (${pos.x}, ${pos.y})`);
 
-      // Translate to absolute position but DON'T rotate
-      // KiCad will apply the footprint's rotation automatically to zones
-      const zone_points = translatePolygon(polygon_points, pos.x, pos.y);
+      // Apply full transformation - zones use absolute coordinates
+      // Testing if zones DON'T inherit footprint rotation
+      const zone_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
 
       footprint += `
     (zone

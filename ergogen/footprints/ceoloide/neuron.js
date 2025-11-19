@@ -1289,11 +1289,11 @@ module.exports = {
       console.log(`[NEURON DEBUG] ref: ${p.ref}`);
       console.log(`[NEURON DEBUG] p.at: ${p.at}`);
       console.log(`[NEURON DEBUG] p.r: ${p.r}`);
-      console.log(`[NEURON DEBUG] Translating to position (${pos.x}, ${pos.y}) - KiCad will apply rotation ${rotation}°`);
+      console.log(`[NEURON DEBUG] Applying full transform: rotate ${rotation}° then translate to (${pos.x}, ${pos.y})`);
 
-      // Translate to absolute position but DON'T rotate
-      // KiCad will apply the footprint's rotation automatically to zones
-      const zone_points = translatePolygon(polygon_points, pos.x, pos.y);
+      // Apply full transformation - zones use absolute coordinates
+      // Testing if zones DON'T inherit footprint rotation
+      const zone_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
 
       footprint += `
     (zone
