@@ -46,17 +46,29 @@ convert:
 # Mirror case STL files for right-hand versions
 mirror:
 	@echo "Mirroring case files..."
-	@if [ -f $(CASES_DIR)/temporal.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal.stl\"" $(MIRROR_SCAD); \
-		echo "Created temporal_mirror.stl"; \
+	@if [ -f $(CASES_DIR)/temporal_38.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_38_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_38.stl\"" $(MIRROR_SCAD); \
+		echo "Created temporal_38_mirror.stl"; \
 	else \
-		echo "Warning: $(CASES_DIR)/temporal.stl not found"; \
+		echo "Warning: $(CASES_DIR)/temporal_38.stl not found"; \
 	fi
-	@if [ -f $(CASES_DIR)/temporal_small.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_small_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_small.stl\"" $(MIRROR_SCAD); \
-		echo "Created temporal_small_mirror.stl"; \
+	@if [ -f $(CASES_DIR)/temporal_40.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_40_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_40.stl\"" $(MIRROR_SCAD); \
+		echo "Created temporal_40_mirror.stl"; \
 	else \
-		echo "Warning: $(CASES_DIR)/temporal_small.stl not found"; \
+		echo "Warning: $(CASES_DIR)/temporal_40.stl not found"; \
+	fi
+	@if [ -f $(CASES_DIR)/temporal_42.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_42_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_42.stl\"" $(MIRROR_SCAD); \
+		echo "Created temporal_42_mirror.stl"; \
+	else \
+		echo "Warning: $(CASES_DIR)/temporal_42.stl not found"; \
+	fi
+	@if [ -f $(CASES_DIR)/temporal_44.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_44_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_44.stl\"" $(MIRROR_SCAD); \
+		echo "Created temporal_44_mirror.stl"; \
+	else \
+		echo "Warning: $(CASES_DIR)/temporal_44.stl not found"; \
 	fi
 
 # Generate gerbers for all PCBs and zip them
