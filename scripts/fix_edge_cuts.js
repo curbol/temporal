@@ -34,8 +34,6 @@ function calculateArcLength(startX, startY, midX, midY, endX, endY) {
  * Process a KiCad PCB file and remove tiny Edge.Cuts segments.
  */
 function processPcbFile(filepath) {
-  console.log(`Processing ${filepath}...`);
-
   let content = fs.readFileSync(filepath, 'utf-8');
 
   // Regular expressions for Edge.Cuts gr_line and gr_arc
@@ -58,7 +56,6 @@ function processPcbFile(filepath) {
     if (length < MIN_SEGMENT_LENGTH) {
       content = content.replace(match[0], '');
       removedLines++;
-      console.log(`  Removed line segment: length=${length.toFixed(6)}mm at (${startX.toFixed(3)}, ${startY.toFixed(3)})`);
     }
   }
 
@@ -77,16 +74,12 @@ function processPcbFile(filepath) {
     if (length < MIN_SEGMENT_LENGTH) {
       content = content.replace(match[0], '');
       removedArcs++;
-      console.log(`  Removed arc segment: length≈${length.toFixed(6)}mm at (${startX.toFixed(3)}, ${startY.toFixed(3)})`);
     }
   }
 
   // Write back
   if (removedLines > 0 || removedArcs > 0) {
     fs.writeFileSync(filepath, content, 'utf-8');
-    console.log(`✓ Removed ${removedLines} line segments and ${removedArcs} arc segments`);
-  } else {
-    console.log(`✓ No tiny segments found (all segments >= ${MIN_SEGMENT_LENGTH}mm)`);
   }
 
   return removedLines + removedArcs;
@@ -117,7 +110,9 @@ async function main() {
     totalRemoved += removed;
   }
 
-  console.log(`\n✓ Processed ${pcbFiles.length} PCB files, removed ${totalRemoved} tiny segments total`);
+  if (totalRemoved > 0) {
+    console.log(`✓ Removed ${totalRemoved} tiny edge cut segments from ${pcbFiles.length} PCB files`);
+  }
 }
 
 main().catch(err => {
