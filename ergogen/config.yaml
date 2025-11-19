@@ -1152,7 +1152,6 @@ pcbs:
         params:
           text: "by curbol"
           face: "Maple Mono NF SemiBold"
-          knockout: true
           reversible: true
 
       hole_1: &hole_1
