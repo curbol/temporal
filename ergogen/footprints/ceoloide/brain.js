@@ -32,13 +32,14 @@ module.exports = {
       return `${hex.substr(0,8)}-${hex.substr(4,4)}-${hex.substr(8,4)}-${hex.substr(12,4)}-${hex.substr(16,12)}`;
     };
 
-    // Parse position from p.at string
+    // Parse position and rotation from p.at string
     const parseAt = (at_str) => {
       const match = at_str.match(/\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
-      if (!match) return { x: 0, y: 0 };
+      if (!match) return { x: 0, y: 0, r: 0 };
       return {
         x: parseFloat(match[1]),
-        y: parseFloat(match[2])
+        y: parseFloat(match[2]),
+        r: match[3] ? parseFloat(match[3]) : 0
       };
     };
 
@@ -6904,13 +6905,12 @@ module.exports = {
 
     // Add keepout zone if requested (as part of the footprint)
     if (p.add_keepout) {
-      // Parse footprint position and rotation
+      // Parse footprint position and rotation from p.at
       const pos = parseAt(p.at);
-      const rotation = p.r || 0;
 
       // Transform polygon to absolute board coordinates
       // Zones use absolute coordinates even when embedded in footprints
-      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
+      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, pos.r);
 
       footprint += `
     (zone
