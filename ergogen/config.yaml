@@ -236,7 +236,7 @@ outlines:
   _plate_holes:
     - what: circle
       radius: m2_size / 2 + 0.1
-      where: &hole_locations
+      where: &plate_holes
         - ref: finger_middle_top
           shift: [hole1_x, hole1_y]
         - ref: finger_inner_top
@@ -478,13 +478,13 @@ outlines:
       radius: m2_insert_outer_diameter / 2
   _m2_insert_outer_posts:
     - name: _m2_insert_outer_post
-      where: *hole_locations
+      where: *plate_holes
   _m2_insert_inner_post:
     - what: circle
       radius: m2_insert_inner_diameter / 2
   _m2_insert_inner_posts:
     - name: _m2_insert_inner_post
-      where: *hole_locations
+      where: *plate_holes
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
@@ -1134,7 +1134,6 @@ pcbs:
           height: 1.5
           width: 1.8
           face: "Maple Mono NF SemiBold"
-          knockout: true
           reversible: true
       neuron: &neuron
         what: ceoloide/neuron
