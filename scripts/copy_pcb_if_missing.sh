@@ -10,29 +10,29 @@ ERGOGEN_OUTPUT="ergogen/output/pcbs"
 
 # List of all PCB files to copy
 PCB_FILES=(
-    "temporal"
-    "top_plate_38"
-    "top_plate_40"
-    "top_plate_42"
-    "top_plate_44"
-    "back_plate_38"
-    "back_plate_40"
-    "back_plate_42"
-    "back_plate_44"
-    "mcu_cover"
+  "temporal"
+  "top_plate_38"
+  "top_plate_40"
+  "top_plate_42"
+  "top_plate_44"
+  "back_plate_38"
+  "back_plate_40"
+  "back_plate_42"
+  "back_plate_44"
+  "mcu_cover"
 )
 
 # Copy each PCB file if it doesn't exist
 for pcb in "${PCB_FILES[@]}"; do
-    DEST_DIR="pcbs/$pcb"
-    mkdir -p "$DEST_DIR"
+  DEST_DIR="pcbs/$pcb"
+  mkdir -p "$DEST_DIR"
 
-    if [ ! -f "$DEST_DIR/$pcb.kicad_pcb" ]; then
-        echo "Copying $pcb.kicad_pcb (file doesn't exist)"
-        cp "$ERGOGEN_OUTPUT/$pcb.kicad_pcb" "$DEST_DIR/$pcb.kicad_pcb"
-    else
-        echo "Skipping $pcb.kicad_pcb (file already exists - delete to get fresh copy)"
-    fi
+  if [ ! -f "$DEST_DIR/$pcb.kicad_pcb" ]; then
+    echo "Copying $pcb.kicad_pcb (file doesn't exist)"
+    cp "$ERGOGEN_OUTPUT/$pcb.kicad_pcb" "$DEST_DIR/$pcb.kicad_pcb"
+  else
+    echo "Skipping $pcb.kicad_pcb (file already exists - delete to get fresh copy)"
+  fi
 done
 
 echo ""
