@@ -63,6 +63,20 @@ module.exports = {
       });
     };
 
+    // Translate polygon to absolute position WITHOUT rotation (KiCad applies rotation)
+    const translatePolygon = (polygon_str, x, y) => {
+      return polygon_str.replace(/\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g, (match, px_str, py_str) => {
+        const px = parseFloat(px_str);
+        const py = parseFloat(py_str);
+
+        // Only translate, no rotation
+        const px_final = px + x;
+        const py_final = py + y;
+
+        return `(xy ${px_final} ${py_final})`;
+      });
+    };
+
     // Define the polygon points for the brain shape
     const polygon_points = `
       
@@ -6914,11 +6928,11 @@ module.exports = {
       console.log(`[BRAIN DEBUG] ref: ${p.ref}`);
       console.log(`[BRAIN DEBUG] p.at: ${p.at}`);
       console.log(`[BRAIN DEBUG] p.r: ${p.r}`);
-      console.log(`[BRAIN DEBUG] Using footprint-relative coordinates (KiCad will apply rotation)`);
+      console.log(`[BRAIN DEBUG] Translating to position (${pos.x}, ${pos.y}) - KiCad will apply rotation ${rotation}°`);
 
-      // Use footprint-relative coordinates - KiCad will apply the footprint's rotation
-      // This is the same as the silkscreen polygons
-      const zone_points = polygon_points;
+      // Translate to absolute position but DON'T rotate
+      // KiCad will apply the footprint's rotation automatically to zones
+      const zone_points = translatePolygon(polygon_points, pos.x, pos.y);
 
       footprint += `
     (zone
