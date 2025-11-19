@@ -1271,6 +1271,13 @@ module.exports = {
       // Use Ergogen's rotation parameter directly
       const rotation = p.r || pos.r;
 
+      // DEBUG: Log values to help diagnose rotation issues
+      console.log(`[NEURON DEBUG] ref: ${p.ref}`);
+      console.log(`[NEURON DEBUG] p.at: ${p.at}`);
+      console.log(`[NEURON DEBUG] p.r: ${p.r}`);
+      console.log(`[NEURON DEBUG] pos.x: ${pos.x}, pos.y: ${pos.y}, pos.r: ${pos.r}`);
+      console.log(`[NEURON DEBUG] final rotation: ${rotation}`);
+
       // Transform polygon to absolute board coordinates
       // Zones use absolute coordinates even when embedded in footprints
       const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
