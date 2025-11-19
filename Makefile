@@ -1,8 +1,8 @@
 # Directory variables
 ERGOGEN_DIR := ergogen
 OUTPUT_DIR := $(ERGOGEN_DIR)/output
-PCBS_DIR := $(OUTPUT_DIR)/pcbs
-PCB_DIR := pcb
+PCBS_DIR := pcbs
+TEMPORAL_DIR := temporal
 CASES_DIR := cases
 GERBERS_DIR := gerbers
 MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
@@ -86,7 +86,7 @@ mirror:
 # Generate gerbers for all PCBs and zip them
 gerbers:
 	@mkdir -p $(GERBERS_DIR)
-	@for pcb in $(PCBS_DIR)/*.kicad_pcb; do \
+	@for pcb in $(PCBS_DIR)/**/*.kicad_pcb; do \
 		if [ -f "$$pcb" ]; then \
 			pcb_name=$$(basename "$$pcb" .kicad_pcb); \
 			mkdir -p $(GERBERS_DIR)/$$pcb_name; \
@@ -94,12 +94,6 @@ gerbers:
 			kicad-cli pcb export drill --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null 2>&1; \
 		fi \
 	done
-	@if [ -f $(PCB_DIR)/temporal.kicad_pcb ]; then \
-		rm -rf $(GERBERS_DIR)/temporal; \
-		mkdir -p $(GERBERS_DIR)/temporal; \
-		kicad-cli pcb export gerbers --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb" >/dev/null 2>&1; \
-		kicad-cli pcb export drill --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb" >/dev/null 2>&1; \
-	fi
 	@ZIP_COUNT=0; \
 	for dir in $(GERBERS_DIR)/*/; do \
 		if [ -d "$$dir" ]; then \
@@ -118,3 +112,4 @@ clean:
 	@rm -rf $(OUTPUT_DIR)
 	@rm -rf $(CASES_DIR)
 	@rm -rf $(GERBERS_DIR)
+	@find $(PCBS_DIR) -mindepth 1 -maxdepth 1 ! -name '$(TEMPORAL_DIR)' -exec rm -rf {} + 2>/dev/null || true
