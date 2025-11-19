@@ -1285,13 +1285,8 @@ module.exports = {
       // Use Ergogen's rotation parameter directly
       const rotation = p.r || pos.r;
 
-      // DEBUG: Log values to help diagnose rotation issues
-      console.log(`[NEURON DEBUG] ref: ${p.ref}`);
-      console.log(`[NEURON DEBUG] p.at: ${p.at}`);
-      console.log(`[NEURON DEBUG] p.r: ${p.r}`);
-      console.log(`[NEURON DEBUG] Applying transform with NEGATIVE rotation: rotate ${-rotation}° then translate to (${pos.x}, ${pos.y})`);
-
-      // Apply transformation with negative rotation - testing if rotation direction is reversed
+      // Apply transformation with negative rotation
+      // The rotation direction is inverted because zones use a different coordinate system
       const zone_points = transformPolygon(polygon_points, pos.x, pos.y, -rotation);
 
       footprint += `

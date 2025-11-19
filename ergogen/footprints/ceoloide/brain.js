@@ -6863,17 +6863,6 @@ module.exports = {
       (xy 29.590601156277486 29.44358301859716)
       (xy 29.522311738525644 29.44117035472506)
       (xy 29.522369145216786 29.440373037322587)
-      (xy 40.94528039478551 -6.7312535054927025)
-      (xy 40.948776984150726 -6.738768158327666)
-      (xy 40.94982074217019 -6.7204476894500225)
-      (xy 40.946402434656434 -6.731123591155555)
-      (xy 40.94528039478551 -6.7312535054927025)
-      (xy 40.9431928787466 -6.201467933288026)
-      (xy 40.946715562062295 -6.208959660063488)
-      (xy 40.946955626406776 -6.193627220940222)
-      (xy 40.94405919790276 -6.202005422016217)
-      (xy 40.9431928787466 -6.201467933288026)
-
 `;
 
     // Generate front polygon
@@ -6924,13 +6913,8 @@ module.exports = {
       // Use Ergogen's rotation parameter directly
       const rotation = p.r || pos.r;
 
-      // DEBUG: Log values to help diagnose rotation issues
-      console.log(`[BRAIN DEBUG] ref: ${p.ref}`);
-      console.log(`[BRAIN DEBUG] p.at: ${p.at}`);
-      console.log(`[BRAIN DEBUG] p.r: ${p.r}`);
-      console.log(`[BRAIN DEBUG] Applying transform with NEGATIVE rotation: rotate ${-rotation}° then translate to (${pos.x}, ${pos.y})`);
-
-      // Apply transformation with negative rotation - testing if rotation direction is reversed
+      // Apply transformation with negative rotation
+      // The rotation direction is inverted because zones use a different coordinate system
       const zone_points = transformPolygon(polygon_points, pos.x, pos.y, -rotation);
 
       footprint += `
