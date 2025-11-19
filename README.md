@@ -1,35 +1,25 @@
 # TEMPORAL
 
-**WORK IN PROGRESS** (Files and images are not updated yet)
+A 36-44 key split ergonomic keyboard with wireless support and encoder integration. TEMPORAL is inspired by [TEMPEST](https://github.com/thrly/tempest) by thrly, featuring a revised layout with configurable pinky columns and encoder thumb key options.
 
-Preview design:
-<img width="1649" height="1067" alt="image" src="https://github.com/user-attachments/assets/b65a0838-cac9-4117-b53e-7bb658d3d93b" />
-
-
-
-A 36-42 key split ergonomic keyboard based on [TEMPEST](https://github.com/thrly/tempest) by thrly. TEMPORAL features a revised layout with an additional snap-off pinky key and an additional thumb key with encoder support.
-
-![Maintenance](https://img.shields.io/maintenance/yes/2025) ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/thrly/tempest)
-![Tempest](images/tempest.jpg)
+![Maintenance](https://img.shields.io/maintenance/yes/2025)
+![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
 ## Design
 
 - Five columns, three rows, four thumb keys per side
-  - Optional snap-off extra pinky column for 38-42 key configurations
+  - Optional snap-off extra pinky column for 36-44 key configurations
   - One thumb position can be either an encoder or standard switch
 - Column stagger and splay on the pinky and ring columns
-- EC12 Encoders
-- Powered by nice!nano / pro micro microcontroller
+- EC12 rotary encoder support
+- Powered by nice!nano or Pro Micro compatible microcontrollers
 - Optional nice!view display
-- Designed for wireless use + battery
-- Low profile v1 Choc switches + hotswap sockets
-- Reversible PCB
-- Uses some components (JST plug, power switch, reset) from the Typeractive Corne design
+- Designed for wireless use with battery support
+- Kailh Choc v1 low-profile switches with hotswap sockets
+- Reversible PCB design
 - Layout designed with [Ergogen](https://ergogen.ceoloide.com/) (see [config.yaml](./ergogen/config.yaml))
-- PCB designed with [KiCad](https://www.kicad.org/) (v 9)
-- Simple 3D-printable case supporting all configurations
-
-![Tempest](images/tempest-half.jpg)
+- PCB designed with [KiCad](https://www.kicad.org/) v9
+- Simple 3D-printable cases for all key configurations
 
 ## Firmware
 
@@ -70,12 +60,14 @@ PCB defaults (trace widths, via sizes, clearances, net classes) are centralized 
 
 ## Build Guide
 
-[Details on the build and case can be found here.](/docs/build-guide.md)
-![TEMPEST pcb](images/tempest-pcb.png)
+See [docs/build-guide.md](/docs/build-guide.md) for assembly instructions and ordering information.
 
-![Tempest](images/tempest-alt.jpg)
-![Tempest](images/tempest-edge.jpg)
-![Tempest](images/tempest-side.jpg)
+For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
+
+### Where to Buy Components
+
+- [Typeractive](https://typeractive.xyz/) - nice!nano, nice!view, switches, sockets, encoders, and other components
+- [KEEBD](https://keebd.com/) - Alternative source for keyboard components
 
 ## Influences
 
