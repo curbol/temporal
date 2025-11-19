@@ -19,18 +19,16 @@ function loadDefaultsConfig() {
   const configPath = path.join(__dirname, '..', 'config', 'kicad_defaults.yaml');
 
   if (!fs.existsSync(configPath)) {
-    console.warn(`Warning: Config file not found at ${configPath}`);
-    console.warn('Using fallback hardcoded defaults');
-    return null;
+    console.error(`Error: Config file not found at ${configPath}`);
+    process.exit(1);
   }
 
   try {
     const content = fs.readFileSync(configPath, 'utf-8');
     return yaml.load(content);
   } catch (err) {
-    console.warn(`Warning: Failed to load config: ${err.message}`);
-    console.warn('Using fallback hardcoded defaults');
-    return null;
+    console.error(`Error: Failed to load config: ${err.message}`);
+    process.exit(1);
   }
 }
 
@@ -84,30 +82,17 @@ function calculateBoundingBox(content, margin = 2.0) {
 /**
  * Create a KiCad zone definition with hatch fill pattern.
  */
-function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneConfig = null) {
-  // Default values (fallback if config not provided)
-  const defaults = {
-    clearance: 0.2,
-    min_thickness: 0.2,
-    thermal_gap: 0.254,
-    thermal_bridge_width: 0.4,
-    smoothing_radius: 0.5,
-    hatch_thickness: 0.5,
-    hatch_gap: 0.5,
-    hatch_orientation: 45,
-    hatch_smoothing_level: 1
-  };
-
-  // Use config values if provided, otherwise use defaults
-  const clearance = zoneConfig?.clearance ?? defaults.clearance;
-  const minThickness = zoneConfig?.min_thickness ?? defaults.min_thickness;
-  const thermalGap = zoneConfig?.thermal_gap ?? defaults.thermal_gap;
-  const thermalBridgeWidth = zoneConfig?.thermal_bridge_width ?? defaults.thermal_bridge_width;
-  const radius = zoneConfig?.smoothing_radius ?? defaults.smoothing_radius;
-  const hatchThickness = zoneConfig?.hatch_thickness ?? defaults.hatch_thickness;
-  const hatchGap = zoneConfig?.hatch_gap ?? defaults.hatch_gap;
-  const hatchOrientation = zoneConfig?.hatch_orientation ?? defaults.hatch_orientation;
-  const hatchSmoothingLevel = zoneConfig?.hatch_smoothing_level ?? defaults.hatch_smoothing_level;
+function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneConfig) {
+  // Extract values from config
+  const clearance = zoneConfig.clearance;
+  const minThickness = zoneConfig.min_thickness;
+  const thermalGap = zoneConfig.thermal_gap;
+  const thermalBridgeWidth = zoneConfig.thermal_bridge_width;
+  const radius = zoneConfig.smoothing_radius;
+  const hatchThickness = zoneConfig.hatch_thickness;
+  const hatchGap = zoneConfig.hatch_gap;
+  const hatchOrientation = zoneConfig.hatch_orientation;
+  const hatchSmoothingLevel = zoneConfig.hatch_smoothing_level;
 
   // Format polygon points
   const ptsStr = points.map(([x, y]) => `        (xy ${x} ${y})`).join('\n');
@@ -215,7 +200,7 @@ function zonesAlreadyExist(content) {
 /**
  * Add GND zones to a KiCad PCB file.
  */
-function processPcbFile(filepath, zoneConfig = null) {
+function processPcbFile(filepath, zoneConfig) {
   console.log(`Processing ${filepath}...`);
 
   let content = fs.readFileSync(filepath, 'utf-8');
@@ -269,13 +254,8 @@ function processPcbFile(filepath, zoneConfig = null) {
   // Write back
   fs.writeFileSync(filepath, modifiedContent, 'utf-8');
 
-  // Display zone settings
-  const clearance = zoneConfig?.clearance ?? 0.2;
-  const thermalGap = zoneConfig?.thermal_gap ?? 0.254;
-  const thermalBridge = zoneConfig?.thermal_bridge_width ?? 0.4;
-
   console.log('  ✓ Added GND zones to F.Cu and B.Cu');
-  console.log(`     Clearance: ${clearance}mm, Thermal gap: ${thermalGap}mm, Bridge: ${thermalBridge}mm`);
+  console.log(`     Clearance: ${zoneConfig.clearance}mm, Thermal gap: ${zoneConfig.thermal_gap}mm, Bridge: ${zoneConfig.thermal_bridge_width}mm`);
   return true;
 }
 
@@ -285,15 +265,13 @@ function processPcbFile(filepath, zoneConfig = null) {
 async function main() {
   // Load zone configuration from YAML
   const config = loadDefaultsConfig();
-  const zoneConfig = config?.zones ?? null;
+  const zoneConfig = config.zones;
 
-  if (zoneConfig) {
-    console.log('Loaded zone settings from config/kicad_defaults.yaml');
-    console.log(`  Clearance: ${zoneConfig.clearance ?? 0.2}mm`);
-    console.log(`  Thermal gap: ${zoneConfig.thermal_gap ?? 0.254}mm`);
-    console.log(`  Thermal bridge: ${zoneConfig.thermal_bridge_width ?? 0.4}mm`);
-    console.log();
-  }
+  console.log('Loaded zone settings from config/kicad_defaults.yaml');
+  console.log(`  Clearance: ${zoneConfig.clearance}mm`);
+  console.log(`  Thermal gap: ${zoneConfig.thermal_gap}mm`);
+  console.log(`  Thermal bridge: ${zoneConfig.thermal_bridge_width}mm`);
+  console.log();
 
   const outputDir = 'ergogen/output/pcbs';
 
