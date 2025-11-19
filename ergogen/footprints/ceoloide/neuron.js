@@ -1289,11 +1289,10 @@ module.exports = {
       console.log(`[NEURON DEBUG] ref: ${p.ref}`);
       console.log(`[NEURON DEBUG] p.at: ${p.at}`);
       console.log(`[NEURON DEBUG] p.r: ${p.r}`);
-      console.log(`[NEURON DEBUG] Applying full transform: rotate ${rotation}° then translate to (${pos.x}, ${pos.y})`);
+      console.log(`[NEURON DEBUG] Applying transform with NEGATIVE rotation: rotate ${-rotation}° then translate to (${pos.x}, ${pos.y})`);
 
-      // Apply full transformation - zones use absolute coordinates
-      // Testing if zones DON'T inherit footprint rotation
-      const zone_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
+      // Apply transformation with negative rotation - testing if rotation direction is reversed
+      const zone_points = transformPolygon(polygon_points, pos.x, pos.y, -rotation);
 
       footprint += `
     (zone

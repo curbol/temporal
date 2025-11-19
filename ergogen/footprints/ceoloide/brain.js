@@ -6928,11 +6928,10 @@ module.exports = {
       console.log(`[BRAIN DEBUG] ref: ${p.ref}`);
       console.log(`[BRAIN DEBUG] p.at: ${p.at}`);
       console.log(`[BRAIN DEBUG] p.r: ${p.r}`);
-      console.log(`[BRAIN DEBUG] Applying full transform: rotate ${rotation}° then translate to (${pos.x}, ${pos.y})`);
+      console.log(`[BRAIN DEBUG] Applying transform with NEGATIVE rotation: rotate ${-rotation}° then translate to (${pos.x}, ${pos.y})`);
 
-      // Apply full transformation - zones use absolute coordinates
-      // Testing if zones DON'T inherit footprint rotation
-      const zone_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
+      // Apply transformation with negative rotation - testing if rotation direction is reversed
+      const zone_points = transformPolygon(polygon_points, pos.x, pos.y, -rotation);
 
       footprint += `
     (zone
