@@ -94,6 +94,7 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
     smoothing_radius: 0.5,
     hatch_thickness: 0.5,
     hatch_gap: 0.5,
+    hatch_orientation: 45,
     hatch_smoothing_level: 0
   };
 
@@ -105,6 +106,7 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
   const radius = zoneConfig?.smoothing_radius ?? defaults.smoothing_radius;
   const hatchThickness = zoneConfig?.hatch_thickness ?? defaults.hatch_thickness;
   const hatchGap = zoneConfig?.hatch_gap ?? defaults.hatch_gap;
+  const hatchOrientation = zoneConfig?.hatch_orientation ?? defaults.hatch_orientation;
   const hatchSmoothingLevel = zoneConfig?.hatch_smoothing_level ?? defaults.hatch_smoothing_level;
 
   // Format polygon points
@@ -130,7 +132,7 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
       (radius ${radius})
       (hatch_thickness ${hatchThickness})
       (hatch_gap ${hatchGap})
-      (hatch_orientation 45)
+      (hatch_orientation ${hatchOrientation})
       (hatch_smoothing_level ${hatchSmoothingLevel})
       (hatch_smoothing_value 0.1)
       (hatch_border_algorithm hatch_thickness)
