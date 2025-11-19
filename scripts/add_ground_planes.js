@@ -201,13 +201,10 @@ function zonesAlreadyExist(content) {
  * Add GND zones to a KiCad PCB file.
  */
 function processPcbFile(filepath, zoneConfig) {
-  console.log(`Processing ${filepath}...`);
-
   let content = fs.readFileSync(filepath, 'utf-8');
 
   // Check if zones already exist
   if (zonesAlreadyExist(content)) {
-    console.log('  ⚠ GND zones already exist, skipping');
     return false;
   }
 
@@ -216,26 +213,20 @@ function processPcbFile(filepath, zoneConfig) {
   let netNumber, netName;
 
   if (!gndNet) {
-    console.log('  GND net not found, creating one...');
     [content, netNumber] = createGndNet(content);
     if (netNumber === null) {
       return false;
     }
     netName = 'GND';
-    console.log(`  Created GND net: net ${netNumber}`);
   } else {
     [netNumber, netName] = gndNet;
-    console.log(`  Found GND net: net ${netNumber}`);
   }
 
   // Calculate bounding box around board
   const points = calculateBoundingBox(content, 2.0);
   if (points.length === 0) {
-    console.log('  ⚠ No Edge.Cuts found, skipping');
     return false;
   }
-
-  console.log(`  Calculated bounding box: ${points.length} corners`);
 
   // Generate zones for F.Cu and B.Cu
   const frontZone = createZoneDefinition(netNumber, netName, 'F.Cu', points, generateUUID(), zoneConfig);
@@ -254,8 +245,6 @@ function processPcbFile(filepath, zoneConfig) {
   // Write back
   fs.writeFileSync(filepath, modifiedContent, 'utf-8');
 
-  console.log('  ✓ Added GND zones to F.Cu and B.Cu');
-  console.log(`     Clearance: ${zoneConfig.clearance}mm, Thermal gap: ${zoneConfig.thermal_gap}mm, Bridge: ${zoneConfig.thermal_bridge_width}mm`);
   return true;
 }
 
@@ -266,12 +255,6 @@ async function main() {
   // Load zone configuration from YAML
   const config = loadDefaultsConfig();
   const zoneConfig = config.zones;
-
-  console.log('Loaded zone settings from config/kicad_defaults.yaml');
-  console.log(`  Clearance: ${zoneConfig.clearance}mm`);
-  console.log(`  Thermal gap: ${zoneConfig.thermal_gap}mm`);
-  console.log(`  Thermal bridge: ${zoneConfig.thermal_bridge_width}mm`);
-  console.log();
 
   const outputDir = 'ergogen/output/pcbs';
 
@@ -295,8 +278,9 @@ async function main() {
     }
   }
 
-  console.log(`\n✓ Added GND zones to ${processed}/${pcbFiles.length} PCB files`);
-  console.log('Note: Zones will be filled when you first open the PCB in KiCad');
+  if (processed > 0) {
+    console.log(`✓ Added GND zones to ${processed} PCB files`);
+  }
 }
 
 main().catch(err => {

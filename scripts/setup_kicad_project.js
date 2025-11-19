@@ -30,7 +30,6 @@ function loadDefaultsConfig() {
   const content = fs.readFileSync(configPath, 'utf-8');
   const config = yaml.load(content);
 
-  console.log(`Loaded defaults from ${configPath}`);
   return config;
 }
 
@@ -425,11 +424,9 @@ function setupProjectFile(pcbPath, config) {
   // Load existing project or create new one
   let projectData;
   if (fs.existsSync(projectPath)) {
-    console.log(`Updating existing project file: ${projectPath}`);
     const content = fs.readFileSync(projectPath, 'utf-8');
     projectData = JSON.parse(content);
   } else {
-    console.log(`Creating new project file: ${projectPath}`);
     projectData = getBaseProjectStructure(projectName);
   }
 
@@ -439,7 +436,6 @@ function setupProjectFile(pcbPath, config) {
   // Write project file
   fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2), 'utf-8');
 
-  console.log(`✓ Successfully configured ${projectPath}`);
   return true;
 }
 
@@ -466,23 +462,19 @@ async function main() {
     const pcbFiles = await glob(`${pcbsDir}/**/*.kicad_pcb`);
 
     if (pcbFiles.length === 0) {
-      console.log(`No .kicad_pcb files found in ${pcbsDir}`);
       process.exit(0);
     }
-
-    console.log(`\nFound ${pcbFiles.length} PCB file(s)`);
-    console.log('='.repeat(60));
 
     let successCount = 0;
     for (const pcbFile of pcbFiles) {
       if (setupProjectFile(pcbFile, config)) {
         successCount++;
       }
-      console.log();
     }
 
-    console.log('='.repeat(60));
-    console.log(`Processed ${successCount}/${pcbFiles.length} project file(s) successfully`);
+    if (successCount > 0) {
+      console.log(`✓ Configured ${successCount} KiCad project files`);
+    }
   }
 }
 

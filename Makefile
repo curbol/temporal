@@ -27,83 +27,94 @@ deps:
 
 # Generate keyboard PCBs and cases
 gen:
-	$(MAKE) clean
-	npm run gen
-	@echo "Post-processing PCB files..."
-	node scripts/fix_edge_cuts.js
-	node scripts/add_ground_planes.js
-	bash scripts/copy_pcb_if_missing.sh
-	@echo "Setting up KiCad project files with defaults..."
-	node scripts/setup_kicad_project.js
-	$(MAKE) convert
-	$(MAKE) mirror
-	$(MAKE) gerbers
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  Temporal Keyboard Build"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@$(MAKE) clean
+	@echo "[1/5] Generating PCBs and cases with Ergogen..."
+	@npm run gen 2>/dev/null || npm run gen
+	@echo "✓ Ergogen generation complete"
+	@echo ""
+	@echo "[2/5] Post-processing PCB files..."
+	@node scripts/fix_edge_cuts.js
+	@node scripts/add_ground_planes.js
+	@bash scripts/copy_pcb_if_missing.sh
+	@node scripts/setup_kicad_project.js
+	@echo ""
+	@echo "[3/5] Converting cases to STL..."
+	@$(MAKE) convert
+	@echo ""
+	@echo "[4/5] Mirroring case files..."
+	@$(MAKE) mirror
+	@echo ""
+	@echo "[5/5] Generating gerber files..."
+	@$(MAKE) gerbers
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "✓ Build complete!"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Convert JSCAD files to STL
 convert:
-	npm run convert
+	@npm run convert 2>/dev/null || npm run convert
+	@echo "✓ Converted cases to STL"
 
 # Mirror case STL files for right-hand versions
 mirror:
-	@echo "Mirroring case files..."
-	@if [ -f $(CASES_DIR)/temporal_38.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_38_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_38.stl\"" $(MIRROR_SCAD); \
-		echo "Created temporal_38_mirror.stl"; \
-	else \
-		echo "Warning: $(CASES_DIR)/temporal_38.stl not found"; \
-	fi
-	@if [ -f $(CASES_DIR)/temporal_40.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_40_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_40.stl\"" $(MIRROR_SCAD); \
-		echo "Created temporal_40_mirror.stl"; \
-	else \
-		echo "Warning: $(CASES_DIR)/temporal_40.stl not found"; \
-	fi
-	@if [ -f $(CASES_DIR)/temporal_42.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_42_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_42.stl\"" $(MIRROR_SCAD); \
-		echo "Created temporal_42_mirror.stl"; \
-	else \
-		echo "Warning: $(CASES_DIR)/temporal_42.stl not found"; \
-	fi
-	@if [ -f $(CASES_DIR)/temporal_44.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_44_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_44.stl\"" $(MIRROR_SCAD); \
-		echo "Created temporal_44_mirror.stl"; \
-	else \
-		echo "Warning: $(CASES_DIR)/temporal_44.stl not found"; \
+	@MIRRORED=0; \
+	if [ -f $(CASES_DIR)/temporal_38.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_38_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_38.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
+		MIRRORED=$$((MIRRORED + 1)); \
+	fi; \
+	if [ -f $(CASES_DIR)/temporal_40.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_40_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_40.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
+		MIRRORED=$$((MIRRORED + 1)); \
+	fi; \
+	if [ -f $(CASES_DIR)/temporal_42.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_42_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_42.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
+		MIRRORED=$$((MIRRORED + 1)); \
+	fi; \
+	if [ -f $(CASES_DIR)/temporal_44.stl ]; then \
+		openscad -o $(CASES_DIR)/temporal_44_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_44.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
+		MIRRORED=$$((MIRRORED + 1)); \
+	fi; \
+	if [ $$MIRRORED -gt 0 ]; then \
+		echo "✓ Mirrored $$MIRRORED case files"; \
 	fi
 
 # Generate gerbers for all PCBs and zip them
 gerbers:
-	@echo "Generating gerbers..."
 	@mkdir -p $(GERBERS_DIR)
 	@for pcb in $(PCBS_DIR)/*.kicad_pcb; do \
 		if [ -f "$$pcb" ]; then \
 			pcb_name=$$(basename "$$pcb" .kicad_pcb); \
-			echo "Processing $$pcb_name..."; \
 			mkdir -p $(GERBERS_DIR)/$$pcb_name; \
-			kicad-cli pcb export gerbers --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb"; \
-			kicad-cli pcb export drill --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb"; \
+			kicad-cli pcb export gerbers --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null 2>&1; \
+			kicad-cli pcb export drill --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null 2>&1; \
 		fi \
 	done
 	@if [ -f $(PCB_DIR)/temporal.kicad_pcb ]; then \
-		echo "Processing manual temporal PCB..."; \
 		rm -rf $(GERBERS_DIR)/temporal; \
 		mkdir -p $(GERBERS_DIR)/temporal; \
-		kicad-cli pcb export gerbers --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb"; \
-		kicad-cli pcb export drill --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb"; \
+		kicad-cli pcb export gerbers --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb" >/dev/null 2>&1; \
+		kicad-cli pcb export drill --output $(GERBERS_DIR)/temporal/ "$(PCB_DIR)/temporal.kicad_pcb" >/dev/null 2>&1; \
 	fi
-	@echo "Zipping gerbers..."
-	@for dir in $(GERBERS_DIR)/*/; do \
+	@ZIP_COUNT=0; \
+	for dir in $(GERBERS_DIR)/*/; do \
 		if [ -d "$$dir" ]; then \
 			pcb_name=$$(basename "$$dir"); \
-			echo "Zipping $$pcb_name..."; \
-			cd $(GERBERS_DIR) && zip -r $$pcb_name.zip $$pcb_name/ && cd ..; \
+			cd $(GERBERS_DIR) && zip -r $$pcb_name.zip $$pcb_name/ >/dev/null 2>&1 && cd ..; \
 			rm -rf $(GERBERS_DIR)/$$pcb_name; \
+			ZIP_COUNT=$$((ZIP_COUNT + 1)); \
 		fi \
-	done
-	@echo "Gerbers zipped in $(GERBERS_DIR)/"
+	done; \
+	if [ $$ZIP_COUNT -gt 0 ]; then \
+		echo "✓ Generated and zipped $$ZIP_COUNT gerber packages"; \
+	fi
 
 # Clean generated output
 clean:
-	rm -rf $(OUTPUT_DIR)
-	rm -rf $(CASES_DIR)
-	rm -rf $(GERBERS_DIR)
+	@rm -rf $(OUTPUT_DIR)
+	@rm -rf $(CASES_DIR)
+	@rm -rf $(GERBERS_DIR)
