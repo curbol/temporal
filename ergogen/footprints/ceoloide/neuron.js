@@ -32,6 +32,36 @@ module.exports = {
       return `${hex.substr(0,8)}-${hex.substr(8,4)}-${hex.substr(12,4)}-${hex.substr(16,4)}-${hex.substr(20,12)}`;
     };
 
+    // Parse position from p.at string
+    const parseAt = (at_str) => {
+      const match = at_str.match(/\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
+      if (!match) return { x: 0, y: 0 };
+      return {
+        x: parseFloat(match[1]),
+        y: parseFloat(match[2])
+      };
+    };
+
+    // Transform polygon coordinates to absolute board coordinates
+    // Zones always use absolute coordinates, even when embedded in footprints
+    const transformPolygon = (polygon_str, x, y, r) => {
+      const cos_r = Math.cos(r * Math.PI / 180);
+      const sin_r = Math.sin(r * Math.PI / 180);
+
+      return polygon_str.replace(/\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g, (match, px_str, py_str) => {
+        const px = parseFloat(px_str);
+        const py = parseFloat(py_str);
+
+        // Apply rotation then translation
+        const px_rot = px * cos_r - py * sin_r;
+        const py_rot = px * sin_r + py * cos_r;
+        const px_final = px_rot + x;
+        const py_final = py_rot + y;
+
+        return `(xy ${px_final} ${py_final})`;
+      });
+    };
+
     // Define the polygon points for the neuron shape
     const polygon_points = `
       (xy -13.9933496197878 10.621647291291668)
@@ -1235,8 +1265,14 @@ module.exports = {
 
     // Add keepout zone if requested (as part of the footprint)
     if (p.add_keepout) {
-      // Use footprint-relative coordinates (no transformation needed)
-      // The zone will rotate with the footprint automatically
+      // Parse footprint position and rotation
+      const pos = parseAt(p.at);
+      const rotation = p.r || 0;
+
+      // Transform polygon to absolute board coordinates
+      // Zones use absolute coordinates even when embedded in footprints
+      const transformed_points = transformPolygon(polygon_points, pos.x, pos.y, rotation);
+
       footprint += `
     (zone
       (net 0)
@@ -1253,7 +1289,7 @@ module.exports = {
       )
       (polygon
         (pts
-${polygon_points}
+${transformed_points}
         )
       )
     )`;
