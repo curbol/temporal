@@ -19,13 +19,17 @@ const path = require('path');
 const { execSync } = require('child_process');
 const os = require('os');
 
-function convertSvgToKicad(svgPath, tempKicadPath, name, precision = 0.1) {
+// Default precision for SVG to footprint conversion
+// Lower values = smoother curves but larger files
+const DEFAULT_PRECISION = 0.25;
+
+function convertSvgToKicad(svgPath, tempKicadPath, name, precision = DEFAULT_PRECISION) {
   console.log(`Converting SVG to KiCad format...`);
   console.log(`Using precision: ${precision} (lower = smoother)`);
 
   try {
     execSync(
-      `svg2mod -i "${svgPath}" --force F.SilkS -o "${tempKicadPath}" --format pretty --name "${name}" -p ${precision}`,
+      `svg2mod -i "${svgPath}" --force F.SilkS -o "${tempKicadPath}" --format pretty --name "${name}" -p ${precision} -c`,
       { stdio: 'inherit' }
     );
 
@@ -277,7 +281,7 @@ function main() {
     console.log('  input.svg   Path to input SVG file');
     console.log('  output.js   Path to output JavaScript footprint file');
     console.log('  name        Optional name for the footprint (defaults to basename of output file)');
-    console.log('  precision   Optional precision for curve smoothness (default: 0.1, lower = smoother)');
+    console.log(`  precision   Optional precision for curve smoothness (default: ${DEFAULT_PRECISION}, lower = smoother)`);
     console.log('');
     console.log('Examples:');
     console.log('  node scripts/convert_svg_to_footprint.js art/brain.svg ergogen/footprints/ceoloide/brain.js brain');
@@ -288,7 +292,7 @@ function main() {
   const svgPath = args[0];
   const outputPath = args[1];
   const name = args[2] || path.basename(outputPath, '.js');
-  const precision = args[3] ? parseFloat(args[3]) : 0.1;
+  const precision = args[3] ? parseFloat(args[3]) : DEFAULT_PRECISION;
 
   // Verify input file exists
   if (!fs.existsSync(svgPath)) {
