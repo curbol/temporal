@@ -19,12 +19,13 @@ const path = require('path');
 const { execSync } = require('child_process');
 const os = require('os');
 
-function convertSvgToKicad(svgPath, tempKicadPath, name) {
+function convertSvgToKicad(svgPath, tempKicadPath, name, precision = 0.1) {
   console.log(`Converting SVG to KiCad format...`);
+  console.log(`Using precision: ${precision} (lower = smoother)`);
 
   try {
     execSync(
-      `svg2mod -i "${svgPath}" --force F.SilkS -o "${tempKicadPath}" --format pretty --name "${name}"`,
+      `svg2mod -i "${svgPath}" --force F.SilkS -o "${tempKicadPath}" --format pretty --name "${name}" -p ${precision}`,
       { stdio: 'inherit' }
     );
 
@@ -39,30 +40,52 @@ function convertSvgToKicad(svgPath, tempKicadPath, name) {
 function extractPolygons(content) {
   const polygons = [];
 
-  // Find all fp_poly blocks
-  const polyRegex = /\(fp_poly[^)]*\(pts[^)]*(?:\([^)]*\)[^)]*)*\)[^)]*\)/gs;
-  const matches = content.matchAll(polyRegex);
+  // Find all fp_poly blocks - match opening (fp_poly to its closing )
+  // Need to handle nested parentheses properly
+  let depth = 0;
+  let currentPoly = '';
+  let inPoly = false;
 
-  for (const match of matches) {
-    const polyText = match[0];
+  for (let i = 0; i < content.length; i++) {
+    const char = content[i];
 
-    // Extract layer information
-    const layerMatch = polyText.match(/\(layer\s+([^)]+)\)/);
-    const layer = layerMatch ? layerMatch[1] : 'F.SilkS';
-
-    // Extract width if present
-    const widthMatch = polyText.match(/\(width\s+([\d.]+)\)/);
-    const width = widthMatch ? widthMatch[1] : '0.15';
-
-    // Extract all xy points
-    const pointRegex = /\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g;
-    const points = [];
-    let pointMatch;
-    while ((pointMatch = pointRegex.exec(polyText)) !== null) {
-      points.push([pointMatch[1], pointMatch[2]]);
+    if (content.substr(i, 8) === '(fp_poly') {
+      inPoly = true;
+      currentPoly = '';
+      depth = 0;
     }
 
-    polygons.push({ layer, width, points });
+    if (inPoly) {
+      currentPoly += char;
+
+      if (char === '(') depth++;
+      if (char === ')') depth--;
+
+      if (depth === 0 && currentPoly.length > 0) {
+        // Extract layer information
+        const layerMatch = currentPoly.match(/\(layer\s+([^)]+)\)/);
+        const layer = layerMatch ? layerMatch[1] : 'F.SilkS';
+
+        // Extract width if present
+        const widthMatch = currentPoly.match(/\(width\s+([\d.]+)\)/);
+        const width = widthMatch ? widthMatch[1] : '0';
+
+        // Extract all xy points
+        const pointRegex = /\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g;
+        const points = [];
+        let pointMatch;
+        while ((pointMatch = pointRegex.exec(currentPoly)) !== null) {
+          points.push([pointMatch[1], pointMatch[2]]);
+        }
+
+        if (points.length > 0) {
+          polygons.push({ layer, width, points });
+        }
+
+        inPoly = false;
+        currentPoly = '';
+      }
+    }
   }
 
   return polygons;
@@ -140,77 +163,84 @@ module.exports = {
     };
 
     const at = parseAt(p.at);
-    let output = '';
 
-    // Add artwork polygons
+    // Define all polygon points
+    const polygons_data = [
 `;
 
-  // Add each polygon
+  // Add each polygon's points
   polygons.forEach((poly, i) => {
-    const pointsStr = poly.points.map(([x, y]) => `(xy ${x} ${y})`).join('\n      ');
-
-    jsOutput += `    output += \`
-    (fp_poly
-      (pts
-        ${pointsStr}
-      )
-      (layer \${p.side}.SilkS)
-      (width ${poly.width})
-    )
-\`;
+    jsOutput += `      {
+        width: ${poly.width},
+        points: \`
+${poly.points.map(([x, y]) => `          (xy ${x} ${y})`).join('\n')}
+        \`
+      },
 `;
   });
 
-  // Add reversible logic
-  jsOutput += `
-    // Add mirrored version on opposite side if reversible
+  jsOutput += `    ];
+
+    // Build footprint polygons
+    let front_polys = '';
+    let back_polys = '';
+
+    polygons_data.forEach(poly => {
+      front_polys += \`
+    (fp_poly
+      (pts
+        \${poly.points}
+      )
+      (layer "\${p.side}.SilkS")
+      (width \${poly.width})
+    )\`;
+
+      back_polys += \`
+    (fp_poly
+      (pts
+        \${poly.points}
+      )
+      (layer "\${p.side === 'F' ? 'B' : 'F'}.SilkS")
+      (width \${poly.width})
+    )\`;
+    });
+
+
+    // Build the footprint
+    let footprint = \`
+  (footprint "${name}" (layer "\${p.side}.Cu")
+    \${p.at}
+    (attr virtual)
+    (descr "${displayName} silkscreen artwork")
+    (tags svg2mod)
+    (fp_text reference "\${p.ref}" (at 0 0) (layer "\${p.side}.SilkS") hide
+      (effects (font (size 1.524 1.524) (thickness 0.3048)))
+    )
+    (fp_text value "G***" (at 0 0) (layer "\${p.side}.SilkS") hide
+      (effects (font (size 1.524 1.524) (thickness 0.3048)))
+    )
+\`;
+
+    // Add polygons based on reversible setting
     if (p.reversible) {
-`;
-
-  polygons.forEach((poly, i) => {
-    const pointsStr = poly.points.map(([x, y]) => `(xy ${parseFloat(x) * -1} ${y})`).join('\n        ');
-
-    jsOutput += `      output += \`
-    (fp_poly
-      (pts
-        ${pointsStr}
-      )
-      (layer \${p.side === 'F' ? 'B' : 'F'}.SilkS)
-      (width ${poly.width})
-    )
-\`;
-`;
-  });
-
-  jsOutput += `    }
+      footprint += front_polys + back_polys;
+    } else {
+      footprint += front_polys;
+    }
 
     // Add keepout zone if requested
     if (p.add_keepout) {
-      const uuid = generate_uuid(\`${name}_keepout_\${p.at}_\${Date.now()}\`);
-      const polygonData = \``;
+      const pos = parseAt(p.at);
+      const rotation = p.r || pos.r;
+      const zone_points = transformPolygon(polygons_data[0].points, pos.x, pos.y, -rotation);
 
-  // Add a simplified keepout polygon (using first polygon's bounds)
-  if (polygons.length > 0) {
-    const firstPoly = polygons[0];
-    const pointsStr = firstPoly.points.map(([x, y]) => `(xy ${x} ${y})`).join('\n        ');
-    jsOutput += pointsStr;
-  }
-
-  jsOutput += `\`;
-
-      output += \`
+      footprint += \`
     (zone
       (net 0)
       (net_name "")
-      (layer "F.Cu")
-      (uuid "\${uuid}")
-      (name "${displayName} Artwork Keepout")
+      (layers "F.Cu" "B.Cu")
+      (uuid "\${generate_uuid(p.ref + '-${name}-keepout')}")
       (hatch edge 0.508)
-      (connect_pads
-        (clearance 0)
-      )
-      (min_thickness 0.254)
-      (filled_areas_thickness no)
       (keepout
         (tracks not_allowed)
         (vias not_allowed)
@@ -218,20 +248,18 @@ module.exports = {
         (copperpour not_allowed)
         (footprints allowed)
       )
-      (fill
-        (thermal_gap 0.508)
-        (thermal_bridge_width 0.508)
-      )
       (polygon
         (pts
-          \${transformPolygon(polygonData, at.x, at.y, at.r)}
+\${zone_points}
         )
       )
-    )
-\`;
+    )\`;
     }
 
-    return output;
+    footprint += \`
+  )\`;
+
+    return footprint;
   }
 };
 `;
@@ -243,21 +271,24 @@ function main() {
   const args = process.argv.slice(2);
 
   if (args.length < 2) {
-    console.log('Usage: convert_svg_to_footprint.js <input.svg> <output.js> [name]');
+    console.log('Usage: convert_svg_to_footprint.js <input.svg> <output.js> [name] [precision]');
     console.log('');
     console.log('Arguments:');
     console.log('  input.svg   Path to input SVG file');
     console.log('  output.js   Path to output JavaScript footprint file');
     console.log('  name        Optional name for the footprint (defaults to basename of output file)');
+    console.log('  precision   Optional precision for curve smoothness (default: 0.1, lower = smoother)');
     console.log('');
-    console.log('Example:');
+    console.log('Examples:');
     console.log('  node scripts/convert_svg_to_footprint.js art/brain.svg ergogen/footprints/ceoloide/brain.js brain');
+    console.log('  node scripts/convert_svg_to_footprint.js art/brain.svg ergogen/footprints/ceoloide/brain.js brain 0.05');
     process.exit(1);
   }
 
   const svgPath = args[0];
   const outputPath = args[1];
   const name = args[2] || path.basename(outputPath, '.js');
+  const precision = args[3] ? parseFloat(args[3]) : 0.1;
 
   // Verify input file exists
   if (!fs.existsSync(svgPath)) {
@@ -275,7 +306,7 @@ function main() {
 
   try {
     // Step 1: Convert SVG to KiCad format
-    const kicadPath = convertSvgToKicad(svgPath, tempKicadPath, name);
+    const kicadPath = convertSvgToKicad(svgPath, tempKicadPath, name, precision);
 
     // Step 2: Read KiCad file
     const kicadContent = fs.readFileSync(kicadPath, 'utf8');
