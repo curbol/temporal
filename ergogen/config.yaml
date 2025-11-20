@@ -51,6 +51,10 @@ units:
   hole3_x: 0.5 kx + 1
   hole3_y: 0.0 ky - 0.5
 
+  # Thumb right extra
+  hole3_e_x: 0.5 kx + 1
+  hole3_e_y: 0.0 ky - 0.5
+
   # Thumb left
   hole4_x: 0.5 kx + 0.6
   hole4_y: 0.0 ky - 0.5
@@ -58,6 +62,10 @@ units:
   # Far left
   hole5_x: -0.5 kx - 0.425
   hole5_y: -1.25 ky - 0.175
+
+  # Far left extra
+  hole5_e_x: -0.5 kx - 0.425
+  hole5_e_y: -1.25 ky - 0.175
 
   # MCU Cover Holes
   mcu_hole1_x: 0.5kx + 4
@@ -86,7 +94,7 @@ units:
 
   # M2 heat-set insert posts
   m2_size: 2
-  m2_insert_inner_diameter: 2.7
+  post_hole_diameter: 2.7
   m2_insert_outer_diameter: 4.9
   m2_insert_post_height: pcb_thickness + 0.9 # PCB thickness + Choc gap under top-plate
   m2_insert_hole_depth: 3.95 # Max = bottom_thickness + m2_insert_post_height
@@ -485,54 +493,82 @@ outlines:
       where:
         - ref: finger_inner_bottom
           shift: [mcu_hole2_x, mcu_hole2_y]
-  _m2_insert_outer_post:
+  _post:
     - what: circle
       radius: m2_insert_outer_diameter / 2
-  _m2_insert_outer_posts:
-    - name: _m2_insert_outer_post
-      where:
-        ref: finger_middle_top
-        shift: [hole1_x, hole1_y]
-    - name: _m2_insert_outer_post
-      where:
-        ref: finger_inner_top
-        shift: [hole2_x, hole2_y]
-    - name: _m2_insert_outer_post
-      where:
-        ref: thumb_mid
-        shift: [hole3_x, hole3_y]
-    - name: _m2_insert_outer_post
-      where:
-        ref: thumb_enc
-        shift: [hole4_x, hole4_y]
-    - name: _m2_insert_outer_post
-      where:
-        ref: finger_ring_home
-        shift: [hole5_x, hole5_y]
-  _m2_insert_inner_post:
+  _post_hole:
     - what: circle
-      radius: m2_insert_inner_diameter / 2
-  _m2_insert_inner_posts:
-    - name: _m2_insert_inner_post
+      radius: post_hole_diameter / 2
+  _posts_core:
+    - name: _post
       where:
         ref: finger_middle_top
         shift: [hole1_x, hole1_y]
-    - name: _m2_insert_inner_post
+    - name: _post
       where:
         ref: finger_inner_top
         shift: [hole2_x, hole2_y]
-    - name: _m2_insert_inner_post
+    - name: _post
       where:
         ref: thumb_mid
         shift: [hole3_x, hole3_y]
-    - name: _m2_insert_inner_post
+    - name: _post
       where:
         ref: thumb_enc
         shift: [hole4_x, hole4_y]
-    - name: _m2_insert_inner_post
+    - name: _post
       where:
         ref: finger_ring_home
         shift: [hole5_x, hole5_y]
+    - operation: subtract
+      name: _extra_thumb
+      adjust:
+        shift: [wall_thickness / 2, 0]
+    - operation: subtract
+      name: _extra_pinky
+      adjust:
+        shift: [-wall_thickness / 2, 0]
+  _posts_pinky:
+    - name: _post
+      where:
+        ref: finger_extra_home
+        shift: [hole5_e_x, hole5_e_y]
+  _posts_thumb:
+    - name: _post
+      where:
+        ref: thumb_far
+        shift: [hole3_e_x, hole3_e_y]
+  _post_holes_core:
+    - name: _post_hole
+      where:
+        ref: finger_middle_top
+        shift: [hole1_x, hole1_y]
+    - name: _post_hole
+      where:
+        ref: finger_inner_top
+        shift: [hole2_x, hole2_y]
+    - name: _post_hole
+      where:
+        ref: thumb_mid
+        shift: [hole3_x, hole3_y]
+    - name: _post_hole
+      where:
+        ref: thumb_enc
+        shift: [hole4_x, hole4_y]
+    - name: _post_hole
+      where:
+        ref: finger_ring_home
+        shift: [hole5_x, hole5_y]
+  _posts_holes_thumb:
+    - name: _post
+      where:
+        ref: thumb_far
+        shift: [hole3_e_x, hole3_e_y]
+  _posts_holes_pinky:
+    - name: _post
+      where:
+        ref: finger_extra_home
+        shift: [hole5_e_x, hole5_e_y]
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
@@ -936,13 +972,33 @@ cases:
       rotate: [0, 90, 0]
   _posts:
     - what: outline # M2 heat-set insert posts
-      name: _m2_insert_outer_posts
+      name: _posts_core
       extrude: m2_insert_post_height
       shift: [0, 0, 0]
     - what: outline
       operation: subtract
-      name: _m2_insert_inner_posts
-      extrude: m2_insert_hole_depth + 1
+      name: _post_holes_core
+      extrude: m2_insert_hole_depth * 2
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+  _posts_thumb:
+    - what: outline # M2 heat-set insert posts
+      name: _posts_thumb
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _posts_holes_thumb
+      extrude: m2_insert_hole_depth * 2
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+  _posts_pinky:
+    - what: outline # M2 heat-set insert posts
+      name: _posts_pinky
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _posts_holes_pinky
+      extrude: m2_insert_hole_depth * 2
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
   temporal_44:
     - what: outline # Bottom
@@ -968,6 +1024,10 @@ cases:
       name: _wall_cutouts
     - what: case
       name: _posts
+    - what: case
+      name: _posts_thumb
+    - what: case
+      name: _posts_pinky
   top_plate_44:
     - what: outline
       name: _top_plate_44
@@ -993,6 +1053,8 @@ cases:
       name: _wall_cutouts
     - what: case
       name: _posts
+    - what: case
+      name: _posts_pinky
   top_plate_42:
     - what: outline
       name: _top_plate_42
@@ -1018,6 +1080,8 @@ cases:
       name: _wall_cutouts
     - what: case
       name: _posts
+    - what: case
+      name: _posts_thumb
   top_plate_40:
     - what: outline
       name: _top_plate_40
@@ -1186,8 +1250,8 @@ pcbs:
       neuron: &neuron
         what: ceoloide/neuron
         where:
-          - ref: finger_ring_bottom
-            shift: [9.5, -10.5]
+          - ref: finger_middle_bottom
+            shift: [-0, -20]
         params:
           reversible: true
           add_keepout: true
@@ -1289,8 +1353,8 @@ pcbs:
       brain: &brain
         what: ceoloide/brain
         where:
-          - ref: finger_pinky_top
-            shift: [0, 0]
+          - ref: finger_middle_bottom
+            shift: [8, 0]
         params:
           reversible: true
           add_keepout: true
