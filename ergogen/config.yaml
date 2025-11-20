@@ -40,32 +40,32 @@ units:
   standoff_size: 5 # Size for standoff holes on pcb
 
   # Top left
-  hole1_x: -0.5 kx - 1
-  hole1_y: -1 ky - 1
+  hole1_x: -0.5kx - 1
+  hole1_y: -1ky - 1
 
   # Top right
   hole2_x: -0.52 kx
   hole2_y: -0.35 ky
 
   # Thumb right
-  hole3_x: 0.5 kx + 1
-  hole3_y: 0.0 ky - 0.5
+  hole3_x: 0.5kx + 1
+  hole3_y: 0ky - 0.5
 
   # Thumb right extra
-  hole3_e_x: 0.5 kx + 1
-  hole3_e_y: 0.0 ky - 0.5
+  hole3_e_x: 0.5kx + 1
+  hole3_e_y: 0.0ky - 0.5
 
   # Thumb left
-  hole4_x: 0.5 kx + 0.6
-  hole4_y: 0.0 ky - 0.5
+  hole4_x: 0.5kx + 0.6
+  hole4_y: 0.0ky - 0.5
 
   # Far left
-  hole5_x: -0.5 kx - 0.425
-  hole5_y: -1.25 ky - 0.175
+  hole5_x: -0.5kx - 0.425
+  hole5_y: -1.25ky - 0.175
 
   # Far left extra
-  hole5_e_x: -0.5 kx - 0.425
-  hole5_e_y: -1.25 ky - 0.175
+  hole5_e_x: -0.5kx - 0
+  hole5_e_y: 0ky - 0.3
 
   # MCU Cover Holes
   mcu_hole1_x: 0.5kx + 4
@@ -77,6 +77,7 @@ units:
   # Extra Breakoff
   cut_w: 0.5
   cut_fillet: 0.24
+  break_bridge_size: 3.8
 
   # Board
   base_fillet: 2.5
@@ -229,7 +230,6 @@ outlines:
         ref: finger_inner_home
         shift: [19.8, 6.75 - voff]
       size: [11, 25.5] # (10.8 x 25.3) + some buffer
-
   _mcu_cover_holes:
     - what: circle
       radius: m2_size / 2
@@ -241,32 +241,26 @@ outlines:
       where:
         - ref: finger_inner_bottom
           shift: [mcu_hole2_x, mcu_hole2_y]
-  _plate_holes:
-    - what: circle
-      radius: m2_size / 2 + 0.1
+  _m2_nut:
+    - what: polygon
+      adjust:
+        shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+      points:
+        - shift: [m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
+        - shift: [-m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
+        - shift: [-m2_nut_width / sqrt_3, 0]
+        - shift: [-m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+        - shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+        - shift: [m2_nut_width / sqrt_3, 0]
+  _mcu_cover_nut_cutout:
+    - name: _m2_nut
       where:
-        ref: finger_middle_top
-        shift: [hole1_x, hole1_y]
-    - what: circle
-      radius: m2_size / 2 + 0.1
+        - ref: finger_inner_bottom
+          shift: [mcu_hole1_x, mcu_hole1_y]
+    - name: _m2_nut
       where:
-        ref: finger_inner_top
-        shift: [hole2_x, hole2_y]
-    - what: circle
-      radius: m2_size / 2 + 0.1
-      where:
-        ref: thumb_mid
-        shift: [hole3_x, hole3_y]
-    - what: circle
-      radius: m2_size / 2 + 0.1
-      where:
-        ref: thumb_enc
-        shift: [hole4_x, hole4_y]
-    - what: circle
-      radius: m2_size / 2 + 0.1
-      where:
-        ref: finger_ring_home
-        shift: [hole5_x, hole5_y]
+        - ref: finger_inner_bottom
+          shift: [mcu_hole2_x, mcu_hole2_y]
 
   _socket:
     - what: rectangle # Center
@@ -473,26 +467,59 @@ outlines:
           shift: [27.5 + side_cut_radius * 2, -14.95 - voff]
           rotate: 90
 
-  _m2_nut:
-    - what: polygon
-      adjust:
-        shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
-      points:
-        - shift: [m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
-        - shift: [-m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
-        - shift: [-m2_nut_width / sqrt_3, 0]
-        - shift: [-m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
-        - shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
-        - shift: [m2_nut_width / sqrt_3, 0]
-  _mcu_cover_nut_cutout:
-    - name: _m2_nut
-      where:
-        - ref: finger_inner_bottom
-          shift: [mcu_hole1_x, mcu_hole1_y]
-    - name: _m2_nut
-      where:
-        - ref: finger_inner_bottom
-          shift: [mcu_hole2_x, mcu_hole2_y]
+  _plate_hole:
+    - what: circle
+      radius: m2_size / 2 + 0.1
+  _plate_holes_38:
+    - name: _plate_hole
+      where: &hole1
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - name: _plate_hole
+      where: &hole2
+        - ref: finger_inner_top
+          shift: [hole2_x, hole2_y]
+    - name: _plate_hole
+      where: &hole3
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - name: _plate_hole
+      where: &hole4
+        - ref: thumb_enc
+          shift: [hole4_x, hole4_y]
+    - name: _plate_hole
+      where: &hole5
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
+  _plate_holes_40:
+    - name: _plate_holes_38
+    - name: _plate_hole
+      where: &hole3_e
+        ref: thumb_far
+        shift: [hole3_e_x, hole3_e_y]
+    - operation: subtract
+      what: circle
+      radius: m2_size
+      where: *hole3
+  _plate_holes_42:
+    - name: _plate_holes_38
+    - name: _plate_hole
+      where: &hole5_e
+        ref: finger_pinky_home
+        shift: [hole5_e_x, hole5_e_y]
+    - operation: subtract
+      what: circle
+      radius: m2_size
+      where: *hole5
+  _plate_holes_44:
+    - name: _plate_holes_40
+    - name: _plate_hole
+      where: *hole5_e
+    - operation: subtract
+      what: circle
+      radius: m2_size
+      where: *hole5
+
   _post:
     - what: circle
       radius: m2_insert_outer_diameter / 2
@@ -502,24 +529,11 @@ outlines:
   _posts_core:
     - name: _post
       where:
-        ref: finger_middle_top
-        shift: [hole1_x, hole1_y]
-    - name: _post
-      where:
-        ref: finger_inner_top
-        shift: [hole2_x, hole2_y]
-    - name: _post
-      where:
-        ref: thumb_mid
-        shift: [hole3_x, hole3_y]
-    - name: _post
-      where:
-        ref: thumb_enc
-        shift: [hole4_x, hole4_y]
-    - name: _post
-      where:
-        ref: finger_ring_home
-        shift: [hole5_x, hole5_y]
+        - *hole1
+        - *hole2
+        - *hole3
+        - *hole4
+        - *hole5
     - operation: subtract
       name: _extra_thumb
       adjust:
@@ -528,47 +542,26 @@ outlines:
       name: _extra_pinky
       adjust:
         shift: [-wall_thickness / 2, 0]
-  _posts_pinky:
-    - name: _post
-      where:
-        ref: finger_extra_home
-        shift: [hole5_e_x, hole5_e_y]
   _posts_thumb:
     - name: _post
-      where:
-        ref: thumb_far
-        shift: [hole3_e_x, hole3_e_y]
+      where: *hole3_e
+  _posts_pinky:
+    - name: _post
+      where: *hole5_e
   _post_holes_core:
     - name: _post_hole
       where:
-        ref: finger_middle_top
-        shift: [hole1_x, hole1_y]
-    - name: _post_hole
-      where:
-        ref: finger_inner_top
-        shift: [hole2_x, hole2_y]
-    - name: _post_hole
-      where:
-        ref: thumb_mid
-        shift: [hole3_x, hole3_y]
-    - name: _post_hole
-      where:
-        ref: thumb_enc
-        shift: [hole4_x, hole4_y]
-    - name: _post_hole
-      where:
-        ref: finger_ring_home
-        shift: [hole5_x, hole5_y]
+        - *hole1
+        - *hole2
+        - *hole3
+        - *hole4
+        - *hole5
   _posts_holes_thumb:
-    - name: _post
-      where:
-        ref: thumb_far
-        shift: [hole3_e_x, hole3_e_y]
+    - name: _post_hole
+      where: *hole3_e
   _posts_holes_pinky:
-    - name: _post
-      where:
-        ref: finger_extra_home
-        shift: [hole5_e_x, hole5_e_y]
+    - name: _post_hole
+      where: *hole5_e
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
@@ -698,11 +691,11 @@ outlines:
     - what: rectangle
       adjust:
         shift: [0, 0.25py - 1]
-      size: [cut_w * 2, 3.7]
+      size: [cut_w * 2, break_bridge_size]
     - what: rectangle
       adjust:
         shift: [0, -0.25py]
-      size: [cut_w * 2, 3.7]
+      size: [cut_w * 2, break_bridge_size]
   _break_bridges:
     - name: _break_bridge
       where:
@@ -741,12 +734,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_44
   _back_plate_44:
     - name: _board_44
       fillet: base_fillet
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_44
 
   # Board 42
   _case_inner_42_1:
@@ -769,12 +762,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_42
   _back_plate_42:
     - name: _board_42
       fillet: base_fillet
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_42
 
   # Board 40
   _case_inner_40_1:
@@ -797,12 +790,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_40
   _back_plate_40:
     - name: _board_40
       fillet: base_fillet
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_40
 
   # Board 38
   _case_inner_38_1:
@@ -825,12 +818,12 @@ outlines:
     - operation: subtract
       name: _key_plugs
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_38
   _back_plate_38:
     - name: _board_38
       fillet: base_fillet
     - operation: subtract
-      name: _plate_holes
+      name: _plate_holes_38
 
   # Common
   pcb:
@@ -1290,6 +1283,14 @@ pcbs:
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
+      hole_3_e: &hole_3_e
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: thumb_far
+            shift: [hole3_e_x, hole3_e_y]
+        params:
+          hole_size: standoff_size
+          hole_drill: standoff_size
       hole_4: &hole_4
         what: ceoloide/mounting_hole_npth
         where:
@@ -1303,6 +1304,14 @@ pcbs:
         where:
           - ref: finger_ring_home
             shift: [hole5_x, hole5_y]
+        params:
+          hole_size: standoff_size
+          hole_drill: standoff_size
+      hole_5_e: &hole_5_e
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_pinky_home
+            shift: [hole5_e_x, hole5_e_y]
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
@@ -1333,9 +1342,9 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3: *hole_3
+      hole_3_e: *hole_3_e
       hole_4: *hole_4
-      hole_5: *hole_5
+      hole_5_e: *hole_5_e
       temporal: *temporal_text
       neuron: *neuron
 
@@ -1347,9 +1356,9 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3: *hole_3
+      hole_3_e: *hole_3_e
       hole_4: *hole_4
-      hole_5: *hole_5
+      hole_5_e: *hole_5_e
       brain: &brain
         what: ceoloide/brain
         where:
@@ -1369,7 +1378,7 @@ pcbs:
       hole_2: *hole_2
       hole_3: *hole_3
       hole_4: *hole_4
-      hole_5: *hole_5
+      hole_5_e: *hole_5_e
       temporal: *temporal_text
       neuron: *neuron
 
@@ -1383,7 +1392,7 @@ pcbs:
       hole_2: *hole_2
       hole_3: *hole_3
       hole_4: *hole_4
-      hole_5: *hole_5
+      hole_5_e: *hole_5_e
       brain: *brain
 
   top_plate_40:
@@ -1394,7 +1403,7 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3: *hole_3
+      hole_3_e: *hole_3_e
       hole_4: *hole_4
       hole_5: *hole_5
       temporal: *temporal_text
@@ -1408,7 +1417,7 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3: *hole_3
+      hole_3_e: *hole_3_e
       hole_4: *hole_4
       hole_5: *hole_5
       brain: *brain
