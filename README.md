@@ -38,16 +38,19 @@ To generate PCBs and cases from the Ergogen design:
 ### Setup
 
 1. Install dependencies:
+
 ```bash
 make deps
 ```
 
 2. Generate PCBs and cases:
+
 ```bash
 make gen
 ```
 
 This will:
+
 - Run Ergogen to generate PCB and case files
 - Post-process PCBs (fix edge cuts, add ground planes)
 - Configure KiCad project files with defaults from `config/kicad_defaults.yaml`
@@ -68,6 +71,12 @@ For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
 
 - [Typeractive](https://typeractive.xyz/) - nice!nano, nice!view, switches, sockets, encoders, and other components
 - [KEEBD](https://keebd.com/) - Alternative source for keyboard components
+
+## Keycaps
+
+TEMPORAL uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
+
+- [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
 
 ## Influences
 
