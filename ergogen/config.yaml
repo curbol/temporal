@@ -119,7 +119,7 @@ points:
           key.splay: finger_splay_1 + finger_splay_2
           key.column_net: col_extra
         pinky:
-          key.stagger: 0.55ky
+          key.stagger: 0.525ky
           key.column_net: col_pinky
         ring:
           key.stagger: 0.7ky
