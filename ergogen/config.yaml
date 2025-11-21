@@ -27,63 +27,53 @@ units:
   px: kx + pad
   py: ky + pad
 
-  # Vertical offset of mcu area items
-  voff: 10.5
-
   # Finger splay
   finger_splay_1: 6
   finger_splay_2: 4
   thumb_splay: 15
   thumb_spread: 1kx - 0.15
 
-  # Standoffs
-  standoff_size: 5 # Size for standoff holes on pcb
-
+  # Board
+  base_fillet: 2.5
+  pcb_thickness: 1.6
+  top_plate_thickness: 1.3
+  pcb_hole_diameter: 5
   # Top left
   hole1_x: -0.5kx - 1
   hole1_y: -1ky - 1
-
   # Top right
   hole2_x: 0.5kx - 0.35
   hole2_y: -0.5ky
-
   # Thumb right
   hole3_x: 0.5kx + 1
   hole3_y: 0ky - 0.5
-
   # Thumb right extra
   hole3_e_x: 0.5kx + 1
   hole3_e_y: 0.0ky - 0.5
-
   # Thumb left
   hole4_x: 0.5kx + 0.6
   hole4_y: 0.0ky - 0.5
-
   # Far left
   hole5_x: -0.5kx - 0.425
   hole5_y: -1.25ky - 0.175
-
   # Far left extra
   hole5_e_x: 0.5kx - 0.35
   hole5_e_y: -0.5ky
 
-  # MCU Cover Holes
+  # MCU Cover
+  mcu_y: 11
+  mcu_pin_spacing: 7.62 # Distance between MCU pin rows
+  # Left hole
   mcu_hole1_x: 0.5kx + 4
-  mcu_hole1_y: -0.5ky - voff + 7
-
+  mcu_hole1_y: -0.5ky - mcu_y + 7
+  # Right hole
   mcu_hole2_x: 0.5kx + 18
-  mcu_hole2_y: -0.5ky - voff - 1.08
+  mcu_hole2_y: -0.5ky - mcu_y - 1.08
 
   # Extra Breakoff
   cut_w: 0.5
   cut_fillet: 0.24
   break_bridge_size: 3.65
-
-  # Board
-  base_fillet: 2.5
-  pcb_thickness: 1.6
-  top_plate_thickness: 1.3
-  mcu_pin_spacing: 7.62 # Distance between MCU pin rows
 
   # Case
   case_expand: 0.1
@@ -209,7 +199,7 @@ outlines:
     - what: rectangle # Remove fillet by mcu area
       where:
         - ref: finger_inner_home
-          shift: [19.4 + 21.7, -15 - voff]
+          shift: [19.4 + 21.7, -15 - mcu_y]
       size: [21.7, 66.8]
     - what: rectangle # Remove fillet under thumb_far
       where:
@@ -222,13 +212,13 @@ outlines:
     - what: rectangle
       where:
         - ref: finger_inner_home
-          shift: [19.4, -5 - voff]
+          shift: [19.4, -5 - mcu_y]
       size: [21.7, 66.8]
   _display:
     - what: rectangle
       where:
         ref: finger_inner_home
-        shift: [19.8, 6.75 - voff]
+        shift: [19.8, 6.75 - mcu_y]
       size: [11, 25.5] # (10.8 x 25.3) + some buffer
   _mcu_cover_holes:
     - what: circle
@@ -415,17 +405,17 @@ outlines:
     - name: _mcu_pins
       where:
         - ref: finger_inner_home
-          shift: [19.8, 10.8 - voff]
+          shift: [19.8, 10.8 - mcu_y]
   _display_pins_cutouts:
     - name: _display_pins
       where:
         - ref: finger_inner_home
-          shift: [19.8, 7.5 - voff]
+          shift: [19.8, 7.5 - mcu_y]
   _battery_pins_cutouts:
     - name: _battery_pins
       where:
         - ref: finger_inner_home
-          shift: [23.5, -14.5 - voff]
+          shift: [23.5, -14.5 - mcu_y]
 
   _case_cutout_template:
     - what: circle
@@ -458,13 +448,13 @@ outlines:
     - name: _case_cutout_template
       where:
         - ref: finger_inner_home
-          shift: [19.8, 25 + side_cut_radius * 2 - voff]
+          shift: [19.8, 25 + side_cut_radius * 2 - mcu_y]
           rotate: 0
   _power_reset_cutout:
     - name: _case_cutout_template
       where:
         - ref: finger_inner_home
-          shift: [27.5 + side_cut_radius * 2, -14.95 - voff]
+          shift: [27.5 + side_cut_radius * 2, -14.95 - mcu_y]
           rotate: 90
 
   _plate_hole:
@@ -547,8 +537,12 @@ outlines:
         shift: [-wall_thickness / 2, 0]
   _posts_thumb:
     - name: _post
+      where: *hole3_pos
+    - name: _post
       where: *hole3_e_pos
   _posts_pinky:
+    - name: _post
+      where: *hole5_pos
     - name: _post
       where: *hole5_e_pos
   _post_holes_core:
@@ -1166,7 +1160,7 @@ pcbs:
         what: ceoloide/mcu_nice_nano
         where:
           - ref: finger_inner_home
-            shift: [19.8, 10.8 - voff]
+            shift: [19.8, 10.8 - mcu_y]
         params:
           reversible: true
           reverse_mount: true
@@ -1198,7 +1192,7 @@ pcbs:
           include_labels: false
         where:
           - ref: finger_inner_home
-            shift: [19.8, 7.5 - voff]
+            shift: [19.8, 7.5 - mcu_y]
 
       battery:
         what: ceoloide/battery_connector_jst_ph_2
@@ -1209,7 +1203,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [23.5, -14.5 - voff]
+            shift: [23.5, -14.5 - mcu_y]
             rotate: -90
 
       power:
@@ -1221,7 +1215,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [28.225, -18.5 - voff]
+            shift: [28.225, -18.5 - mcu_y]
             rotate: 0
       reset:
         what: ceoloide/reset_switch_smd_side
@@ -1232,7 +1226,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [28.3, -10.2 - voff]
+            shift: [28.3, -10.2 - mcu_y]
             rotate: -90
 
       temporal: &temporal_text
@@ -1268,44 +1262,44 @@ pcbs:
         what: ceoloide/mounting_hole_npth
         where: *hole1_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
       hole_2: &hole_2
         what: ceoloide/mounting_hole_npth
         where: *hole2_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
       hole_3: &hole_3
         what: ceoloide/mounting_hole_npth
         where: *hole3_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
       hole_3_e: &hole_3_e
         what: ceoloide/mounting_hole_npth
         where: *hole3_e_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
       hole_4: &hole_4
         what: ceoloide/mounting_hole_npth
         where: *hole4_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
       hole_5: &hole_5
         what: ceoloide/mounting_hole_npth
         where: *hole5_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
       hole_5_e: &hole_5_e
         what: ceoloide/mounting_hole_npth
         where: *hole5_e_pos
         params:
-          hole_size: standoff_size
-          hole_drill: standoff_size
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
 
       # MCU cover holes
       mcu_hole_L: &mcu_hole_L
