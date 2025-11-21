@@ -1244,7 +1244,7 @@ pcbs:
         what: ceoloide/neuron
         where:
           - ref: finger_middle_bottom
-            shift: [-0, -20]
+            shift: [-0.5ky + 0.9, -20]
         params:
           reversible: true
           add_keepout: true
