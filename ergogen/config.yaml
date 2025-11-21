@@ -44,8 +44,8 @@ units:
   hole1_y: -1ky - 1
 
   # Top right
-  hole2_x: -0.52 kx
-  hole2_y: -0.35 ky
+  hole2_x: 0.5kx - 0.35
+  hole2_y: -0.5ky
 
   # Thumb right
   hole3_x: 0.5kx + 1
@@ -64,8 +64,8 @@ units:
   hole5_y: -1.25ky - 0.175
 
   # Far left extra
-  hole5_e_x: -0.5kx - 0
-  hole5_e_y: 0ky - 0.3
+  hole5_e_x: 0.5kx - 0.35
+  hole5_e_y: -0.5ky
 
   # MCU Cover Holes
   mcu_hole1_x: 0.5kx + 4
@@ -119,7 +119,7 @@ points:
           key.splay: finger_splay_1 + finger_splay_2
           key.column_net: col_extra
         pinky:
-          key.stagger: 0.5ky
+          key.stagger: 0.55ky
           key.column_net: col_pinky
         ring:
           key.stagger: 0.7ky
@@ -472,53 +472,53 @@ outlines:
       radius: m2_size / 2 + 0.1
   _plate_holes_38:
     - name: _plate_hole
-      where: &hole1
+      where: &hole1_pos
         - ref: finger_middle_top
           shift: [hole1_x, hole1_y]
     - name: _plate_hole
-      where: &hole2
-        - ref: finger_inner_top
+      where: &hole2_pos
+        - ref: finger_index_top
           shift: [hole2_x, hole2_y]
     - name: _plate_hole
-      where: &hole3
+      where: &hole3_pos
         - ref: thumb_mid
           shift: [hole3_x, hole3_y]
     - name: _plate_hole
-      where: &hole4
+      where: &hole4_pos
         - ref: thumb_enc
           shift: [hole4_x, hole4_y]
     - name: _plate_hole
-      where: &hole5
+      where: &hole5_pos
         - ref: finger_ring_home
           shift: [hole5_x, hole5_y]
   _plate_holes_40:
     - name: _plate_holes_38
     - name: _plate_hole
-      where: &hole3_e
-        ref: thumb_far
-        shift: [hole3_e_x, hole3_e_y]
+      where: &hole3_e_pos
+        - ref: thumb_far
+          shift: [hole3_e_x, hole3_e_y]
     - operation: subtract
       what: circle
       radius: m2_size
-      where: *hole3
+      where: *hole3_pos
   _plate_holes_42:
     - name: _plate_holes_38
     - name: _plate_hole
-      where: &hole5_e
-        ref: finger_pinky_home
-        shift: [hole5_e_x, hole5_e_y]
+      where: &hole5_e_pos
+        - ref: finger_extra_top
+          shift: [hole5_e_x, hole5_e_y]
     - operation: subtract
       what: circle
       radius: m2_size
-      where: *hole5
+      where: *hole5_pos
   _plate_holes_44:
     - name: _plate_holes_40
     - name: _plate_hole
-      where: *hole5_e
+      where: *hole5_e_pos
     - operation: subtract
       what: circle
       radius: m2_size
-      where: *hole5
+      where: *hole5_pos
 
   _post:
     - what: circle
@@ -529,11 +529,11 @@ outlines:
   _posts_core:
     - name: _post
       where:
-        - *hole1
-        - *hole2
-        - *hole3
-        - *hole4
-        - *hole5
+        - *hole1_pos
+        - *hole2_pos
+        - *hole3_pos
+        - *hole4_pos
+        - *hole5_pos
     - operation: subtract
       name: _extra_thumb
       adjust:
@@ -544,24 +544,24 @@ outlines:
         shift: [-wall_thickness / 2, 0]
   _posts_thumb:
     - name: _post
-      where: *hole3_e
+      where: *hole3_e_pos
   _posts_pinky:
     - name: _post
-      where: *hole5_e
+      where: *hole5_e_pos
   _post_holes_core:
     - name: _post_hole
       where:
-        - *hole1
-        - *hole2
-        - *hole3
-        - *hole4
-        - *hole5
+        - *hole1_pos
+        - *hole2_pos
+        - *hole3_pos
+        - *hole4_pos
+        - *hole5_pos
   _posts_holes_thumb:
     - name: _post_hole
-      where: *hole3_e
+      where: *hole3_e_pos
   _posts_holes_pinky:
     - name: _post_hole
-      where: *hole5_e
+      where: *hole5_e_pos
 
   _thumb:
     - what: rectangle # Fill gap with finger keys
@@ -1260,58 +1260,43 @@ pcbs:
 
       hole_1: &hole_1
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_middle_top
-            shift: [hole1_x, hole1_y]
-
+        where: *hole1_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
       hole_2: &hole_2
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_inner_top
-            shift: [hole2_x, hole2_y]
+        where: *hole2_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
       hole_3: &hole_3
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_mid
-            shift: [hole3_x, hole3_y]
+        where: *hole3_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
       hole_3_e: &hole_3_e
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_far
-            shift: [hole3_e_x, hole3_e_y]
+        where: *hole3_e_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
       hole_4: &hole_4
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: thumb_enc
-            shift: [hole4_x, hole4_y]
+        where: *hole4_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
       hole_5: &hole_5
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_ring_home
-            shift: [hole5_x, hole5_y]
+        where: *hole5_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
       hole_5_e: &hole_5_e
         what: ceoloide/mounting_hole_npth
-        where:
-          - ref: finger_pinky_home
-            shift: [hole5_e_x, hole5_e_y]
+        where: *hole5_e_pos
         params:
           hole_size: standoff_size
           hole_drill: standoff_size
