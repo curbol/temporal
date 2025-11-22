@@ -61,7 +61,7 @@ units:
   hole5_e_y: -0.5ky
 
   # MCU Cover
-  mcu_y: 11
+  mcu_y: 11.5
   mcu_pin_spacing: 7.62 # Distance between MCU pin rows
   # Left hole
   mcu_hole1_x: 0.5kx + 4
@@ -141,7 +141,7 @@ points:
         spread: 1kx
       anchor:
         ref: finger_index_bottom
-        shift: [-1.25kx, -1.39ky]
+        shift: [-1.3kx, -1.39ky]
       columns:
         encoder:
           key.splay: finger_splay_1 + finger_splay_2
@@ -206,14 +206,14 @@ outlines:
         - thumb_far
       size: [px, py]
       adjust:
-        shift: [0.5px, -0.99999py]
+        shift: [0.5px, -0.999py]
 
   _mcu_area:
     - what: rectangle
       where:
         - ref: finger_inner_home
           shift: [19.4, -5 - mcu_y]
-      size: [21.7, 66.8]
+      size: [20.25, 66.25]
   _display:
     - what: rectangle
       where:
@@ -1195,6 +1195,29 @@ pcbs:
         where:
           - ref: finger_inner_home
             shift: [19.8, 7.5 - mcu_y]
+      power:
+        what: ceoloide/power_switch_smd_side
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        where:
+          - ref: finger_inner_home
+            shift: [19.8, 26 - mcu_y]
+            rotate: 90
+
+      reset:
+        what: ceoloide/reset_switch_smd_side
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        where:
+          - ref: finger_inner_home
+            shift: [27.5, -14.5 - mcu_y]
+            rotate: -90
 
       battery:
         what: ceoloide/battery_connector_jst_ph_2
@@ -1205,31 +1228,8 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [23.5, -14.5 - mcu_y]
-            rotate: -90
-
-      power:
-        what: ceoloide/power_switch_smd_side
-        params:
-          reversible: true
-          include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
-        where:
-          - ref: finger_inner_home
-            shift: [28.225, -18.5 - mcu_y]
-            rotate: 0
-      reset:
-        what: ceoloide/reset_switch_smd_side
-        params:
-          reversible: true
-          include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
-        where:
-          - ref: finger_inner_home
-            shift: [28.3, -10.2 - mcu_y]
-            rotate: -90
+            shift: [25.5, -21.75 - mcu_y]
+            rotate: -120
 
       temporal: &temporal_text
         what: ceoloide/utility_text
