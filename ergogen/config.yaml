@@ -61,14 +61,14 @@ units:
   hole5_e_y: -0.5ky
 
   # MCU Cover
-  mcu_y: 11.5
+  mcu_y: -12.3
   mcu_pin_spacing: 7.62 # Distance between MCU pin rows
   # Left hole
   mcu_hole1_x: 0.5kx + 4
-  mcu_hole1_y: -0.5ky - mcu_y + 7
+  mcu_hole1_y: -0.5ky + mcu_y + 8
   # Right hole
   mcu_hole2_x: 0.5kx + 18
-  mcu_hole2_y: -0.5ky - mcu_y - 1.08
+  mcu_hole2_y: -0.5ky + mcu_y - 0.08
 
   # Extra Breakoff
   cut_w: 0.5
@@ -125,7 +125,7 @@ points:
           key.stagger: -0.5ky
           key.column_net: col_index
         inner:
-          key.stagger: -0.15ky
+          key.stagger: -0.16ky
           key.column_net: col_inner
       rows:
         bottom:
@@ -141,7 +141,7 @@ points:
         spread: 1kx
       anchor:
         ref: finger_index_bottom
-        shift: [-1.3kx, -1.39ky]
+        shift: [-1.2566kx, -1.4ky]
       columns:
         encoder:
           key.splay: finger_splay_1 + finger_splay_2
@@ -199,7 +199,7 @@ outlines:
     - what: rectangle # Remove fillet by mcu area
       where:
         - ref: finger_inner_home
-          shift: [19.4 + 21.7, -15 - mcu_y]
+          shift: [19.4 + 21.7, -15 + mcu_y]
       size: [21.7, 66.8]
     - what: rectangle # Remove fillet under thumb_far
       where:
@@ -212,13 +212,13 @@ outlines:
     - what: rectangle
       where:
         - ref: finger_inner_home
-          shift: [19.4, -5 - mcu_y]
+          shift: [19.4, -5 + mcu_y]
       size: [20.25, 66.25]
   _display:
     - what: rectangle
       where:
         ref: finger_inner_home
-        shift: [19.8, 6.75 - mcu_y]
+        shift: [19.8, 6.75 + mcu_y]
       size: [11, 25.5] # (10.8 x 25.3) + some buffer
   _mcu_cover_holes:
     - what: circle
@@ -407,17 +407,17 @@ outlines:
     - name: _mcu_pins
       where:
         - ref: finger_inner_home
-          shift: [19.8, 10.8 - mcu_y]
+          shift: [19.8, 10.8 + mcu_y]
   _display_pins_cutouts:
     - name: _display_pins
       where:
         - ref: finger_inner_home
-          shift: [19.8, 7.5 - mcu_y]
+          shift: [19.8, 7.5 + mcu_y]
   _battery_pins_cutouts:
     - name: _battery_pins
       where:
         - ref: finger_inner_home
-          shift: [23.5, -14.5 - mcu_y]
+          shift: [23.5, -14.5 + mcu_y]
 
   _case_cutout_template:
     - what: circle
@@ -450,13 +450,13 @@ outlines:
     - name: _case_cutout_template
       where:
         - ref: finger_inner_home
-          shift: [19.8, 25 + side_cut_radius * 2 - mcu_y]
+          shift: [19.8, 25 + side_cut_radius * 2 + mcu_y]
           rotate: 0
   _power_reset_cutout:
     - name: _case_cutout_template
       where:
         - ref: finger_inner_home
-          shift: [27.5 + side_cut_radius * 2, -14.95 - mcu_y]
+          shift: [27.5 + side_cut_radius * 2, -14.95 + mcu_y]
           rotate: 90
 
   _plate_hole:
@@ -575,7 +575,7 @@ outlines:
         - thumb_extra
       size: [px, py]
     - what: polygon # Main thumb area
-      fillet: 15
+      fillet: 14
       points:
         - ref: thumb_enc
           shift: [-0.5px, 1.75py]
@@ -614,7 +614,7 @@ outlines:
       size: [2px, py]
       adjust:
         shift: [-1px, 0.00001py]
-      fillet: 10
+      fillet: base_fillet * 2
 
   _finger_fill: # Fill in gaps between splays
     - what: rectangle
@@ -1162,7 +1162,7 @@ pcbs:
         what: ceoloide/mcu_nice_nano
         where:
           - ref: finger_inner_home
-            shift: [19.8, 10.8 - mcu_y]
+            shift: [19.8, 10.8 + mcu_y]
         params:
           reversible: true
           reverse_mount: true
@@ -1194,7 +1194,7 @@ pcbs:
           include_labels: false
         where:
           - ref: finger_inner_home
-            shift: [19.8, 7.5 - mcu_y]
+            shift: [19.8, 7.5 + mcu_y]
       power:
         what: ceoloide/power_switch_smd_side
         params:
@@ -1204,7 +1204,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [19.8, 26 - mcu_y]
+            shift: [19.8, 26 + mcu_y]
             rotate: 90
 
       reset:
@@ -1216,7 +1216,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [27.5, -14.5 - mcu_y]
+            shift: [27.5, -14.5 + mcu_y]
             rotate: -90
 
       battery:
@@ -1228,7 +1228,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [25.5, -21.75 - mcu_y]
+            shift: [25.1, -21.3 + mcu_y]
             rotate: -120
 
       temporal: &temporal_text
