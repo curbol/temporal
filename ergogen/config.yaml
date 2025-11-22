@@ -1204,7 +1204,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [19.8, 26.25 + mcu_y]
+            shift: [19.8, 26.275 + mcu_y]
             rotate: 0
 
       power:
@@ -1216,7 +1216,7 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [27.675, -14.5 + mcu_y]
+            shift: [27.5, -14.8 + mcu_y]
             rotate: 0
 
       battery:
