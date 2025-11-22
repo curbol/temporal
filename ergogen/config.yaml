@@ -1195,18 +1195,6 @@ pcbs:
         where:
           - ref: finger_inner_home
             shift: [19.8, 7.5 + mcu_y]
-      power:
-        what: ceoloide/power_switch_smd_side
-        params:
-          reversible: true
-          include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
-        where:
-          - ref: finger_inner_home
-            shift: [19.8, 26 + mcu_y]
-            rotate: 90
-
       reset:
         what: ceoloide/reset_switch_smd_side
         params:
@@ -1216,8 +1204,20 @@ pcbs:
           via_drill: 0.4
         where:
           - ref: finger_inner_home
-            shift: [27.5, -14.5 + mcu_y]
-            rotate: -90
+            shift: [19.8, 26.25 + mcu_y]
+            rotate: 0
+
+      power:
+        what: ceoloide/power_switch_smd_side
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        where:
+          - ref: finger_inner_home
+            shift: [27.675, -14.5 + mcu_y]
+            rotate: 0
 
       battery:
         what: ceoloide/battery_connector_jst_ph_2
