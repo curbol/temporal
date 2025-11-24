@@ -60,7 +60,7 @@ module.exports = {
     designator: 'RST',
     side: 'F',
     reversible: false,
-    include_bosses: false,
+    include_bosses: true,
     include_silkscreen: true,
     include_courtyard: false,
     include_traces_vias: false,
