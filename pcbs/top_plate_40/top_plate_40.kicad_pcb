@@ -10677,7 +10677,7 @@
     (net 1)
     (net_name "GND")
     (layer "F.Cu")
-    (uuid "3e28841d-1ff2-42cb-a27b-0fb140ef638b")
+    (uuid "2b779ba7-0dd9-4556-9ce5-4b8c85112747")
     (hatch edge 0.5)
     (priority 0)
     (connect_pads
@@ -10713,7 +10713,7 @@
     (net 1)
     (net_name "GND")
     (layer "B.Cu")
-    (uuid "50b626aa-a551-41b2-880a-a508c2a6958d")
+    (uuid "7f4703ba-f323-4ae3-a42c-5d38b6092c09")
     (hatch edge 0.5)
     (priority 0)
     (connect_pads

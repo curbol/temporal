@@ -63,22 +63,29 @@ gen:
 	@npm run gen 2>/dev/null || npm run gen
 	@echo "✓ Ergogen generation complete"
 	@echo ""
-	@echo "[2/6] Generating preview assets..."
+	@echo "[2/6] Post-processing PCB files..."
+	@node scripts/fix_edge_cuts.js
+	@node scripts/add_ground_planes.js
+	@bash scripts/copy_pcb_if_missing.sh
+	@node scripts/setup_kicad_project.js
+	@echo ""
+	@echo "[3/6] Generating preview assets..."
 	@mkdir -p $(ASSETS_DIR)
 	@if [ -f $(OUTPUT_DIR)/outlines/preview.svg ]; then \
 		sed -e 's/stroke="#000"/stroke="#e2725b"/g' -e 's/stroke:#000/stroke:#e2725b/g' $(OUTPUT_DIR)/outlines/preview.svg > $(ASSETS_DIR)/preview.svg; \
 		echo "✓ Generated preview.svg"; \
 	fi
-	@if [ -f $(PCBS_DIR)/$(TEMPORAL_DIR)/$(TEMPORAL_DIR).kicad_pcb ]; then \
-		kicad-cli pcb render --output $(ASSETS_DIR)/pcb.png --width 1600 --height 900 --side top --background transparent $(PCBS_DIR)/$(TEMPORAL_DIR)/$(TEMPORAL_DIR).kicad_pcb 2>/dev/null; \
-		echo "✓ Generated pcb.png"; \
+	@IMG_COUNT=0; \
+	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		if [ -f "$$pcb" ]; then \
+			pcb_dir=$$(dirname "$$pcb"); \
+			kicad-cli pcb render --output "$$pcb_dir/pcb.png" --width 1600 --height 900 --side top --background transparent "$$pcb" >/dev/null 2>&1; \
+			IMG_COUNT=$$((IMG_COUNT + 1)); \
+		fi \
+	done; \
+	if [ $$IMG_COUNT -gt 0 ]; then \
+		echo "✓ Generated $$IMG_COUNT PCB images"; \
 	fi
-	@echo ""
-	@echo "[3/6] Post-processing PCB files..."
-	@node scripts/fix_edge_cuts.js
-	@node scripts/add_ground_planes.js
-	@bash scripts/copy_pcb_if_missing.sh
-	@node scripts/setup_kicad_project.js
 	@echo ""
 	@echo "[4/6] Converting cases to STL..."
 	@$(MAKE) convert

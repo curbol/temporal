@@ -5,8 +5,6 @@
 
 A 36-44 key split ergonomic keyboard with wireless support. Features breakoff pinky columns and a breakoff thumb key, with an optional encoder in the thumb cluster.
 
-![TEMPORAL PCB](assets/pcb.png)
-
 ![TEMPORAL Preview](assets/preview.svg)
 
 ## Design
