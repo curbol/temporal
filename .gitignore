@@ -1,0 +1,19 @@
+# macOS
+**/.DS_Store
+
+# Node
+node_modules/
+
+# Ergogen
+ergogen/output/**/*
+
+# Gerbers (keep only zips)
+gerbers/*
+!gerbers/*.zip
+
+# KiCad
+pcbs/**/*-backups/
+pcbs/**/fp-info-cache
+pcbs/**/*.kicad_prl
+pcbs/**/~*.lck
+pcbs/**/_autosave-*

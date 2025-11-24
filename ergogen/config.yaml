@@ -1,0 +1,1454 @@
+# Ergogen config file for TEMPORAL keyboard
+
+# TEMPORAL, by Curtis Bollinger - @curbol
+# https://github.com/curbol/temporal
+# v1 - fall 2025
+
+# ergogen docs: https://docs.ergogen.xyz/config-overview
+
+meta:
+  engine: 4.1.0
+  version: 1.0
+  author: Curtis Bollinger
+  url: https://github.com/curbol/temporal
+
+units:
+  # Math
+  sqrt_3: 1.73205080757
+
+  # Display correct choc sizing
+  $default_width: 18
+  $default_height: 17
+  # Proxy Spacing Variables
+  kx: cx #choc spaced
+  ky: cy
+  # Padding Variables
+  pad: 2.151
+  px: kx + pad
+  py: ky + pad
+
+  # Finger splay
+  finger_splay_1: 6
+  finger_splay_2: 4
+  thumb_splay: 15
+  thumb_spread: 1kx - 0.15
+
+  # Board
+  base_fillet: 2.5
+  pcb_thickness: 1.6
+  top_plate_thickness: 1.3
+  pcb_hole_diameter: 5
+  # Top left
+  hole1_x: -0.5kx - 1
+  hole1_y: -1ky - 1
+  # Top right
+  hole2_x: 0.5kx - 0.35
+  hole2_y: -0.5ky
+  # Thumb right
+  hole3_x: 0.5kx + 1
+  hole3_y: 0ky - 0.5
+  # Thumb right extra
+  hole3_e_x: 0.5kx + 1
+  hole3_e_y: 0.0ky - 0.5
+  # Thumb left
+  hole4_x: 0.5kx + 0.6
+  hole4_y: 0.0ky - 0.5
+  # Far left
+  hole5_x: -0.5kx - 0.425
+  hole5_y: -1.25ky - 0.175
+  # Far left extra
+  hole5_e_x: 0.5kx - 0.35
+  hole5_e_y: -0.5ky
+
+  # MCU Cover
+  mcu_y: -12
+  mcu_pin_spacing: 7.62 # Distance between MCU pin rows
+  # Left hole
+  mcu_hole1_x: 0.5kx + 4
+  mcu_hole1_y: -0.5ky + mcu_y + 8
+  # Right hole
+  mcu_hole2_x: 0.5kx + 17.6
+  mcu_hole2_y: -0.5ky + mcu_y + 0.146
+
+  # Extra Breakoff
+  cut_w: 0.5
+  cut_fillet: 0.24
+  break_bridge_size: 3.65
+
+  # Case
+  case_expand: 0.1
+  bottom_thickness: 1.85
+  wall_height: pcb_thickness + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
+  wall_thickness: 1.21 # Note: Small changes affact the curves on case_outer. Seems finicky.
+  side_cut_width: 12
+  side_cut_radius: 1.5
+  power_y: -14.8 + mcu_y
+
+  # M2 heat-set insert posts
+  m2_size: 2
+  post_hole_diameter: 2.7
+  m2_insert_outer_diameter: 4.9
+  m2_insert_post_height: pcb_thickness + 0.9 # PCB thickness + Choc gap under top-plate
+  m2_insert_hole_depth: 3.95 # Max = bottom_thickness + m2_insert_post_height
+
+  # M2 nut recesses for MCU cover standoffs
+  m2_nut_width: 4.2 # (4mm + tolerance)
+
+# ------------
+# Points
+# ------------
+points:
+  zones:
+    finger:
+      anchor.shift: [50, -100] # Fix KiCad placement
+      key:
+        padding: 1ky
+        spread: 1kx
+      columns:
+        extra:
+          rows.bottom.skip: true
+          key.splay: finger_splay_1 + finger_splay_2
+          key.column_net: col_extra
+        pinky:
+          key.stagger: 0.5199ky
+          key.column_net: col_pinky
+        ring:
+          key.stagger: 0.7ky
+          key.splay: -finger_splay_1
+          key.spread: 1kx + finger_splay_1 / 8
+          key.column_net: col_ring
+        middle:
+          key.stagger: 0.525ky
+          key.splay: -finger_splay_2
+          key.spread: 1kx + finger_splay_2 / 8
+          key.column_net: col_middle
+        index:
+          key.stagger: -0.5ky
+          key.column_net: col_index
+        inner:
+          key.stagger: -0.16ky
+          key.column_net: col_inner
+      rows:
+        bottom:
+          row_net: row_bottom
+        home:
+          row_net: row_home
+        top:
+          row_net: row_top
+
+    thumb:
+      key:
+        padding: 1ky
+        spread: 1kx
+      anchor:
+        ref: finger_index_bottom
+        shift: [-1.246kx, -1.4ky]
+      columns:
+        encoder:
+          key.splay: finger_splay_1 + finger_splay_2
+          key.spread: thumb_spread
+          key.origin: [-0.5kx, -0.5ky]
+          key.name: thumb_enc
+          key.column_net: col_pinky
+        near:
+          key.splay: -finger_splay_1 - finger_splay_2
+          key.spread: thumb_spread
+          key.origin: [-0.5kx, -0.5ky]
+          key.name: thumb_near
+          key.column_net: col_ring
+        mid:
+          key.splay: -thumb_splay
+          key.spread: thumb_spread
+          key.origin: [-0.5kx, -0.5ky]
+          key.name: thumb_mid
+          key.column_net: col_middle
+        far:
+          key.splay: -thumb_splay
+          key.spread: thumb_spread
+          key.origin: [-0.5kx, -0.5ky]
+          key.name: thumb_far
+          key.column_net: col_index
+        extra:
+          key.splay: -thumb_splay
+          key.spread: thumb_spread
+          key.origin: [-0.5kx, -0.5ky]
+          key.name: thumb_extra
+          key.column_net: col_inner
+      rows:
+        thumb:
+          row_net: row_thumb
+
+# ------------
+# Outlines
+# ------------
+outlines:
+  _extra_pinky:
+    - what: rectangle
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      size: [1px, 3py]
+      adjust:
+        shift: [-pad, 0]
+  _extra_thumb:
+    - what: rectangle # Remove key
+      where:
+        - thumb_far
+      size: [2px, 2py]
+      adjust:
+        shift: [0.5px + 1px, 0]
+    - what: rectangle # Remove fillet by mcu area
+      where:
+        - ref: finger_inner_home
+          shift: [19.4 + 21.7, -15 + mcu_y]
+      size: [21.7, 66.8]
+    - what: rectangle # Remove fillet under thumb_far
+      where:
+        - thumb_far
+      size: [px, py]
+      adjust:
+        shift: [0.5px, -0.99999py] # Floating point shenanigans?
+
+  _mcu_area:
+    - what: rectangle
+      where:
+        - ref: finger_inner_home
+          shift: [19.4, -5 + mcu_y]
+      size: [20.25, 66.25]
+  _display:
+    - what: rectangle
+      where:
+        ref: finger_inner_home
+        shift: [19.8, 6.75 + mcu_y]
+      size: [11, 25.5] # (10.8 x 25.3) + some buffer
+  _mcu_cover_holes:
+    - what: circle
+      radius: m2_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole1_x, mcu_hole1_y]
+    - what: circle
+      radius: m2_size / 2
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole2_x, mcu_hole2_y]
+  _m2_nut:
+    - what: polygon
+      adjust:
+        shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+      points:
+        - shift: [m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
+        - shift: [-m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
+        - shift: [-m2_nut_width / sqrt_3, 0]
+        - shift: [-m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+        - shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+        - shift: [m2_nut_width / sqrt_3, 0]
+  _mcu_cover_nut_cutout:
+    - name: _m2_nut
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole1_x, mcu_hole1_y]
+    - name: _m2_nut
+      where:
+        - ref: finger_inner_bottom
+          shift: [mcu_hole2_x, mcu_hole2_y]
+
+  _socket:
+    - what: rectangle # Center
+      size: [2.7, 5]
+      adjust:
+        rotate: 42
+        shift: [2, 5]
+    - what: rectangle # Upper Left Big
+      size: [4.1, 4.6]
+      adjust:
+        shift: [0, 5.95]
+    - what: rectangle # Upper Left Small
+      size: [2.6, 2.6]
+      adjust:
+        shift: [-3.3, 5.95]
+    - what: rectangle # Lower Right Big
+      size: [4.6, 4.7]
+      adjust:
+        shift: [4.75, 3.85]
+    - what: rectangle # Lower Right Small
+      size: [2.6, 2.6]
+      expand: 0.3
+      adjust:
+        shift: [8.3, 3.735]
+      fillet: 0.3
+  _diode:
+    - what: rectangle
+      size: [4.2, 1.2]
+      adjust:
+        shift: [0, -5]
+    - what: rectangle
+      size: [2.8, 1.7]
+      expand: 0.3
+      adjust:
+        shift: [0, -5]
+      fillet: 0.3
+  _choc_side_posts:
+    - what: circle # Left
+      radius: 1.25
+      adjust:
+        shift: [-5.5, 0]
+    - what: circle # Right
+      radius: 1.25
+      adjust:
+        shift: [5.5, 0]
+    - what: rectangle # Bridge to socket cutout
+      size: [2.5, 2.5]
+      adjust:
+        shift: [5.5, 1.25]
+  _choc_posts:
+    - name: _choc_side_posts
+    - what: circle # Center
+      radius: 2
+  _mcu_pins_trench:
+    - what: circle
+      radius: 1.2
+      adjust:
+        shift: [0, 12.75]
+    - what: rectangle
+      size: [2.4, 28]
+      adjust:
+        shift: [0, -1.27]
+    - what: circle
+      radius: 1.2
+      adjust:
+        shift: [0, -15.25]
+  _mcu_pins:
+    - name: _mcu_pins_trench
+      adjust:
+        shift: [-mcu_pin_spacing, 0]
+    - name: _mcu_pins_trench
+      adjust:
+        shift: [mcu_pin_spacing, 0]
+  _display_pins:
+    - what: circle
+      radius: 1.2
+      adjust:
+        shift: [-5.1, -16.7]
+    - what: rectangle
+      size: [10.2, 2.4]
+      adjust:
+        shift: [0, -16.7]
+    - what: circle
+      radius: 1.2
+      adjust:
+        shift: [5.1, -16.7]
+  _battery_pins:
+    - what: rectangle
+      size: [3, 3.8]
+      fillet: 0.8
+      adjust:
+        shift: [-0.35, 0]
+    - what: rectangle
+      size: [3, 3.8]
+      adjust:
+        shift: [-1.85, 0]
+  _encoder_pins:
+    - what: circle
+      radius: 0.6
+      adjust:
+        shift: [-2.75, -7.5]
+    - what: rectangle
+      size: [5.5, 1.2]
+      adjust:
+        shift: [0, -7.5]
+    - what: circle
+      radius: 0.6
+      adjust:
+        shift: [2.75, -7.5]
+
+  _socket_cutouts_38:
+    - name: _socket
+      where: true
+    - operation: subtract
+      name: _extra_pinky
+      adjust:
+        shift: [3, 0]
+    - operation: subtract
+      name: _extra_thumb
+      adjust:
+        shift: [3, 0]
+  _socket_cutouts_pinky:
+    - name: _socket
+      where:
+        - finger_extra_top
+        - finger_extra_home
+  _socket_cutouts_thumb:
+    - name: _socket
+      where:
+        - thumb_extra
+  _diode_cutouts:
+    - name: _diode
+      where: true
+  _choc_posts_cutouts:
+    - name: _choc_posts
+      where: true
+  _encoder_posts_cutouts:
+    - name: _choc_side_posts
+      where:
+        - thumb_enc
+  _encoder_pins_cutouts:
+    - name: _encoder_pins
+      where:
+        - thumb_enc
+  _encoder_pins_plate_cutouts:
+    - name: _encoder_pins_cutouts
+    - what: rectangle
+      size: [6.7, 1.2]
+      where:
+        - ref: thumb_enc
+          shift: [0, -6.9]
+      expand: -0.2
+  _mcu_pins_cutouts:
+    - name: _mcu_pins
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 10.8 + mcu_y]
+  _display_pins_cutouts:
+    - name: _display_pins
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 7.5 + mcu_y]
+  _battery_pins_cutouts:
+    - name: _battery_pins
+      where:
+        - ref: finger_inner_home
+          shift: [23.5, -14.5 + mcu_y]
+
+  _case_cutout_template:
+    - what: circle
+      radius: side_cut_radius
+      adjust:
+        shift: [-(side_cut_width / 2) + side_cut_radius, -side_cut_radius]
+    - what: circle
+      radius: side_cut_radius
+      adjust:
+        shift: [(side_cut_width / 2) - side_cut_radius, -side_cut_radius]
+    - what: rectangle
+      size: [side_cut_width - side_cut_radius * 2, side_cut_radius * 4]
+      adjust:
+        shift: [0, 0]
+    - what: rectangle
+      size: [side_cut_width + side_cut_radius * 2, side_cut_radius * 2]
+      adjust:
+        shift: [0, 0]
+    - what: circle
+      operation: subtract
+      radius: side_cut_radius
+      adjust:
+        shift: [-(side_cut_width / 2) - side_cut_radius, -side_cut_radius]
+    - what: circle
+      operation: subtract
+      radius: side_cut_radius
+      adjust:
+        shift: [(side_cut_width / 2) + side_cut_radius, -side_cut_radius]
+  _usbc_cutout:
+    - name: _case_cutout_template
+      where:
+        - ref: finger_inner_home
+          shift: [19.8, 25 + side_cut_radius * 2 + mcu_y]
+          rotate: 0
+  _power_cutout:
+    - name: _case_cutout_template
+      where:
+        - ref: finger_inner_home
+          shift: [27.5 + side_cut_radius * 2, power_y]
+          rotate: 90
+
+  _plate_hole:
+    - what: circle
+      radius: m2_size / 2 + 0.1
+  _plate_holes_38:
+    - name: _plate_hole
+      where: &hole1_pos
+        - ref: finger_middle_top
+          shift: [hole1_x, hole1_y]
+    - name: _plate_hole
+      where: &hole2_pos
+        - ref: finger_index_top
+          shift: [hole2_x, hole2_y]
+    - name: _plate_hole
+      where: &hole3_pos
+        - ref: thumb_mid
+          shift: [hole3_x, hole3_y]
+    - name: _plate_hole
+      where: &hole4_pos
+        - ref: thumb_enc
+          shift: [hole4_x, hole4_y]
+    - name: _plate_hole
+      where: &hole5_pos
+        - ref: finger_ring_home
+          shift: [hole5_x, hole5_y]
+  _plate_holes_40:
+    - name: _plate_holes_38
+    - name: _plate_hole
+      where: &hole3_e_pos
+        - ref: thumb_far
+          shift: [hole3_e_x, hole3_e_y]
+    - operation: subtract
+      what: circle
+      radius: m2_size
+      where: *hole3_pos
+  _plate_holes_42:
+    - name: _plate_holes_38
+    - name: _plate_hole
+      where: &hole5_e_pos
+        - ref: finger_extra_top
+          shift: [hole5_e_x, hole5_e_y]
+    - operation: subtract
+      what: circle
+      radius: m2_size
+      where: *hole5_pos
+  _plate_holes_44:
+    - name: _plate_holes_40
+    - name: _plate_hole
+      where: *hole5_e_pos
+    - operation: subtract
+      what: circle
+      radius: m2_size
+      where: *hole5_pos
+
+  _post:
+    - what: circle
+      radius: m2_insert_outer_diameter / 2
+  _post_hole:
+    - what: circle
+      radius: post_hole_diameter / 2
+  _posts_core:
+    - name: _post
+      where: *hole1_pos
+    - name: _post
+      where: *hole2_pos
+    - name: _post
+      where: *hole3_pos
+    - name: _post
+      where: *hole4_pos
+    - name: _post
+      where: *hole5_pos
+    - operation: subtract
+      name: _extra_thumb
+      adjust:
+        shift: [wall_thickness / 2, 0]
+    - operation: subtract
+      name: _extra_pinky
+      adjust:
+        shift: [-wall_thickness / 2, 0]
+  _posts_thumb:
+    - name: _post
+      where: *hole3_pos
+    - name: _post
+      where: *hole3_e_pos
+  _posts_pinky:
+    - name: _post
+      where: *hole5_pos
+    - name: _post
+      where: *hole5_e_pos
+  _post_holes_core:
+    - name: _post_hole
+      where: *hole1_pos
+    - name: _post_hole
+      where: *hole2_pos
+    - name: _post_hole
+      where: *hole3_pos
+    - name: _post_hole
+      where: *hole4_pos
+    - name: _post_hole
+      where: *hole5_pos
+  _posts_holes_thumb:
+    - name: _post_hole
+      where: *hole3_e_pos
+  _posts_holes_pinky:
+    - name: _post_hole
+      where: *hole5_e_pos
+
+  _thumb:
+    - what: rectangle # Fill gap with finger keys
+      where:
+        - thumb_enc
+        - thumb_near
+        - thumb_mid
+        - thumb_far
+        - thumb_extra
+      size: [px, py]
+    - what: polygon # Main thumb area
+      fillet: 15
+      points:
+        - ref: thumb_enc
+          shift: [-0.5px, 1.75py]
+        - ref: thumb_near
+          shift: [0.5px, 1.75py]
+        - ref: thumb_far
+          shift: [-0.75px, 0.5py]
+        - ref: thumb_far
+          shift: [0.561px, 0.5py]
+        - ref: thumb_extra
+          shift: [0.5px, 0.5py]
+        - ref: thumb_extra
+          shift: [0.5px, 0py]
+        - ref: thumb_extra
+          shift: [-0.5px, 0py]
+        - ref: thumb_far
+          shift: [-0.5px, 0py]
+        - ref: thumb_mid
+          shift: [-0.5px, 0py]
+        - ref: thumb_near
+          shift: [-0.5px, 0py]
+        - ref: thumb_enc
+          shift: [-0.5px, 0py]
+    - what: rectangle # Fill gap with finger keys
+      where:
+        - finger_inner_bottom
+      size: [px, py]
+      adjust:
+        shift: [0px, -0.5py]
+
+  _thumb_smooth: # Smooth curve from thumb to mcu area
+    - name: _mcu_area
+    - what: rectangle
+      where:
+        - thumb_extra
+      size: [1px, py]
+      adjust:
+        shift: [-0.5px, 0.02] # Floating point shenanigans?
+
+  _finger_fill: # Fill in gaps between splays
+    - what: rectangle
+      where:
+        - finger_pinky_top
+        - finger_pinky_home
+        - finger_pinky_bottom
+        - finger_ring_top
+        - finger_ring_home
+        - finger_index_top
+      size: [px, py]
+      adjust:
+        shift: [1kx, 0]
+
+  _keys:
+    - what: rectangle
+      where: true
+      size: [px, py]
+  _key_plugs:
+    - what: rectangle
+      where: true
+      size: [13.8, 13.8]
+      fillet: 0.25
+    - name: _encoder_pins_plate_cutouts
+
+  _keys_area_44:
+    - name: _keys
+    - name: _finger_fill
+    - name: _thumb
+  _keys_area_42:
+    - name: _keys_area_44
+    - operation: subtract
+      name: _extra_thumb
+  _keys_area_40:
+    - name: _keys_area_44
+    - operation: subtract
+      name: _extra_pinky
+  _keys_area_38:
+    - name: _keys_area_40
+    - operation: subtract
+      name: _extra_thumb
+
+  _board_44:
+    - name: _mcu_area
+    - name: _keys_area_44
+    - name: _thumb_smooth
+  _board_42:
+    - name: _board_44
+    - operation: subtract
+      name: _extra_thumb
+  _board_40:
+    - name: _board_44
+    - operation: subtract
+      name: _extra_pinky
+  _board_38:
+    - name: _board_40
+    - operation: subtract
+      name: _extra_thumb
+
+  _break_cut_inner:
+    - name: _board_38
+      fillet: base_fillet
+  _break_cut:
+    - name: _break_cut_inner
+      expand: cut_w
+      joints: 1
+    - operation: subtract
+      name: _break_cut_inner
+    - what: rectangle # Make top of thumb break straight so fillet works
+      size: [cut_w, 1py]
+      where:
+        - thumb_far
+      adjust:
+        shift: [0.5px + cut_w / 2, 0.5py]
+  _break_bridge:
+    - what: rectangle
+      adjust:
+        shift: [0, 0.25py - 1.06]
+      size: [cut_w * 2, break_bridge_size]
+    - what: rectangle
+      adjust:
+        shift: [0, -0.25py + 0.14]
+      size: [cut_w * 2, break_bridge_size / 2]
+  _break_bridges:
+    - name: _break_bridge
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      adjust:
+        shift: [0.5px - pad - cut_w / 2, 0]
+    - name: _break_bridge
+      where:
+        - thumb_far
+      adjust:
+        shift: [0.5px + cut_w / 2, 0.415]
+  _break:
+    - name: _break_cut
+    - operation: subtract
+      name: _break_bridges
+
+  # Board 44
+  _case_inner_44_1:
+    - name: _board_44
+      fillet: base_fillet
+  _case_inner_44:
+    - name: _case_inner_44_1
+      expand: case_expand
+      joints: 1
+  _case_outer_44_1: # Need to do hacky stuff to get expand and fillet working together
+    - name: _board_44
+      expand: case_expand + wall_thickness
+      joints: 1
+  _case_outer_44:
+    - name: _case_outer_44_1
+      fillet: base_fillet
+  _top_plate_44:
+    - name: _keys_area_44
+      fillet: base_fillet
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _plate_holes_44
+  _back_plate_44:
+    - name: _board_44
+      fillet: base_fillet
+    - operation: subtract
+      name: _plate_holes_44
+
+  # Board 42
+  _case_inner_42_1:
+    - name: _board_42
+      fillet: base_fillet
+  _case_inner_42:
+    - name: _case_inner_42_1
+      expand: case_expand
+      joints: 1
+  _case_outer_42_1:
+    - name: _board_42
+      expand: case_expand + wall_thickness
+      joints: 1
+  _case_outer_42:
+    - name: _case_outer_42_1
+      fillet: base_fillet
+  _top_plate_42:
+    - name: _keys_area_42
+      fillet: base_fillet
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _plate_holes_42
+  _back_plate_42:
+    - name: _board_42
+      fillet: base_fillet
+    - operation: subtract
+      name: _plate_holes_42
+
+  # Board 40
+  _case_inner_40_1:
+    - name: _board_40
+      fillet: base_fillet
+  _case_inner_40:
+    - name: _case_inner_40_1
+      expand: case_expand
+      joints: 1
+  _case_outer_40_1:
+    - name: _board_40
+      expand: case_expand + wall_thickness
+      joints: 1
+  _case_outer_40:
+    - name: _case_outer_40_1
+      fillet: base_fillet
+  _top_plate_40:
+    - name: _keys_area_40
+      fillet: base_fillet
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _plate_holes_40
+  _back_plate_40:
+    - name: _board_40
+      fillet: base_fillet
+    - operation: subtract
+      name: _plate_holes_40
+
+  # Board 38
+  _case_inner_38_1:
+    - name: _board_38
+      fillet: base_fillet
+  _case_inner_38:
+    - name: _case_inner_38_1
+      expand: case_expand
+      joints: 1
+  _case_outer_38_1:
+    - name: _board_38
+      expand: case_expand + wall_thickness
+      joints: 1
+  _case_outer_38:
+    - name: _case_outer_38_1
+      fillet: base_fillet
+  _top_plate_38:
+    - name: _keys_area_38
+      fillet: base_fillet
+    - operation: subtract
+      name: _key_plugs
+    - operation: subtract
+      name: _plate_holes_38
+  _back_plate_38:
+    - name: _board_38
+      fillet: base_fillet
+    - operation: subtract
+      name: _plate_holes_38
+
+  # Common
+  pcb:
+    - name: _board_44
+      fillet: base_fillet
+    - operation: subtract
+      name: _break
+      fillet: cut_fillet
+
+  mcu_cover:
+    - name: _mcu_area
+    - operation: subtract
+      name: _keys_area_44
+    - what: rectangle
+      operation: subtract
+      where:
+        - thumb_far
+      size: [2px, py]
+      adjust:
+        shift: [1px, 0]
+      fillet: base_fillet
+    - operation: subtract
+      name: _display
+      fillet: cut_fillet
+    - operation: subtract
+      name: _mcu_cover_holes
+
+  _preview_44:
+    - name: _case_outer_44
+    - name: _case_inner_44
+      operation: subtract
+    - name: _top_plate_44
+      adjust:
+        shift: [-0.01, -0.01]
+    - name: mcu_cover
+      adjust:
+        shift: [0.01, 0.01]
+  _preview_42:
+    - name: _case_outer_42
+    - name: _case_inner_42
+      operation: subtract
+    - name: _top_plate_42
+      adjust:
+        shift: [-0.01, -0.01]
+    - name: mcu_cover
+      adjust:
+        shift: [0.01, 0.01]
+  _preview_40:
+    - name: _case_outer_40
+    - name: _case_inner_40
+      operation: subtract
+    - name: _top_plate_40
+      adjust:
+        shift: [-0.01, -0.01]
+    - name: mcu_cover
+      adjust:
+        shift: [0.01, 0.01]
+  _preview_38:
+    - name: _case_outer_38
+    - name: _case_inner_38
+      operation: subtract
+    - name: _top_plate_38
+      adjust:
+        shift: [-0.01, -0.01]
+    - name: mcu_cover
+      adjust:
+        shift: [0.01, 0.01]
+  preview:
+    - name: _preview_44
+      adjust:
+        shift: [-4px, 3py]
+    - name: _preview_42
+      adjust:
+        shift: [4px, 3py]
+    - name: _preview_40
+      adjust:
+        shift: [-4px, -3py]
+    - name: _preview_38
+      adjust:
+        shift: [4px, -3py]
+
+# ------------
+# Cases
+# ------------
+cases:
+  mcu_cover:
+    - what: outline
+      name: mcu_cover
+      extrude: top_plate_thickness
+  _bottom_cutouts:
+    - what: outline # Socket cutouts (1.85mm). Cut all the way through.
+      name: _socket_cutouts_38
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # MCU cover M2 nut cutouts
+      name: _mcu_cover_nut_cutout
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # Diode cutouts (1.15mm)
+      name: _diode_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.2]
+    - what: outline # Choc switch post cutouts (2.65mm through 1.6mm PCB = 1.25mm)
+      name: _choc_posts_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.3]
+    - what: outline # Encoder post cutouts (3.5mm through 1.6mm PCB = 1.9mm)
+      name: _encoder_posts_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline # Encoder pin cutouts (3.5mm, but can trim)
+      name: _encoder_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.4]
+    - what: outline # MCU pin cutouts
+      name: _mcu_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Display pin cutouts
+      name: _display_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+    - what: outline # Battery pin cutouts
+      name: _battery_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1]
+  _bottom_cutouts_pinky:
+    - what: outline # Socket cutouts
+      name: _socket_cutouts_pinky
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _bottom_cutouts_thumb:
+    - what: outline # Socket cutouts
+      name: _socket_cutouts_thumb
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _wall_cutouts:
+    - what: outline # Wall usb-c cutout
+      name: _usbc_cutout
+      extrude: 20
+      shift: [0, 10, wall_height]
+      rotate: [90, 0, 0]
+    - what: outline # Wall power and reset cutouts
+      name: _power_cutout
+      extrude: 10
+      shift: [-5, 0, wall_height]
+      rotate: [0, 90, 0]
+  _posts:
+    - what: outline # M2 heat-set insert posts
+      name: _posts_core
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _post_holes_core
+      extrude: m2_insert_hole_depth * 2
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+  _posts_thumb:
+    - what: outline # M2 heat-set insert posts
+      name: _posts_thumb
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _posts_holes_thumb
+      extrude: m2_insert_hole_depth * 2
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+  _posts_pinky:
+    - what: outline # M2 heat-set insert posts
+      name: _posts_pinky
+      extrude: m2_insert_post_height
+      shift: [0, 0, 0]
+    - what: outline
+      operation: subtract
+      name: _posts_holes_pinky
+      extrude: m2_insert_hole_depth * 2
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+  temporal_44:
+    - what: outline # Bottom
+      name: _case_outer_44
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_pinky
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_thumb
+    - what: outline # Walls
+      operation: subtract
+      name: _case_inner_44
+      extrude: wall_height * 2
+      shift: [0, 0, 0]
+    - what: case
+      operation: subtract
+      name: _wall_cutouts
+    - what: case
+      name: _posts
+    - what: case
+      name: _posts_thumb
+    - what: case
+      name: _posts_pinky
+  top_plate_44:
+    - what: outline
+      name: _top_plate_44
+      extrude: top_plate_thickness
+  temporal_42:
+    - what: outline # Bottom
+      name: _case_outer_42
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_pinky
+    - what: outline # Walls
+      operation: subtract
+      name: _case_inner_42
+      extrude: wall_height * 2
+      shift: [0, 0, 0]
+    - what: case
+      operation: subtract
+      name: _wall_cutouts
+    - what: case
+      name: _posts
+    - what: case
+      name: _posts_pinky
+  top_plate_42:
+    - what: outline
+      name: _top_plate_42
+      extrude: top_plate_thickness
+  temporal_40:
+    - what: outline # Bottom
+      name: _case_outer_40
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts_thumb
+    - what: outline # Walls
+      operation: subtract
+      name: _case_inner_40
+      extrude: wall_height * 2
+      shift: [0, 0, 0]
+    - what: case
+      operation: subtract
+      name: _wall_cutouts
+    - what: case
+      name: _posts
+    - what: case
+      name: _posts_thumb
+  top_plate_40:
+    - what: outline
+      name: _top_plate_40
+      extrude: top_plate_thickness
+  temporal_38:
+    - what: outline # Bottom
+      name: _case_outer_38
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+    - what: case
+      operation: subtract
+      name: _bottom_cutouts
+    - what: outline # Walls
+      operation: subtract
+      name: _case_inner_38
+      extrude: wall_height * 2
+      shift: [0, 0, 0]
+    - what: case
+      operation: subtract
+      name: _wall_cutouts
+    - what: case
+      name: _posts
+  top_plate_38:
+    - what: outline
+      name: _top_plate_38
+      extrude: top_plate_thickness
+
+# ------------
+# PCBs
+# ------------
+pcbs:
+  temporal:
+    template: kicad8
+    outlines:
+      main:
+        outline: pcb
+    footprints:
+      choc_hotswap:
+        what: ceoloide/switch_choc_v1_v2
+        where: true
+        params:
+          from: "{{colrow}}"
+          to: "{{column_net}}"
+          include_corner_marks: true
+          include_keycap: true
+          keycap_height: 16.5
+          keycap_width: 17.5
+          reversible: true
+          hotswap: true
+          choc_v2_support: false
+          trace_width: 0.25
+          via_size: 0.8
+          via_drill: 0.4
+      diode:
+        what: ceoloide/diode_tht_sod123
+        where: true
+        params:
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+          include_tht: false
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        adjust:
+          shift: [0, -5]
+      encoder:
+        what: ceoloide/rotary_encoder_ec11_ec12
+        where:
+          - ref: thumb_enc
+        params:
+          reversible: true
+          include_plated_mounting_holes: false
+          include_momentary_switch_pads: true
+          smd_momentary_switch: true
+          A: encoder_a # Left pin
+          C: GND # Center pin
+          B: encoder_b # Right pin
+          S1: col_pinky # Switch pin 1
+          S2: encoder_thumb # Switch pin 2
+
+      mcu:
+        what: ceoloide/mcu_nice_nano
+        where:
+          - ref: finger_inner_home
+            shift: [19.8, 10.8 + mcu_y]
+        params:
+          reversible: true
+          reverse_mount: true
+          show_silk_labels: false
+          label_font_face: "Maple Mono NF SemiBold"
+          # Finger rows
+          P4: row_top
+          P5: row_home
+          P6: row_bottom
+          P7: row_thumb
+          # Finger columns
+          P14: col_inner
+          P15: col_index
+          P18: col_middle
+          P19: col_ring
+          P20: col_pinky
+          P21: col_extra
+          # Encoder (using available pins)
+          P0: encoder_a
+          P1: encoder_b
+          # SPI for nice!view
+          P8: MOSI
+          P9: SCK
+          P10: CS
+      display:
+        what: ceoloide/display_nice_view
+        params:
+          reversible: true
+          include_labels: false
+        where:
+          - ref: finger_inner_home
+            shift: [19.8, 7.5 + mcu_y]
+      reset:
+        what: ceoloide/reset_switch_smd_side
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        where:
+          - ref: finger_inner_home
+            shift: [19.8, 26.08 + mcu_y]
+            rotate: 0
+
+      power:
+        what: ceoloide/power_switch_smd_side
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        where:
+          - ref: finger_inner_home
+            shift: [27.5, power_y]
+            rotate: 0
+
+      battery:
+        what: ceoloide/battery_connector_jst_ph_2
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.8
+          via_drill: 0.4
+        where:
+          - ref: finger_inner_home
+            shift: [24.5, -22.35 + mcu_y]
+            rotate: -135
+
+      temporal: &temporal_text
+        what: ceoloide/utility_text
+        where:
+          - ref: finger_inner_top
+            shift: [0, 0.58ky]
+        params:
+          text: "TEMPORAL"
+          height: 1.5
+          width: 1.8
+          face: "Maple Mono NF SemiBold"
+          reversible: true
+      neuron: &neuron
+        what: ceoloide/neuron
+        where:
+          - ref: finger_middle_bottom
+            shift: [-0.5ky + 0.25, -20.2]
+        params:
+          reversible: true
+          add_keepout: true
+      curbol:
+        what: ceoloide/utility_text
+        where:
+          - ref: thumb_far
+            shift: [0, -3]
+        params:
+          text: "by curbol"
+          face: "Maple Mono NF SemiBold"
+          reversible: true
+
+      hole_1: &hole_1
+        what: ceoloide/mounting_hole_npth
+        where: *hole1_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+      hole_2: &hole_2
+        what: ceoloide/mounting_hole_npth
+        where: *hole2_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+      hole_3: &hole_3
+        what: ceoloide/mounting_hole_npth
+        where: *hole3_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+      hole_3_e: &hole_3_e
+        what: ceoloide/mounting_hole_npth
+        where: *hole3_e_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+      hole_4: &hole_4
+        what: ceoloide/mounting_hole_npth
+        where: *hole4_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+      hole_5: &hole_5
+        what: ceoloide/mounting_hole_npth
+        where: *hole5_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+      hole_5_e: &hole_5_e
+        what: ceoloide/mounting_hole_npth
+        where: *hole5_e_pos
+        params:
+          hole_size: pcb_hole_diameter
+          hole_drill: pcb_hole_diameter
+
+      # MCU cover holes
+      mcu_hole_L: &mcu_hole_L
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_bottom
+            shift: [mcu_hole1_x, mcu_hole1_y]
+        params:
+          hole_size: m2_size
+          hole_drill: m2_size
+      mcu_hole_R: &mcu_hole_R
+        what: ceoloide/mounting_hole_npth
+        where:
+          - ref: finger_inner_bottom
+            shift: [mcu_hole2_x, mcu_hole2_y]
+        params:
+          hole_size: m2_size
+          hole_drill: m2_size
+
+  top_plate_44:
+    template: kicad8
+    outlines:
+      main:
+        outline: _top_plate_44
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3_e: *hole_3_e
+      hole_4: *hole_4
+      hole_5_e: *hole_5_e
+      temporal: *temporal_text
+      neuron: *neuron
+
+  back_plate_44:
+    template: kicad8
+    outlines:
+      main:
+        outline: _back_plate_44
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3_e: *hole_3_e
+      hole_4: *hole_4
+      hole_5_e: *hole_5_e
+      brain: &brain
+        what: ceoloide/brain
+        where:
+          - ref: finger_middle_bottom
+            shift: [7.5, 0]
+        params:
+          reversible: true
+          add_keepout: true
+
+  top_plate_42:
+    template: kicad8
+    outlines:
+      main:
+        outline: _top_plate_42
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5_e: *hole_5_e
+      temporal: *temporal_text
+      neuron: *neuron
+
+  back_plate_42:
+    template: kicad8
+    outlines:
+      main:
+        outline: _back_plate_42
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5_e: *hole_5_e
+      brain: *brain
+
+  top_plate_40:
+    template: kicad8
+    outlines:
+      main:
+        outline: _top_plate_40
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3_e: *hole_3_e
+      hole_4: *hole_4
+      hole_5: *hole_5
+      temporal: *temporal_text
+      neuron: *neuron
+
+  back_plate_40:
+    template: kicad8
+    outlines:
+      main:
+        outline: _back_plate_40
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3_e: *hole_3_e
+      hole_4: *hole_4
+      hole_5: *hole_5
+      brain: *brain
+
+  top_plate_38:
+    template: kicad8
+    outlines:
+      main:
+        outline: _top_plate_38
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
+      temporal: *temporal_text
+      neuron: *neuron
+
+  back_plate_38:
+    template: kicad8
+    outlines:
+      main:
+        outline: _back_plate_38
+    footprints:
+      hole_1: *hole_1
+      hole_2: *hole_2
+      hole_3: *hole_3
+      hole_4: *hole_4
+      hole_5: *hole_5
+      brain: *brain
+
+  mcu_cover:
+    template: kicad8
+    outlines:
+      main:
+        outline: mcu_cover
+    footprints:
+      mcu_hole_L: *mcu_hole_L
+      mcu_hole_R: *mcu_hole_R
