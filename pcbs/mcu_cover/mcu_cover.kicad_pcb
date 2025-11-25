@@ -11,7 +11,7 @@
   (paper "A3")
   (title_block
     (title "mcu_cover")
-    (date "2025-11-24")
+    (date "2025-11-25")
     (rev "1")
     (company "Curtis Bollinger")
   )
@@ -144,7 +144,7 @@
     (net 1)
     (net_name "GND")
     (layer "F.Cu")
-    (uuid "bc435fc4-baa6-4648-890b-5f8d3334f406")
+    (uuid "09383679-d4b0-40de-a0f8-80ce7b50a367")
     (hatch edge 0.5)
     (priority 0)
     (connect_pads
@@ -180,7 +180,7 @@
     (net 1)
     (net_name "GND")
     (layer "B.Cu")
-    (uuid "adfa9422-56b4-470c-9fa0-420b39d27284")
+    (uuid "383f60fa-f116-447c-83ec-8c758d3bf43f")
     (hatch edge 0.5)
     (priority 0)
     (connect_pads

@@ -11,7 +11,7 @@
   (paper "A3")
   (title_block
     (title "top_plate_40")
-    (date "2025-11-24")
+    (date "2025-11-25")
     (rev "1")
     (company "Curtis Bollinger")
   )
@@ -10677,7 +10677,7 @@
     (net 1)
     (net_name "GND")
     (layer "F.Cu")
-    (uuid "2b779ba7-0dd9-4556-9ce5-4b8c85112747")
+    (uuid "f2bb9918-8938-4894-85c9-d27d6a85904c")
     (hatch edge 0.5)
     (priority 0)
     (connect_pads
@@ -10713,7 +10713,7 @@
     (net 1)
     (net_name "GND")
     (layer "B.Cu")
-    (uuid "7f4703ba-f323-4ae3-a42c-5d38b6092c09")
+    (uuid "edced753-7399-4277-a189-2016e2ceea06")
     (hatch edge 0.5)
     (priority 0)
     (connect_pads
