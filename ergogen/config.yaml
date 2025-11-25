@@ -1243,11 +1243,11 @@ pcbs:
         what: ceoloide/utility_text
         where:
           - ref: finger_inner_top
-            shift: [0, 0.58ky]
+            shift: [0, 0.56ky]
         params:
           text: "TEMPORAL"
           height: 1.5
-          width: 1.8
+          width: 1.5
           face: "Maple Mono NF SemiBold"
           reversible: true
       neuron: &neuron
@@ -1368,7 +1368,7 @@ pcbs:
         what: ceoloide/brain
         where:
           - ref: finger_middle_bottom
-            shift: [7.5, 0]
+            shift: [7, -1.65]
         params:
           reversible: true
           add_keepout: true
