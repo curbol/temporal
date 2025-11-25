@@ -1268,43 +1268,43 @@ pcbs:
           face: "Maple Mono NF SemiBold"
           reversible: true
 
-      hole_1: &hole_1
+      hole_1:
         what: ceoloide/mounting_hole_npth
         where: *hole1_pos
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_2: &hole_2
+      hole_2:
         what: ceoloide/mounting_hole_npth
         where: *hole2_pos
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_3: &hole_3
+      hole_3:
         what: ceoloide/mounting_hole_npth
         where: *hole3_pos
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_3_e: &hole_3_e
+      hole_3_e:
         what: ceoloide/mounting_hole_npth
         where: *hole3_e_pos
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_4: &hole_4
+      hole_4:
         what: ceoloide/mounting_hole_npth
         where: *hole4_pos
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_5: &hole_5
+      hole_5:
         what: ceoloide/mounting_hole_npth
         where: *hole5_pos
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_5_e: &hole_5_e
+      hole_5_e:
         what: ceoloide/mounting_hole_npth
         where: *hole5_e_pos
         params:
@@ -1335,11 +1335,21 @@ pcbs:
       main:
         outline: _top_plate_44
     footprints:
-      hole_1: *hole_1
-      hole_2: *hole_2
-      hole_3_e: *hole_3_e
-      hole_4: *hole_4
-      hole_5_e: *hole_5_e
+      hole_1: &hole_1
+        what: ceoloide/mounting_hole_npth
+        where: *hole1_pos
+      hole_2: &hole_2
+        what: ceoloide/mounting_hole_npth
+        where: *hole2_pos
+      hole_3_e: &hole_3_e
+        what: ceoloide/mounting_hole_npth
+        where: *hole3_e_pos
+      hole_4: &hole_4
+        what: ceoloide/mounting_hole_npth
+        where: *hole4_pos
+      hole_5_e: &hole_5_e
+        what: ceoloide/mounting_hole_npth
+        where: *hole5_e_pos
       temporal: *temporal_text
       neuron: *neuron
 
@@ -1371,7 +1381,9 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3: *hole_3
+      hole_3: &hole_3
+        what: ceoloide/mounting_hole_npth
+        where: *hole3_pos
       hole_4: *hole_4
       hole_5_e: *hole_5_e
       temporal: *temporal_text
@@ -1400,7 +1412,9 @@ pcbs:
       hole_2: *hole_2
       hole_3_e: *hole_3_e
       hole_4: *hole_4
-      hole_5: *hole_5
+      hole_5: &hole_5
+        what: ceoloide/mounting_hole_npth
+        where: *hole5_pos
       temporal: *temporal_text
       neuron: *neuron
 
