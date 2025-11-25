@@ -309,22 +309,27 @@ outlines:
     - what: circle
       radius: 1.2
       adjust:
-        shift: [0, 12.75]
+        shift: [0, 14]
     - what: rectangle
       size: [2.4, 28]
       adjust:
-        shift: [0, -1.27]
+        shift: [0, 0]
     - what: circle
       radius: 1.2
       adjust:
-        shift: [0, -15.25]
+        shift: [0, -14]
+    - what: rectangle
+      size: [3.7, 30.4]
+      adjust:
+        shift: [1.85, 0]
   _mcu_pins:
     - name: _mcu_pins_trench
       adjust:
-        shift: [-mcu_pin_spacing, 0]
+        shift: [-mcu_pin_spacing, -1.25]
     - name: _mcu_pins_trench
       adjust:
-        shift: [mcu_pin_spacing, 0]
+        shift: [mcu_pin_spacing, -1.25]
+        rotate: 180
   _display_pins:
     - what: circle
       radius: 1.2
@@ -338,16 +343,20 @@ outlines:
       radius: 1.2
       adjust:
         shift: [5.1, -16.7]
+    - what: rectangle
+      size: [12.6, 4]
+      adjust:
+        shift: [0, -14.7]
   _battery_pins:
     - what: rectangle
-      size: [3, 3.8]
+      size: [3.8, 3]
       fillet: 0.8
       adjust:
-        shift: [-0.35, 0]
+        shift: [0, -0.35]
     - what: rectangle
-      size: [3, 3.8]
+      size: [3.8, 3]
       adjust:
-        shift: [-1.85, 0]
+        shift: [0, -1.85]
   _encoder_pins:
     - what: circle
       radius: 0.6
@@ -380,8 +389,7 @@ outlines:
         - finger_extra_home
   _socket_cutouts_thumb:
     - name: _socket
-      where:
-        - thumb_extra
+      where: thumb_extra
   _diode_cutouts:
     - name: _diode
       where: true
@@ -390,12 +398,10 @@ outlines:
       where: true
   _encoder_posts_cutouts:
     - name: _choc_side_posts
-      where:
-        - thumb_enc
+      where: thumb_enc
   _encoder_pins_cutouts:
     - name: _encoder_pins
-      where:
-        - thumb_enc
+      where: thumb_enc
   _encoder_pins_plate_cutouts:
     - name: _encoder_pins_cutouts
     - what: rectangle
@@ -406,19 +412,20 @@ outlines:
       expand: -0.2
   _mcu_pins_cutouts:
     - name: _mcu_pins
-      where:
+      where: &mcu_pos
         - ref: finger_inner_home
           shift: [19.8, 10.8 + mcu_y]
   _display_pins_cutouts:
     - name: _display_pins
-      where:
+      where: &display_pos
         - ref: finger_inner_home
           shift: [19.8, 7.5 + mcu_y]
   _battery_pins_cutouts:
     - name: _battery_pins
-      where:
+      where: &battery_pos
         - ref: finger_inner_home
-          shift: [23.5, -14.5 + mcu_y]
+          shift: [24.5, -22.35 + mcu_y]
+          rotate: -135
 
   _case_cutout_template:
     - what: circle
@@ -1168,9 +1175,7 @@ pcbs:
 
       mcu:
         what: ceoloide/mcu_nice_nano
-        where:
-          - ref: finger_inner_home
-            shift: [19.8, 10.8 + mcu_y]
+        where: *mcu_pos
         params:
           reversible: true
           reverse_mount: true
@@ -1200,9 +1205,7 @@ pcbs:
         params:
           reversible: true
           include_labels: false
-        where:
-          - ref: finger_inner_home
-            shift: [19.8, 7.5 + mcu_y]
+        where: *display_pos
       reset:
         what: ceoloide/reset_switch_smd_side
         params:
@@ -1234,10 +1237,7 @@ pcbs:
           include_traces_vias: true
           via_size: 0.8
           via_drill: 0.4
-        where:
-          - ref: finger_inner_home
-            shift: [24.5, -22.35 + mcu_y]
-            rotate: -135
+        where: *battery_pos
 
       temporal: &temporal_text
         what: ceoloide/utility_text
