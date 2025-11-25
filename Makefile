@@ -69,6 +69,7 @@ gen:
 	@echo "[2/6] Post-processing PCB files..."
 	@node scripts/fix_edge_cuts.js
 	@node scripts/add_ground_planes.js
+	@node scripts/create_text_keepouts.js
 	@node scripts/via_stitching.js
 	@node scripts/fill_zones.js
 	@bash scripts/copy_pcb_if_missing.sh

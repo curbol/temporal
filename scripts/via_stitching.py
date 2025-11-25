@@ -21,6 +21,9 @@ Exit codes:
 import sys
 import os
 
+# Suppress wxWidgets debug messages
+os.environ["WXSUPPRESS_SIZER_FLAGS_CHECK"] = "1"
+
 try:
     import pcbnew
     import wx

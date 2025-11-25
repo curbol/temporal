@@ -18,7 +18,7 @@ const { getKiCadPythonOrThrow } = require('./kicad_python');
  * Load via stitching configuration from YAML.
  */
 function loadViaStitchingConfig() {
-  const configPath = path.join(__dirname, 'kicad_defaults.yaml');
+  const configPath = path.join(__dirname, 'kicad_config.yaml');
 
   if (!fs.existsSync(configPath)) {
     console.error(`Error: Config file not found at ${configPath}`);

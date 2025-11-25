@@ -83,3 +83,7 @@ via_stitching:
 # PCB File Settings
 pcb_settings:
   pad_to_mask_clearance: 0.05 # Solder mask clearance from pads in mm
+
+# Text Keepout Settings (used by create_text_keepouts.js)
+text_keepouts:
+  patterns: ["TEMPORAL", "by curbol"] # Text to create keepouts for (empty array = all text)

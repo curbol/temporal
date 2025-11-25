@@ -16,7 +16,7 @@ const { randomUUID } = require('crypto');
  * Load defaults from YAML config file.
  */
 function loadDefaultsConfig() {
-  const configPath = path.join(__dirname, 'kicad_defaults.yaml');
+  const configPath = path.join(__dirname, 'kicad_config.yaml');
 
   if (!fs.existsSync(configPath)) {
     console.error(`Error: Config file not found at ${configPath}`);

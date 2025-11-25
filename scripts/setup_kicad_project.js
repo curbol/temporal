@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Setup KiCad project files (.kicad_pro) with defaults from scripts/kicad_defaults.yaml
+ * Setup KiCad project files (.kicad_pro) with defaults from scripts/kicad_config.yaml
  *
  * This script creates or updates .kicad_pro files with design defaults, ensuring
  * consistent settings across all PCB projects.
@@ -20,7 +20,7 @@ const yaml = require('js-yaml');
  * Load defaults from YAML config file.
  */
 function loadDefaultsConfig() {
-  const configPath = path.join(__dirname, 'kicad_defaults.yaml');
+  const configPath = path.join(__dirname, 'kicad_config.yaml');
 
   if (!fs.existsSync(configPath)) {
     console.error(`Error: Config file not found at ${configPath}`);
