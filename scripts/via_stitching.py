@@ -32,12 +32,28 @@ except ImportError:
     )
     sys.exit(1)
 
-# Suppress wx debug messages
-if hasattr(wx, "Log"):
-    wx.Log.SetLogLevel(0)
-
 # Initialize wxPython application (required for pcbnew API)
 app = wx.App()
+
+
+# Custom log target to capture via count from FillArea
+class ViaCountLogTarget(wx.Log):
+    def __init__(self):
+        super().__init__()
+        self.via_count = None
+
+    def DoLogText(self, msg):
+        # Look for "Done. X vias placed" message
+        if "vias placed" in msg:
+            import re
+
+            match = re.search(r"(\d+) vias placed", msg)
+            if match:
+                self.via_count = int(match.group(1))
+
+
+log_target = ViaCountLogTarget()
+wx.Log.SetActiveTarget(log_target)
 
 # Import FillArea directly (avoiding plugin registration issues)
 try:
@@ -70,13 +86,16 @@ def add_via_stitching(pcb_path, net_name, step_mm, size_mm, drill_mm, clearance_
         clearance_mm: Clearance around vias in mm
 
     Returns:
-        True on success, False on error
+        Number of vias placed on success, -1 on error
     """
     if not os.path.exists(pcb_path):
         print(f"Error: PCB file not found: {pcb_path}", file=sys.stderr)
-        return False
+        return -1
 
     try:
+        # Reset the via count
+        log_target.via_count = None
+
         # Create FillArea instance and configure it
         filler = FillArea(pcb_path)
         filler.SetNetname(net_name)
@@ -88,11 +107,12 @@ def add_via_stitching(pcb_path, net_name, step_mm, size_mm, drill_mm, clearance_
         # Run via stitching
         filler.Run()
 
-        return True
+        # Return the captured via count
+        return log_target.via_count if log_target.via_count is not None else 0
 
     except Exception as e:
         print(f"Error adding via stitching to {pcb_path}: {str(e)}", file=sys.stderr)
-        return False
+        return -1
 
 
 def main():
@@ -110,7 +130,12 @@ def main():
     drill_mm = float(sys.argv[5])
     clearance_mm = float(sys.argv[6])
 
-    if add_via_stitching(pcb_path, net_name, step_mm, size_mm, drill_mm, clearance_mm):
+    via_count = add_via_stitching(
+        pcb_path, net_name, step_mm, size_mm, drill_mm, clearance_mm
+    )
+    if via_count >= 0:
+        # Output the via count for the JS wrapper to parse
+        print(f"{via_count} vias placed")
         sys.exit(0)
     else:
         sys.exit(1)

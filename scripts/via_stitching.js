@@ -37,6 +37,7 @@ function loadViaStitchingConfig() {
 
 /**
  * Add via stitching to a KiCad PCB file using the Python API.
+ * Returns the number of vias placed, or -1 on error.
  */
 function addViaStitching(filepath, pythonPath, config) {
   try {
@@ -52,13 +53,18 @@ function addViaStitching(filepath, pythonPath, config) {
       config.clearance_mm
     ].join(' ');
 
-    execSync(args, {
-      stdio: 'pipe'
+    const output = execSync(args, {
+      stdio: 'pipe',
+      encoding: 'utf-8'
     });
-    return true;
+
+    // Parse the number of vias from the plugin output
+    // Format: "Done. 31 vias placed. You have to refill all your pcb's areas/zones !!!"
+    const match = output.match(/(\d+) vias placed/);
+    return match ? parseInt(match[1], 10) : 0;
   } catch (err) {
     console.error(`  ⚠ Failed to add via stitching: ${err.message}`);
-    return false;
+    return -1;
   }
 }
 
@@ -94,16 +100,8 @@ async function main() {
     process.exit(1);
   }
 
-  // Count vias before stitching
-  const contentBefore = fs.readFileSync(temporalPcb, 'utf-8');
-  const viasBefore = (contentBefore.match(/^\t\(via$/gm) || []).length;
-
-  if (addViaStitching(temporalPcb, pythonPath, config)) {
-    // Count vias after stitching
-    const contentAfter = fs.readFileSync(temporalPcb, 'utf-8');
-    const viasAfter = (contentAfter.match(/^\t\(via$/gm) || []).length;
-    const viasAdded = viasAfter - viasBefore;
-
+  const viasAdded = addViaStitching(temporalPcb, pythonPath, config);
+  if (viasAdded >= 0) {
     console.log(`✓ Added ${viasAdded} stitching vias to temporal.kicad_pcb (${config.step_mm}mm grid)`);
   }
 }
