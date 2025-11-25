@@ -72,6 +72,14 @@ zones:
   hatch_orientation: 45 # Hatch pattern orientation in degrees
   hatch_smoothing_level: 1 # Hatch smoothing (0=none, 1=light, 2=heavy)
 
+# Via Stitching Settings (used by via_stitching.js)
+via_stitching:
+  net_name: "GND" # Net name to add via stitching to
+  step_mm: 12 # Spacing between vias in mm (grid size)
+  size_mm: 0.6 # Via copper diameter in mm
+  drill_mm: 0.3 # Via drill hole diameter in mm
+  clearance_mm: 0.2 # Clearance around vias in mm
+
 # PCB File Settings
 pcb_settings:
   pad_to_mask_clearance: 0.05 # Solder mask clearance from pads in mm

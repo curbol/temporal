@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+/**
+ * Add via stitching to KiCad PCB files using the ViaStitching plugin.
+ *
+ * Uses KiCad's pcbnew Python API and the ViaStitching plugin to automatically
+ * add stitching vias on a grid pattern to improve EMI performance and ground
+ * plane connectivity.
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+const { glob } = require('glob');
+const yaml = require('js-yaml');
+const { getKiCadPythonOrThrow } = require('./kicad_python');
+
+/**
+ * Load via stitching configuration from YAML.
+ */
+function loadViaStitchingConfig() {
+  const configPath = path.join(__dirname, 'kicad_defaults.yaml');
+
+  if (!fs.existsSync(configPath)) {
+    console.error(`Error: Config file not found at ${configPath}`);
+    process.exit(1);
+  }
+
+  try {
+    const content = fs.readFileSync(configPath, 'utf-8');
+    const config = yaml.load(content);
+    return config.via_stitching;
+  } catch (err) {
+    console.error(`Error: Failed to load config: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+/**
+ * Add via stitching to a KiCad PCB file using the Python API.
+ */
+function addViaStitching(filepath, pythonPath, config) {
+  try {
+    const scriptPath = path.join(__dirname, 'via_stitching.py');
+    const args = [
+      `"${pythonPath}"`,
+      `"${scriptPath}"`,
+      `"${filepath}"`,
+      `"${config.net_name}"`,
+      config.step_mm,
+      config.size_mm,
+      config.drill_mm,
+      config.clearance_mm
+    ].join(' ');
+
+    execSync(args, {
+      stdio: 'pipe'
+    });
+    return true;
+  } catch (err) {
+    console.error(`  ⚠ Failed to add via stitching: ${err.message}`);
+    return false;
+  }
+}
+
+/**
+ * Main entry point.
+ */
+async function main() {
+  const outputDir = 'ergogen/output/pcbs';
+
+  if (!fs.existsSync(outputDir)) {
+    console.error(`Error: ${outputDir} does not exist`);
+    console.error("Run 'npm run gen' first to generate PCB files");
+    process.exit(1);
+  }
+
+  // Find KiCad's Python interpreter
+  let pythonPath;
+  try {
+    pythonPath = getKiCadPythonOrThrow();
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+
+  // Load via stitching configuration
+  const config = loadViaStitchingConfig();
+
+  // Only process temporal.kicad_pcb
+  const temporalPcb = path.join(outputDir, 'temporal.kicad_pcb');
+
+  if (!fs.existsSync(temporalPcb)) {
+    console.error(`Error: temporal.kicad_pcb not found in ${outputDir}`);
+    process.exit(1);
+  }
+
+  // Count vias before stitching
+  const contentBefore = fs.readFileSync(temporalPcb, 'utf-8');
+  const viasBefore = (contentBefore.match(/^\t\(via$/gm) || []).length;
+
+  if (addViaStitching(temporalPcb, pythonPath, config)) {
+    // Count vias after stitching
+    const contentAfter = fs.readFileSync(temporalPcb, 'utf-8');
+    const viasAfter = (contentAfter.match(/^\t\(via$/gm) || []).length;
+    const viasAdded = viasAfter - viasBefore;
+
+    console.log(`✓ Added ${viasAdded} stitching vias to temporal.kicad_pcb (${config.step_mm}mm grid)`);
+  }
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

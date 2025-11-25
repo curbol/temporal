@@ -49,6 +49,9 @@ deps:
 		cd "$$TEMP_DIR" && git sparse-checkout set ViaStitching 2>/dev/null; \
 		cp -r "$$TEMP_DIR/ViaStitching" "$$KICAD_PLUGINS/"; \
 		rm -rf "$$TEMP_DIR"; \
+		echo "Applying KiCad 9 compatibility fix..."; \
+		sed -i '' 's/dist = self.clearance + self.size \/ 2 + via.GetWidth() \/ 2/via_width = via.GetFrontWidth() if hasattr(via, "GetFrontWidth") else via.GetWidth()\n        dist = self.clearance + self.size \/ 2 + via_width \/ 2/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
+		sed -i '' 's/clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track.GetWidth() \/ 2)/track_width = track.GetFrontWidth() if (isinstance(track, PCB_VIA) and hasattr(track, "GetFrontWidth")) else track.GetWidth()\n            clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track_width \/ 2)/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
 		echo "ViaStitching plugin installed to $$KICAD_PLUGINS"; \
 	fi
 
@@ -66,6 +69,8 @@ gen:
 	@echo "[2/6] Post-processing PCB files..."
 	@node scripts/fix_edge_cuts.js
 	@node scripts/add_ground_planes.js
+	@node scripts/via_stitching.js
+	@node scripts/fill_zones.js
 	@bash scripts/copy_pcb_if_missing.sh
 	@node scripts/setup_kicad_project.js
 	@echo ""
