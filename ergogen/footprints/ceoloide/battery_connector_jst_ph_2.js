@@ -312,18 +312,29 @@ module.exports = {
         `
 
     // Vias to connect BAT_P and BAT_N pads between front and back
+    // Using 45° transitions for cleaner routing
     const reversible_vias = `
+    ${''/* BAT_P via and traces with 45° routing */}
     (via (at ${p.eaxy(0, 4)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 4)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(-1, 4)}) (end ${p.eaxy(0, 4)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 4)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(1, 4)}) (end ${p.eaxy(0, 4)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
+    ${''/* Front BAT_P pad to via */}
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 3.5)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-1, 3.5)}) (end ${p.eaxy(-0.5, 4)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-0.5, 4)}) (end ${p.eaxy(0, 4)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
+    ${''/* Back BAT_P pad to via */}
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 3.5)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(1, 3.5)}) (end ${p.eaxy(0.5, 4)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(0.5, 4)}) (end ${p.eaxy(0, 4)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
 
+    ${''/* BAT_N via and traces with 45° routing */}
     (via (at ${p.eaxy(0, 5.5)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(1, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(-1, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    ${''/* Front BAT_N pad to via */}
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(1, 5)}) (end ${p.eaxy(0.5, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(0.5, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    ${''/* Back BAT_N pad to via */}
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-1, 5)}) (end ${p.eaxy(-0.5, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-0.5, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
     `
 
     const battery_connector_3dmodel = `
