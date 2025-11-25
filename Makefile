@@ -87,14 +87,14 @@ gen:
 		echo "✓ Generated $$IMG_COUNT PCB images"; \
 	fi
 	@echo ""
-	@echo "[4/6] Converting cases to STL..."
+	@echo "[4/6] Generating gerber files..."
+	@$(MAKE) gerbers
+	@echo ""
+	@echo "[5/6] Converting cases to STL..."
 	@$(MAKE) convert
 	@echo ""
-	@echo "[5/6] Mirroring case files..."
+	@echo "[6/6] Mirroring case files..."
 	@$(MAKE) mirror
-	@echo ""
-	@echo "[6/6] Generating gerber files..."
-	@$(MAKE) gerbers
 	@echo ""
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo "✓ Build complete!"
