@@ -14,3 +14,6 @@ Before starting your build, decide on your key configuration (36, 38, 40, 42, or
 
 > [!IMPORTANT]
 > Ensure that you solder the jumper pads for microcontroller, display, and battery plug closed **on the BACK side of the board** (i.e. the same side you're soldering your hotswap switch plugs and diodes).
+
+> [!IMPORTANT]
+> If installing an encoder with switch pins, the **two switch pins** need to be bent/trimmed and surface mounted to the SMD pads. The other 3 encoder pins (and side mount clips) are through-hole.
