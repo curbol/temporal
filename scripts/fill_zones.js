@@ -22,7 +22,7 @@ function fillZonesInPcb(filepath, pythonPath) {
     });
     return true;
   } catch (err) {
-    console.error(`  ⚠ Failed to fill zones in ${path.basename(filepath)}`);
+    console.error(`Error: Failed to fill zones in ${path.basename(filepath)}: ${err.message}`);
     return false;
   }
 }

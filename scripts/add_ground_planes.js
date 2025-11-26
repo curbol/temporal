@@ -174,7 +174,7 @@ function createGndNet(content) {
   const matches = [...content.matchAll(netsPattern)];
 
   if (matches.length === 0) {
-    console.warn('  ⚠ Could not find nets section in PCB file');
+    console.error('Error: Could not find nets section in PCB file');
     return [content, null];
   }
 
@@ -203,7 +203,7 @@ function zonesAlreadyExist(content) {
 function processPcbFile(filepath, zoneConfig) {
   let content = fs.readFileSync(filepath, 'utf-8');
 
-  // Check if zones already exist
+  // Check if zones already exist (skip silently)
   if (zonesAlreadyExist(content)) {
     return false;
   }
@@ -215,6 +215,7 @@ function processPcbFile(filepath, zoneConfig) {
   if (!gndNet) {
     [content, netNumber] = createGndNet(content);
     if (netNumber === null) {
+      console.error(`Error: Could not create GND net in ${path.basename(filepath)}`);
       return false;
     }
     netName = 'GND';
@@ -225,6 +226,7 @@ function processPcbFile(filepath, zoneConfig) {
   // Calculate bounding box around board
   const points = calculateBoundingBox(content, 2.0);
   if (points.length === 0) {
+    console.error(`Error: Could not find Edge.Cuts outline in ${path.basename(filepath)}`);
     return false;
   }
 
@@ -235,7 +237,7 @@ function processPcbFile(filepath, zoneConfig) {
   // Find the insertion point (before the closing parenthesis)
   const lastParen = content.lastIndexOf(')');
   if (lastParen === -1) {
-    console.log('  ⚠ Malformed PCB file, skipping');
+    console.error(`Error: Malformed PCB file ${path.basename(filepath)}`);
     return false;
   }
 

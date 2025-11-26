@@ -53,7 +53,7 @@ function extractPolygons(content) {
   for (let i = 0; i < content.length; i++) {
     const char = content[i];
 
-    if (content.substr(i, 8) === '(fp_poly') {
+    if (content.substring(i, i + 8) === '(fp_poly') {
       inPoly = true;
       currentPoly = '';
       depth = 0;
@@ -98,31 +98,24 @@ function extractPolygons(content) {
 function generateJsFootprint(kicadContent, svgPath, name) {
   const polygons = extractPolygons(kicadContent);
 
-  // Capitalize first letter for display name
   const displayName = name.charAt(0).toUpperCase() + name.slice(1);
   const svgRelPath = path.relative(process.cwd(), svgPath);
 
   // Generate the JavaScript output
   let jsOutput = `// ${displayName} silkscreen artwork
-//
-// Description:
-//  Converted from ${svgRelPath} using svg2mod
-//  Places ${name} graphic on the PCB silkscreen layer
+// Converted from ${svgRelPath} using svg2mod
 //
 // Params:
-//    side: default is F for Front
-//      the side on which to place the footprint, either F or B
-//    reversible: default is false
-//      if true, adds mirrored version on opposite side
-//    add_keepout: default is false
-//      if true, adds keepout zone to prevent copper pour over artwork
+//   side: F or B (default: F)
+//   reversible: if true, adds mirrored version on opposite side (default: false)
+//   add_keepout: if true, adds keepout zone to prevent copper pour (default: false)
 
 module.exports = {
   params: {
     designator: "G",
     side: "F",
     reversible: false,
-    add_keepout: false,
+    add_keepout: false
   },
   body: (p) => {
     // Simple UUID generator for keepout zones
@@ -134,7 +127,7 @@ module.exports = {
         hash = hash & hash; // Convert to 32-bit integer
       }
       const hex = Math.abs(hash).toString(16).padStart(32, '0');
-      return \`\${hex.substr(0, 8)}-\${hex.substr(4, 4)}-\${hex.substr(8, 4)}-\${hex.substr(12, 4)}-\${hex.substr(16, 12)}\`;
+      return \`\${hex.substring(0, 8)}-\${hex.substring(4, 8)}-\${hex.substring(8, 12)}-\${hex.substring(12, 16)}-\${hex.substring(16, 28)}\`;
     };
 
     // Parse position and rotation from p.at string
@@ -185,7 +178,7 @@ ${poly.points.map(([x, y]) => `          (xy ${x} ${y})`).join('\n')}
 
   jsOutput += `    ];
 
-    // Build footprint polygons
+    // Build footprint polygons for each side
     let front_polys = '';
     let back_polys = '';
 

@@ -22,11 +22,9 @@ function calculateLineLength(startX, startY, endX, endY) {
 }
 
 /**
- * Calculate approximate arc length using chord length as lower bound.
- * For our purposes (detecting degenerate arcs), this is sufficient.
+ * Calculate approximate arc length using chord length.
  */
 function calculateArcLength(startX, startY, midX, midY, endX, endY) {
-  // Use chord length as approximation (actual arc is slightly longer)
   return calculateLineLength(startX, startY, endX, endY);
 }
 

@@ -60,17 +60,53 @@ wx.Log.SetActiveTarget(log_target)
 
 # Import FillArea directly (avoiding plugin registration issues)
 try:
-    via_stitching_dir = os.path.expanduser(
-        "~/Documents/KiCad/9.0/scripting/plugins/ViaStitching"
-    )
+    import glob
+    import platform
+
+    # Search for ViaStitching plugin across different KiCad versions and platforms
+    search_patterns = []
+
+    if platform.system() == "Darwin":  # macOS
+        search_patterns = [
+            os.path.expanduser("~/Documents/KiCad/*/scripting/plugins/ViaStitching"),
+            os.path.expanduser(
+                "~/Library/Application Support/kicad/*/scripting/plugins/ViaStitching"
+            ),
+        ]
+    elif platform.system() == "Windows":
+        search_patterns = [
+            os.path.expanduser("~/Documents/KiCad/*/scripting/plugins/ViaStitching"),
+            os.path.join(
+                os.getenv("APPDATA", ""), "kicad/*/scripting/plugins/ViaStitching"
+            ),
+        ]
+    else:  # Linux
+        search_patterns = [
+            os.path.expanduser("~/.config/kicad/*/scripting/plugins/ViaStitching"),
+            os.path.expanduser("~/.local/share/kicad/*/scripting/plugins/ViaStitching"),
+        ]
+
+    # Find the plugin directory
+    via_stitching_dir = None
+    for pattern in search_patterns:
+        matches = glob.glob(pattern)
+        if matches:
+            # Use the first match (or latest version if multiple)
+            via_stitching_dir = sorted(matches)[-1]
+            break
+
+    if not via_stitching_dir or not os.path.exists(via_stitching_dir):
+        raise ImportError("ViaStitching plugin directory not found")
+
     if via_stitching_dir not in sys.path:
         sys.path.insert(0, via_stitching_dir)
+
     # Import FillArea module directly, not through the plugin __init__.py
     from FillArea import FillArea
 except ImportError as e:
     print(f"Error: Could not import ViaStitching FillArea: {e}", file=sys.stderr)
     print(
-        "Make sure the ViaStitching plugin is installed at ~/Documents/KiCad/9.0/scripting/plugins/ViaStitching",
+        "Make sure the ViaStitching plugin is installed in KiCad's scripting/plugins directory",
         file=sys.stderr,
     )
     sys.exit(1)

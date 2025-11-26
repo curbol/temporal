@@ -210,9 +210,10 @@ function main() {
 
   // Create temporary Python script
   const tmpScript = path.join(__dirname, 'tmp_create_text_keepouts.py');
-  fs.writeFileSync(tmpScript, pythonScript);
 
   try {
+    fs.writeFileSync(tmpScript, pythonScript);
+
     const layers = LAYERS_TO_PROCESS.join(',');
     const patterns = TEXT_PATTERNS.join('|');
 
@@ -241,7 +242,7 @@ function main() {
         totalKeepouts += count;
         keepoutCounts.push(`${path.basename(pcbPath, '.kicad_pcb')}: ${count}`);
       } else if (count < 0) {
-        console.error(`Error processing ${path.basename(pcbPath)}`);
+        console.error(`Error: Failed to process ${path.basename(pcbPath)}`);
       }
     }
 
@@ -249,17 +250,18 @@ function main() {
       console.log(`✓ Created ${totalKeepouts} text keepout(s) [${keepoutCounts.join(', ')}]`);
     }
   } catch (err) {
-    console.error('Error running text keepouts script:', err.message);
+    console.error('Error: Text keepouts script failed:', err.message);
     if (err.stderr) {
-      console.error('STDERR:', err.stderr);
-    }
-    if (err.stdout) {
-      console.error('STDOUT:', err.stdout);
+      console.error(err.stderr);
     }
   } finally {
     // Clean up temporary script
-    if (fs.existsSync(tmpScript)) {
-      fs.unlinkSync(tmpScript);
+    try {
+      if (fs.existsSync(tmpScript)) {
+        fs.unlinkSync(tmpScript);
+      }
+    } catch (cleanupErr) {
+      // Ignore cleanup errors
     }
   }
 }

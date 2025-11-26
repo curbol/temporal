@@ -63,7 +63,7 @@ function addViaStitching(filepath, pythonPath, config) {
     const match = output.match(/(\d+) vias placed/);
     return match ? parseInt(match[1], 10) : 0;
   } catch (err) {
-    console.error(`  ⚠ Failed to add via stitching: ${err.message}`);
+    console.error(`Error: Failed to add via stitching: ${err.message}`);
     return -1;
   }
 }
