@@ -6,18 +6,18 @@
         "apply_defaults_to_fp_fields": false,
         "apply_defaults_to_fp_shapes": false,
         "apply_defaults_to_fp_text": false,
-        "board_outline_line_width": 0.5,
+        "board_outline_line_width": 0.05,
         "copper_line_width": 0.2,
         "copper_text_italic": false,
         "copper_text_size_h": 1.5,
         "copper_text_size_v": 1.5,
         "copper_text_thickness": 0.3,
         "copper_text_upright": false,
-        "courtyard_line_width": 0.5,
+        "courtyard_line_width": 0.05,
         "dimension_precision": 4,
         "dimension_units": 3,
         "dimensions": {
-          "arrow_length": 1270000,
+          "arrow_length": 1.0270000,
           "extension_offset": 500000,
           "keep_text_aligned": true,
           "suppress_zeroes": true,
@@ -45,7 +45,7 @@
         "silk_text_italic": false,
         "silk_text_size_h": 1.0,
         "silk_text_size_v": 1.0,
-        "silk_text_thickness": 0.15,
+        "silk_text_thickness": 0.1,
         "silk_text_upright": false,
         "zones": {
           "min_clearance": 0.5
@@ -116,7 +116,7 @@
         "zones_intersect": "error"
       },
       "rules": {
-        "max_error": 0.5,
+        "max_error": 0.005,
         "min_clearance": 0.0,
         "min_connection": 0.0,
         "min_copper_edge_clearance": 0.5,
@@ -128,7 +128,7 @@
         "min_resolved_spokes": 2.0,
         "min_silk_clearance": 0.0,
         "min_text_height": 0.8,
-        "min_text_thickness": 0.8,
+        "min_text_thickness": 0.08,
         "min_through_hole_diameter": 0.3,
         "min_track_width": 0.0,
         "min_via_annular_width": 0.1,
@@ -236,7 +236,7 @@
   "net_settings": {
     "classes": [
       {
-        "bus_width": 12,
+        "bus_width": 1.02,
         "clearance": 0.2,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
@@ -246,7 +246,7 @@
         "microvia_drill": 0.1,
         "name": "Default",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
-        "priority": 2147483647,
+        "priority": 2.0147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.25,
         "via_diameter": 0.6,
@@ -254,7 +254,7 @@
         "wire_width": 6
       },
       {
-        "bus_width": 12,
+        "bus_width": 1.02,
         "clearance": 0.2,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
@@ -272,7 +272,7 @@
         "wire_width": 6
       },
       {
-        "bus_width": 12,
+        "bus_width": 1.02,
         "clearance": 0.2,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
