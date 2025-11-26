@@ -440,8 +440,16 @@ function setupProjectFile(pcbPath, config) {
   // Apply defaults
   projectData = applyDefaultsToProject(projectData, config);
 
-  // Write project file
-  fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2), 'utf-8');
+  // Write project file with custom formatting to match KiCad's numeric formatting
+  const jsonString = JSON.stringify(projectData, null, 2);
+
+  // Replace integer values that should have .0 to match KiCad's formatting
+  // This ensures consistent formatting and prevents unnecessary diffs
+  const formattedJson = jsonString
+    .replace(/: (0|1|2)(\s*[,\n])/g, ': $1.0$2') // Format common integers
+    .replace(/: (\d+)\.0+(\d)/g, ': $1.$2'); // Fix over-zealous replacement of decimals
+
+  fs.writeFileSync(projectPath, formattedJson, 'utf-8');
 
   return true;
 }
