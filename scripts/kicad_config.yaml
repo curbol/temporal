@@ -57,7 +57,7 @@ board_defaults:
   silk_line_width: 0.1 # Silkscreen line width in mm
   silk_text_size_h: 1.0 # Silkscreen text height in mm
   silk_text_size_v: 1.0 # Silkscreen text width in mm
-  silk_text_thickness: 0.1 # Silkscreen text thickness in mm
+  silk_text_thickness: 0.15 # Silkscreen text thickness in mm (increased from 0.1 to avoid DRC warnings)
   zones_min_clearance: 0.5 # Minimum clearance for zones in mm
 
 # Zone Fill Settings (used by add_ground_planes.js)
