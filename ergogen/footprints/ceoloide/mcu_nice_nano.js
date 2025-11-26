@@ -710,19 +710,19 @@ module.exports = {
     `;
 
     const instructions = `
-    (fp_text user "Right" (at -6 -15.7 ${p.r}) (layer "F.SilkS")
+    (fp_text user "Right" (at -6 -15.8 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "Back" (at -6 -14.5 ${p.r}) (layer "F.SilkS")
+    (fp_text user "Back" (at -6 -14.4 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
     (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at 6 -15.1 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "Left" (at 6 -15.7 ${p.r}) (layer "B.SilkS")
+    (fp_text user "Left" (at 6 -15.8 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
-    (fp_text user "Back" (at 6 -14.5 ${p.r}) (layer "B.SilkS")
+    (fp_text user "Back" (at 6 -14.4 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
     (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at -6 -15.1 ${p.r}) (layer "B.SilkS")
