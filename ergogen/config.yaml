@@ -1248,7 +1248,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.5
-          face: "Maple Mono NF ExtraBold"
+          face: "Maple Mono NF"
           reversible: true
       neuron: &neuron
         what: ceoloide/neuron
