@@ -47,10 +47,10 @@
 //  - Add ability to adjust font thickness and size
 //  - Add mirrored and knockout effects
 //
-// @diseltravis's improvements:
-//  - Add option to customizer the font face
+// @dieseltravis's improvements:
+//  - Add option to customize the font face
 //  - Add option to set bold, italic font styles
-//  - Add option to chose the layer where the text is added to
+//  - Add option to choose the layer where the text is added to
 
 module.exports = {
   params: {
@@ -90,13 +90,13 @@ module.exports = {
       ${p.at}
       (layer "${side}.${layer}" ${knockout ? "knockout" : ""})
       (effects
-        (font ${face != "" ? '(face "' + face + '")' : ""}
+        (font ${face !== "" ? '(face "' + face + '")' : ""}
           (size ${height} ${width})
           (thickness ${thickness})
           ${bold ? "(bold yes)" : ""}
           ${italic ? "(italic yes)" : ""}
         )
-        ${align != "" || mirrored ? justify : ""}
+        ${align !== "" || mirrored ? justify : ""}
       )
     )
         `;

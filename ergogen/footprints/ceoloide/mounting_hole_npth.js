@@ -23,8 +23,8 @@ module.exports = {
   params: {
     designator: 'MH',
     side: 'F',
-    hole_size: '2.2',
-    hole_drill: '2.2',
+    hole_size: 2.2,
+    hole_drill: 2.2,
   },
   body: p => `
   (footprint "ceoloide:mounting_hole_npth"

@@ -1,5 +1,3 @@
-// Custom utility_circle footprint for magnet placement guides
-//
 // Description:
 //  Allows you to place circles on the PCB's Silkscreen layer,
 //  and optionally make it reversible on the opposite side.
