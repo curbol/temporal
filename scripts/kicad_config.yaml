@@ -46,8 +46,6 @@ design_rules:
   min_microvia_diameter: 0.2 # Minimum microvia outer diameter in mm
   min_microvia_drill: 0.1 # Minimum microvia drill diameter in mm
   min_through_hole_diameter: 0.3 # Minimum through-hole diameter in mm
-  min_text_height: 0.8 # Minimum text height in mm (for DRC checks)
-  min_text_thickness: 0.08 # Minimum text stroke thickness in mm (for DRC checks)
 
 # Board Defaults
 board_defaults:
@@ -88,4 +86,4 @@ pcb_settings:
 
 # Text Keepout Settings (used by create_text_keepouts.js)
 text_keepouts:
-  patterns: ["TEMPORAL", "by curbol"] # Text to create keepouts for (empty array = all text)
+  patterns: ["TEMPORAL", "by curbol", "Right", "Left", "Back", "(M↓)"] # Text to create keepouts for (empty array = all text)
