@@ -1180,7 +1180,7 @@ pcbs:
           reversible: true
           reverse_mount: true
           show_silk_labels: false
-          label_font_face: "Maple Mono NF SemiBold"
+          label_font_face: "Maple Mono NF ExtraBold"
           # Finger rows
           P4: row_top
           P5: row_home
@@ -1248,7 +1248,7 @@ pcbs:
           text: "TEMPORAL"
           height: 1.5
           width: 1.5
-          face: "Maple Mono NF SemiBold"
+          face: "Maple Mono NF ExtraBold"
           reversible: true
       neuron: &neuron
         what: ceoloide/neuron
@@ -1265,7 +1265,9 @@ pcbs:
             shift: [0, -3]
         params:
           text: "by curbol"
-          face: "Maple Mono NF SemiBold"
+          height: 1.2
+          width: 1.2
+          face: "Maple Mono NF ExtraBold"
           reversible: true
 
       hole_1:
