@@ -369,8 +369,15 @@ function applyDefaultsToProject(projectData, config) {
     // Remove existing custom classes (keep only Default)
     projectData.net_settings.classes = [defaultClass];
 
-    // Add new custom classes
-    for (const netClassConfig of additionalClasses) {
+    // Sort additional classes alphabetically by name to match KiCad's ordering
+    const sortedClasses = [...additionalClasses].sort((a, b) => {
+      const nameA = a.name ?? 'Unknown';
+      const nameB = b.name ?? 'Unknown';
+      return nameA.localeCompare(nameB);
+    });
+
+    // Add new custom classes in sorted order
+    for (const netClassConfig of sortedClasses) {
       const name = netClassConfig.name ?? 'Unknown';
       const newClass = createNetClass(name, netClassConfig, false);
       projectData.net_settings.classes.push(newClass);
