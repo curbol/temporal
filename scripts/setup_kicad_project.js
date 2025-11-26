@@ -397,6 +397,8 @@ function applyDefaultsToProject(projectData, config) {
   projectRules.min_microvia_diameter = rules.min_microvia_diameter ?? 0.2;
   projectRules.min_microvia_drill = rules.min_microvia_drill ?? 0.1;
   projectRules.min_through_hole_diameter = rules.min_through_hole_diameter ?? 0.3;
+  projectRules.min_text_height = rules.min_text_height ?? 0.8;
+  projectRules.min_text_thickness = rules.min_text_thickness ?? 0.08;
 
   // Apply board defaults
   const boardDefaults = config.board_defaults ?? {};
@@ -445,9 +447,9 @@ function setupProjectFile(pcbPath, config) {
 
   // Replace integer values that should have .0 to match KiCad's formatting
   // This ensures consistent formatting and prevents unnecessary diffs
+  // Use negative lookbehind to avoid matching numbers that are already decimals
   const formattedJson = jsonString
-    .replace(/: (0|1|2)(\s*[,\n])/g, ': $1.0$2') // Format common integers
-    .replace(/: (\d+)\.0+(\d)/g, ': $1.$2'); // Fix over-zealous replacement of decimals
+    .replace(/: (0|1|2)(?!\.)/g, ': $1.0'); // Format integers 0, 1, 2 with .0 (but not if already followed by decimal)
 
   fs.writeFileSync(projectPath, formattedJson, 'utf-8');
 

@@ -46,6 +46,8 @@ design_rules:
   min_microvia_diameter: 0.2 # Minimum microvia outer diameter in mm
   min_microvia_drill: 0.1 # Minimum microvia drill diameter in mm
   min_through_hole_diameter: 0.3 # Minimum through-hole diameter in mm
+  min_text_height: 0.8 # Minimum text height in mm (for DRC checks)
+  min_text_thickness: 0.08 # Minimum text stroke thickness in mm (for DRC checks)
 
 # Board Defaults
 board_defaults:
@@ -57,7 +59,7 @@ board_defaults:
   silk_line_width: 0.1 # Silkscreen line width in mm
   silk_text_size_h: 1.0 # Silkscreen text height in mm
   silk_text_size_v: 1.0 # Silkscreen text width in mm
-  silk_text_thickness: 0.15 # Silkscreen text thickness in mm (increased from 0.1 to avoid DRC warnings)
+  silk_text_thickness: 0.1 # Silkscreen text thickness in mm
   zones_min_clearance: 0.5 # Minimum clearance for zones in mm
 
 # Zone Fill Settings (used by add_ground_planes.js)
