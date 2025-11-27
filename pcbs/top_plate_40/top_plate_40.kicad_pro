@@ -295,7 +295,16 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Power",
+        "pattern": "VCC"
+      },
+      {
+        "netclass": "Battery",
+        "pattern": "BAT*"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
