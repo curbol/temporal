@@ -3,7 +3,7 @@
 
 # Default net class (applied to most signals)
 net_class_default:
-  track_width: 0.25 # Default trace width for signals in mm (see README)
+  track_width: 0.25 # Default trace width for signals in mm
   via_diameter: 0.6 # Via outer diameter in mm
   via_drill: 0.3 # Via drill/hole diameter in mm
   clearance: 0.2 # Clearance between traces in mm
@@ -15,7 +15,7 @@ net_class_default:
 # Additional net classes for different trace widths
 net_classes:
   - name: "Power"
-    track_width: 0.375 # Power (VCC/GND) traces in mm (see README)
+    track_width: 0.375
     via_diameter: 0.6
     via_drill: 0.3
     clearance: 0.2
@@ -25,7 +25,7 @@ net_classes:
     microvia_drill: 0.1
 
   - name: "Battery"
-    track_width: 0.5 # Battery traces in mm (see README)
+    track_width: 0.5 # Battery traces in mm
     via_diameter: 0.6
     via_drill: 0.3
     clearance: 0.2
@@ -33,6 +33,13 @@ net_classes:
     diff_pair_gap: 0.25
     microvia_diameter: 0.3
     microvia_drill: 0.1
+
+# Netclass assignment patterns (wildcards supported)
+netclass_patterns:
+  - pattern: "VCC"
+    netclass: "Power"
+  - pattern: "BAT*"
+    netclass: "Battery"
 
 # Design Rules (minimum values enforced by DRC)
 design_rules:

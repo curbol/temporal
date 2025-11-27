@@ -384,6 +384,15 @@ function applyDefaultsToProject(projectData, config) {
     }
   }
 
+  // Apply netclass assignment patterns
+  const netclassPatterns = config.netclass_patterns ?? [];
+  if (netclassPatterns.length > 0) {
+    projectData.net_settings.netclass_patterns = netclassPatterns.map(p => ({
+      netclass: p.netclass,
+      pattern: p.pattern
+    }));
+  }
+
   // Apply design rules
   const rules = config.design_rules ?? {};
   const projectRules = projectData.board.design_settings.rules;
