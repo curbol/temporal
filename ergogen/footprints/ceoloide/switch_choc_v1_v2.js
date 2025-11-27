@@ -684,29 +684,21 @@ module.exports = {
 	)
     `
 
-    const diode_routing_via = `
+    const diode_routing_trace = `
 	(segment
-		(start ${p.eaxy(1.65, 5.0)})
-		(end ${p.eaxy(2.85, 5.0)})
+		(start ${p.eaxy(2.85, 5.0)})
+		(end ${p.eaxy(2.85, -1.95)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
 		(net ${p.from.index})
 	)
-	(via
-		(at ${p.eaxy(2.85, 5.0)})
-		(size ${p.via_size})
-    (drill ${p.via_drill})
-		(layers "F.Cu" "B.Cu")
-    (locked ${p.locked_traces_vias ? 'yes' : 'no'})
-		(net ${p.from.index})
-	)
 	(segment
-		(start ${p.eaxy(2.85, 5.0)})
-		(end ${p.eaxy(1.65, 5.0)})
+		(start ${p.eaxy(2.85, -1.95)})
+		(end ${p.eaxy(1.2, -3.6)})
 		(width ${p.trace_width})
     (locked ${p.locked_traces_vias ? 'yes' : 'no'})
-		(layer "B.Cu")
+		(layer "F.Cu")
 		(net ${p.from.index})
 	)
     `
@@ -783,9 +775,9 @@ module.exports = {
       }
     }
 
-    // Add diode routing via when hotswap is enabled
+    // Add diode routing trace when hotswap is enabled
     if (p.hotswap) {
-      final += diode_routing_via
+      final += diode_routing_trace
     }
 
     return final;
