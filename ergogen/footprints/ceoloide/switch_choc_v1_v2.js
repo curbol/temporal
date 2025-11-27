@@ -684,6 +684,33 @@ module.exports = {
 	)
     `
 
+    const diode_routing_via = `
+	(segment
+		(start ${p.eaxy(1.65, 5.0)})
+		(end ${p.eaxy(2.85, 5.0)})
+		(width ${p.trace_width})
+    (locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "F.Cu")
+		(net ${p.from.index})
+	)
+	(via
+		(at ${p.eaxy(2.85, 5.0)})
+		(size ${p.via_size})
+    (drill ${p.via_drill})
+		(layers "F.Cu" "B.Cu")
+    (locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(net ${p.from.index})
+	)
+	(segment
+		(start ${p.eaxy(2.85, 5.0)})
+		(end ${p.eaxy(1.65, 5.0)})
+		(width ${p.trace_width})
+    (locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "B.Cu")
+		(net ${p.from.index})
+	)
+    `
+
     let final = common_top
     if (p.choc_v1_support) {
       final += choc_v1_stabilizers
@@ -754,6 +781,11 @@ module.exports = {
       } else {
         final += hotswap_routes_unplated
       }
+    }
+
+    // Add diode routing via when hotswap is enabled
+    if (p.hotswap) {
+      final += diode_routing_via
     }
 
     return final;
