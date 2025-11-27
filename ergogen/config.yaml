@@ -1143,8 +1143,8 @@ pcbs:
           hotswap: true
           choc_v2_support: false
           trace_width: 0.25
-          via_size: 0.8
-          via_drill: 0.4
+          via_size: 0.6
+          via_drill: 0.3
       diode:
         what: ceoloide/diode_tht_sod123
         where: true
@@ -1154,8 +1154,8 @@ pcbs:
           include_tht: false
           reversible: true
           include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
+          via_size: 0.6
+          via_drill: 0.3
         adjust:
           shift: [0, -5]
       encoder:
@@ -1211,8 +1211,8 @@ pcbs:
         params:
           reversible: true
           include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
+          via_size: 0.6
+          via_drill: 0.3
         where:
           - ref: finger_inner_home
             shift: [19.8, 26.08 + mcu_y]
@@ -1223,8 +1223,8 @@ pcbs:
         params:
           reversible: true
           include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
+          via_size: 0.6
+          via_drill: 0.3
         where:
           - ref: finger_inner_home
             shift: [27.5, power_y]
@@ -1235,8 +1235,8 @@ pcbs:
         params:
           reversible: true
           include_traces_vias: true
-          via_size: 0.8
-          via_drill: 0.4
+          via_size: 0.6
+          via_drill: 0.3
         where: *battery_pos
 
       temporal: &temporal_text
@@ -1262,7 +1262,7 @@ pcbs:
         what: ceoloide/utility_text
         where:
           - ref: thumb_far
-            shift: [0, -3]
+            shift: [0, -7]
         params:
           text: "by curbol"
           height: 1.2
