@@ -51,7 +51,7 @@ units:
   hole3_e_x: 0.5kx + 1
   hole3_e_y: 0.0ky - 0.5
   # Thumb left
-  hole4_x: 0.5kx + 0.6
+  hole4_x: 0.5kx + 0.625
   hole4_y: 0.0ky - 0.5
   # Far left
   hole5_x: -0.5kx - 0.425
