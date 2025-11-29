@@ -1243,7 +1243,7 @@ pcbs:
         what: ceoloide/utility_text
         where:
           - ref: finger_inner_top
-            shift: [0, 0.56ky]
+            shift: [0, 0.66ky - 1.2]
         params:
           text: "TEMPORAL"
           height: 1.5
