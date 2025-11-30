@@ -59,12 +59,21 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 
 3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for all key configurations (36, 38, 40, 42, 44).
 
+**For home 3D printing:**
+
 - Material: Matte PLA
 - Layer height: 0.12mm
 - Infill: Not critical (walls are thin)
 
+**For JLC 3D printing service:**
+
+- 3D Technology: MJF (Nylon)
+- Material: PA11-HP Nylon (verified to work well for cases and keycaps)
+
+> Note: Other materials would likely work well also
+
 > Alternatively, use the Gerber files in [`gerbers/`](/gerbers/) to order FR-4 switch plates along with your PCB. Files are provided for top plates, back plates, and MCU covers for all configurations.
->
+
 ## Optional Tools
 
 | Tool | Purpose | Source |
