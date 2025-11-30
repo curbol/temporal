@@ -5,10 +5,11 @@ PCBS_DIR := pcbs
 TEMPORAL_DIR := temporal
 CASES_DIR := cases
 GERBERS_DIR := gerbers
+JLCPCB_DIR := jlcpcb
 ASSETS_DIR := assets
 MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
 
-.PHONY: deps gen convert mirror gerbers clean
+.PHONY: deps gen convert mirror gerbers assembly clean
 
 # Install all dependencies
 deps:
@@ -96,6 +97,8 @@ gen:
 	@echo "[4/6] Generating gerber files..."
 	@$(MAKE) gerbers
 	@echo ""
+	@$(MAKE) assembly
+	@echo ""
 	@echo "[5/6] Converting cases to STL..."
 	@$(MAKE) convert
 	@echo ""
@@ -134,6 +137,11 @@ mirror:
 		echo "✓ Mirrored $$MIRRORED case files"; \
 	fi
 
+# Generate JLCPCB assembly files
+assembly:
+	@mkdir -p $(JLCPCB_DIR)
+	@node scripts/generate_jlcpcb_files.js
+
 # Generate gerbers for all PCBs and zip them
 gerbers:
 	@mkdir -p $(GERBERS_DIR)
@@ -163,4 +171,5 @@ clean:
 	@rm -rf $(OUTPUT_DIR)
 	@rm -rf $(CASES_DIR)
 	@rm -rf $(GERBERS_DIR)
+	@rm -rf $(JLCPCB_DIR)
 	@find $(PCBS_DIR) -mindepth 1 -maxdepth 1 ! -name '$(TEMPORAL_DIR)' -exec rm -rf {} + 2>/dev/null || true
