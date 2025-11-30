@@ -1,0 +1,226 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const yaml = require('js-yaml');
+
+/**
+ * Generate JLCPCB BOM and CPL files for PCB assembly
+ *
+ * Generates:
+ * - BOM (Bill of Materials) with JLCPCB part numbers
+ * - CPL files (Component Placement List) for top and bottom assembly
+ *   with automatic rotation correction for bottom side
+ */
+
+/**
+ * Load JLCPCB configuration from kicad_config.yaml
+ */
+function loadJlcpcbConfig() {
+  const configPath = path.join(__dirname, 'kicad_config.yaml');
+
+  if (!fs.existsSync(configPath)) {
+    console.error(`Error: Config file not found at ${configPath}`);
+    process.exit(1);
+  }
+
+  try {
+    const content = fs.readFileSync(configPath, 'utf-8');
+    const config = yaml.load(content);
+    return config.jlcpcb;
+  } catch (err) {
+    console.error(`Error: Failed to load config: ${err.message}`);
+    process.exit(1);
+  }
+}
+
+/**
+ * Parse KiCad PCB file to extract component information
+ */
+function parseKiCadPCB(pcbPath, assemblyParts) {
+  const content = fs.readFileSync(pcbPath, 'utf8');
+  const components = [];
+
+  // Create footprint to LCSC part mapping
+  const footprintMap = {};
+  assemblyParts.forEach(part => {
+    footprintMap[part.footprint] = {
+      lcsc: part.lcsc_part,
+      description: part.description
+    };
+  });
+
+  // Regular expression to match footprint sections
+  const footprintRegex = /\(footprint\s+"([^"]+)"[\s\S]*?\n\t\)/g;
+
+  let match;
+  while ((match = footprintRegex.exec(content)) !== null) {
+    const footprintBlock = match[0];
+    const footprintName = match[1];
+
+    // Only process footprints that are in our assembly parts list
+    if (!footprintMap[footprintName]) {
+      continue;
+    }
+
+    // Extract reference designator
+    const refMatch = footprintBlock.match(/\(property\s+"Reference"\s+"([^"]+)"/);
+    const reference = refMatch ? refMatch[1] : null;
+
+    // Extract position (at line format: (at x y rotation))
+    const posMatch = footprintBlock.match(/\n\t\t\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
+    if (!posMatch) continue;
+
+    const x = parseFloat(posMatch[1]);
+    const y = parseFloat(posMatch[2]);
+    const rotation = posMatch[3] ? parseFloat(posMatch[3]) : 0;
+
+    // Extract layer to determine component side
+    const layerMatch = footprintBlock.match(/\(layer\s+"([^"]+)"/);
+    const layer = layerMatch ? layerMatch[1] : 'F.Cu';
+    const side = layer.startsWith('B.') ? 'Bottom' : 'Top';
+
+    const partInfo = footprintMap[footprintName];
+
+    components.push({
+      designator: reference,
+      footprint: footprintName,
+      lcsc: partInfo.lcsc,
+      description: partInfo.description,
+      x: x,
+      y: y,
+      rotation: rotation,
+      side: side
+    });
+  }
+
+  return components;
+}
+
+/**
+ * Generate JLCPCB BOM file (CSV format)
+ */
+function generateBOM(components, outputPath) {
+  // Group components by LCSC part number
+  const bomMap = new Map();
+
+  components.forEach(comp => {
+    const key = comp.lcsc;
+    if (!bomMap.has(key)) {
+      bomMap.set(key, {
+        comment: comp.description,
+        designator: [],
+        footprint: comp.footprint,
+        lcsc: comp.lcsc
+      });
+    }
+    bomMap.get(key).designator.push(comp.designator);
+  });
+
+  // Generate CSV content
+  let csv = 'Comment,Designator,Footprint,LCSC Part #\n';
+
+  for (const [lcsc, item] of bomMap) {
+    const designators = item.designator.sort().join(',');
+    csv += `"${item.comment}","${designators}","${item.footprint}","${item.lcsc}"\n`;
+  }
+
+  fs.writeFileSync(outputPath, csv);
+  console.log(`✓ Generated BOM: ${path.basename(outputPath)}`);
+  console.log(`  - ${bomMap.size} unique parts`);
+  console.log(`  - ${components.length} total components`);
+}
+
+/**
+ * Generate JLCPCB CPL file (CSV format for pick-and-place)
+ * @param {boolean} isBottomSide - If true, apply rotation transformation for bottom assembly
+ */
+function generateCPL(components, outputPath, isBottomSide = false) {
+  // JLCPCB CPL format
+  let csv = 'Designator,Mid X,Mid Y,Layer,Rotation\n';
+
+  // For JLCPCB assembly, the Layer column indicates which side to assemble
+  // NOT which layer the component is on in KiCad
+  const assemblyLayer = isBottomSide ? 'Bottom' : 'Top';
+
+  components.forEach(comp => {
+    // For bottom side assembly, apply rotation transformation
+    // Formula: rotation_bottom = 180 - rotation_top
+    const rotation = isBottomSide ? (180 - comp.rotation) : comp.rotation;
+
+    // JLCPCB uses Cartesian coordinates (Y increases upward)
+    // KiCad uses Y increasing downward, so we need to negate Y
+    const y_jlcpcb = -comp.y;
+
+    csv += `"${comp.designator}",${comp.x.toFixed(4)}mm,${y_jlcpcb.toFixed(4)}mm,${assemblyLayer},${rotation}\n`;
+  });
+
+  fs.writeFileSync(outputPath, csv);
+  const sideLabel = isBottomSide ? 'bottom' : 'top';
+  console.log(`✓ Generated CPL (${sideLabel}): ${path.basename(outputPath)}`);
+  console.log(`  - ${components.length} component positions`);
+  console.log(`  - All components: Layer=${assemblyLayer}`);
+  if (isBottomSide) {
+    console.log(`  - Rotations automatically corrected (180 - rotation)`);
+  }
+}
+
+/**
+ * Main function
+ */
+function main() {
+  const pcbFile = path.join(__dirname, '..', 'pcbs', 'temporal', 'temporal.kicad_pcb');
+  const jlcpcbDir = path.join(__dirname, '..', 'jlcpcb');
+
+  // Check if PCB file exists
+  if (!fs.existsSync(pcbFile)) {
+    console.error(`Error: PCB file not found at ${pcbFile}`);
+    process.exit(1);
+  }
+
+  // Load config
+  const config = loadJlcpcbConfig();
+
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('  Generating JLCPCB Assembly Files');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('');
+
+  // Parse PCB file
+  console.log(`Processing: temporal.kicad_pcb`);
+  const components = parseKiCadPCB(pcbFile, config.assembly_parts);
+
+  if (components.length === 0) {
+    console.log('  ⚠ No assembly components found');
+    console.log('');
+    return;
+  }
+
+  // Generate output files
+  const bomPath = path.join(jlcpcbDir, 'temporal_BOM.csv');
+  const cplTopPath = path.join(jlcpcbDir, 'temporal_CPL_top.csv');
+  const cplBottomPath = path.join(jlcpcbDir, 'temporal_CPL_bottom.csv');
+
+  generateBOM(components, bomPath);
+  console.log('');
+  generateCPL(components, cplTopPath, false);  // Top side - no rotation transformation
+  console.log('');
+  generateCPL(components, cplBottomPath, true); // Bottom side - with rotation transformation
+  console.log('');
+
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('✓ Assembly files generated successfully');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('');
+  console.log('Ordering instructions:');
+  console.log('  Order 1 (Left hand - Top assembly):');
+  console.log('    - Use temporal_BOM.csv + temporal_CPL_top.csv');
+  console.log('    - Quantity: 5 boards');
+  console.log('');
+  console.log('  Order 2 (Right hand - Bottom assembly):');
+  console.log('    - Use temporal_BOM.csv + temporal_CPL_bottom.csv');
+  console.log('    - Quantity: 5 boards');
+  console.log('');
+}
+
+main();

@@ -94,3 +94,14 @@ pcb_settings:
 # Text Keepout Settings (used by create_text_keepouts.js)
 text_keepouts:
   patterns: ["TEMPORAL", "by curbol", "Right", "Left", "Back", "(M↓)"] # Text to create keepouts for (empty array = all text)
+
+# JLCPCB Assembly Configuration (used by generate_jlcpcb_files.js)
+jlcpcb:
+  assembly_parts:
+    - footprint: "ceoloide:diode_tht_sod123"
+      lcsc_part: "C2099"
+      description: "1N4148W Diode SOD-123"
+
+    - footprint: "ceoloide:switch_choc_v1_v2"
+      lcsc_part: "C5333465"
+      description: "Kailh Choc Hotswap Socket CPG135001S30"
