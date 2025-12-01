@@ -77,7 +77,7 @@ units:
 
   # Case
   case_expand: 0.1
-  bottom_thickness: 1.85
+  bottom_thickness: 1.9
   wall_height: pcb_thickness + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
   wall_thickness: 1.21 # Note: Small changes affact the curves on case_outer. Seems finicky.
   side_cut_width: 12
@@ -307,21 +307,22 @@ outlines:
       radius: 2
   _mcu_pins_trench:
     - what: circle
-      radius: 1.2
+      radius: 1
       adjust:
         shift: [0, 14]
     - what: rectangle
-      size: [2.4, 28]
+      size: [2, 28]
       adjust:
         shift: [0, 0]
     - what: circle
-      radius: 1.2
+      radius: 1
       adjust:
         shift: [0, -14]
+  _mcu_jumpers_trench:
     - what: rectangle
-      size: [3.7, 30.4]
+      size: [2, 29.5]
       adjust:
-        shift: [1.85, 0]
+        shift: [2.5, 0]
   _mcu_pins:
     - name: _mcu_pins_trench
       adjust:
@@ -330,33 +331,43 @@ outlines:
       adjust:
         shift: [mcu_pin_spacing, -1.25]
         rotate: 180
+  _mcu_jumpers:
+    - name: _mcu_jumpers_trench
+      adjust:
+        shift: [-mcu_pin_spacing, -1.25]
+    - name: _mcu_jumpers_trench
+      adjust:
+        shift: [mcu_pin_spacing, -1.25]
+        rotate: 180
   _display_pins:
     - what: circle
-      radius: 1.2
+      radius: 1
       adjust:
         shift: [-5.1, -16.7]
     - what: rectangle
-      size: [10.2, 2.4]
+      size: [10.2, 2]
       adjust:
         shift: [0, -16.7]
     - what: circle
-      radius: 1.2
+      radius: 1
       adjust:
         shift: [5.1, -16.7]
+  _display_jumpers:
     - what: rectangle
-      size: [12.6, 4]
+      size: [11.75, 3.8]
       adjust:
-        shift: [0, -14.7]
+        shift: [0, -15.5]
   _battery_pins:
     - what: rectangle
-      size: [3.8, 3]
-      fillet: 0.8
+      size: [3.6, 2]
+      fillet: 0.7
       adjust:
-        shift: [0, -0.35]
+        shift: [0, -0]
+  _battery_jumpers:
     - what: rectangle
-      size: [3.8, 3]
+      size: [3.6, 3]
       adjust:
-        shift: [0, -1.85]
+        shift: [0, -1.75]
   _encoder_pins:
     - what: circle
       radius: 0.6
@@ -415,13 +426,29 @@ outlines:
       where: &mcu_pos
         - ref: finger_inner_home
           shift: [19.8, 10.8 + mcu_y]
+  _mcu_jumpers_cutouts:
+    - name: _mcu_jumpers
+      where: &mcu_pos
+        - ref: finger_inner_home
+          shift: [19.8, 10.8 + mcu_y]
   _display_pins_cutouts:
     - name: _display_pins
       where: &display_pos
         - ref: finger_inner_home
           shift: [19.8, 7.5 + mcu_y]
+  _display_jumpers_cutouts:
+    - name: _display_jumpers
+      where: &display_pos
+        - ref: finger_inner_home
+          shift: [19.8, 7.5 + mcu_y]
   _battery_pins_cutouts:
     - name: _battery_pins
+      where: &battery_pos
+        - ref: finger_inner_home
+          shift: [24.5, -22.35 + mcu_y]
+          rotate: -135
+  _battery_jumpers_cutouts:
+    - name: _battery_jumpers
       where: &battery_pos
         - ref: finger_inner_home
           shift: [24.5, -22.35 + mcu_y]
@@ -951,14 +978,26 @@ cases:
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
+    - what: outline
+      name: _mcu_jumpers_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -0.5]
     - what: outline # Display pin cutouts
       name: _display_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
+    - what: outline
+      name: _display_jumpers_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -0.5]
     - what: outline # Battery pin cutouts
       name: _battery_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1]
+    - what: outline
+      name: _battery_jumpers_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -0.5]
   _bottom_cutouts_pinky:
     - what: outline # Socket cutouts
       name: _socket_cutouts_pinky
