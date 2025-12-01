@@ -65,6 +65,7 @@ gen:
 	@$(MAKE) clean
 	@echo "[1/6] Generating PCBs and cases with Ergogen..."
 	@npm run gen 2>/dev/null || npm run gen
+	@node scripts/generate_layout.js
 	@echo "✓ Ergogen generation complete"
 	@echo ""
 	@echo "[2/6] Post-processing PCB files..."
