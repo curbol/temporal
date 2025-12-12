@@ -40,7 +40,7 @@ units:
   top_plate_thickness: 1.3
   pcb_hole_diameter: 5
   # Top left
-  hole1_x: -0.5kx - 0.5
+  hole1_x: -0.5kx - 0.8
   hole1_y: -0.5ky
   # Top right
   hole2_x: 0.5kx - 0.35
@@ -52,7 +52,7 @@ units:
   hole4_x: 0.5kx + 1
   hole4_y: 0.0ky - 0.5
   # Far left
-  hole5_x: 0.5kx + 0.5
+  hole5_x: 0.5kx + 0.6
   hole5_y: -0.5ky
   # Far left extra
   hole5_e_x: 0.5kx - 0.35
