@@ -28,13 +28,14 @@ units:
   py: ky + pad
 
   # Finger splay
-  finger_splay_1: 6
+  finger_splay_1: 5
   finger_splay_2: 4
+  finger_splay_total: finger_splay_1 + finger_splay_2
   thumb_splay: 15
   thumb_spread: 1kx - 0.15
 
   # Board
-  base_fillet: 2.5
+  pcb_fillet: 2.5
   pcb_thickness: 1.6
   top_plate_thickness: 1.3
   pcb_hole_diameter: 5
@@ -51,7 +52,7 @@ units:
   hole3_e_x: 0.5kx + 1
   hole3_e_y: 0.0ky - 0.5
   # Thumb left
-  hole4_x: 0.5kx + 0.625
+  hole4_x: 0.5kx + 1
   hole4_y: 0.0ky - 0.5
   # Far left
   hole5_x: -0.5kx - 0.425
@@ -61,7 +62,9 @@ units:
   hole5_e_y: -0.5ky
 
   # MCU Cover
-  mcu_y: -12
+  mcu_y: -12.5
+  mcu_area_w: 20.25
+  mcu_area_h: 66.25
   mcu_pin_spacing: 7.62 # Distance between MCU pin rows
   # Left hole
   mcu_hole1_x: 0.5kx + 4
@@ -79,7 +82,8 @@ units:
   case_expand: 0.1
   bottom_thickness: 1.9
   wall_height: pcb_thickness + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
-  wall_thickness: 1.21 # Note: Small changes affact the curves on case_outer. Seems finicky.
+  wall_thickness: 1.207 # Note: Small changes affact the curves on case_outer. Seems finicky.
+  case_fillet: pcb_fillet + wall_thickness
   side_cut_width: 12
   side_cut_radius: 1.5
   power_y: -14.8 + mcu_y
@@ -102,15 +106,16 @@ points:
     finger:
       anchor.shift: [50, -100] # Fix KiCad placement
       key:
+        tags: ["include"]
         padding: 1ky
         spread: 1kx
       columns:
         extra:
           rows.bottom.skip: true
-          key.splay: finger_splay_1 + finger_splay_2
+          key.splay: finger_splay_total
           key.column_net: col_extra
         pinky:
-          key.stagger: 0.5199ky
+          key.stagger: 0.52ky
           key.column_net: col_pinky
         ring:
           key.stagger: 0.7ky
@@ -118,15 +123,15 @@ points:
           key.spread: 1kx + finger_splay_1 / 8
           key.column_net: col_ring
         middle:
-          key.stagger: 0.525ky
+          key.stagger: 0.375ky
           key.splay: -finger_splay_2
           key.spread: 1kx + finger_splay_2 / 8
           key.column_net: col_middle
         index:
-          key.stagger: -0.5ky
+          key.stagger: -0.35ky
           key.column_net: col_index
         inner:
-          key.stagger: -0.16ky
+          key.stagger: -0.15ky
           key.column_net: col_inner
       rows:
         bottom:
@@ -138,20 +143,15 @@ points:
 
     thumb:
       key:
+        tags: ["include"]
         padding: 1ky
         spread: 1kx
       anchor:
         ref: finger_index_bottom
-        shift: [-1.246kx, -1.4ky]
+        shift: [-0.64kx, -1ky]
       columns:
-        encoder:
-          key.splay: finger_splay_1 + finger_splay_2
-          key.spread: thumb_spread
-          key.origin: [-0.5kx, -0.5ky]
-          key.name: thumb_enc
-          key.column_net: col_pinky
         near:
-          key.splay: -finger_splay_1 - finger_splay_2
+          key.splay: 0
           key.spread: thumb_spread
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_near
@@ -174,6 +174,25 @@ points:
           key.origin: [-0.5kx, -0.5ky]
           key.name: thumb_extra
           key.column_net: col_inner
+      rows:
+        thumb:
+          row_net: row_thumb
+
+    encoder:
+      key:
+        tags: ["include"]
+        padding: 1ky
+        spread: 1kx
+      anchor:
+        ref: thumb_near
+        shift: [-thumb_spread, 0]
+      columns:
+        encoder:
+          key.splay: thumb_splay
+          key.spread: -thumb_spread
+          key.origin: [0.5kx, -0.5ky]
+          key.name: thumb_enc
+          key.column_net: col_pinky
       rows:
         thumb:
           row_net: row_thumb
@@ -214,13 +233,13 @@ outlines:
       where:
         - ref: finger_inner_home
           shift: [19.4, -5 + mcu_y]
-      size: [20.25, 66.25]
+      size: [mcu_area_w, mcu_area_h]
   _display:
     - what: rectangle
       where:
         ref: finger_inner_home
         shift: [19.8, 6.75 + mcu_y]
-      size: [11, 25.5] # (10.8 x 25.3) + some buffer
+      size: [11.3, 25.8] # (10.8 x 25.3) + some buffer
   _mcu_cover_holes:
     - what: circle
       radius: m2_size / 2
@@ -600,8 +619,75 @@ outlines:
     - name: _post_hole
       where: *hole5_e_pos
 
+  _thumb_smooth: # Smooth curve from thumb to mcu area
+    - name: _mcu_area
+    - name: _mcu_area
+      operation: subtract
+      adjust:
+        shift: [0, 1.5py]
+    - what: rectangle
+      where:
+        - thumb_extra
+      size: [px, py]
+      fillet: pcb_fillet * 2
+  _top_plate_smooth_1:
+    - name: _thumb_smooth
+    - what: rectangle
+      operation: subtract
+      where:
+        - thumb_far
+      size: [2px, py]
+      adjust:
+        shift: [0, py - 1.5]
+    - what: polygon
+      points:
+        - ref: thumb_far
+          shift: [0px, 0py]
+        - ref: thumb_far
+          shift: [0px, 0.5py]
+        - ref: thumb_far
+          shift: [0.9px, 0.5py]
+        - ref: thumb_far
+          shift: [1.38px, 0py]
+      fillet: pcb_fillet
+  _top_plate_smooth: # Smooth curve on wedge below mcu
+    - name: _thumb_smooth
+    - name: _top_plate_smooth_1
+      operation: intersect
+
+  _thumb_arc:
+    - what: rectangle
+      where:
+        - thumb_enc
+      size: [4px, py]
+    - what: rectangle
+      where:
+        - thumb_extra
+      size: [4px, py]
+      fillet: 66.6
+    - what: rectangle
+      operation: subtract
+      where:
+        - thumb_far
+      size: [5px, py]
+      adjust:
+        shift: [0, 0.5py]
+    - what: rectangle
+      operation: subtract
+      where:
+        - thumb_enc
+      size: [2px, 2py]
+      adjust:
+        shift: [-1.5px, 0]
+    - what: rectangle
+      operation: subtract
+      where:
+        - thumb_extra
+      size: [2px, 2py]
+      adjust:
+        shift: [1.5px, 0]
   _thumb:
-    - what: rectangle # Fill gap with finger keys
+    - what: rectangle
       where:
         - thumb_enc
         - thumb_near
@@ -609,17 +695,17 @@ outlines:
         - thumb_far
         - thumb_extra
       size: [px, py]
+    - name: _top_plate_smooth
     - what: polygon # Main thumb area
-      fillet: 15
       points:
         - ref: thumb_enc
           shift: [-0.5px, 1.75py]
-        - ref: thumb_near
-          shift: [0.5px, 1.75py]
         - ref: thumb_far
-          shift: [-0.75px, 0.5py]
+          shift: [-2px, 0.5py]
         - ref: thumb_far
-          shift: [0.561px, 0.5py]
+          shift: [-0.5px, 0.5py]
+        - ref: thumb_far
+          shift: [0.561px, 0.5py] # Nudge for corner between far and extra
         - ref: thumb_extra
           shift: [0.5px, 0.5py]
         - ref: thumb_extra
@@ -634,21 +720,13 @@ outlines:
           shift: [-0.5px, 0py]
         - ref: thumb_enc
           shift: [-0.5px, 0py]
+    - name: _thumb_arc
     - what: rectangle # Fill gap with finger keys
       where:
         - finger_inner_bottom
       size: [px, py]
       adjust:
         shift: [0px, -0.5py]
-
-  _thumb_smooth: # Smooth curve from thumb to mcu area
-    - name: _mcu_area
-    - what: rectangle
-      where:
-        - thumb_extra
-      size: [1px, py]
-      adjust:
-        shift: [-0.5px, 0.02] # Floating point shenanigans?
 
   _finger_fill: # Fill in gaps between splays
     - what: rectangle
@@ -678,51 +756,29 @@ outlines:
     - name: _keys
     - name: _finger_fill
     - name: _thumb
-  _keys_area_42:
-    - name: _keys_area_44
-    - operation: subtract
-      name: _extra_thumb
   _keys_area_40:
     - name: _keys_area_44
     - operation: subtract
       name: _extra_pinky
-  _keys_area_38:
-    - name: _keys_area_40
-    - operation: subtract
-      name: _extra_thumb
 
   _board_44:
     - name: _mcu_area
     - name: _keys_area_44
     - name: _thumb_smooth
-  _board_42:
-    - name: _board_44
-    - operation: subtract
-      name: _extra_thumb
   _board_40:
     - name: _board_44
     - operation: subtract
       name: _extra_pinky
-  _board_38:
-    - name: _board_40
-    - operation: subtract
-      name: _extra_thumb
 
   _break_cut_inner:
-    - name: _board_38
-      fillet: base_fillet
+    - name: _board_40
+      fillet: pcb_fillet
   _break_cut:
     - name: _break_cut_inner
       expand: cut_w
       joints: 1
     - operation: subtract
       name: _break_cut_inner
-    - what: rectangle # Make top of thumb break straight so fillet works
-      size: [cut_w, 1py]
-      where:
-        - thumb_far
-      adjust:
-        shift: [0.5px + cut_w / 2, 0.5py]
   _break_bridge:
     - what: rectangle
       adjust:
@@ -739,11 +795,6 @@ outlines:
         - finger_extra_home
       adjust:
         shift: [0.5px - pad - cut_w / 2, 0]
-    - name: _break_bridge
-      where:
-        - thumb_far
-      adjust:
-        shift: [0.5px + cut_w / 2, 0.415]
   _break:
     - name: _break_cut
     - operation: subtract
@@ -752,7 +803,7 @@ outlines:
   # Board 44
   _case_inner_44_1:
     - name: _board_44
-      fillet: base_fillet
+      fillet: pcb_fillet
   _case_inner_44:
     - name: _case_inner_44_1
       expand: case_expand
@@ -763,52 +814,24 @@ outlines:
       joints: 1
   _case_outer_44:
     - name: _case_outer_44_1
-      fillet: base_fillet
+      fillet: pcb_fillet
   _top_plate_44:
     - name: _keys_area_44
-      fillet: base_fillet
+      fillet: pcb_fillet
     - operation: subtract
       name: _key_plugs
     - operation: subtract
       name: _plate_holes_44
   _back_plate_44:
     - name: _board_44
-      fillet: base_fillet
+      fillet: pcb_fillet
     - operation: subtract
       name: _plate_holes_44
-
-  # Board 42
-  _case_inner_42_1:
-    - name: _board_42
-      fillet: base_fillet
-  _case_inner_42:
-    - name: _case_inner_42_1
-      expand: case_expand
-      joints: 1
-  _case_outer_42_1:
-    - name: _board_42
-      expand: case_expand + wall_thickness
-      joints: 1
-  _case_outer_42:
-    - name: _case_outer_42_1
-      fillet: base_fillet
-  _top_plate_42:
-    - name: _keys_area_42
-      fillet: base_fillet
-    - operation: subtract
-      name: _key_plugs
-    - operation: subtract
-      name: _plate_holes_42
-  _back_plate_42:
-    - name: _board_42
-      fillet: base_fillet
-    - operation: subtract
-      name: _plate_holes_42
 
   # Board 40
   _case_inner_40_1:
     - name: _board_40
-      fillet: base_fillet
+      fillet: pcb_fillet
   _case_inner_40:
     - name: _case_inner_40_1
       expand: case_expand
@@ -819,52 +842,24 @@ outlines:
       joints: 1
   _case_outer_40:
     - name: _case_outer_40_1
-      fillet: base_fillet
+      fillet: pcb_fillet
   _top_plate_40:
     - name: _keys_area_40
-      fillet: base_fillet
+      fillet: pcb_fillet
     - operation: subtract
       name: _key_plugs
     - operation: subtract
       name: _plate_holes_40
   _back_plate_40:
     - name: _board_40
-      fillet: base_fillet
+      fillet: pcb_fillet
     - operation: subtract
       name: _plate_holes_40
-
-  # Board 38
-  _case_inner_38_1:
-    - name: _board_38
-      fillet: base_fillet
-  _case_inner_38:
-    - name: _case_inner_38_1
-      expand: case_expand
-      joints: 1
-  _case_outer_38_1:
-    - name: _board_38
-      expand: case_expand + wall_thickness
-      joints: 1
-  _case_outer_38:
-    - name: _case_outer_38_1
-      fillet: base_fillet
-  _top_plate_38:
-    - name: _keys_area_38
-      fillet: base_fillet
-    - operation: subtract
-      name: _key_plugs
-    - operation: subtract
-      name: _plate_holes_38
-  _back_plate_38:
-    - name: _board_38
-      fillet: base_fillet
-    - operation: subtract
-      name: _plate_holes_38
 
   # Common
   pcb:
     - name: _board_44
-      fillet: base_fillet
+      fillet: pcb_fillet
     - operation: subtract
       name: _break
       fillet: cut_fillet
@@ -879,8 +874,8 @@ outlines:
         - thumb_far
       size: [2px, py]
       adjust:
-        shift: [1px, 0]
-      fillet: base_fillet
+        shift: [px, 0.0001]
+      fillet: pcb_fillet
     - operation: subtract
       name: _display
       fillet: cut_fillet
@@ -897,16 +892,6 @@ outlines:
     - name: mcu_cover
       adjust:
         shift: [0.01, 0.01]
-  _preview_42:
-    - name: _case_outer_42
-    - name: _case_inner_42
-      operation: subtract
-    - name: _top_plate_42
-      adjust:
-        shift: [-0.01, -0.01]
-    - name: mcu_cover
-      adjust:
-        shift: [0.01, 0.01]
   _preview_40:
     - name: _case_outer_40
     - name: _case_inner_40
@@ -917,29 +902,13 @@ outlines:
     - name: mcu_cover
       adjust:
         shift: [0.01, 0.01]
-  _preview_38:
-    - name: _case_outer_38
-    - name: _case_inner_38
-      operation: subtract
-    - name: _top_plate_38
-      adjust:
-        shift: [-0.01, -0.01]
-    - name: mcu_cover
-      adjust:
-        shift: [0.01, 0.01]
   preview:
     - name: _preview_44
       adjust:
         shift: [-4px, 3py]
-    - name: _preview_42
-      adjust:
-        shift: [4px, 3py]
     - name: _preview_40
       adjust:
         shift: [-4px, -3py]
-    - name: _preview_38
-      adjust:
-        shift: [4px, -3py]
 
 # ------------
 # Cases
@@ -1081,33 +1050,6 @@ cases:
     - what: outline
       name: _top_plate_44
       extrude: top_plate_thickness
-  temporal_42:
-    - what: outline # Bottom
-      name: _case_outer_42
-      extrude: bottom_thickness + wall_height
-      shift: [0, 0, -bottom_thickness]
-    - what: case
-      operation: subtract
-      name: _bottom_cutouts
-    - what: case
-      operation: subtract
-      name: _bottom_cutouts_pinky
-    - what: outline # Walls
-      operation: subtract
-      name: _case_inner_42
-      extrude: wall_height * 2
-      shift: [0, 0, 0]
-    - what: case
-      operation: subtract
-      name: _wall_cutouts
-    - what: case
-      name: _posts
-    - what: case
-      name: _posts_pinky
-  top_plate_42:
-    - what: outline
-      name: _top_plate_42
-      extrude: top_plate_thickness
   temporal_40:
     - what: outline # Bottom
       name: _case_outer_40
@@ -1134,28 +1076,6 @@ cases:
   top_plate_40:
     - what: outline
       name: _top_plate_40
-      extrude: top_plate_thickness
-  temporal_38:
-    - what: outline # Bottom
-      name: _case_outer_38
-      extrude: bottom_thickness + wall_height
-      shift: [0, 0, -bottom_thickness]
-    - what: case
-      operation: subtract
-      name: _bottom_cutouts
-    - what: outline # Walls
-      operation: subtract
-      name: _case_inner_38
-      extrude: wall_height * 2
-      shift: [0, 0, 0]
-    - what: case
-      operation: subtract
-      name: _wall_cutouts
-    - what: case
-      name: _posts
-  top_plate_38:
-    - what: outline
-      name: _top_plate_38
       extrude: top_plate_thickness
 
 # ------------
@@ -1414,35 +1334,6 @@ pcbs:
           reversible: true
           add_keepout: true
 
-  top_plate_42:
-    template: kicad8
-    outlines:
-      main:
-        outline: _top_plate_42
-    footprints:
-      hole_1: *hole_1
-      hole_2: *hole_2
-      hole_3: &hole_3
-        what: ceoloide/mounting_hole_npth
-        where: *hole3_pos
-      hole_4: *hole_4
-      hole_5_e: *hole_5_e
-      temporal: *temporal_text
-      neuron: *neuron
-
-  back_plate_42:
-    template: kicad8
-    outlines:
-      main:
-        outline: _back_plate_42
-    footprints:
-      hole_1: *hole_1
-      hole_2: *hole_2
-      hole_3: *hole_3
-      hole_4: *hole_4
-      hole_5_e: *hole_5_e
-      brain: *brain
-
   top_plate_40:
     template: kicad8
     outlines:
@@ -1468,33 +1359,6 @@ pcbs:
       hole_1: *hole_1
       hole_2: *hole_2
       hole_3_e: *hole_3_e
-      hole_4: *hole_4
-      hole_5: *hole_5
-      brain: *brain
-
-  top_plate_38:
-    template: kicad8
-    outlines:
-      main:
-        outline: _top_plate_38
-    footprints:
-      hole_1: *hole_1
-      hole_2: *hole_2
-      hole_3: *hole_3
-      hole_4: *hole_4
-      hole_5: *hole_5
-      temporal: *temporal_text
-      neuron: *neuron
-
-  back_plate_38:
-    template: kicad8
-    outlines:
-      main:
-        outline: _back_plate_38
-    footprints:
-      hole_1: *hole_1
-      hole_2: *hole_2
-      hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
       brain: *brain
