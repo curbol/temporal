@@ -40,23 +40,20 @@ units:
   top_plate_thickness: 1.3
   pcb_hole_diameter: 5
   # Top left
-  hole1_x: -0.5kx - 1
-  hole1_y: -1ky - 1
+  hole1_x: -0.5kx - 0.5
+  hole1_y: -0.5ky
   # Top right
   hole2_x: 0.5kx - 0.35
   hole2_y: -0.5ky
   # Thumb right
   hole3_x: 0.5kx + 1
-  hole3_y: 0ky - 0.5
-  # Thumb right extra
-  hole3_e_x: 0.5kx + 1
-  hole3_e_y: 0.0ky - 0.5
+  hole3_y: 0.0ky - 0.5
   # Thumb left
   hole4_x: 0.5kx + 1
   hole4_y: 0.0ky - 0.5
   # Far left
-  hole5_x: -0.5kx - 0.425
-  hole5_y: -1.25ky - 0.175
+  hole5_x: 0.5kx + 0.5
+  hole5_y: -0.5ky
   # Far left extra
   hole5_e_x: 0.5kx - 0.35
   hole5_e_y: -0.5ky
@@ -209,24 +206,6 @@ outlines:
       size: [1px, 3py]
       adjust:
         shift: [-pad, 0]
-  _extra_thumb:
-    - what: rectangle # Remove key
-      where:
-        - thumb_far
-      size: [2px, 2py]
-      adjust:
-        shift: [0.5px + 1px, 0]
-    - what: rectangle # Remove fillet by mcu area
-      where:
-        - ref: finger_inner_home
-          shift: [19.4 + 21.7, -15 + mcu_y]
-      size: [21.7, 66.8]
-    - what: rectangle # Remove fillet under thumb_far
-      where:
-        - thumb_far
-      size: [px, py]
-      adjust:
-        shift: [0.5px, -0.99999py] # Floating point shenanigans?
 
   _mcu_area:
     - what: rectangle
@@ -401,15 +380,11 @@ outlines:
       adjust:
         shift: [2.75, -7.5]
 
-  _socket_cutouts_38:
+  _socket_cutouts_40:
     - name: _socket
       where: true
     - operation: subtract
       name: _extra_pinky
-      adjust:
-        shift: [3, 0]
-    - operation: subtract
-      name: _extra_thumb
       adjust:
         shift: [3, 0]
   _socket_cutouts_pinky:
@@ -417,9 +392,6 @@ outlines:
       where:
         - finger_extra_top
         - finger_extra_home
-  _socket_cutouts_thumb:
-    - name: _socket
-      where: thumb_extra
   _diode_cutouts:
     - name: _diode
       where: true
@@ -447,9 +419,7 @@ outlines:
           shift: [19.8, 10.8 + mcu_y]
   _mcu_jumpers_cutouts:
     - name: _mcu_jumpers
-      where: &mcu_pos
-        - ref: finger_inner_home
-          shift: [19.8, 10.8 + mcu_y]
+      where: *mcu_pos
   _display_pins_cutouts:
     - name: _display_pins
       where: &display_pos
@@ -457,9 +427,7 @@ outlines:
           shift: [19.8, 7.5 + mcu_y]
   _display_jumpers_cutouts:
     - name: _display_jumpers
-      where: &display_pos
-        - ref: finger_inner_home
-          shift: [19.8, 7.5 + mcu_y]
+      where: *display_pos
   _battery_pins_cutouts:
     - name: _battery_pins
       where: &battery_pos
@@ -468,10 +436,7 @@ outlines:
           rotate: -135
   _battery_jumpers_cutouts:
     - name: _battery_jumpers
-      where: &battery_pos
-        - ref: finger_inner_home
-          shift: [24.5, -22.35 + mcu_y]
-          rotate: -135
+      where: *battery_pos
 
   _case_cutout_template:
     - what: circle
@@ -516,7 +481,7 @@ outlines:
   _plate_hole:
     - what: circle
       radius: m2_size / 2 + 0.1
-  _plate_holes_38:
+  _plate_holes_40:
     - name: _plate_hole
       where: &hole1_pos
         - ref: finger_middle_top
@@ -527,7 +492,7 @@ outlines:
           shift: [hole2_x, hole2_y]
     - name: _plate_hole
       where: &hole3_pos
-        - ref: thumb_mid
+        - ref: thumb_far
           shift: [hole3_x, hole3_y]
     - name: _plate_hole
       where: &hole4_pos
@@ -535,20 +500,10 @@ outlines:
           shift: [hole4_x, hole4_y]
     - name: _plate_hole
       where: &hole5_pos
-        - ref: finger_ring_home
+        - ref: finger_pinky_top
           shift: [hole5_x, hole5_y]
-  _plate_holes_40:
-    - name: _plate_holes_38
-    - name: _plate_hole
-      where: &hole3_e_pos
-        - ref: thumb_far
-          shift: [hole3_e_x, hole3_e_y]
-    - operation: subtract
-      what: circle
-      radius: m2_size
-      where: *hole3_pos
-  _plate_holes_42:
-    - name: _plate_holes_38
+  _plate_holes_44:
+    - name: _plate_holes_40
     - name: _plate_hole
       where: &hole5_e_pos
         - ref: finger_extra_top
@@ -557,15 +512,6 @@ outlines:
       what: circle
       radius: m2_size
       where: *hole5_pos
-  _plate_holes_44:
-    - name: _plate_holes_40
-    - name: _plate_hole
-      where: *hole5_e_pos
-    - operation: subtract
-      what: circle
-      radius: m2_size
-      where: *hole5_pos
-
   _post:
     - what: circle
       radius: m2_insert_outer_diameter / 2
@@ -584,18 +530,9 @@ outlines:
     - name: _post
       where: *hole5_pos
     - operation: subtract
-      name: _extra_thumb
-      adjust:
-        shift: [wall_thickness / 2, 0]
-    - operation: subtract
       name: _extra_pinky
       adjust:
         shift: [-wall_thickness / 2, 0]
-  _posts_thumb:
-    - name: _post
-      where: *hole3_pos
-    - name: _post
-      where: *hole3_e_pos
   _posts_pinky:
     - name: _post
       where: *hole5_pos
@@ -612,9 +549,6 @@ outlines:
       where: *hole4_pos
     - name: _post_hole
       where: *hole5_pos
-  _posts_holes_thumb:
-    - name: _post_hole
-      where: *hole3_e_pos
   _posts_holes_pinky:
     - name: _post_hole
       where: *hole5_e_pos
@@ -920,7 +854,7 @@ cases:
       extrude: top_plate_thickness
   _bottom_cutouts:
     - what: outline # Socket cutouts (1.85mm). Cut all the way through.
-      name: _socket_cutouts_38
+      name: _socket_cutouts_40
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline # MCU cover M2 nut cutouts
@@ -972,11 +906,6 @@ cases:
       name: _socket_cutouts_pinky
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-  _bottom_cutouts_thumb:
-    - what: outline # Socket cutouts
-      name: _socket_cutouts_thumb
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
   _wall_cutouts:
     - what: outline # Wall usb-c cutout
       name: _usbc_cutout
@@ -996,16 +925,6 @@ cases:
     - what: outline
       operation: subtract
       name: _post_holes_core
-      extrude: m2_insert_hole_depth * 2
-      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
-  _posts_thumb:
-    - what: outline # M2 heat-set insert posts
-      name: _posts_thumb
-      extrude: m2_insert_post_height
-      shift: [0, 0, 0]
-    - what: outline
-      operation: subtract
-      name: _posts_holes_thumb
       extrude: m2_insert_hole_depth * 2
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
   _posts_pinky:
@@ -1029,9 +948,6 @@ cases:
     - what: case
       operation: subtract
       name: _bottom_cutouts_pinky
-    - what: case
-      operation: subtract
-      name: _bottom_cutouts_thumb
     - what: outline # Walls
       operation: subtract
       name: _case_inner_44
@@ -1042,8 +958,6 @@ cases:
       name: _wall_cutouts
     - what: case
       name: _posts
-    - what: case
-      name: _posts_thumb
     - what: case
       name: _posts_pinky
   top_plate_44:
@@ -1058,9 +972,6 @@ cases:
     - what: case
       operation: subtract
       name: _bottom_cutouts
-    - what: case
-      operation: subtract
-      name: _bottom_cutouts_thumb
     - what: outline # Walls
       operation: subtract
       name: _case_inner_40
@@ -1071,8 +982,6 @@ cases:
       name: _wall_cutouts
     - what: case
       name: _posts
-    - what: case
-      name: _posts_thumb
   top_plate_40:
     - what: outline
       name: _top_plate_40
@@ -1247,12 +1156,6 @@ pcbs:
         params:
           hole_size: pcb_hole_diameter
           hole_drill: pcb_hole_diameter
-      hole_3_e:
-        what: ceoloide/mounting_hole_npth
-        where: *hole3_e_pos
-        params:
-          hole_size: pcb_hole_diameter
-          hole_drill: pcb_hole_diameter
       hole_4:
         what: ceoloide/mounting_hole_npth
         where: *hole4_pos
@@ -1302,9 +1205,9 @@ pcbs:
       hole_2: &hole_2
         what: ceoloide/mounting_hole_npth
         where: *hole2_pos
-      hole_3_e: &hole_3_e
+      hole_3: &hole_3
         what: ceoloide/mounting_hole_npth
-        where: *hole3_e_pos
+        where: *hole3_pos
       hole_4: &hole_4
         what: ceoloide/mounting_hole_npth
         where: *hole4_pos
@@ -1322,7 +1225,7 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3_e: *hole_3_e
+      hole_3: *hole_3
       hole_4: *hole_4
       hole_5_e: *hole_5_e
       brain: &brain
@@ -1342,7 +1245,7 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3_e: *hole_3_e
+      hole_3: *hole_3
       hole_4: *hole_4
       hole_5: &hole_5
         what: ceoloide/mounting_hole_npth
@@ -1358,7 +1261,7 @@ pcbs:
     footprints:
       hole_1: *hole_1
       hole_2: *hole_2
-      hole_3_e: *hole_3_e
+      hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
       brain: *brain
