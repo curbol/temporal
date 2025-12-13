@@ -11,13 +11,9 @@ ERGOGEN_OUTPUT="ergogen/output/pcbs"
 # List of all PCB files to copy
 PCB_FILES=(
   "temporal"
-  "top_plate_38"
   "top_plate_40"
-  "top_plate_42"
   "top_plate_44"
-  "back_plate_38"
   "back_plate_40"
-  "back_plate_42"
   "back_plate_44"
   "mcu_cover"
 )
@@ -68,7 +64,7 @@ After regenerating the PCB, the following manual steps are needed:
 
 2. **Add manual traces** - Route connections that Ergogen doesn't handle automatically
 
-3. **(Optional) Create rule areas** - Add rule areas to exclude the "TEMPORAL" and "by curbol" silkscreen text from the ground plane fill
+3. **(Optional) Create rule areas** - Add rule areas to exclude the "Temporal" and "curbol" silkscreen text from the ground plane fill
 EOF
     fi
   else

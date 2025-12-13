@@ -1,6 +1,6 @@
 # Build Guide
 
-The TEMPORAL build process is straightforward and follows similar steps to [Typeractive's Corne wireless build guide](https://docs.typeractive.xyz/build-guides/corne-wireless), which provides excellent reference documentation.
+The Temporal build process is straightforward and follows similar steps to [Typeractive's Corne wireless build guide](https://docs.typeractive.xyz/build-guides/corne-wireless), which provides excellent reference documentation.
 
 ## Key Configuration
 

@@ -1,6 +1,6 @@
 # Bill of Materials (BOM)
 
-This is the complete list of components needed to build one TEMPORAL keyboard (both halves).
+This is the complete list of components needed to build one Temporal keyboard (both halves).
 
 ## Required Components
 
@@ -46,7 +46,7 @@ This is the complete list of components needed to build one TEMPORAL keyboard (b
 
 | Component | Quantity | Notes |
 |-----------|----------|-------|
-| TEMPORAL PCB | 2 | Order using gerbers/temporal.zip |
+| Temporal PCB | 2 | Order using gerbers/temporal.zip |
 | 3D Printed Case | 1 | Choose your key configuration (36/38/40/42/44) |
 | 3D Printed Case (Mirror) | 1 | Choose your key configuration (36/38/40/42/44) |
 | MCU Cover | 2 | Optional, protects the microcontroller |

@@ -118,16 +118,8 @@ convert:
 # Mirror case STL files for right-hand versions
 mirror:
 	@MIRRORED=0; \
-	if [ -f $(CASES_DIR)/temporal_38.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_38_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_38.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
-		MIRRORED=$$((MIRRORED + 1)); \
-	fi; \
 	if [ -f $(CASES_DIR)/temporal_40.stl ]; then \
 		openscad -o $(CASES_DIR)/temporal_40_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_40.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
-		MIRRORED=$$((MIRRORED + 1)); \
-	fi; \
-	if [ -f $(CASES_DIR)/temporal_42.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_42_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_42.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
 		MIRRORED=$$((MIRRORED + 1)); \
 	fi; \
 	if [ -f $(CASES_DIR)/temporal_44.stl ]; then \

@@ -28,4 +28,4 @@ After regenerating the PCB, the following manual steps are needed:
 
 2. **Add manual traces** - Route connections that Ergogen doesn't handle automatically
 
-3. **(Optional) Create rule areas** - Add rule areas to exclude the "TEMPORAL" and "by curbol" silkscreen text from the ground plane fill
+3. **(Optional) Create rule areas** - Add rule areas to exclude the "Temporal" and "curbol" silkscreen text from the ground plane fill

@@ -1,17 +1,17 @@
-# TEMPORAL
+# Temporal
 
 ![Maintenance](https://img.shields.io/maintenance/yes/2025)
 ![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
-A 36-44 key split ergonomic keyboard with wireless support. Features breakoff pinky columns and a breakoff thumb key, with an optional encoder in the thumb cluster.
+A 40/44 key split ergonomic keyboard with wireless support. Features breakoff pinky columns and a breakoff thumb key, with an optional encoder in the thumb cluster.
 
-![TEMPORAL Preview](assets/preview.svg)
+![Temporal Preview](assets/preview.svg)
 
 ## Design
 
 ### Layout
 
-- 36-44 keys with breakoff pinky column and thumb key
+- 40/44 keys with breakoff pinky column and thumb key
 - Column stagger and splay on pinky and ring columns
 
 ### Hardware
@@ -30,7 +30,7 @@ A 36-44 key split ergonomic keyboard with wireless support. Features breakoff pi
 
 ## Firmware
 
-TEMPORAL is designed to be used with ZMK. [You can find the ZMK-config repository and keymap here.](https://github.com/curbol/temporal-zmk)
+Temporal is designed to be used with ZMK. [You can find the ZMK-config repository and keymap here.](https://github.com/curbol/temporal-zmk)
 
 ## Development
 
@@ -71,13 +71,13 @@ For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
 
 ## Keycaps
 
-TEMPORAL uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
+Temporal uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
 
 - [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
 
 ## Influences
 
-TEMPORAL is inspired by and takes influence from:
+Temporal is inspired by and takes influence from:
 
 - [TEMPEST](https://github.com/thrly/tempest) by thrly
 - [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) by GEIST
