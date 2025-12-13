@@ -81,7 +81,6 @@ units:
   case_fillet: pcb_fillet + wall_thickness
   side_cut_width: 12
   side_cut_radius: 1.5
-  power_y: -14.8 + mcu_y
 
   # M2 heat-set insert posts
   m2_size: 2
@@ -430,7 +429,7 @@ outlines:
     - name: _battery_pins
       where: &battery_pos
         - ref: finger_inner_home
-          shift: [24.5, -22.35 + mcu_y]
+          shift: [25.4, -22.2 + mcu_y]
           rotate: -135
   _battery_jumpers_cutouts:
     - name: _battery_jumpers
@@ -473,7 +472,7 @@ outlines:
     - name: _case_cutout_template
       where:
         - ref: finger_inner_home
-          shift: [27.5 + side_cut_radius * 2, power_y]
+          shift: [27.5 + side_cut_radius * 2, -14.8 + mcu_y]
           rotate: 90
 
   _plate_hole:
@@ -1072,18 +1071,6 @@ pcbs:
           reversible: true
           include_labels: false
         where: *display_pos
-      reset:
-        what: ceoloide/reset_switch_smd_side
-        params:
-          reversible: true
-          include_traces_vias: true
-          via_size: 0.6
-          via_drill: 0.3
-        where:
-          - ref: finger_inner_home
-            shift: [19.8, 26.08 + mcu_y]
-            rotate: 0
-
       power:
         what: ceoloide/power_switch_smd_side
         params:
@@ -1093,8 +1080,20 @@ pcbs:
           via_drill: 0.3
         where:
           - ref: finger_inner_home
-            shift: [27.5, power_y]
-            rotate: 0
+            shift: [19.8 - 0.07, 26.1 + mcu_y] # Nudge off center to avoid trace
+            rotate: 90
+
+      reset:
+        what: ceoloide/reset_switch_smd_side
+        params:
+          reversible: true
+          include_traces_vias: true
+          via_size: 0.6
+          via_drill: 0.3
+        where:
+          - ref: finger_inner_home
+            shift: [27.4, -14.5 + mcu_y]
+            rotate: -90
 
       battery:
         what: ceoloide/battery_connector_jst_ph_2
@@ -1111,10 +1110,10 @@ pcbs:
           - ref: finger_inner_top
             shift: [0, 0.66ky - 1.2]
         params:
-          text: "TEMPORAL"
+          text: "Temporal"
           height: 1.5
           width: 1.5
-          face: "Maple Mono NF"
+          face: "Maple Mono NF ExtraBold"
           reversible: true
       neuron: &neuron
         what: ceoloide/neuron
@@ -1127,10 +1126,10 @@ pcbs:
       curbol:
         what: ceoloide/utility_text
         where:
-          - ref: thumb_far
+          - ref: thumb_extra
             shift: [0, -7]
         params:
-          text: "by curbol"
+          text: "curbol"
           height: 1.2
           width: 1.2
           face: "Maple Mono NF ExtraBold"
