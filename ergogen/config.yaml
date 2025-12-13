@@ -1,6 +1,4 @@
-# Ergogen config file for TEMPORAL keyboard
-
-# TEMPORAL, by Curtis Bollinger - @curbol
+# Temporal, by Curtis Bollinger - @curbol
 # https://github.com/curbol/temporal
 # v1 - fall 2025
 
@@ -79,7 +77,7 @@ units:
   case_expand: 0.1
   bottom_thickness: 1.9
   wall_height: pcb_thickness + 2.2 + 0.1 # (PCB thickness + choc height below top-plate + a bit extra) Does not include bottom
-  wall_thickness: 1.207 # Note: Small changes affact the curves on case_outer. Seems finicky.
+  wall_thickness: 1.2001 # NOTE: Small changes affact the curves on case_outer. #finicky
   case_fillet: pcb_fillet + wall_thickness
   side_cut_width: 12
   side_cut_radius: 1.5
@@ -808,7 +806,7 @@ outlines:
         - thumb_far
       size: [2px, py]
       adjust:
-        shift: [px, 0.0001]
+        shift: [px, 0.0001] # NOTE: Floating point rounding error?. #finicky
       fillet: pcb_fillet
     - operation: subtract
       name: _display
