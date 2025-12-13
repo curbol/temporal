@@ -4,7 +4,7 @@ The Temporal build process is straightforward and follows similar steps to [Type
 
 ## Key Configuration
 
-Before starting your build, decide on your key configuration (36, 38, 40, 42, or 44 keys). The outer pinky columns can be snapped off the PCB if not needed.
+Before starting your build, decide on your key configuration (40 or 44 keys). The outer pinky columns can be snapped off the PCB if not needed.
 
 > [!WARNING]
 > When removing keys, the break-off points may be sharp - file or sand them smooth. PCB dust is toxic, so wear a mask and work in a well-ventilated area or outside.

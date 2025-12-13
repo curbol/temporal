@@ -3,7 +3,7 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2025)
 ![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
-A 40/44 key split ergonomic keyboard with wireless support. Features breakoff pinky columns and a breakoff thumb key, with an optional encoder in the thumb cluster.
+A 40/44 key split ergonomic keyboard with wireless support. Features a breakoff pinky column with an optional encoder in the thumb cluster.
 
 ![Temporal Preview](assets/preview.svg)
 
@@ -11,7 +11,7 @@ A 40/44 key split ergonomic keyboard with wireless support. Features breakoff pi
 
 ### Layout
 
-- 40/44 keys with breakoff pinky column and thumb key
+- 40/44 keys with breakoff pinky column
 - Column stagger and splay on pinky and ring columns
 
 ### Hardware

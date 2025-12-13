@@ -47,8 +47,8 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | Component | Quantity | Notes |
 |-----------|----------|-------|
 | Temporal PCB | 2 | Order using gerbers/temporal.zip |
-| 3D Printed Case | 1 | Choose your key configuration (36/38/40/42/44) |
-| 3D Printed Case (Mirror) | 1 | Choose your key configuration (36/38/40/42/44) |
+| 3D Printed Case | 1 | Choose your key configuration (40/44) |
+| 3D Printed Case (Mirror) | 1 | Choose your key configuration (40/44) |
 | MCU Cover | 2 | Optional, protects the microcontroller |
 
 Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
@@ -57,7 +57,7 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 - Surface finish: LeadFree HASL
 - See [`pcbs/README.md`](/pcbs/README.md) for detailed manufacturing specifications
 
-3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for all key configurations (36, 38, 40, 42, 44).
+3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for 40 and 44 key configurations.
 
 **For home 3D printing:**
 
