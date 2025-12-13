@@ -59,7 +59,7 @@ units:
   hole5_e_y: -0.5ky
 
   # MCU Cover
-  mcu_y: -12.5
+  mcu_y: -12.3
   mcu_area_w: 20.25
   mcu_area_h: 66.25
   mcu_pin_spacing: 7.62 # Distance between MCU pin rows
@@ -582,7 +582,7 @@ outlines:
         - ref: thumb_far
           shift: [0.9px, 0.5py]
         - ref: thumb_far
-          shift: [1.38px, 0py]
+          shift: [1.38px, 0py] # angle towards thumb_smooth curve to connect smoothly
       fillet: pcb_fillet
   _top_plate_smooth: # Smooth curve on wedge below mcu
     - name: _thumb_smooth
@@ -598,7 +598,7 @@ outlines:
       where:
         - thumb_extra
       size: [4px, py]
-      fillet: 66.6
+      fillet: 66.62 # Smallest number that creates a single arc segment
     - what: rectangle
       operation: subtract
       where:
