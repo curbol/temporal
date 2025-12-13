@@ -220,7 +220,22 @@ module.exports = {
     };
 
     const gen_traces_row = (row_num) => {
-      const traces = `
+      // For row 0 (top pins), shift vias and connected traces down 0.5mm to make room for power switch
+      const via_y_offset = row_num === 0 ? 0.5 : 0;
+
+      // Front traces: for row 0, go horizontal then 45° to via; otherwise straight horizontal
+      const front_traces = via_y_offset > 0 ? `
+  (segment (start ${p.eaxy(
+        p.use_rectangular_jumpers ? 4.58 : 4.775,
+        -12.7 + row_num * 2.54
+      )}) (end ${p.eaxy(3.4 + via_y_offset, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+  (segment (start ${p.eaxy(3.4 + via_y_offset, -12.7 + row_num * 2.54)}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54 + via_y_offset)}) (width 0.25) (layer "F.Cu"))
+  (segment (start ${p.eaxy(
+        p.use_rectangular_jumpers ? -4.58 : -4.775,
+        -12.7 + row_num * 2.54
+      )}) (end ${p.eaxy(-3.4 - via_y_offset, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+  (segment (start ${p.eaxy(-3.4 - via_y_offset, -12.7 + row_num * 2.54)}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54 + via_y_offset)}) (width 0.25) (layer "F.Cu"))
+` : `
   (segment (start ${p.eaxy(
         p.use_rectangular_jumpers ? 4.58 : 4.775,
         -12.7 + row_num * 2.54
@@ -229,7 +244,9 @@ module.exports = {
         p.use_rectangular_jumpers ? -4.58 : -4.775,
         -12.7 + row_num * 2.54
       )}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+`;
 
+      const other_traces = `
   (segment (start ${p.eaxy(-7.62, -12.7 + row_num * 2.54)}) (end ${p.eaxy(
         -5.5,
         -12.7 + row_num * 2.54
@@ -249,69 +266,69 @@ module.exports = {
 
   (segment (start ${p.eaxy(
         -2.604695,
-        0.23 + row_num * 2.54 - 12.7
+        0.23 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         3.17,
-        0.23 + row_num * 2.54 - 12.7
+        0.23 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(-4.775, 0 + row_num * 2.54 - 12.7)}) (end ${p.eaxy(
         -4.425305,
-        0 + row_num * 2.54 - 12.7
+        0 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
         -3.700305,
-        0.725 + row_num * 2.54 - 12.7
+        0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         -3.099695,
-        0.725 + row_num * 2.54 - 12.7
+        0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
         -4.425305,
-        0 + row_num * 2.54 - 12.7
+        0 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         -3.700305,
-        0.725 + row_num * 2.54 - 12.7
+        0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
         -3.099695,
-        0.725 + row_num * 2.54 - 12.7
+        0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         -2.604695,
-        0.23 + row_num * 2.54 - 12.7
+        0.23 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
 
   (segment (start ${p.eaxy(4.775, 0 + row_num * 2.54 - 12.7)}) (end ${p.eaxy(
         4.425305,
-        0 + row_num * 2.54 - 12.7
+        0 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
         2.594695,
-        -0.22 + row_num * 2.54 - 12.7
+        -0.22 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         -3.18,
-        -0.22 + row_num * 2.54 - 12.7
+        -0.22 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(4.425305, 0 + row_num * 2.54 - 12.7)}) (end ${p.eaxy(
+  (segment (start ${p.eaxy(4.425305, 0 + row_num * 2.54 - 12.7 + via_y_offset)}) (end ${p.eaxy(
         3.700305,
-        -0.725 + row_num * 2.54 - 12.7
+        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
         3.700305,
-        -0.725 + row_num * 2.54 - 12.7
+        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         3.099695,
-        -0.725 + row_num * 2.54 - 12.7
+        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
   (segment (start ${p.eaxy(
         3.099695,
-        -0.725 + row_num * 2.54 - 12.7
+        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (end ${p.eaxy(
         2.594695,
-        -0.22 + row_num * 2.54 - 12.7
+        -0.22 + row_num * 2.54 - 12.7 + via_y_offset
       )}) (width 0.25) (layer "B.Cu"))
         `;
 
-      return traces;
+      return front_traces + other_traces;
     };
 
     const gen_traces = () => {
@@ -339,6 +356,8 @@ module.exports = {
       show_silk_labels
     ) => {
       const row_offset_y = 2.54 * row_num;
+      // For row 0 (top pins), shift vias down 0.5mm to make room for power switch
+      const via_y_offset = row_num === 0 ? 0.5 : 0;
 
       const socket_hole_num_left = 24 - row_num;
       const socket_hole_num_right = 1 + row_num;
@@ -373,10 +392,10 @@ module.exports = {
       `;
       let socket_row_vias = `
     ${"" /* Inside VIAS */}
-    (pad "${via_num_left}" thru_hole circle (at -3.4 ${-12.7 + row_offset_y} ${p.r
+    (pad "${via_num_left}" thru_hole circle (at -3.4 ${-12.7 + row_offset_y + via_y_offset} ${p.r
         }) (size ${p.via_size} ${p.via_size}) (drill ${p.via_drill
         }) (layers "*.Cu" "*.Mask") ${net_left})
-    (pad "${via_num_right}" thru_hole circle (at 3.4 ${-12.7 + row_offset_y} ${p.r
+    (pad "${via_num_right}" thru_hole circle (at 3.4 ${-12.7 + row_offset_y + via_y_offset} ${p.r
         }) (size ${p.via_size} ${p.via_size}) (drill ${p.via_drill
         }) (layers "*.Cu" "*.Mask") ${net_right})
       `;
@@ -710,22 +729,22 @@ module.exports = {
     `;
 
     const instructions = `
-    (fp_text user "Right" (at -6 -15.8 ${p.r}) (layer "F.SilkS")
+    (fp_text user "Right" (at -6.6 -15.8 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "Back" (at -6 -14.4 ${p.r}) (layer "F.SilkS")
+    (fp_text user "Back" (at -6.6 -14.4 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at 6 -15.1 ${p.r}) (layer "F.SilkS")
+    (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at 6.6 -15.1 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "Left" (at 6 -15.8 ${p.r}) (layer "B.SilkS")
+    (fp_text user "Left" (at 6.6 -15.8 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
-    (fp_text user "Back" (at 6 -14.4 ${p.r}) (layer "B.SilkS")
+    (fp_text user "Back" (at 6.6 -14.4 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
-    (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at -6 -15.1 ${p.r}) (layer "B.SilkS")
+    (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at -6.6 -15.1 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
     `;
