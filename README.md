@@ -80,5 +80,5 @@ Temporal uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
 Temporal is inspired by and takes influence from:
 
 - [TEMPEST](https://github.com/thrly/tempest) by thrly
-- [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) by GEIST
-- [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST
+- [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) and [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST
+- [Hillside](https://github.com/mmccoyd/hillside) by mmccoyd
