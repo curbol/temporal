@@ -33,7 +33,7 @@ units:
   thumb_spread: 1kx - 0.15
 
   # Board
-  pcb_fillet: 2.5
+  pcb_fillet: 2.95
   pcb_thickness: 1.6
   top_plate_thickness: 1.3
   pcb_hole_diameter: 5
@@ -408,7 +408,7 @@ outlines:
       where:
         - ref: thumb_enc
           shift: [0, -6.9]
-      expand: -0.2
+      expand: -0.275
   _mcu_pins_cutouts:
     - name: _mcu_pins
       where: &mcu_pos
@@ -567,9 +567,9 @@ outlines:
       operation: subtract
       where:
         - thumb_far
-      size: [2px, py]
+      size: [3px, py]
       adjust:
-        shift: [0, py - 1.5]
+        shift: [0, py - 1.9] # Cut top off outer thumb curve
     - what: polygon
       points:
         - ref: thumb_far
@@ -577,9 +577,9 @@ outlines:
         - ref: thumb_far
           shift: [0px, 0.5py]
         - ref: thumb_far
-          shift: [0.9px, 0.5py]
+          shift: [0.906px, 0.5py]
         - ref: thumb_far
-          shift: [1.38px, 0py] # angle towards thumb_smooth curve to connect smoothly
+          shift: [1.4px, 0py] # Angle towards thumb_smooth curve to connect smoothly
       fillet: pcb_fillet
   _top_plate_smooth: # Smooth curve on wedge below mcu
     - name: _thumb_smooth
@@ -1107,22 +1107,14 @@ pcbs:
       temporal: &temporal_text
         what: ceoloide/utility_text
         where:
-          - ref: finger_inner_top
-            shift: [0, 0.66ky - 1.2]
+          - ref: finger_middle_bottom
+            shift: [0, -0.5ky - 2.9]
         params:
           text: "Temporal"
-          height: 1.5
-          width: 1.5
-          face: "Maple Mono NF ExtraBold"
+          height: 2
+          width: 2
+          face: "Maple Mono NF Medium"
           reversible: true
-      neuron: &neuron
-        what: ceoloide/neuron
-        where:
-          - ref: finger_middle_bottom
-            shift: [-0.5ky + 0.25, -20.2]
-        params:
-          reversible: true
-          add_keepout: true
       curbol:
         what: ceoloide/utility_text
         where:
@@ -1212,7 +1204,6 @@ pcbs:
         what: ceoloide/mounting_hole_npth
         where: *hole5_e_pos
       temporal: *temporal_text
-      neuron: *neuron
 
   back_plate_44:
     template: kicad8
@@ -1225,14 +1216,6 @@ pcbs:
       hole_3: *hole_3
       hole_4: *hole_4
       hole_5_e: *hole_5_e
-      brain: &brain
-        what: ceoloide/brain
-        where:
-          - ref: finger_middle_bottom
-            shift: [7, -1.65]
-        params:
-          reversible: true
-          add_keepout: true
 
   top_plate_40:
     template: kicad8
@@ -1248,7 +1231,6 @@ pcbs:
         what: ceoloide/mounting_hole_npth
         where: *hole5_pos
       temporal: *temporal_text
-      neuron: *neuron
 
   back_plate_40:
     template: kicad8
@@ -1261,7 +1243,6 @@ pcbs:
       hole_3: *hole_3
       hole_4: *hole_4
       hole_5: *hole_5
-      brain: *brain
 
   mcu_cover:
     template: kicad8
