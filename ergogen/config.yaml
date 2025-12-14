@@ -81,6 +81,8 @@ units:
   case_fillet: pcb_fillet + wall_thickness
   side_cut_width: 12
   side_cut_radius: 1.5
+  pin_depth: 1
+  jumper_depth: 0.75
 
   # M2 heat-set insert posts
   m2_size: 2
@@ -429,7 +431,7 @@ outlines:
     - name: _battery_pins
       where: &battery_pos
         - ref: finger_inner_home
-          shift: [25.4, -22.2 + mcu_y]
+          shift: [24.8, -22 + mcu_y]
           rotate: -135
   _battery_jumpers_cutouts:
     - name: _battery_jumpers
@@ -877,27 +879,27 @@ cases:
     - what: outline # MCU pin cutouts
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _mcu_jumpers_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -0.5]
+      shift: [0, 0, -jumper_depth]
     - what: outline # Display pin cutouts
       name: _display_pins_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _display_jumpers_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -0.5]
+      shift: [0, 0, -jumper_depth]
     - what: outline # Battery pin cutouts
       name: _battery_pins_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _battery_jumpers_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -0.5]
+      shift: [0, 0, -jumper_depth]
   _bottom_cutouts_pinky:
     - what: outline # Socket cutouts
       name: _socket_cutouts_pinky
