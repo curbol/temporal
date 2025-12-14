@@ -69,9 +69,9 @@ units:
   mcu_hole2_y: -0.5ky + mcu_y + 0.146
 
   # Extra Breakoff
-  cut_w: 0.5
-  cut_fillet: 0.24
-  break_bridge_size: 3.65
+  cut_w: 0.8
+  cut_fillet: cut_w / 2 - 0.01
+  break_bridge_size: 3.7
 
   # Case
   case_expand: 0.1
@@ -437,44 +437,59 @@ outlines:
     - name: _battery_jumpers
       where: *battery_pos
 
-  _case_cutout_template:
+  _case_cutout_left:
     - what: circle
       radius: side_cut_radius
       adjust:
-        shift: [-(side_cut_width / 2) + side_cut_radius, -side_cut_radius]
+        shift: [side_cut_radius, -side_cut_radius]
+    - what: rectangle
+      size: [side_cut_radius * 2, side_cut_radius * 2]
+    - what: circle
+      operation: subtract
+      radius: side_cut_radius
+      adjust:
+        shift: [-side_cut_radius, -side_cut_radius]
+  _case_cutout_right:
     - what: circle
       radius: side_cut_radius
       adjust:
-        shift: [(side_cut_width / 2) - side_cut_radius, -side_cut_radius]
+        shift: [-side_cut_radius, -side_cut_radius]
+    - what: rectangle
+      size: [side_cut_radius * 2, side_cut_radius * 2]
+    - what: circle
+      operation: subtract
+      radius: side_cut_radius
+      adjust:
+        shift: [side_cut_radius, -side_cut_radius]
+  _case_cutout:
+    - name: _case_cutout_left
+      adjust:
+        shift: [-(side_cut_width / 2), 0]
     - what: rectangle
       size: [side_cut_width - side_cut_radius * 2, side_cut_radius * 4]
+    - name: _case_cutout_right
       adjust:
-        shift: [0, 0]
+        shift: [(side_cut_width / 2), 0]
+  _case_cutout_half:
+    - name: _case_cutout_left
+      adjust:
+        shift: [-(side_cut_width / 4), 0]
     - what: rectangle
-      size: [side_cut_width + side_cut_radius * 2, side_cut_radius * 2]
+      size: [(side_cut_width / 2) - side_cut_radius * 2, side_cut_radius * 4]
+    - name: _case_cutout_right
       adjust:
-        shift: [0, 0]
-    - what: circle
-      operation: subtract
-      radius: side_cut_radius
-      adjust:
-        shift: [-(side_cut_width / 2) - side_cut_radius, -side_cut_radius]
-    - what: circle
-      operation: subtract
-      radius: side_cut_radius
-      adjust:
-        shift: [(side_cut_width / 2) + side_cut_radius, -side_cut_radius]
-  _usbc_cutout:
-    - name: _case_cutout_template
+        shift: [(side_cut_width / 4), 0]
+  _usbc_case_cutout:
+    - name: _case_cutout
       where:
         - ref: finger_inner_home
           shift: [19.8, 25 + side_cut_radius * 2 + mcu_y]
           rotate: 0
-  _power_cutout:
-    - name: _case_cutout_template
+  _side_case_cutout:
+    - name: _case_cutout_half
       where:
         - ref: finger_inner_home
-          shift: [27.5 + side_cut_radius * 2, -14.8 + mcu_y]
+          shift: [27.5 + side_cut_radius * 2, -14.5 + mcu_y]
           rotate: 90
 
   _plate_hole:
@@ -907,12 +922,12 @@ cases:
       shift: [0, 0, -bottom_thickness * 1.5]
   _wall_cutouts:
     - what: outline # Wall usb-c cutout
-      name: _usbc_cutout
+      name: _usbc_case_cutout
       extrude: 20
       shift: [0, 10, wall_height]
       rotate: [90, 0, 0]
     - what: outline # Wall power and reset cutouts
-      name: _power_cutout
+      name: _side_case_cutout
       extrude: 10
       shift: [-5, 0, wall_height]
       rotate: [0, 90, 0]
