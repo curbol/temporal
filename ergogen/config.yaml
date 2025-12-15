@@ -594,13 +594,13 @@ outlines:
       operation: subtract
     - what: rectangle
       where: thumb_far
-      size: [pcb_fillet / 2, pcb_fillet / 2]
-      adjust.shift: [1cy + pcb_fillet / 2 + 0.07, 0.5py]
+      size: [pcb_fillet, pcb_fillet]
+      adjust.shift: [1py - 0.6, 0.5py + 0.3]
       operation: subtract
     - what: circle
       where: thumb_far
-      radius: pcb_fillet / 2
-      adjust.shift: [1cy + pcb_fillet / 4 + 0.07, 0.5py - pcb_fillet / 2]
+      radius: pcb_fillet
+      adjust.shift: [1py - pcb_fillet / 2 - 0.6, 0.5py - pcb_fillet]
   _top_plate_smooth:
     - +_thumb_smooth
     - ~_top_plate_smooth_1
