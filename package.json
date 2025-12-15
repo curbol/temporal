@@ -4,7 +4,7 @@
   "description": "Temporal keyboard ergogen configuration",
   "scripts": {
     "gen": "cd ergogen && ergogen . -o output --svg",
-    "convert": "mkdir -p cases && cd ergogen/output/cases && for f in *.jscad; do npx @jscad/cli \"$f\" -of stla -o $INIT_CWD/cases/$(basename \"$f\" .jscad).stl; done"
+    "convert": "node scripts/convert_jscad.js"
   },
   "dependencies": {
     "glob": "^10.3.10",
