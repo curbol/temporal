@@ -116,16 +116,16 @@ convert:
 	@echo "✓ Converted cases to STL"
 
 # Mirror case STL files for right-hand versions
+CASE_BASES := temporal_40 temporal_44 temporal_40_kickstand temporal_44_kickstand
+
 mirror:
 	@MIRRORED=0; \
-	if [ -f $(CASES_DIR)/temporal_40.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_40_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_40.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
-		MIRRORED=$$((MIRRORED + 1)); \
-	fi; \
-	if [ -f $(CASES_DIR)/temporal_44.stl ]; then \
-		openscad -o $(CASES_DIR)/temporal_44_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/temporal_44.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
-		MIRRORED=$$((MIRRORED + 1)); \
-	fi; \
+	for base in $(CASE_BASES); do \
+		if [ -f $(CASES_DIR)/$$base.stl ]; then \
+			openscad -o $(CASES_DIR)/$${base}_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/$$base.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
+			MIRRORED=$$((MIRRORED + 1)); \
+		fi; \
+	done; \
 	if [ $$MIRRORED -gt 0 ]; then \
 		echo "✓ Mirrored $$MIRRORED case files"; \
 	fi
