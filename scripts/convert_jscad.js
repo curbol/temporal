@@ -8,8 +8,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { exec } = require('child_process');
+const { promisify } = require('util');
 const { glob } = require('glob');
+
+const execAsync = promisify(exec);
 
 // Higher resolution for smoother arcs
 // Segments per full circle - higher = smoother but larger files
@@ -32,7 +35,8 @@ async function main() {
     return;
   }
 
-  for (const file of jscadFiles) {
+  // Convert files in parallel
+  const conversions = jscadFiles.map(async (file) => {
     const inputPath = path.join(jscadDir, file);
     const outputName = file.replace('.jscad', '.stl');
     const outputPath = path.join(casesDir, outputName);
@@ -40,9 +44,6 @@ async function main() {
     // Read original JSCAD content
     let content = fs.readFileSync(inputPath, 'utf8');
 
-    // Add resolution parameter to appendArc calls
-    // Original: .appendArc([x,y],{"radius":r,"clockwise":bool,"large":bool})
-    // Patched:  .appendArc([x,y],{"radius":r,"clockwise":bool,"large":bool,"resolution":N})
     content = content.replace(
       /\.appendArc\(\[([^\]]+)\],\{"radius":([^,]+),"clockwise":(true|false),"large":(true|false)\}\)/g,
       `.appendArc([$1],{"radius":$2,"clockwise":$3,"large":$4,"resolution":${ARC_SEGMENTS}})`
@@ -54,9 +55,7 @@ async function main() {
 
     try {
       // Convert to STL
-      execSync(`npx @jscad/cli "${patchedPath}" -of stla -o "${outputPath}"`, {
-        stdio: 'pipe'
-      });
+      await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${outputPath}"`);
       console.log(`✓ Converted ${file} -> ${outputName}`);
     } catch (error) {
       console.error(`✗ Failed to convert ${file}:`, error.message);
@@ -64,7 +63,9 @@ async function main() {
       // Clean up patched file
       fs.unlinkSync(patchedPath);
     }
-  }
+  });
+
+  await Promise.all(conversions);
 }
 
 main().catch(console.error);

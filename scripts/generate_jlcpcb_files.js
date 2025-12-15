@@ -117,18 +117,16 @@ function generateBOM(components, outputPath) {
     bomMap.get(key).designator.push(comp.designator);
   });
 
-  // Generate CSV content
+  // Generate CSV content (sorted by LCSC part number for deterministic output)
   let csv = 'Comment,Designator,Footprint,LCSC Part #\n';
 
-  for (const [lcsc, item] of bomMap) {
+  const sortedEntries = [...bomMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  for (const [lcsc, item] of sortedEntries) {
     const designators = item.designator.sort().join(',');
     csv += `"${item.comment}","${designators}","${item.footprint}","${item.lcsc}"\n`;
   }
 
   fs.writeFileSync(outputPath, csv);
-  console.log(`✓ Generated BOM: ${path.basename(outputPath)}`);
-  console.log(`  - ${bomMap.size} unique parts`);
-  console.log(`  - ${components.length} total components`);
 }
 
 /**
@@ -143,7 +141,10 @@ function generateCPL(components, outputPath, isBottomSide = false) {
   // NOT which layer the component is on in KiCad
   const assemblyLayer = isBottomSide ? 'Bottom' : 'Top';
 
-  components.forEach(comp => {
+  // Sort by designator for deterministic output
+  const sortedComponents = [...components].sort((a, b) => a.designator.localeCompare(b.designator));
+
+  sortedComponents.forEach(comp => {
     // For bottom side assembly, apply rotation transformation
     // Formula: rotation_bottom = 180 - rotation_top
     const rotation = isBottomSide ? (180 - comp.rotation) : comp.rotation;
@@ -156,13 +157,6 @@ function generateCPL(components, outputPath, isBottomSide = false) {
   });
 
   fs.writeFileSync(outputPath, csv);
-  const sideLabel = isBottomSide ? 'bottom' : 'top';
-  console.log(`✓ Generated CPL (${sideLabel}): ${path.basename(outputPath)}`);
-  console.log(`  - ${components.length} component positions`);
-  console.log(`  - All components: Layer=${assemblyLayer}`);
-  if (isBottomSide) {
-    console.log(`  - Rotations automatically corrected (180 - rotation)`);
-  }
 }
 
 /**
@@ -181,18 +175,11 @@ function main() {
   // Load config
   const config = loadJlcpcbConfig();
 
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('  Generating JLCPCB Assembly Files');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('');
-
   // Parse PCB file
-  console.log(`Processing: temporal.kicad_pcb`);
   const components = parseKiCadPCB(pcbFile, config.assembly_parts);
 
   if (components.length === 0) {
-    console.log('  ⚠ No assembly components found');
-    console.log('');
+    console.log('⚠ No assembly components found');
     return;
   }
 
@@ -202,25 +189,10 @@ function main() {
   const cplBottomPath = path.join(jlcpcbDir, 'temporal_CPL_bottom.csv');
 
   generateBOM(components, bomPath);
-  console.log('');
-  generateCPL(components, cplTopPath, false);  // Top side - no rotation transformation
-  console.log('');
-  generateCPL(components, cplBottomPath, true); // Bottom side - with rotation transformation
-  console.log('');
+  generateCPL(components, cplTopPath, false);
+  generateCPL(components, cplBottomPath, true);
 
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('✓ Assembly files generated successfully');
-  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('');
-  console.log('Ordering instructions:');
-  console.log('  Order 1 (Left hand - Top assembly):');
-  console.log('    - Use temporal_BOM.csv + temporal_CPL_top.csv');
-  console.log('    - Quantity: 5 boards');
-  console.log('');
-  console.log('  Order 2 (Right hand - Bottom assembly):');
-  console.log('    - Use temporal_BOM.csv + temporal_CPL_bottom.csv');
-  console.log('    - Quantity: 5 boards');
-  console.log('');
+  console.log(`✓ Generated JLCPCB assembly files (${components.length} components)`);
 }
 
 main();
