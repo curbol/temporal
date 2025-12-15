@@ -10,15 +10,18 @@ meta:
   author: Curtis Bollinger
   url: https://github.com/curbol/temporal
 
+# ============================================================================
+# Units
+# ============================================================================
 units:
   # Math constants
   sqrt_3: 1.73205080757
 
-  # Display correct choc sizing (override defaults)
+  # Override choc defaults
   $default_width: 18
   $default_height: 17
 
-  # Keys with padding
+  # Key spacing with padding
   pad: 2.151
   px: cx + pad
   py: cy + pad
@@ -111,9 +114,9 @@ units:
   preview_x: 4px
   preview_y: 3py
 
-# ------------
+# ============================================================================
 # Points
-# ------------
+# ============================================================================
 points:
   zones:
     finger:
@@ -162,7 +165,7 @@ points:
           row_net: row_top
 
     thumb:
-      key: &thumb_key_defaults
+      key: &thumb_defaults
         tags: [key, thumb]
         padding: 1cy
         spread: 1cx
@@ -199,7 +202,7 @@ points:
           row_net: row_thumb
 
     encoder:
-      key: *thumb_key_defaults
+      key: *thumb_defaults
       anchor:
         ref: thumb_near
         shift: [-thumb_spread, 0]
@@ -215,16 +218,16 @@ points:
         thumb:
           row_net: row_thumb
 
-# ------------
+# ============================================================================
 # Outlines
-# ------------
+# ============================================================================
 outlines:
   # MCU and display areas
   _mcu_area:
     - what: rectangle
-      where:
-        - ref: finger_inner_home
-          shift: [mcu_area_x, -5 + mcu_y]
+      where: &mcu_area_where
+        ref: finger_inner_home
+        shift: [mcu_area_x, -5 + mcu_y]
       size: [mcu_area_w, mcu_area_h]
 
   _display:
@@ -238,18 +241,17 @@ outlines:
     - what: circle
       radius: m2_size / 2
       where: &mcu_hole1_where
-        - ref: finger_inner_bottom
-          shift: [mcu_hole1_x, mcu_hole1_y]
+        ref: finger_inner_bottom
+        shift: [mcu_hole1_x, mcu_hole1_y]
     - what: circle
       radius: m2_size / 2
       where: &mcu_hole2_where
-        - ref: finger_inner_bottom
-          shift: [mcu_hole2_x, mcu_hole2_y]
+        ref: finger_inner_bottom
+        shift: [mcu_hole2_x, mcu_hole2_y]
 
   _m2_nut:
     - what: polygon
-      adjust:
-        shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
+      adjust.shift: [m2_nut_width / (2 * sqrt_3), m2_nut_width / 2]
       points:
         - shift: [m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
         - shift: [-m2_nut_width / (2 * sqrt_3), -m2_nut_width / 2]
@@ -264,7 +266,7 @@ outlines:
     - name: _m2_nut
       where: *mcu_hole2_where
 
-  # Component cutout shapes (reusable primitives)
+  # Component cutout primitives
   _socket:
     - what: rectangle
       size: [2.7, 5]
@@ -306,7 +308,7 @@ outlines:
       adjust.shift: [5.5, 1.25]
 
   _choc_posts:
-    - name: _choc_side_posts
+    - +_choc_side_posts
     - what: circle
       radius: 2
 
@@ -374,7 +376,7 @@ outlines:
       radius: 0.6
       adjust.shift: [2.75, -7.5]
 
-  # Cutout collections with shared where patterns
+  # Cutout collections
   _socket_cutouts_40:
     - name: _socket
       where: [[key, -extra]]
@@ -404,15 +406,15 @@ outlines:
     - what: rectangle
       size: [6.7, 1.2]
       where:
-        - ref: thumb_enc
-          shift: [0, -6.9]
+        ref: thumb_enc
+        shift: [0, -6.9]
       expand: -0.275
 
   _mcu_pins_cutouts:
     - name: _mcu_pins
       where: &mcu_pos
-        - ref: finger_inner_home
-          shift: [mcu_x, 10.8 + mcu_y]
+        ref: finger_inner_home
+        shift: [mcu_x, 10.8 + mcu_y]
 
   _mcu_jumpers_cutouts:
     - name: _mcu_jumpers
@@ -421,8 +423,8 @@ outlines:
   _display_pins_cutouts:
     - name: _display_pins
       where: &display_pos
-        - ref: finger_inner_home
-          shift: [display_x, 7.5 + mcu_y]
+        ref: finger_inner_home
+        shift: [display_x, 7.5 + mcu_y]
 
   _display_jumpers_cutouts:
     - name: _display_jumpers
@@ -431,9 +433,9 @@ outlines:
   _battery_pins_cutouts:
     - name: _battery_pins
       where: &battery_pos
-        - ref: finger_inner_home
-          shift: [battery_x, battery_y]
-          rotate: battery_rot
+        ref: finger_inner_home
+        shift: [battery_x, battery_y]
+        rotate: battery_rot
 
   _battery_jumpers_cutouts:
     - name: _battery_jumpers
@@ -481,17 +483,17 @@ outlines:
   _usbc_case_cutout:
     - name: _case_cutout
       where:
-        - ref: finger_inner_home
-          shift: [mcu_x, 25 + side_cut_radius * 2 + mcu_y]
+        ref: finger_inner_home
+        shift: [mcu_x, 25 + side_cut_radius * 2 + mcu_y]
 
   _side_case_cutout:
     - name: _case_cutout_half
       where:
-        - ref: finger_inner_home
-          shift: [27.5 + side_cut_radius * 2, reset_y]
-          rotate: 90
+        ref: finger_inner_home
+        shift: [27.5 + side_cut_radius * 2, reset_y]
+        rotate: 90
 
-  # Mounting holes - shared position anchors
+  # Mounting holes
   _plate_hole:
     - what: circle
       radius: m2_size / 2 + 0.1
@@ -499,31 +501,31 @@ outlines:
   _plate_holes_40:
     - name: _plate_hole
       where: &hole1_pos
-        - ref: finger_middle_top
-          shift: [hole1_x, hole1_y]
+        ref: finger_middle_top
+        shift: [hole1_x, hole1_y]
     - name: _plate_hole
       where: &hole2_pos
-        - ref: finger_index_top
-          shift: [hole2_x, hole2_y]
+        ref: finger_index_top
+        shift: [hole2_x, hole2_y]
     - name: _plate_hole
       where: &hole3_pos
-        - ref: thumb_far
-          shift: [hole3_x, hole3_y]
+        ref: thumb_far
+        shift: [hole3_x, hole3_y]
     - name: _plate_hole
       where: &hole4_pos
-        - ref: thumb_enc
-          shift: [hole4_x, hole4_y]
+        ref: thumb_enc
+        shift: [hole4_x, hole4_y]
     - name: _plate_hole
       where: &hole5_pos
-        - ref: finger_pinky_top
-          shift: [hole5_x, hole5_y]
+        ref: finger_pinky_top
+        shift: [hole5_x, hole5_y]
 
   _plate_holes_44:
     - +_plate_holes_40
     - name: _plate_hole
       where: &hole5_e_pos
-        - ref: finger_extra_top
-          shift: [hole5_e_x, hole5_e_y]
+        ref: finger_extra_top
+        shift: [hole5_e_x, hole5_e_y]
     - what: circle
       radius: m2_size
       where: *hole5_pos
@@ -800,7 +802,7 @@ outlines:
     - +_break_cut
     - -_break_bridges
 
-  # Board 44 case outlines
+  # 44-key case outlines
   _case_inner_44_1:
     - name: _board_44
       fillet: pcb_fillet
@@ -835,7 +837,7 @@ outlines:
       fillet: pcb_fillet
     - -_case_inner_44
 
-  # Board 40 case outlines
+  # 40-key case outlines
   _case_inner_40_1:
     - name: _board_40
       fillet: pcb_fillet
@@ -927,15 +929,16 @@ outlines:
     - name: _preview_40_kickstand
       adjust.shift: [preview_x, -preview_y]
 
-# ------------
+# ============================================================================
 # Cases
-# ------------
+# ============================================================================
 cases:
   mcu_cover:
     - what: outline
       name: _mcu_cover
       extrude: top_plate_thickness
 
+  # Shared case building blocks
   _bottom_cutouts:
     - what: outline
       name: _socket_cutouts_40
@@ -1078,9 +1081,9 @@ cases:
       name: _top_plate_40
       extrude: top_plate_thickness
 
-# ------------
+# ============================================================================
 # PCBs
-# ------------
+# ============================================================================
 pcbs:
   temporal:
     template: kicad8
@@ -1108,6 +1111,7 @@ pcbs:
       diode:
         what: ceoloide/diode_tht_sod123
         where: /key/
+        adjust.shift: [0, -5]
         params:
           from: "{{colrow}}"
           to: "{{row_net}}"
@@ -1116,7 +1120,6 @@ pcbs:
           include_traces_vias: true
           via_size: 0.6
           via_drill: 0.3
-        adjust.shift: [0, -5]
 
       encoder:
         what: ceoloide/rotary_encoder_ec11_ec12
@@ -1166,9 +1169,9 @@ pcbs:
       power:
         what: ceoloide/power_switch_smd_side
         where:
-          - ref: finger_inner_home
-            shift: [power_x, power_y]
-            rotate: 90
+          ref: finger_inner_home
+          shift: [power_x, power_y]
+          rotate: 90
         params:
           reversible: true
           include_traces_vias: true
@@ -1178,9 +1181,9 @@ pcbs:
       reset:
         what: ceoloide/reset_switch_smd_side
         where:
-          - ref: finger_inner_home
-            shift: [reset_x, reset_y]
-            rotate: -90
+          ref: finger_inner_home
+          shift: [reset_x, reset_y]
+          rotate: -90
         params:
           reversible: true
           include_traces_vias: true
@@ -1196,12 +1199,11 @@ pcbs:
           via_size: 0.6
           via_drill: 0.3
 
-      # Text labels
       temporal: &temporal_text
         what: ceoloide/utility_text
         where:
-          - ref: finger_middle_bottom
-            shift: [0, -0.5cy - 2.9]
+          ref: finger_middle_bottom
+          shift: [0, -0.5cy - 2.9]
         params:
           text: "Temporal"
           height: 2
@@ -1212,8 +1214,8 @@ pcbs:
       curbol:
         what: ceoloide/utility_text
         where:
-          - ref: thumb_extra
-            shift: [0, -7]
+          ref: thumb_extra
+          shift: [0, -7]
         params:
           text: "curbol"
           height: 1.2
@@ -1221,7 +1223,6 @@ pcbs:
           face: "Maple Mono NF ExtraBold"
           reversible: true
 
-      # Main PCB mounting holes
       hole_1:
         what: ceoloide/mounting_hole_npth
         where: *hole1_pos
@@ -1267,7 +1268,6 @@ pcbs:
         where: *mcu_hole2_where
         params: *m2_hole_params
 
-  # Plate PCBs
   top_plate_44:
     template: kicad8
     outlines:
