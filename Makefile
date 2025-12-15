@@ -1,3 +1,6 @@
+# Build configuration
+TOTAL_STEPS := 7
+
 # Directory variables
 ERGOGEN_DIR := ergogen
 OUTPUT_DIR := $(ERGOGEN_DIR)/output
@@ -58,57 +61,54 @@ deps:
 
 # Generate keyboard PCBs and cases
 gen:
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo "  Temporal Keyboard Build"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo ""
-	@$(MAKE) clean
-	@echo "[1/6] Generating PCBs and cases with Ergogen..."
-	@npm run gen 2>/dev/null || npm run gen
-	@node scripts/generate_layout.js
-	@echo "✓ Ergogen generation complete"
-	@echo ""
-	@echo "[2/6] Post-processing PCB files..."
-	@node scripts/fix_edge_cuts.js
-	@node scripts/add_ground_planes.js
-	@node scripts/create_text_keepouts.js
-	@node scripts/via_stitching.js
-	@node scripts/fill_zones.js
-	@bash scripts/copy_pcb_if_missing.sh
-	@node scripts/setup_kicad_project.js
-	@echo ""
-	@echo "[3/6] Generating preview assets..."
-	@mkdir -p $(ASSETS_DIR)
-	@if [ -f $(OUTPUT_DIR)/outlines/preview.svg ]; then \
+	@set -e; \
+	step=0; \
+	next() { step=$$((step + 1)); echo ""; echo "[$$step/$(TOTAL_STEPS)] $$1"; }; \
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+	echo "  Temporal Keyboard Build"; \
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+	$(MAKE) --no-print-directory clean; \
+	next "Generating PCBs and cases with Ergogen..."; \
+	npm run gen 2>/dev/null || npm run gen; \
+	node scripts/generate_layout.js; \
+	echo "✓ Ergogen generation complete"; \
+	next "Post-processing PCB files..."; \
+	node scripts/fix_edge_cuts.js; \
+	node scripts/add_ground_planes.js; \
+	node scripts/create_text_keepouts.js; \
+	node scripts/via_stitching.js; \
+	node scripts/fill_zones.js; \
+	bash scripts/copy_pcb_if_missing.sh; \
+	node scripts/setup_kicad_project.js; \
+	next "Generating preview assets..."; \
+	mkdir -p $(ASSETS_DIR); \
+	if [ -f $(OUTPUT_DIR)/outlines/preview.svg ]; then \
 		sed -e 's/stroke="#000"/stroke="#e2725b"/g' -e 's/stroke:#000/stroke:#e2725b/g' $(OUTPUT_DIR)/outlines/preview.svg > $(ASSETS_DIR)/preview.svg; \
 		echo "✓ Generated preview.svg"; \
-	fi
-	@IMG_COUNT=0; \
+	fi; \
+	IMG_COUNT=0; \
 	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
 		if [ -f "$$pcb" ]; then \
 			pcb_dir=$$(dirname "$$pcb"); \
 			kicad-cli pcb render --output "$$pcb_dir/pcb.png" --width 1600 --height 900 --side top --background transparent "$$pcb" >/dev/null 2>&1; \
 			IMG_COUNT=$$((IMG_COUNT + 1)); \
-		fi \
+		fi; \
 	done; \
 	if [ $$IMG_COUNT -gt 0 ]; then \
 		echo "✓ Generated $$IMG_COUNT PCB images"; \
-	fi
-	@echo ""
-	@echo "[4/6] Generating gerber files..."
-	@$(MAKE) gerbers
-	@echo ""
-	@$(MAKE) assembly
-	@echo ""
-	@echo "[5/6] Converting cases to STL..."
-	@$(MAKE) convert
-	@echo ""
-	@echo "[6/6] Mirroring case files..."
-	@$(MAKE) mirror
-	@echo ""
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo "✓ Build complete!"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	fi; \
+	next "Generating gerber files..."; \
+	$(MAKE) --no-print-directory gerbers; \
+	next "Generating JLCPCB assembly files..."; \
+	$(MAKE) --no-print-directory assembly; \
+	next "Converting cases to STL..."; \
+	$(MAKE) --no-print-directory convert; \
+	next "Mirroring case files..."; \
+	$(MAKE) --no-print-directory mirror; \
+	echo ""; \
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
+	echo "✓ Build complete!"; \
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Convert JSCAD files to STL
 convert:
