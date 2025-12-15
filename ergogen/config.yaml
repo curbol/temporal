@@ -85,7 +85,7 @@ units:
   side_cut_width: 12
   side_cut_radius: (wall_height - pcb_thickness) / 2
   pin_depth: 1
-  jumper_depth: 0.75
+  jumper_depth: 0.8
 
   # M2 heat-set insert posts
   m2_size: 2
@@ -1055,6 +1055,7 @@ cases:
     - what: outline
       name: _kickstand_44
       extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
   top_plate_44:
     - what: outline
       name: _top_plate_44
@@ -1083,6 +1084,7 @@ cases:
     - what: outline
       name: _kickstand_40
       extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
   top_plate_40:
     - what: outline
       name: _top_plate_40
