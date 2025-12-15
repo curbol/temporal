@@ -590,19 +590,17 @@ outlines:
     - what: rectangle
       where: thumb_far
       size: [3px, py]
-      adjust.shift: [0, py - 1.9]
+      adjust.shift: [0, py]
       operation: subtract
-    - what: polygon
-      points:
-        - ref: thumb_far
-        - ref: thumb_far
-          shift: [0, 0.5py]
-        - ref: thumb_far
-          shift: [0.906px, 0.5py]
-        - ref: thumb_far
-          shift: [1.4px, 0]
-      fillet: pcb_fillet
-
+    - what: rectangle
+      where: thumb_far
+      size: [pcb_fillet / 2, pcb_fillet / 2]
+      adjust.shift: [1cy + pcb_fillet / 2, 0.5py - pcb_fillet / 4 + 1]
+      operation: subtract
+    - what: circle
+      where: thumb_far
+      radius: pcb_fillet / 2
+      adjust.shift: [1cy + pcb_fillet / 4 + 0.07, 0.5py - pcb_fillet / 2]
   _top_plate_smooth:
     - +_thumb_smooth
     - ~_top_plate_smooth_1
@@ -696,7 +694,6 @@ outlines:
           affect: y
         - ref: finger_extra_home
           shift: [-2px, -0.5py]
-
   _kickstand_44_2:
     - name: _kickstand_44_1
       expand: case_expand + wall_thickness
@@ -722,7 +719,6 @@ outlines:
           affect: y
         - ref: finger_pinky_bottom
           shift: [-2px, -0.5py]
-
   _kickstand_40_2:
     - name: _kickstand_40_1
       expand: case_expand + wall_thickness
@@ -806,7 +802,6 @@ outlines:
   _case_inner_44_1:
     - name: _board_44
       fillet: pcb_fillet
-
   _case_inner_44:
     - name: _case_inner_44_1
       expand: case_expand
@@ -816,7 +811,6 @@ outlines:
     - name: _board_44
       expand: case_expand + wall_thickness
       joints: 1
-
   _case_outer_44:
     - name: _case_outer_44_1
       fillet: pcb_fillet
@@ -841,7 +835,6 @@ outlines:
   _case_inner_40_1:
     - name: _board_40
       fillet: pcb_fillet
-
   _case_inner_40:
     - name: _case_inner_40_1
       expand: case_expand
@@ -851,7 +844,6 @@ outlines:
     - name: _board_40
       expand: case_expand + wall_thickness
       joints: 1
-
   _case_outer_40:
     - name: _case_outer_40_1
       fillet: pcb_fillet
