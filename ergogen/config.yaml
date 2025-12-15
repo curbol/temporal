@@ -17,13 +17,16 @@ units:
   # Display correct choc sizing
   $default_width: 18
   $default_height: 17
-  # Proxy Spacing Variables
+  # Spacing variables
   kx: cx #choc spaced
   ky: cy
-  # Padding Variables
+  # Keys with padding
   pad: 2.151
   px: kx + pad
   py: ky + pad
+  # Key plug holes
+  plug_w: 13.8
+  plug_h: 13.8
 
   # Finger splay
   finger_splay_1: 5
@@ -689,6 +692,56 @@ outlines:
       adjust:
         shift: [1kx, 0]
 
+  _kickstand_44_1:
+    - what: rectangle
+      where:
+        - finger_extra_top
+        - finger_extra_home
+      size: [px, py]
+      adjust:
+        shift: [-0.5px, 0]
+    - what: polygon
+      operation: subtract
+      points:
+        - ref: finger_extra_top
+          shift: [-2px, 0.5py]
+        - ref: finger_extra_top
+          shift: [-0.5px, 0.5py]
+        - ref: finger_extra_home
+          shift: [-1px, -0.5py]
+          affect: y
+        - ref: finger_extra_home
+          shift: [-2px, -0.5py]
+  _kickstand_44_2:
+    - name: _kickstand_44_1
+      expand: case_expand + wall_thickness
+      joints: 1
+  _kickstand_40_1:
+    - what: rectangle
+      where:
+        - finger_pinky_top
+        - finger_pinky_home
+        - finger_pinky_bottom
+      size: [px, py]
+      adjust:
+        shift: [-0.5px, 0]
+    - what: polygon
+      operation: subtract
+      points:
+        - ref: finger_pinky_top
+          shift: [-2px, 0.5py]
+        - ref: finger_pinky_top
+          shift: [-0.5px, 0.5py]
+        - ref: finger_pinky_bottom
+          shift: [-1px, -0.5py]
+          affect: y
+        - ref: finger_pinky_bottom
+          shift: [-2px, -0.5py]
+  _kickstand_40_2:
+    - name: _kickstand_40_1
+      expand: case_expand + wall_thickness
+      joints: 1
+
   _keys:
     - what: rectangle
       where: true
@@ -696,7 +749,7 @@ outlines:
   _key_plugs:
     - what: rectangle
       where: true
-      size: [13.8, 13.8]
+      size: [plug_w, plug_h]
       fillet: 0.25
     - name: _encoder_pins_plate_cutouts
 
@@ -756,7 +809,7 @@ outlines:
     - name: _case_inner_44_1
       expand: case_expand
       joints: 1
-  _case_outer_44_1: # Need to do hacky stuff to get expand and fillet working together
+  _case_outer_44_1: # Extra step to get expand and fillet working together nicely
     - name: _board_44
       expand: case_expand + wall_thickness
       joints: 1
@@ -775,6 +828,11 @@ outlines:
       fillet: pcb_fillet
     - operation: subtract
       name: _plate_holes_44
+  _kickstand_44:
+    - name: _kickstand_44_2
+      fillet: pcb_fillet
+    - name: _case_inner_44
+      operation: subtract
 
   # Board 40
   _case_inner_40_1:
@@ -803,16 +861,21 @@ outlines:
       fillet: pcb_fillet
     - operation: subtract
       name: _plate_holes_40
+  _kickstand_40:
+    - name: _kickstand_40_2
+      fillet: pcb_fillet
+    - name: _case_inner_40
+      operation: subtract
 
   # Common
-  pcb:
+  _pcb:
     - name: _board_44
       fillet: pcb_fillet
     - operation: subtract
       name: _break
       fillet: cut_fillet
 
-  mcu_cover:
+  _mcu_cover:
     - name: _mcu_area
     - operation: subtract
       name: _keys_area_44
@@ -837,9 +900,12 @@ outlines:
     - name: _top_plate_44
       adjust:
         shift: [-0.01, -0.01]
-    - name: mcu_cover
+    - name: _mcu_cover
       adjust:
         shift: [0.01, 0.01]
+  _preview_44_kickstand:
+    - name: _preview_44
+    - name: _kickstand_44
   _preview_40:
     - name: _case_outer_40
     - name: _case_inner_40
@@ -847,16 +913,25 @@ outlines:
     - name: _top_plate_40
       adjust:
         shift: [-0.01, -0.01]
-    - name: mcu_cover
+    - name: _mcu_cover
       adjust:
         shift: [0.01, 0.01]
+  _preview_40_kickstand:
+    - name: _preview_40
+    - name: _kickstand_40
   preview:
     - name: _preview_44
       adjust:
         shift: [-4px, 3py]
+    - name: _preview_44_kickstand
+      adjust:
+        shift: [4px, 3py]
     - name: _preview_40
       adjust:
         shift: [-4px, -3py]
+    - name: _preview_40_kickstand
+      adjust:
+        shift: [4px, -3py]
 
 # ------------
 # Cases
@@ -864,7 +939,7 @@ outlines:
 cases:
   mcu_cover:
     - what: outline
-      name: mcu_cover
+      name: _mcu_cover
       extrude: top_plate_thickness
   _bottom_cutouts:
     - what: outline # Socket cutouts (1.85mm). Cut all the way through.
@@ -974,6 +1049,12 @@ cases:
       name: _posts
     - what: case
       name: _posts_pinky
+  temporal_44_kickstand:
+    - what: case
+      name: temporal_44
+    - what: outline
+      name: _kickstand_44
+      extrude: bottom_thickness + wall_height
   top_plate_44:
     - what: outline
       name: _top_plate_44
@@ -996,6 +1077,12 @@ cases:
       name: _wall_cutouts
     - what: case
       name: _posts
+  temporal_40_kickstand:
+    - what: case
+      name: temporal_40
+    - what: outline
+      name: _kickstand_40
+      extrude: bottom_thickness + wall_height
   top_plate_40:
     - what: outline
       name: _top_plate_40
@@ -1009,7 +1096,7 @@ pcbs:
     template: kicad8
     outlines:
       main:
-        outline: pcb
+        outline: _pcb
     footprints:
       choc_hotswap:
         what: ceoloide/switch_choc_v1_v2
@@ -1265,7 +1352,7 @@ pcbs:
     template: kicad8
     outlines:
       main:
-        outline: mcu_cover
+        outline: _mcu_cover
     footprints:
       mcu_hole_L: *mcu_hole_L
       mcu_hole_R: *mcu_hole_R
