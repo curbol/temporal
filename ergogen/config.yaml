@@ -225,14 +225,14 @@ outlines:
   # MCU and display areas
   _mcu_area:
     - what: rectangle
-      where: &mcu_area_where
+      where:
         ref: finger_inner_home
         shift: [mcu_area_x, -5 + mcu_y]
       size: [mcu_area_w, mcu_area_h]
 
   _display:
     - what: rectangle
-      where: &display_where
+      where:
         ref: finger_inner_home
         shift: [display_x, display_y]
       size: [display_w, display_h]
