@@ -92,6 +92,17 @@ async function main() {
   // Load via stitching configuration
   const config = loadViaStitchingConfig();
 
+  // Allow CLI override for step_mm (first argument)
+  const stepArg = process.argv[2];
+  if (stepArg) {
+    const stepValue = parseFloat(stepArg);
+    if (isNaN(stepValue) || stepValue <= 0) {
+      console.error(`Error: Invalid step value '${stepArg}'. Must be a positive number.`);
+      process.exit(1);
+    }
+    config.step_mm = stepValue;
+  }
+
   // Only process temporal.kicad_pcb
   const temporalPcb = path.join(outputDir, 'temporal.kicad_pcb');
 
