@@ -1099,6 +1099,7 @@ pcbs:
           trace_width: 0.25
           via_size: 0.6
           via_drill: 0.3
+          via_separation: 1.6
 
       diode:
         what: ceoloide/diode_tht_sod123
