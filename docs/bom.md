@@ -35,12 +35,12 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 
 | Part | Quantity | Contents |
 |------|----------|----------|
-| Saddle part 1 | 1 | 6 tilted, 3 home |
-| Saddle part 2 | 2 | 4 tilted, 4 home, 1 homing each |
-| Saddle part 3 | 1 | 9 tilted each |
-| Normal part 2 | 4-5 | 3 thumbs each |
+| Saddle part 1 | 1 | 6 tilted, 3 saddle |
+| Saddle part 2 | 2 | 4 tilted, 4 saddle, 1 homing |
+| Saddle part 3 | 1 | 9 tilted |
+| Normal part 2 | 4-5 | 3 thumb |
 
-**Totals:** Tilted: 23, Home: 11, Homing: 2, Thumb: 12-15 (depending on encoders)
+**Totals:** Tilted: 23, Saddle: 11, Homing: 2, Thumb: 12-15 (depending on encoders)
 
 ### Hardware (per keyboard half)
 
