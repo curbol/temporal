@@ -74,12 +74,13 @@ function generateLayout() {
 
   // Sort keys by zone, then column, then row for consistent ordering
   const rowOrder = { top: 0, home: 1, bottom: 2, thumb: 3 };
+  const zoneOrder = { finger: 0, thumb: 1, encoder: 2 };
   const colOrder = { extra: 0, pinky: 1, ring: 2, middle: 3, index: 4, inner: 5, encoder: 0, near: 1, mid: 2, far: 3 };
 
   keys.sort((a, b) => {
-    // Fingers before thumbs
+    // Fingers before thumbs before encoders
     if (a.zone !== b.zone) {
-      return a.zone === 'finger' ? -1 : 1;
+      return (zoneOrder[a.zone] ?? 99) - (zoneOrder[b.zone] ?? 99);
     }
     // Then by column
     const colA = colOrder[a.column] ?? 99;
@@ -111,7 +112,9 @@ function generateZmkLayout(keys) {
   // Right side: inner=6, index=7, middle=8, ring=9, pinky=10, extra=11
   const colMapLeft = { extra: 0, pinky: 1, ring: 2, middle: 3, index: 4, inner: 5 };
   // Thumb columns use same mapping but on row 3
-  const thumbColMapLeft = { encoder: 1, near: 2, mid: 3, far: 4, extra: 5 };
+  const thumbColMapLeft = { near: 2, mid: 3, far: 4, extra: 5 };
+  // Encoder zone has its own column
+  const encoderColMapLeft = { encoder: 1 };
 
   // Find bounds to normalize positions
   let minX = Infinity, maxY = -Infinity;
@@ -129,6 +132,8 @@ function generateZmkLayout(keys) {
 
     if (key.zone === 'thumb') {
       col = thumbColMapLeft[key.column];
+    } else if (key.zone === 'encoder') {
+      col = encoderColMapLeft[key.column];
     } else {
       col = colMapLeft[key.column];
     }
