@@ -10,9 +10,9 @@ This is the complete list of components needed to build one Temporal keyboard (b
 |-----------|----------|-------|--------|
 | nice!nano v2.0 | 2 | Wireless microcontroller | [Typeractive](https://typeractive.xyz/) |
 | nice!view | 2 | Optional display | [Typeractive](https://typeractive.xyz/) |
-| Kailh Choc Hotswap Sockets | 36-44 | Depends on your key configuration | [Typeractive](https://typeractive.xyz/) |
+| Kailh Choc Hotswap Sockets | 40-44 | Depends on your key configuration | [Typeractive](https://typeractive.xyz/) |
 | EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [Typeractive](https://typeractive.xyz/) |
-| SMD Diodes (1N4148W) | 36-44 | One per switch, depends on configuration | [Typeractive](https://typeractive.xyz/) |
+| SMD Diodes (1N4148W) | 40-44 | One per switch, depends on configuration | [Typeractive](https://typeractive.xyz/) |
 | ALPS EC12 Low Profile Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [Typeractive](https://typeractive.xyz/) |
 | Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [Typeractive](https://typeractive.xyz/) |
 | Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [Typeractive](https://typeractive.xyz/) |
@@ -26,10 +26,21 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 | Component | Quantity | Notes |
 |-----------|----------|-------|
-| Kailh Choc v1 Switches | 36-44 | Low-profile switches, depends on configuration |
-| Choc v1 Keycaps | 36-44 | Compatible with Choc switches |
+| Choc v1 Switches | 40-44 | Low-profile switches, depends on configuration |
+| Choc v1 Keycaps | 40-44 | Compatible with Choc switches |
 
-- [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
+I recommend using sculpted keycaps as it significantly improves the feel, but ultimately it's personal preference.
+
+**[KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps)** - 3D printable sculpted keycaps designed for Choc switches. If ordering from a printing service, here are the quantities needed for a full Temporal build:
+
+| Part | Quantity | Contents |
+|------|----------|----------|
+| Saddle part 1 | 1 | 6 tilted, 3 home |
+| Saddle part 2 | 2 | 4 tilted, 4 home, 1 homing each |
+| Saddle part 3 | 1 | 9 tilted each |
+| Normal part 2 | 4-5 | 3 thumbs each |
+
+**Totals:** Tilted: 23, Home: 11, Homing: 2, Thumb: 12-15 (depending on encoders)
 
 ### Hardware (per keyboard half)
 
