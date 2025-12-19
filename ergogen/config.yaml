@@ -1090,12 +1090,12 @@ cases:
       name: _case_outer_44
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - -_symmetric_bottom_cutouts
     - what: outline
       name: _case_inner_44
       extrude: wall_height * 2
       operation: subtract
     - -_wall_cutouts
+    - -_symmetric_bottom_cutouts
     - +_posts
     - +_posts_pinky
   temporal_44:
@@ -1131,12 +1131,12 @@ cases:
       name: _case_outer_40
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - -_symmetric_bottom_cutouts
     - what: outline
       name: _case_inner_40
       extrude: wall_height * 2
       operation: subtract
     - -_wall_cutouts
+    - -_symmetric_bottom_cutouts
     - +_posts
   temporal_40:
     - +_temporal_40_1
