@@ -269,21 +269,39 @@ outlines:
   # Component cutout primitives
   _socket:
     - what: rectangle
-      size: [2.7, 5]
-      adjust: { rotate: 42, shift: [2, 5] }
+      size: [2.6, 2.6]
+      adjust.shift: [-3.3, 5.95]
     - what: rectangle
       size: [4.1, 4.6]
       adjust.shift: [0, 5.95]
     - what: rectangle
-      size: [2.6, 2.6]
-      adjust.shift: [-3.3, 5.95]
+      size: [2.7, 5]
+      adjust: { rotate: 42, shift: [2, 5] }
     - what: rectangle
       size: [4.6, 4.7]
       adjust.shift: [4.75, 3.85]
     - what: rectangle
       size: [2.6, 2.6]
-      expand: 0.3
       adjust.shift: [8.3, 3.735]
+      expand: 0.3
+      fillet: 0.3
+  _socket_mirrored:
+    - what: rectangle
+      size: [2.6, 2.6]
+      adjust.shift: [3.3, 5.95]
+    - what: rectangle
+      size: [4.1, 4.6]
+      adjust.shift: [0, 5.95]
+    - what: rectangle
+      size: [2.7, 5]
+      adjust: { rotate: -42, shift: [-2, 5] }
+    - what: rectangle
+      size: [4.6, 4.7]
+      adjust.shift: [-4.75, 3.85]
+    - what: rectangle
+      size: [2.6, 2.6]
+      adjust.shift: [-8.3, 3.735]
+      expand: 0.3
       fillet: 0.3
 
   _diode:
@@ -380,9 +398,15 @@ outlines:
   _socket_cutouts_40:
     - name: _socket
       where: [[key, -extra]]
+  _socket_cutouts_40_mirrored:
+    - name: _socket_mirrored
+      where: [[key, -extra]]
 
   _socket_cutouts_pinky:
     - name: _socket
+      where: extra
+  _socket_cutouts_pinky_mirrored:
+    - name: _socket_mirrored
       where: extra
 
   _diode_cutouts:
@@ -933,10 +957,6 @@ cases:
   # Shared case building blocks
   _bottom_cutouts:
     - what: outline
-      name: _socket_cutouts_40
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
-    - what: outline
       name: _mcu_cover_nut_cutout
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
@@ -981,9 +1001,25 @@ cases:
       extrude: bottom_thickness * 2
       shift: [0, 0, -jumper_depth]
 
-  _bottom_cutouts_pinky:
+  _socket_cutouts_40:
+    - what: outline
+      name: _socket_cutouts_40
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _socket_cutouts_40_mirrored:
+    - what: outline
+      name: _socket_cutouts_40_mirrored
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+
+  _socket_cutouts_pinky:
     - what: outline
       name: _socket_cutouts_pinky
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _socket_cutouts_pinky_mirrored:
+    - what: outline
+      name: _socket_cutouts_pinky_mirrored
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
 
@@ -1020,13 +1056,12 @@ cases:
       operation: subtract
 
   # 44-key cases
-  temporal_44:
+  _temporal_44_1:
     - what: outline
       name: _case_outer_44
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
     - -_bottom_cutouts
-    - -_bottom_cutouts_pinky
     - what: outline
       name: _case_inner_44
       extrude: wall_height * 2
@@ -1034,13 +1069,27 @@ cases:
     - -_wall_cutouts
     - +_posts
     - +_posts_pinky
+  temporal_44:
+    - +_temporal_44_1
+    - -_socket_cutouts_40
+    - -_socket_cutouts_pinky
+  temporal_44_mirrored:
+    - +_temporal_44_1
+    - -_socket_cutouts_40_mirrored
+    - -_socket_cutouts_pinky_mirrored
 
-  temporal_44_kickstand:
+  _temporal_44_kickstand_1:
     - +temporal_44
     - what: outline
       name: _kickstand_44
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
+  temporal_44_kickstand:
+    - +_temporal_44_kickstand_1
+    - +temporal_44
+  temporal_44_kickstand_mirrored:
+    - +_temporal_44_kickstand_1
+    - +temporal_44_mirrored
 
   top_plate_44:
     - what: outline
@@ -1048,7 +1097,7 @@ cases:
       extrude: top_plate_thickness
 
   # 40-key cases
-  temporal_40:
+  _temporal_40_1:
     - what: outline
       name: _case_outer_40
       extrude: bottom_thickness + wall_height
@@ -1060,13 +1109,24 @@ cases:
       operation: subtract
     - -_wall_cutouts
     - +_posts
+  temporal_40:
+    - +_temporal_40_1
+    - -_socket_cutouts_40
+  temporal_40_mirrored:
+    - +_temporal_40_1
+    - -_socket_cutouts_40_mirrored
 
-  temporal_40_kickstand:
-    - +temporal_40
+  _temporal_40_kickstand_1:
     - what: outline
       name: _kickstand_40
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
+  temporal_40_kickstand:
+    - +_temporal_40_kickstand_1
+    - +temporal_40
+  temporal_40_kickstand_mirrored:
+    - +_temporal_40_kickstand_1
+    - +temporal_40_mirrored
 
   top_plate_40:
     - what: outline
