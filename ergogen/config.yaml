@@ -916,7 +916,6 @@ outlines:
     - name: _break
       fillet: cut_fillet
       operation: subtract
-    - -_encoder_pins_cutouts
 
   _mcu_cover:
     - +_mcu_area
