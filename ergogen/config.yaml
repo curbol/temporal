@@ -99,7 +99,7 @@ units:
   case_fillet: pcb_fillet + wall_thickness
   side_cut_width: 12
   side_cut_radius: (wall_height - pcb_thickness) / 2
-  pin_depth: 1
+  pin_depth: 1.2
   jumper_depth: 0.8
 
   # M2 hardware
@@ -988,7 +988,7 @@ cases:
     - what: outline
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1.4]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
