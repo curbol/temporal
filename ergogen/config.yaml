@@ -48,7 +48,7 @@ units:
   hole1_y: -0.5cy
   hole2_x: 0.5cx - 0.35 # Top right (finger_index_top)
   hole2_y: -0.5cy
-  hole3_x: 0.5cx + 1 # Thumb right (thumb_far)
+  hole3_x: 0.5cx + 1 # Thumb right (thumb_mid)
   hole3_y: -0.5
   hole4_x: 0.5cx + 1 # Thumb left (thumb_enc)
   hole4_y: -0.5
@@ -165,7 +165,7 @@ points:
           row_net: row_top
 
     thumb:
-      key: &thumb_defaults
+      key:
         tags: [key, thumb]
         padding: 1cy
         spread: 1cx
@@ -173,47 +173,30 @@ points:
         ref: finger_index_bottom
         shift: [-0.64cx, -1cy]
       columns:
-        near:
+        enc:
           key:
             splay: 0
             spread: thumb_spread
             origin: [-0.5cx, -0.5cy]
-            name: thumb_near
+            name: thumb_enc
             column_net: col_ring
-        mid:
+        near:
           key: &thumb_splayed
             splay: -thumb_splay
             spread: thumb_spread
             origin: [-0.5cx, -0.5cy]
-            name: thumb_mid
+            name: thumb_near
             column_net: col_middle
+        mid:
+          key:
+            <<: *thumb_splayed
+            name: thumb_mid
+            column_net: col_index
         far:
           key:
             <<: *thumb_splayed
             name: thumb_far
-            column_net: col_index
-        extra:
-          key:
-            <<: *thumb_splayed
-            name: thumb_extra
             column_net: col_inner
-      rows:
-        thumb:
-          row_net: row_thumb
-
-    encoder:
-      key: *thumb_defaults
-      anchor:
-        ref: thumb_near
-        shift: [-thumb_spread, 0]
-      columns:
-        encoder:
-          key:
-            splay: thumb_splay
-            spread: -thumb_spread
-            origin: [0.5cx, -0.5cy]
-            name: thumb_enc
-            column_net: col_pinky
       rows:
         thumb:
           row_net: row_thumb
@@ -554,7 +537,7 @@ outlines:
         shift: [hole2_x, hole2_y]
     - name: _plate_hole
       where: &hole3_pos
-        ref: thumb_far
+        ref: thumb_mid
         shift: [hole3_x, hole3_y]
     - name: _plate_hole
       where: &hole4_pos
@@ -626,24 +609,24 @@ outlines:
       operation: subtract
       adjust.shift: [0, 1.5py]
     - what: rectangle
-      where: thumb_extra
+      where: thumb_far
       size: [px, py]
       fillet: pcb_fillet * 2
 
   _top_plate_smooth_1:
     - +_thumb_smooth
     - what: rectangle
-      where: thumb_far
+      where: thumb_mid
       size: [3px, py]
       adjust.shift: [0, py]
       operation: subtract
     - what: rectangle
-      where: thumb_far
+      where: thumb_mid
       size: [pcb_fillet, pcb_fillet]
       adjust.shift: [1py - 0.6, 0.5py + 0.3]
       operation: subtract
     - what: circle
-      where: thumb_far
+      where: thumb_mid
       radius: pcb_fillet
       adjust.shift: [1py - pcb_fillet / 2 - 0.6, 0.5py - pcb_fillet]
   _top_plate_smooth:
@@ -655,11 +638,11 @@ outlines:
       where: thumb_enc
       size: [4px, py]
     - what: rectangle
-      where: thumb_extra
+      where: thumb_far
       size: [4px, py]
       fillet: 66.62
     - what: rectangle
-      where: thumb_far
+      where: thumb_mid
       size: [5px, py]
       adjust.shift: [0, 0.5py]
       operation: subtract
@@ -669,7 +652,7 @@ outlines:
       adjust.shift: [-1.5px, 0]
       operation: subtract
     - what: rectangle
-      where: thumb_extra
+      where: thumb_far
       size: [2px, 2py]
       adjust.shift: [1.5px, 0]
       operation: subtract
@@ -683,18 +666,16 @@ outlines:
       points:
         - ref: thumb_enc
           shift: [-0.5px, 1.75py]
-        - ref: thumb_far
+        - ref: thumb_mid
           shift: [-2px, 0.5py]
-        - ref: thumb_far
+        - ref: thumb_mid
           shift: [-0.5px, 0.5py]
-        - ref: thumb_far
+        - ref: thumb_mid
           shift: [0.561px, 0.5py]
-        - ref: thumb_extra
+        - ref: thumb_far
           shift: [0.5px, 0.5py]
-        - ref: thumb_extra
+        - ref: thumb_far
           shift: [0.5px, 0]
-        - ref: thumb_extra
-          shift: [-0.5px, 0]
         - ref: thumb_far
           shift: [-0.5px, 0]
         - ref: thumb_mid
@@ -714,9 +695,9 @@ outlines:
       where:
         - finger_pinky_top
         - finger_pinky_home
-        - finger_pinky_bottom
         - finger_ring_top
         - finger_ring_home
+        - finger_ring_bottom
         - finger_index_top
       size: [px, py]
       adjust.shift: [1cx, 0]
@@ -921,7 +902,7 @@ outlines:
     - +_mcu_area
     - -_keys_area_44
     - what: rectangle
-      where: thumb_far
+      where: thumb_mid
       size: [2px, py]
       adjust.shift: [px, 0.0001]
       fillet: pcb_fillet
@@ -988,7 +969,7 @@ cases:
     - what: outline
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -pin_depth]
+      shift: [0, 0, -1.4]
     - what: outline
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
@@ -1296,7 +1277,7 @@ pcbs:
       curbol:
         what: ceoloide/utility_text
         where:
-          ref: thumb_extra
+          ref: thumb_far
           shift: [0, -7]
         params:
           text: "curbol"
