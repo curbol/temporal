@@ -324,11 +324,26 @@ outlines:
     - what: rectangle
       size: [2.5, 2.5]
       adjust.shift: [5.5, 1.25]
+  _choc_side_posts_mirrored:
+    - what: circle
+      radius: 1.25
+      adjust.shift: [5.5, 0]
+    - what: circle
+      radius: 1.25
+      adjust.shift: [-5.5, 0]
+    - what: rectangle
+      size: [2.5, 2.5]
+      adjust.shift: [-5.5, 1.25]
 
-  _choc_posts:
-    - +_choc_side_posts
+  _choc_center_post:
     - what: circle
       radius: 2
+  _choc_posts:
+    - +_choc_center_post
+    - +_choc_side_posts
+  _choc_posts_mirrored:
+    - +_choc_center_post
+    - +_choc_side_posts_mirrored
 
   _mcu_pins_trench:
     - what: circle
@@ -416,9 +431,15 @@ outlines:
   _choc_posts_cutouts:
     - name: _choc_posts
       where: /key/
+  _choc_posts_cutouts_mirrored:
+    - name: _choc_posts_mirrored
+      where: /key/
 
   _encoder_posts_cutouts:
     - name: _choc_side_posts
+      where: thumb_enc
+  _encoder_posts_cutouts_mirrored:
+    - name: _choc_side_posts_mirrored
       where: thumb_enc
 
   _encoder_pins_cutouts:
@@ -895,6 +916,7 @@ outlines:
     - name: _break
       fillet: cut_fillet
       operation: subtract
+    - -_encoder_pins_cutouts
 
   _mcu_cover:
     - +_mcu_area
@@ -955,7 +977,7 @@ cases:
       extrude: top_plate_thickness
 
   # Shared case building blocks
-  _bottom_cutouts:
+  _symmetric_bottom_cutouts:
     - what: outline
       name: _mcu_cover_nut_cutout
       extrude: bottom_thickness * 2
@@ -964,14 +986,6 @@ cases:
       name: _diode_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -1.2]
-    - what: outline
-      name: _choc_posts_cutouts
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -1.3]
-    - what: outline
-      name: _encoder_posts_cutouts
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
@@ -1001,23 +1015,39 @@ cases:
       extrude: bottom_thickness * 2
       shift: [0, 0, -jumper_depth]
 
-  _socket_cutouts_40:
+  _asymmetric_bottom_cutouts:
     - what: outline
       name: _socket_cutouts_40
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-  _socket_cutouts_40_mirrored:
+    - what: outline
+      name: _choc_posts_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.3]
+    - what: outline
+      name: _encoder_posts_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _asymmetric_bottom_cutouts_mirrored:
     - what: outline
       name: _socket_cutouts_40_mirrored
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline
+      name: _choc_posts_cutouts_mirrored
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.3]
+    - what: outline
+      name: _encoder_posts_cutouts_mirrored
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
 
-  _socket_cutouts_pinky:
+  _asymmetric_pinky_cutouts:
     - what: outline
       name: _socket_cutouts_pinky
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-  _socket_cutouts_pinky_mirrored:
+  _asymmetric_pinky_cutouts_mirrored:
     - what: outline
       name: _socket_cutouts_pinky_mirrored
       extrude: bottom_thickness * 2
@@ -1061,7 +1091,7 @@ cases:
       name: _case_outer_44
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - -_bottom_cutouts
+    - -_symmetric_bottom_cutouts
     - what: outline
       name: _case_inner_44
       extrude: wall_height * 2
@@ -1071,12 +1101,12 @@ cases:
     - +_posts_pinky
   temporal_44:
     - +_temporal_44_1
-    - -_socket_cutouts_40
-    - -_socket_cutouts_pinky
+    - -_asymmetric_bottom_cutouts
+    - -_asymmetric_pinky_cutouts
   temporal_44_mirrored:
     - +_temporal_44_1
-    - -_socket_cutouts_40_mirrored
-    - -_socket_cutouts_pinky_mirrored
+    - -_asymmetric_bottom_cutouts_mirrored
+    - -_asymmetric_pinky_cutouts_mirrored
 
   _temporal_44_kickstand_1:
     - +temporal_44
@@ -1102,7 +1132,7 @@ cases:
       name: _case_outer_40
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-    - -_bottom_cutouts
+    - -_symmetric_bottom_cutouts
     - what: outline
       name: _case_inner_40
       extrude: wall_height * 2
@@ -1111,10 +1141,10 @@ cases:
     - +_posts
   temporal_40:
     - +_temporal_40_1
-    - -_socket_cutouts_40
+    - -_asymmetric_bottom_cutouts
   temporal_40_mirrored:
     - +_temporal_40_1
-    - -_socket_cutouts_40_mirrored
+    - -_asymmetric_bottom_cutouts_mirrored
 
   _temporal_40_kickstand_1:
     - what: outline
