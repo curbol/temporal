@@ -4,6 +4,9 @@
  *
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
+ *
+ * Files ending in _mirrored are converted to a temp STL, then mirrored
+ * using OpenSCAD to produce the final mirrored STL.
  */
 
 const fs = require('fs');
@@ -17,6 +20,8 @@ const execAsync = promisify(exec);
 // Higher resolution for smoother arcs
 // Segments per full circle - higher = smoother but larger files
 const ARC_SEGMENTS = 128;
+
+const MIRROR_SCAD = path.join(__dirname, '..', 'ergogen', 'mirror_case.scad');
 
 async function main() {
   const casesDir = path.join(__dirname, '..', 'cases');
@@ -38,7 +43,9 @@ async function main() {
   // Convert files in parallel
   const conversions = jscadFiles.map(async (file) => {
     const inputPath = path.join(jscadDir, file);
-    const outputName = file.replace('.jscad', '.stl');
+    const baseName = file.replace('.jscad', '');
+    const isMirrored = baseName.endsWith('_mirrored');
+    const outputName = baseName + '.stl';
     const outputPath = path.join(casesDir, outputName);
 
     // Read original JSCAD content
@@ -54,9 +61,18 @@ async function main() {
     fs.writeFileSync(patchedPath, content);
 
     try {
-      // Convert to STL
-      await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${outputPath}"`);
-      console.log(`✓ Converted ${file} -> ${outputName}`);
+      if (isMirrored) {
+        // Convert to temp STL, then mirror
+        const tempPath = path.join(casesDir, baseName + '_temp.stl');
+        await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
+        await execAsync(`openscad -o "${outputPath}" -D "input=\\"${tempPath}\\"" "${MIRROR_SCAD}"`);
+        fs.unlinkSync(tempPath);
+        console.log(`✓ Converted and mirrored ${file} -> ${outputName}`);
+      } else {
+        // Convert directly to STL
+        await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${outputPath}"`);
+        console.log(`✓ Converted ${file} -> ${outputName}`);
+      }
     } catch (error) {
       console.error(`✗ Failed to convert ${file}:`, error.message);
     } finally {

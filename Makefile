@@ -1,5 +1,5 @@
 # Build configuration
-TOTAL_STEPS := 7
+TOTAL_STEPS := 6
 
 # Directory variables
 ERGOGEN_DIR := ergogen
@@ -12,7 +12,7 @@ JLCPCB_DIR := jlcpcb
 ASSETS_DIR := assets
 MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
 
-.PHONY: deps gen convert mirror gerbers assembly clean
+.PHONY: deps gen convert gerbers assembly clean
 
 # Install all dependencies
 deps:
@@ -103,8 +103,6 @@ gen:
 	$(MAKE) --no-print-directory assembly; \
 	next "Converting cases to STL..."; \
 	$(MAKE) --no-print-directory convert; \
-	next "Mirroring case files..."; \
-	$(MAKE) --no-print-directory mirror; \
 	echo ""; \
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 	echo "✓ Build complete!"; \
@@ -114,21 +112,6 @@ gen:
 convert:
 	@npm run convert 2>/dev/null || npm run convert
 	@echo "✓ Converted cases to STL"
-
-# Mirror case STL files for right-hand versions
-CASE_BASES := temporal_40 temporal_44 temporal_40_kickstand temporal_44_kickstand
-
-mirror:
-	@MIRRORED=0; \
-	for base in $(CASE_BASES); do \
-		if [ -f $(CASES_DIR)/$$base.stl ]; then \
-			openscad -o $(CASES_DIR)/$${base}_mirror.stl -D "input=\"$$(pwd)/$(CASES_DIR)/$$base.stl\"" $(MIRROR_SCAD) >/dev/null 2>&1; \
-			MIRRORED=$$((MIRRORED + 1)); \
-		fi; \
-	done; \
-	if [ $$MIRRORED -gt 0 ]; then \
-		echo "✓ Mirrored $$MIRRORED case files"; \
-	fi
 
 # Generate JLCPCB assembly files
 assembly:
