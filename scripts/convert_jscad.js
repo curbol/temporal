@@ -17,9 +17,15 @@ const { glob } = require('glob');
 
 const execAsync = promisify(exec);
 
-// Higher resolution for smoother arcs
-// Segments per full circle - higher = smoother but larger files
-const ARC_SEGMENTS = 128;
+// Arc resolution scaling
+// radius <= 1mm: 32 segments (default)
+// radius 1-10mm: linear scale from 32 to 128
+// radius >= 10mm: 128 segments
+function getArcSegments(radius) {
+  if (radius <= 1) return 32;
+  if (radius >= 10) return 128;
+  return Math.round(32 + ((radius - 1) / 9) * 96);
+}
 
 const MIRROR_SCAD = path.join(__dirname, '..', 'ergogen', 'mirror_case.scad');
 
@@ -53,7 +59,10 @@ async function main() {
 
     content = content.replace(
       /\.appendArc\(\[([^\]]+)\],\{"radius":([^,]+),"clockwise":(true|false),"large":(true|false)\}\)/g,
-      `.appendArc([$1],{"radius":$2,"clockwise":$3,"large":$4,"resolution":${ARC_SEGMENTS}})`
+      (match, endpoint, radius, clockwise, large) => {
+        const segments = getArcSegments(parseFloat(radius));
+        return `.appendArc([${endpoint}],{"radius":${radius},"clockwise":${clockwise},"large":${large},"resolution":${segments}})`;
+      }
     );
 
     // Create patched file
