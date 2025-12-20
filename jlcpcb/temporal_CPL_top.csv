@@ -13,7 +13,6 @@ Designator,Mid X,Mid Y,Layer,Rotation
 "D2",45.4634mm,-71.3570mm,Top,9
 "D20",143.0559mm,-103.6748mm,Top,-30
 "D21",157.8090mm,-115.0200mm,Top,-45
-"D22",88.9707mm,-96.5346mm,Top,15
 "D3",67.1777mm,-93.3915mm,Top,9
 "D4",64.5183mm,-76.6008mm,Top,9
 "D5",61.8589mm,-59.8101mm,Top,9
@@ -35,7 +34,6 @@ Designator,Mid X,Mid Y,Layer,Rotation
 "S2",44.6812mm,-66.4186mm,Top,9
 "S20",145.5559mm,-99.3447mm,Top,-30
 "S21",161.3446mm,-111.4844mm,Top,-45
-"S22",87.6766mm,-91.7050mm,Top,15
 "S3",66.3955mm,-88.4530mm,Top,9
 "S4",63.7361mm,-71.6623mm,Top,9
 "S5",61.0767mm,-54.8716mm,Top,9
