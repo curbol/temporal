@@ -414,10 +414,17 @@ outlines:
 
   _choc_posts_cutouts:
     - name: _choc_posts
-      where: /key/
+      where: [[key, -extra]]
   _choc_posts_cutouts_mirrored:
     - name: _choc_posts_mirrored
-      where: /key/
+      where: [[key, -extra]]
+
+  _choc_posts_cutouts_pinky:
+    - name: _choc_posts
+      where: extra
+  _choc_posts_cutouts_pinky_mirrored:
+    - name: _choc_posts_mirrored
+      where: extra
 
   _encoder_posts_cutouts:
     - name: _choc_side_posts
@@ -1028,11 +1035,19 @@ cases:
       name: _socket_cutouts_pinky
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline
+      name: _choc_posts_cutouts_pinky
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.3]
   _asymmetric_pinky_cutouts_mirrored:
     - what: outline
       name: _socket_cutouts_pinky_mirrored
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
+    - what: outline
+      name: _choc_posts_cutouts_pinky_mirrored
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -1.3]
 
   _wall_cutouts:
     - what: outline
