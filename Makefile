@@ -62,6 +62,7 @@ deps:
 # Generate keyboard PCBs and cases
 gen:
 	@set -e; \
+	SECONDS=0; \
 	step=0; \
 	next() { step=$$((step + 1)); echo ""; echo "[$$step/$(TOTAL_STEPS)] $$1"; }; \
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
@@ -105,7 +106,7 @@ gen:
 	$(MAKE) --no-print-directory convert; \
 	echo ""; \
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
-	echo "✓ Build complete!"; \
+	echo "✓ Build complete in $${SECONDS}s"; \
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # Convert JSCAD files to STL
