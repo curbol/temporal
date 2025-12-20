@@ -18,13 +18,10 @@ const { glob } = require('glob');
 const execAsync = promisify(exec);
 
 // Arc resolution scaling
-// radius <= 1mm: 32 segments (default)
-// radius 1-10mm: linear scale from 32 to 128
-// radius >= 10mm: 128 segments
+// Linear from 4 segments at radius 0 to 128 at radius 10+
 function getArcSegments(radius) {
-  if (radius <= 1) return 32;
   if (radius >= 10) return 128;
-  return Math.round(32 + ((radius - 1) / 9) * 96);
+  return Math.round(4 + radius * 12.4);
 }
 
 const MIRROR_SCAD = path.join(__dirname, '..', 'ergogen', 'mirror_case.scad');
@@ -51,7 +48,11 @@ async function main() {
     const inputPath = path.join(jscadDir, file);
     const baseName = file.replace('.jscad', '');
     const isMirrored = baseName.endsWith('_mirrored');
-    const outputName = baseName + '.stl';
+    // Rename: foo -> foo_left (normal), foo_mirrored -> foo_right (mirrored)
+    const outputBaseName = isMirrored
+      ? baseName.replace(/_mirrored$/, '_right')
+      : baseName + '_left';
+    const outputName = outputBaseName + '.stl';
     const outputPath = path.join(casesDir, outputName);
 
     // Read original JSCAD content
