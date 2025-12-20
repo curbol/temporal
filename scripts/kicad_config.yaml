@@ -83,7 +83,7 @@ zones:
 # CLI: node scripts/via_stitching.js [step_mm]
 via_stitching:
   net_name: "GND" # Net name to add via stitching to
-  step_mm: 8 # Spacing between vias in mm (grid size, smaller = more vias)
+  step_mm: 6 # Spacing between vias in mm (grid size, smaller = more vias)
   size_mm: 0.6 # Via copper diameter in mm
   drill_mm: 0.3 # Via drill hole diameter in mm
   clearance_mm: 0.2 # Clearance around vias in mm
