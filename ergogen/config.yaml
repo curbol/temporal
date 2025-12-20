@@ -337,18 +337,17 @@ outlines:
     - what: circle
       radius: 1
       adjust.shift: [0, -14]
-
-  _mcu_jumpers_trench:
-    - what: rectangle
-      size: [2, 29.5]
-      adjust.shift: [2.5, 0]
-
   _mcu_pins:
     - name: _mcu_pins_trench
       adjust: { shift: [-mcu_pin_spacing, -1.25] }
     - name: _mcu_pins_trench
       adjust: { shift: [mcu_pin_spacing, -1.25], rotate: 180 }
 
+  _mcu_jumpers_trench:
+    - what: rectangle
+      size: [2.05, 29.55]
+      adjust.shift: [2.48, -0.025]
+      fillet: cut_fillet
   _mcu_jumpers:
     - name: _mcu_jumpers_trench
       adjust: { shift: [-mcu_pin_spacing, -1.25] }
@@ -370,6 +369,7 @@ outlines:
     - what: rectangle
       size: [11.75, 3.8]
       adjust.shift: [0, -15.5]
+      fillet: cut_fillet
 
   _battery_pins:
     - what: rectangle
@@ -380,6 +380,7 @@ outlines:
     - what: rectangle
       size: [3.6, 3]
       adjust.shift: [0, -1.75]
+      fillet: cut_fillet
 
   _encoder_pins:
     - what: circle
@@ -967,10 +968,6 @@ cases:
       extrude: bottom_thickness * 2
       shift: [0, 0, -1.2]
     - what: outline
-      name: _encoder_pins_cutouts
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -1.4]
-    - what: outline
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
@@ -994,6 +991,10 @@ cases:
       name: _battery_jumpers_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -jumper_depth]
+    - what: outline
+      name: _encoder_pins_cutouts
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -pin_depth]
 
   _asymmetric_bottom_cutouts:
     - what: outline
