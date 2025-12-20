@@ -1090,7 +1090,6 @@ cases:
     - -_asymmetric_pinky_cutouts_mirrored
 
   _temporal_44_kickstand_1:
-    - +temporal_44
     - what: outline
       name: _kickstand_44
       extrude: bottom_thickness + wall_height
