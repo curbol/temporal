@@ -738,7 +738,6 @@ outlines:
       where:
         - finger_pinky_top
         - finger_pinky_home
-        - finger_pinky_bottom
       size: [px, py]
       adjust.shift: [-0.5px, 0]
     - what: polygon
@@ -748,10 +747,10 @@ outlines:
           shift: [-2px, 0.5py]
         - ref: finger_pinky_top
           shift: [-0.5px, 0.5py]
-        - ref: finger_pinky_bottom
+        - ref: finger_pinky_home
           shift: [-1px, -0.5py]
           affect: y
-        - ref: finger_pinky_bottom
+        - ref: finger_pinky_home
           shift: [-2px, -0.5py]
   _kickstand_40_2:
     - name: _kickstand_40_1
