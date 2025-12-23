@@ -1212,7 +1212,7 @@ pcbs:
           A: encoder_a
           C: GND
           B: encoder_b
-          S1: col_pinky
+          S1: col_ring
           S2: encoder_thumb
 
       mcu:
