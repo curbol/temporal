@@ -1213,7 +1213,7 @@ pcbs:
           C: GND
           B: encoder_b
           S1: col_ring
-          S2: encoder_thumb
+          S2: enc_thumb
 
       mcu:
         what: ceoloide/mcu_nice_nano
