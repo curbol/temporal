@@ -93,14 +93,16 @@ units:
 
   # Case dimensions
   case_expand: 0.1
-  bottom_thickness: 1.9
   wall_height: pcb_thickness + 2.2 + 0.1
   wall_thickness: 1.2001
   case_fillet: pcb_fillet + wall_thickness
   side_cut_width: 12
   side_cut_radius: (wall_height - pcb_thickness) / 2
-  pin_depth: 1.2
-  jumper_depth: 0.8
+  bottom_thickness: 1.9
+  choc_depth: 1.2
+  diode_depth: 1.2
+  pin_depth: 0.8
+  jumper_depth: 0.6
 
   # M2 hardware
   m2_size: 2
@@ -973,7 +975,7 @@ cases:
     - what: outline
       name: _diode_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1.2]
+      shift: [0, 0, -diode_depth]
     - what: outline
       name: _mcu_pins_cutouts
       extrude: bottom_thickness * 2
@@ -1011,7 +1013,7 @@ cases:
     - what: outline
       name: _choc_posts_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1.3]
+      shift: [0, 0, -choc_depth]
     - what: outline
       name: _encoder_posts_cutouts
       extrude: bottom_thickness * 2
@@ -1024,7 +1026,7 @@ cases:
     - what: outline
       name: _choc_posts_cutouts_mirrored
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1.3]
+      shift: [0, 0, -choc_depth]
     - what: outline
       name: _encoder_posts_cutouts_mirrored
       extrude: bottom_thickness * 2
@@ -1038,7 +1040,7 @@ cases:
     - what: outline
       name: _choc_posts_cutouts_pinky
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1.3]
+      shift: [0, 0, -choc_depth]
   _asymmetric_pinky_cutouts_mirrored:
     - what: outline
       name: _socket_cutouts_pinky_mirrored
@@ -1047,7 +1049,7 @@ cases:
     - what: outline
       name: _choc_posts_cutouts_pinky_mirrored
       extrude: bottom_thickness * 2
-      shift: [0, 0, -1.3]
+      shift: [0, 0, -choc_depth]
 
   _wall_cutouts:
     - what: outline
