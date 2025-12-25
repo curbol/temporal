@@ -36,6 +36,15 @@ async function main() {
   // Find all JSCAD files
   const jscadFiles = await glob('*.jscad', { cwd: jscadDir });
 
+  // Build set of base names that have mirrored versions
+  const hasMirroredVersion = new Set();
+  for (const file of jscadFiles) {
+    const baseName = file.replace('.jscad', '');
+    if (baseName.endsWith('_mirrored')) {
+      hasMirroredVersion.add(baseName.replace(/_mirrored$/, ''));
+    }
+  }
+
   if (jscadFiles.length === 0) {
     console.log('No JSCAD files found in', jscadDir);
     return;
@@ -46,10 +55,18 @@ async function main() {
     const inputPath = path.join(jscadDir, file);
     const baseName = file.replace('.jscad', '');
     const isMirrored = baseName.endsWith('_mirrored');
-    // Rename: foo -> foo_left (normal), foo_mirrored -> foo_right (mirrored)
+    const baseWithoutMirrored = baseName.replace(/_mirrored$/, '');
+    const isPairedPart = hasMirroredVersion.has(baseWithoutMirrored);
+
+    // Naming rules:
+    // - foo_mirrored → foo_right (mirrored half of a pair)
+    // - foo (with _mirrored pair) → foo_left (non-mirrored half of a pair)
+    // - foo (no _mirrored pair) → foo (universal part, no suffix)
     const outputBaseName = isMirrored
-      ? baseName.replace(/_mirrored$/, '_right')
-      : baseName + '_left';
+      ? baseWithoutMirrored + '_right'
+      : isPairedPart
+        ? baseName + '_left'
+        : baseName;
     const outputName = outputBaseName + '.stl';
     const outputPath = path.join(casesDir, outputName);
 
