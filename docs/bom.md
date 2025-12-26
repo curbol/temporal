@@ -101,7 +101,18 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 
 ### PCB Manufacturing
 
-- **[JLCPCB](https://jlcpcb.com/)** - Affordable PCB manufacturing
+- **[JLCPCB](https://jlcpcb.com/)** - Affordable PCB manufacturing with optional assembly service
 - **[PCBWay](https://www.pcbway.com/)** - Alternative PCB manufacturer
 
 Use the gerber files in [`gerbers/`](/gerbers/) when ordering.
+
+#### JLCPCB Assembly (Optional)
+
+JLCPCB can pre-assemble the SMD diodes onto your PCBs, saving you from hand-soldering 40-44 tiny components. To use this service:
+
+1. Select "PCB Assembly" when ordering
+2. Upload files from [`jlcpcb/`](/jlcpcb/):
+   - `temporal_BOM.csv` - Bill of Materials with LCSC part numbers
+   - `temporal_CPL_top.csv` or `temporal_CPL_bottom.csv` - Component placement
+
+Note: Hotswap sockets are not included in assembly files because JLCPCB cannot assemble them.
