@@ -102,7 +102,3 @@ jlcpcb:
     - footprint: "ceoloide:diode_tht_sod123"
       lcsc_part: "C2099"
       description: "1N4148W Diode SOD-123"
-
-    - footprint: "ceoloide:switch_choc_v1_v2"
-      lcsc_part: "C5333465"
-      description: "Kailh Choc Hotswap Socket CPG135001S30"
