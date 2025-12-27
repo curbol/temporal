@@ -38,7 +38,7 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 | Saddle part 1 | 1 | 6 tilted, 3 saddle |
 | Saddle part 2 | 2 | 4 tilted, 4 saddle, 1 homing |
 | Saddle part 3 | 1 | 9 tilted |
-| Normal part 2 | 4-5 | 3 thumb |
+| Thumbs | 1 | 9 thumbs |
 
 **Totals:** Tilted: 23, Saddle: 11, Homing: 2, Thumb: 12-15 (depending on encoders)
 
