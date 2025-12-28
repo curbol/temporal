@@ -22,11 +22,11 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 - Encoders are optional. You can use regular switches in the encoder positions if you prefer.
 
-### Hardware (per keyboard half)
+### Hardware
 
 | Component | Quantity | Notes | Source |
 |-----------|-------------------|-------|--------|
-| M2 Heat Set Inserts | 10 | 3mm OD × 2mm height (3mm height also works) | [Amazon](https://www.amazon.com/dp/B0FD7DQS8Y) |
+| M2 Heat Set Inserts | 10 | 3mm OD × 2mm height (3mm height also works) | [KEEBD](https://keebd.com/) |
 | M2 Screws (4mm length) | 18 | Mix of wafer head for flat profile and others for small footprint | Hardware store |
 
 - Try to get M2 inserts with 3mm outer diameter and 2mm height. 3mm height will also work. Avoid inserts with 3.2mm+ outer diameter as they may not fit properly.
