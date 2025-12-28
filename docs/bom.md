@@ -88,7 +88,6 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 | Tool | Purpose | Source |
 |------|---------|--------|
 | NovelLife Heat Set Insert Tool | Makes installing heat set inserts easier with soldering iron | Amazon |
-| No-Solder Spring Headers (MAC8 XB-3-5) | Alternative to soldering microcontroller | [Typeractive](https://typeractive.xyz/) |
 
 ## Where to Buy
 
