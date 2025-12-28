@@ -22,6 +22,15 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 - Encoders are optional. You can use regular switches in the encoder positions if you prefer.
 
+### Hardware (per keyboard half)
+
+| Component | Quantity | Notes | Source |
+|-----------|-------------------|-------|--------|
+| M2 Heat Set Inserts | 10 | 3mm OD × 2mm height (3mm height also works) | [Amazon](https://www.amazon.com/dp/B0FD7DQS8Y) |
+| M2 Screws (4mm length) | 18 | Mix of wafer head for flat profile and others for small footprint | Hardware store |
+
+- Try to get M2 inserts with 3mm outer diameter and 2mm height. 3mm height will also work. Avoid inserts with 3.2mm+ outer diameter as they may not fit properly.
+
 ### Switches & Keycaps
 
 | Component | Quantity | Notes |
@@ -41,17 +50,6 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 | Thumbs | 1 | 9 thumbs |
 
 **Totals:** Tilted: 23, Saddle: 11, Homing: 2, Thumb: 12-15 (depending on encoders)
-
-### Hardware (per keyboard half)
-
-| Component | Quantity per half | Notes | Source |
-|-----------|-------------------|-------|--------|
-| M2 Heat Set Inserts | 5-10 | 3mm OD × 2mm height (3mm height also works) | [Amazon](https://www.amazon.com/dp/B0FD7DQS8Y) |
-| M2 Hex Nuts | 2 | Standard M2 nuts | Hardware store |
-| M2 Screws (3mm length) | 2-4 | Wafer head recommended for flat profile | Hardware store |
-| M2 Screws (4mm length) | 5-10 | Wafer head recommended for flat profile | Hardware store |
-
-- Try to get M2 inserts with 3mm outer diameter and 2mm height. 3mm height will also work. Avoid inserts with 3.2mm+ outer diameter as they may not fit properly.
 
 ### PCBs & Cases
 
