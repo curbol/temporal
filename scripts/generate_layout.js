@@ -112,7 +112,9 @@ function generateZmkLayout(keys) {
   // Right side: inner=6, index=7, middle=8, ring=9, pinky=10, extra=11
   const colMapLeft = { extra: 0, pinky: 1, ring: 2, middle: 3, index: 4, inner: 5 };
   // Thumb columns use same mapping but on row 3
-  const thumbColMapLeft = { enc: 1, near: 2, mid: 3, far: 4 };
+  // Thumb keys share column nets with finger columns
+  // enc=col_ring(2), near=col_middle(3), mid=col_index(4), far=col_inner(5)
+  const thumbColMapLeft = { enc: 2, near: 3, mid: 4, far: 5 };
   // Encoder zone has its own column
   const encoderColMapLeft = { encoder: 1 };
 
@@ -210,8 +212,8 @@ function generateZmkLayout(keys) {
       }
     },
     sensors: [
-      { row: 3, col: 1, name: 'encoder_left' },
-      { row: 3, col: 10, name: 'encoder_right' }
+      { row: 3, col: 2, name: 'encoder_left' },
+      { row: 3, col: 9, name: 'encoder_right' }
     ]
   };
 
