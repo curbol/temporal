@@ -27,7 +27,7 @@ units:
   py: cy + pad
 
   # Key plug holes
-  plug_w: 13.8
+  plug_w: 13.9
   plug_h: 13.8
 
   # Finger splay
@@ -387,13 +387,13 @@ outlines:
   _encoder_pins:
     - what: circle
       radius: 0.6
-      adjust.shift: [-2.75, -7.5]
+      adjust.shift: [-2.9, -7.5]
     - what: rectangle
-      size: [5.5, 1.2]
+      size: [5.8, 1.2]
       adjust.shift: [0, -7.5]
     - what: circle
       radius: 0.6
-      adjust.shift: [2.75, -7.5]
+      adjust.shift: [2.9, -7.5]
 
   # Cutout collections
   _socket_cutouts_40:
@@ -442,7 +442,7 @@ outlines:
   _encoder_pins_plate_cutouts:
     - +_encoder_pins_cutouts
     - what: rectangle
-      size: [6.7, 1.2]
+      size: [7, 1.2]
       where:
         ref: thumb_enc
         shift: [0, -6.9]
