@@ -1221,6 +1221,7 @@ pcbs:
         params:
           reversible: true
           reverse_mount: true
+          use_rectangular_jumpers: true
           show_silk_labels: false
           label_font_face: "Maple Mono NF ExtraBold"
           P4: row_top
