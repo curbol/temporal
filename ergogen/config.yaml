@@ -1222,6 +1222,7 @@ pcbs:
           reversible: true
           reverse_mount: true
           use_rectangular_jumpers: true
+          include_resistor_pads: true
           show_silk_labels: false
           label_font_face: "Maple Mono NF ExtraBold"
           P4: row_top
@@ -1246,6 +1247,7 @@ pcbs:
         params:
           reversible: true
           include_labels: false
+          include_resistor_pads: true
 
       power:
         what: ceoloide/power_switch_smd_side
@@ -1277,6 +1279,7 @@ pcbs:
         params:
           reversible: true
           include_traces_vias: true
+          include_resistor_pads: true
           via_size: 0.6
           via_drill: 0.3
 
