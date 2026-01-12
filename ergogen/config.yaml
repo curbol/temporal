@@ -28,7 +28,7 @@ units:
 
   # Key plug holes
   plug_w: 13.9
-  plug_h: 13.8
+  plug_h: 13.9
 
   # Finger splay
   finger_splay_1: 5
