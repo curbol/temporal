@@ -63,9 +63,12 @@ module.exports = {
     via_drill: 0.3,
     include_traces: true,
     trace_width: 0.5,
+    gnd_trace_width: 0.25,
+    power_trace_width: 0.5,
     include_silkscreen: true,
     include_fabrication: true,
     include_courtyard: true,
+    include_resistor_pads: false,
     battery_connector_3dmodel_filename: '',
     battery_connector_3dmodel_xyz_offset: [0, 0, 0],
     battery_connector_3dmodel_xyz_rotation: [0, 0, 0],
@@ -297,9 +300,30 @@ module.exports = {
                     (width 0)
                     (fill yes)
                 )
-            ) 
+            )
         )
         `
+
+    // 0402 resistor pads (1.0 x 0.5mm body) - overlays jumper pads for optional JLCPCB assembly
+    // Resistors bridge between chevron pads at y=1.65 and larger pads at y=2.666
+    const resistor_pads = `
+        ${"" /* 0402 Resistor 1 - Front (BAT_P side) */}
+        (pad "21" smd rect (at -1 1.65 ${180 + p.r}) (size 0.5 0.6) (layers "F.Cu" "F.Mask" "F.Paste") ${local_nets[0].str})
+        (pad "1" smd rect (at -1 2.666 ${180 + p.r}) (size 0.5 0.6) (layers "F.Cu" "F.Mask" "F.Paste") ${p.BAT_P.str})
+
+        ${"" /* 0402 Resistor 2 - Front (BAT_N side) */}
+        (pad "22" smd rect (at 1 1.65 ${180 + p.r}) (size 0.5 0.6) (layers "F.Cu" "F.Mask" "F.Paste") ${local_nets[1].str})
+        (pad "2" smd rect (at 1 2.666 ${180 + p.r}) (size 0.5 0.6) (layers "F.Cu" "F.Mask" "F.Paste") ${p.BAT_N.str})
+
+        ${"" /* 0402 Resistor 1 - Back (BAT_P side, mirrored) */}
+        (pad "31" smd rect (at -1 1.65 ${180 + p.r}) (size 0.5 0.6) (layers "B.Cu" "B.Mask" "B.Paste") ${local_nets[0].str})
+        (pad "2" smd rect (at -1 2.666 ${180 + p.r}) (size 0.5 0.6) (layers "B.Cu" "B.Mask" "B.Paste") ${p.BAT_N.str})
+
+        ${"" /* 0402 Resistor 2 - Back (BAT_N side, mirrored) */}
+        (pad "32" smd rect (at 1 1.65 ${180 + p.r}) (size 0.5 0.6) (layers "B.Cu" "B.Mask" "B.Paste") ${local_nets[1].str})
+        (pad "1" smd rect (at 1 2.666 ${180 + p.r}) (size 0.5 0.6) (layers "B.Cu" "B.Mask" "B.Paste") ${p.BAT_P.str})
+        `
+
     const standard_closing = `
     )
         `
@@ -317,24 +341,24 @@ module.exports = {
     ${''/* BAT_P via and traces with 45° routing */}
     (via (at ${p.eaxy(0, 4)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_P.index}))
     ${''/* Front BAT_P pad to via */}
-    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 3.5)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(-1, 3.5)}) (end ${p.eaxy(-0.5, 4)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(-0.5, 4)}) (end ${p.eaxy(0, 4)}) (width 0.5) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 3.5)}) (width ${p.power_trace_width}) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-1, 3.5)}) (end ${p.eaxy(-0.5, 4)}) (width ${p.power_trace_width}) (layer "F.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(-0.5, 4)}) (end ${p.eaxy(0, 4)}) (width ${p.power_trace_width}) (layer "F.Cu") (net ${p.BAT_P.index}))
     ${''/* Back BAT_P pad to via */}
-    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 3.5)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(1, 3.5)}) (end ${p.eaxy(0.5, 4)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
-    (segment (start ${p.eaxy(0.5, 4)}) (end ${p.eaxy(0, 4)}) (width 0.5) (layer "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 3.5)}) (width ${p.power_trace_width}) (layer "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(1, 3.5)}) (end ${p.eaxy(0.5, 4)}) (width ${p.power_trace_width}) (layer "B.Cu") (net ${p.BAT_P.index}))
+    (segment (start ${p.eaxy(0.5, 4)}) (end ${p.eaxy(0, 4)}) (width ${p.power_trace_width}) (layer "B.Cu") (net ${p.BAT_P.index}))
 
     ${''/* BAT_N via and traces with 45° routing */}
     (via (at ${p.eaxy(0, 5.5)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.BAT_N.index}))
     ${''/* Front BAT_N pad to via */}
-    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(1, 5)}) (end ${p.eaxy(0.5, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(0.5, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(1, 2.816)}) (end ${p.eaxy(1, 5)}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(1, 5)}) (end ${p.eaxy(0.5, 5.5)}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(0.5, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.gnd_trace_width}) (layer "F.Cu") (net ${p.BAT_N.index}))
     ${''/* Back BAT_N pad to via */}
-    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(-1, 5)}) (end ${p.eaxy(-0.5, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
-    (segment (start ${p.eaxy(-0.5, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-1, 2.816)}) (end ${p.eaxy(-1, 5)}) (width ${p.gnd_trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-1, 5)}) (end ${p.eaxy(-0.5, 5.5)}) (width ${p.gnd_trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
+    (segment (start ${p.eaxy(-0.5, 5.5)}) (end ${p.eaxy(0, 5.5)}) (width ${p.gnd_trace_width}) (layer "B.Cu") (net ${p.BAT_N.index}))
     `
 
     const battery_connector_3dmodel = `
@@ -371,6 +395,9 @@ module.exports = {
     }
     if (p.reversible) {
       final += reversible_pads;
+      if (p.include_resistor_pads) {
+        final += resistor_pads;
+      }
     } else if (p.side == "F") {
       final += front_pads;
     } else if (p.side == "B") {

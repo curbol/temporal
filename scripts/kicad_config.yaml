@@ -102,3 +102,37 @@ jlcpcb:
     - footprint: "ceoloide:diode_tht_sod123"
       lcsc_part: "C2099"
       description: "1N4148W Diode SOD-123"
+
+  # Embedded resistor pads within parent footprints (for jumper bridging)
+  # These are 0402 0-ohm resistors that overlay solder jumper pads
+  embedded_resistors:
+    lcsc_part: "C17168"  # 0402 0-ohm resistor
+    description: "0402 0-Ohm Resistor"
+
+    # MCU resistor positions (relative to footprint center)
+    # 12 rows per side, 2 resistors per row (left and right)
+    mcu_nice_nano:
+      parent_footprint: "ceoloide:mcu_nice_nano"
+      resistor_x_offsets: [-5.03, 5.03]  # Center between pad pairs
+      resistor_y_offsets: [-12.7, -10.16, -7.62, -5.08, -2.54, 0, 2.54, 5.08, 7.62, 10.16, 11.43, 12.7]
+      rotation_offset: 90  # Resistor rotation relative to footprint
+
+    # Display resistor positions (relative to footprint center)
+    # 4 resistors for CS, SCK, MOSI, VCC signals
+    display_nice_view:
+      parent_footprint: "ceoloide:display_nice_view"
+      positions:  # [x, y] relative to footprint
+        - [-5.08, 14.5]
+        - [-2.54, 14.5]
+        - [2.54, 14.5]
+        - [5.08, 14.5]
+      rotation_offset: 0
+
+    # Battery resistor positions (relative to footprint center)
+    # 2 resistors for BAT_P and BAT_N
+    battery_connector:
+      parent_footprint: "ceoloide:battery_connector_jst_ph_2"
+      positions:
+        - [-1, 2.158]  # BAT_P side
+        - [1, 2.158]   # BAT_N side
+      rotation_offset: 0

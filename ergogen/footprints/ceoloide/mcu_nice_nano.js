@@ -110,6 +110,7 @@ module.exports = {
     invert_jumpers_position: false,
     only_required_jumpers: false,
     use_rectangular_jumpers: false,
+    include_resistor_pads: false,
     via_size: 0.6, // JLCPC min is 0.56 for 1-2 layer boards, KiCad defaults to 0.8
     via_drill: 0.3, // JLCPC min is 0.3 for 1-2 layer boards, KiCad defaults to 0.4
 
@@ -516,6 +517,38 @@ module.exports = {
       ) (width 0) (fill yes))
     ))
         `;
+
+      // 0402 resistor pads (1.0 x 0.5mm body) - overlays jumper pads for optional JLCPCB assembly
+      let socket_row_resistor_pads = `
+    ${"" /* 0402 Resistor Pads - Front Left */}
+    (pad "${socket_hole_num_left}" smd rect (at -5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "F.Cu" "F.Paste" "F.Mask") ${p.local_net(socket_hole_num_left).str
+        })
+    (pad "${via_num_left}" smd rect (at -4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "F.Cu" "F.Paste" "F.Mask") ${net_left})
+
+    ${"" /* 0402 Resistor Pads - Front Right */}
+    (pad "${via_num_right}" smd rect (at 4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "F.Cu" "F.Paste" "F.Mask") ${net_right})
+    (pad "${socket_hole_num_right}" smd rect (at 5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "F.Cu" "F.Paste" "F.Mask") ${p.local_net(socket_hole_num_right).str
+        })
+
+    ${"" /* 0402 Resistor Pads - Back Left */}
+    (pad "${socket_hole_num_left}" smd rect (at -5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "B.Cu" "B.Paste" "B.Mask") ${p.local_net(socket_hole_num_left).str
+        })
+    (pad "${via_num_right}" smd rect (at -4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "B.Cu" "B.Paste" "B.Mask") ${net_right})
+
+    ${"" /* 0402 Resistor Pads - Back Right */}
+    (pad "${via_num_left}" smd rect (at 4.58 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "B.Cu" "B.Paste" "B.Mask") ${net_left})
+    (pad "${socket_hole_num_right}" smd rect (at 5.48 ${-12.7 + row_offset_y} ${p.r
+        }) (size 0.6 0.5) (layers "B.Cu" "B.Paste" "B.Mask") ${p.local_net(socket_hole_num_right).str
+        })
+        `;
+
       let socket_row = socket_row_base;
       if (p.reversible && (row_num < 4 || !p.only_required_jumpers)) {
         socket_row += socket_row_vias;
@@ -523,6 +556,9 @@ module.exports = {
           socket_row += socket_row_rectangular_jumpers;
         } else {
           socket_row += socket_row_chevron_jumpers;
+        }
+        if (p.include_resistor_pads) {
+          socket_row += socket_row_resistor_pads;
         }
       }
       if (show_silk_labels == true) {

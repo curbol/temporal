@@ -87,6 +87,7 @@ module.exports = {
     include_silkscreen: true,
     include_labels: true,
     include_courtyard: true,
+    include_resistor_pads: false,
     niceview_3dmodel_filename: "",
     niceview_3dmodel_xyz_offset: [0, 0, 0],
     niceview_3dmodel_xyz_rotation: [0, 0, 0],
@@ -244,6 +245,63 @@ module.exports = {
       })
     (pad "23" smd rect (at -5.08 ${14.95 + jumpers_offset} ${270 + p.r
       }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[4].str
+      })
+    `;
+
+    // 0402 resistor pads (1.0 x 0.5mm body) - overlays jumper pads for optional JLCPCB assembly
+    const front_resistor_pads = `
+    (pad "14" smd rect (at -5.08 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[0].str
+      })
+    (pad "15" smd rect (at -2.54 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[1].str
+      })
+    (pad "16" smd rect (at 2.54 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[3].str
+      })
+    (pad "17" smd rect (at 5.08 ${14.05 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[4].str
+      })
+
+    (pad "10" smd rect (at -5.08 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[0].str
+      })
+    (pad "11" smd rect (at -2.54 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[1].str
+      })
+    (pad "12" smd rect (at 2.54 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[3].str
+      })
+    (pad "13" smd rect (at 5.08 ${14.95 + jumpers_offset} ${90 + p.r
+      }) (size 0.5 0.6) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[4].str
+      })
+    `;
+
+    const back_resistor_pads = `
+    (pad "24" smd rect (at 5.08 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[0].str
+      })
+    (pad "25" smd rect (at 2.54 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[1].str
+      })
+    (pad "26" smd rect (at -2.54 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[3].str
+      })
+    (pad "27" smd rect (at -5.08 ${14.05 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[4].str
+      })
+
+    (pad "20" smd rect (at 5.08 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[0].str
+      })
+    (pad "21" smd rect (at 2.54 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[1].str
+      })
+    (pad "22" smd rect (at -2.54 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[3].str
+      })
+    (pad "23" smd rect (at -5.08 ${14.95 + jumpers_offset} ${270 + p.r
+      }) (size 0.5 0.6) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[4].str
       })
     `;
 
@@ -482,6 +540,10 @@ module.exports = {
     if (p.reversible) {
       final += front_jumpers;
       final += back_jumpers;
+      if (p.include_resistor_pads) {
+        final += front_resistor_pads;
+        final += back_resistor_pads;
+      }
     }
     if (p.niceview_3dmodel_filename) {
       final += niceview_3dmodel;

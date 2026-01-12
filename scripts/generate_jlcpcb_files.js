@@ -98,6 +98,159 @@ function parseKiCadPCB(pcbPath, assemblyParts) {
 }
 
 /**
+ * Find parent footprints in PCB file for embedded resistor calculation
+ */
+function findParentFootprints(pcbPath, parentFootprintName) {
+  const content = fs.readFileSync(pcbPath, 'utf8');
+  const footprints = [];
+
+  const footprintRegex = /\(footprint\s+"([^"]+)"[\s\S]*?\n\t\)/g;
+
+  let match;
+  while ((match = footprintRegex.exec(content)) !== null) {
+    const footprintBlock = match[0];
+    const footprintName = match[1];
+
+    if (footprintName !== parentFootprintName) {
+      continue;
+    }
+
+    // Extract reference designator
+    const refMatch = footprintBlock.match(/\(property\s+"Reference"\s+"([^"]+)"/);
+    const reference = refMatch ? refMatch[1] : null;
+
+    // Extract position
+    const posMatch = footprintBlock.match(/\n\t\t\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
+    if (!posMatch) continue;
+
+    const x = parseFloat(posMatch[1]);
+    const y = parseFloat(posMatch[2]);
+    const rotation = posMatch[3] ? parseFloat(posMatch[3]) : 0;
+
+    // Extract layer
+    const layerMatch = footprintBlock.match(/\(layer\s+"([^"]+)"/);
+    const layer = layerMatch ? layerMatch[1] : 'F.Cu';
+    const side = layer.startsWith('B.') ? 'Bottom' : 'Top';
+
+    footprints.push({ reference, x, y, rotation, side });
+  }
+
+  return footprints;
+}
+
+/**
+ * Transform local coordinates to global based on footprint position and rotation
+ */
+function transformCoordinates(localX, localY, footprintX, footprintY, footprintRotation) {
+  const rad = (footprintRotation * Math.PI) / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+
+  // Rotate local coordinates
+  const rotatedX = localX * cos - localY * sin;
+  const rotatedY = localX * sin + localY * cos;
+
+  // Translate to global
+  return {
+    x: footprintX + rotatedX,
+    y: footprintY + rotatedY
+  };
+}
+
+/**
+ * Generate embedded resistor components from parent footprints
+ */
+function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
+  const components = [];
+  const lcsc = embeddedConfig.lcsc_part;
+  const description = embeddedConfig.description;
+  let resistorIndex = 1;
+
+  // Process MCU resistors
+  if (embeddedConfig.mcu_nice_nano) {
+    const mcuConfig = embeddedConfig.mcu_nice_nano;
+    const mcuFootprints = findParentFootprints(pcbPath, mcuConfig.parent_footprint);
+
+    mcuFootprints.forEach(fp => {
+      // Only include resistors on the assembly side
+      if (fp.side !== assemblySide) return;
+
+      mcuConfig.resistor_x_offsets.forEach(xOffset => {
+        mcuConfig.resistor_y_offsets.forEach(yOffset => {
+          const global = transformCoordinates(xOffset, yOffset, fp.x, fp.y, fp.rotation);
+          const rotation = (fp.rotation + mcuConfig.rotation_offset) % 360;
+
+          components.push({
+            designator: `R${resistorIndex++}`,
+            footprint: '0402',
+            lcsc: lcsc,
+            description: description,
+            x: global.x,
+            y: global.y,
+            rotation: rotation,
+            side: fp.side
+          });
+        });
+      });
+    });
+  }
+
+  // Process Display resistors
+  if (embeddedConfig.display_nice_view) {
+    const displayConfig = embeddedConfig.display_nice_view;
+    const displayFootprints = findParentFootprints(pcbPath, displayConfig.parent_footprint);
+
+    displayFootprints.forEach(fp => {
+      if (fp.side !== assemblySide) return;
+
+      displayConfig.positions.forEach(pos => {
+        const global = transformCoordinates(pos[0], pos[1], fp.x, fp.y, fp.rotation);
+        const rotation = (fp.rotation + displayConfig.rotation_offset) % 360;
+
+        components.push({
+          designator: `R${resistorIndex++}`,
+          footprint: '0402',
+          lcsc: lcsc,
+          description: description,
+          x: global.x,
+          y: global.y,
+          rotation: rotation,
+          side: fp.side
+        });
+      });
+    });
+  }
+
+  // Process Battery resistors
+  if (embeddedConfig.battery_connector) {
+    const batteryConfig = embeddedConfig.battery_connector;
+    const batteryFootprints = findParentFootprints(pcbPath, batteryConfig.parent_footprint);
+
+    batteryFootprints.forEach(fp => {
+      if (fp.side !== assemblySide) return;
+
+      batteryConfig.positions.forEach(pos => {
+        const global = transformCoordinates(pos[0], pos[1], fp.x, fp.y, fp.rotation);
+        const rotation = (fp.rotation + batteryConfig.rotation_offset) % 360;
+
+        components.push({
+          designator: `R${resistorIndex++}`,
+          footprint: '0402',
+          lcsc: lcsc,
+          description: description,
+          x: global.x,
+          y: global.y,
+          rotation: rotation,
+          side: fp.side
+        });
+      });
+    });
+  }
+
+  return components;
+}
+
+/**
  * Generate JLCPCB BOM file (CSV format)
  */
 function generateBOM(components, outputPath) {
@@ -175,10 +328,27 @@ function main() {
   // Load config
   const config = loadJlcpcbConfig();
 
-  // Parse PCB file
+  // Parse PCB file for standard assembly parts
   const components = parseKiCadPCB(pcbFile, config.assembly_parts);
 
-  if (components.length === 0) {
+  // Generate embedded resistors if configured
+  let topResistors = [];
+  let bottomResistors = [];
+  if (config.embedded_resistors) {
+    topResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Top');
+    bottomResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Bottom');
+  }
+
+  // Separate standard components by side
+  const topComponents = components.filter(c => c.side === 'Top');
+  const bottomComponents = components.filter(c => c.side === 'Bottom');
+
+  // Combine with embedded resistors
+  const allTopComponents = [...topComponents, ...topResistors];
+  const allBottomComponents = [...bottomComponents, ...bottomResistors];
+  const allComponents = [...components, ...topResistors, ...bottomResistors];
+
+  if (allComponents.length === 0) {
     console.log('⚠ No assembly components found');
     return;
   }
@@ -188,11 +358,13 @@ function main() {
   const cplTopPath = path.join(jlcpcbDir, 'temporal_CPL_top.csv');
   const cplBottomPath = path.join(jlcpcbDir, 'temporal_CPL_bottom.csv');
 
-  generateBOM(components, bomPath);
-  generateCPL(components, cplTopPath, false);
-  generateCPL(components, cplBottomPath, true);
+  generateBOM(allComponents, bomPath);
+  generateCPL(allTopComponents, cplTopPath, false);
+  generateCPL(allBottomComponents, cplBottomPath, true);
 
-  console.log(`✓ Generated JLCPCB assembly files (${components.length} components)`);
+  const resistorCount = topResistors.length + bottomResistors.length;
+  const standardCount = components.length;
+  console.log(`✓ Generated JLCPCB assembly files (${standardCount} standard + ${resistorCount} resistors)`);
 }
 
 main();
