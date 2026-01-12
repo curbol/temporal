@@ -102,7 +102,7 @@ units:
   choc_depth: 1.2
   diode_depth: 1.2
   pin_depth: 0.8
-  jumper_depth: 0.6
+  jumper_depth: 0.8
 
   # M2 hardware
   m2_size: 2
@@ -347,8 +347,8 @@ outlines:
 
   _mcu_jumpers_trench:
     - what: rectangle
-      size: [2.05, 29.55]
-      adjust.shift: [2.48, -0.025]
+      size: [1.9, 29.55]
+      adjust.shift: [2.59, -0.025]
       fillet: cut_fillet
   _mcu_jumpers:
     - name: _mcu_jumpers_trench
