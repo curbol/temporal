@@ -1182,6 +1182,7 @@ pcbs:
           keycap_width: 17.5
           reversible: true
           hotswap: true
+          solder: true
           choc_v2_support: false
           trace_width: 0.25
           via_size: 0.6
@@ -1191,7 +1192,7 @@ pcbs:
       diode:
         what: ceoloide/diode_tht_sod123
         where: /key/
-        adjust.shift: [0, -5]
+        adjust.shift: [0, -3.315]
         params:
           from: "{{colrow}}"
           to: "{{row_net}}"
@@ -1223,6 +1224,7 @@ pcbs:
           reverse_mount: true
           use_rectangular_jumpers: true
           include_resistor_pads: true
+          include_gnd_vias: true
           show_silk_labels: false
           label_font_face: "Maple Mono NF ExtraBold"
           P4: row_top
