@@ -460,15 +460,15 @@ module.exports = {
     }
 
     const solder_common = `
-    (pad "2" thru_hole circle (at 0 ${solder_offset_y}5.9 ${195 + p.r}) (size 2.032 2.032) (drill 1.27) (layers "*.Cu" "*.Mask") ${p.from.str})
+    (pad "2" thru_hole oval (at 0 ${solder_offset_y}5.9 ${p.r}) (size 2.032 1.5) (drill oval 1.27 0.9) (layers "*.Cu" "*.Mask") ${p.from.str})
     `
 
     const solder_front = `
-    (pad "1" thru_hole circle (at ${solder_offset_x_front}5 ${solder_offset_y}3.8 ${195 + p.r}) (size 2.032 2.032) (drill 1.27) (layers "*.Cu" "*.Mask") ${p.to.str})
+    (pad "1" thru_hole oval (at ${solder_offset_x_front}5 ${solder_offset_y}3.8 ${p.r}) (size 2.032 1.5) (drill oval 1.27 0.9) (layers "*.Cu" "*.Mask") ${p.to.str})
     `
 
     const solder_back = `
-    (pad "1" thru_hole circle (at ${solder_offset_x_back}5 ${solder_offset_y}3.8 ${195 + p.r}) (size 2.032 2.032) (drill 1.27) (layers "*.Cu" "*.Mask") ${p.to.str})
+    (pad "1" thru_hole oval (at ${solder_offset_x_back}5 ${solder_offset_y}3.8 ${p.r}) (size 2.032 1.5) (drill oval 1.27 0.9) (layers "*.Cu" "*.Mask") ${p.to.str})
     `
 
     const oval_corner_stab_front = `
@@ -689,22 +689,87 @@ module.exports = {
 	)
     `
 
-    const diode_routing_trace = `
+    // Solder hole routing traces for FROM net (active when hotswap+solder enabled)
+    const solder_routing_trace = `
 	(segment
-		(start ${p.eaxy(2.85, 5.0)})
-		(end ${p.eaxy(2.85, -1.95)})
+		(start ${p.eaxy(1.2, from_via_y)})
+		(end ${p.eaxy(2.85, -2.225)})
 		(width ${p.trace_width})
-    (locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
 		(net ${p.from.index})
 	)
 	(segment
-		(start ${p.eaxy(2.85, -1.95)})
-		(end ${p.eaxy(1.2, from_via_y)})
+		(start ${p.eaxy(2.85, -2.225)})
+		(end ${p.eaxy(2.85, 3.315)})
 		(width ${p.trace_width})
-    (locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
 		(layer "F.Cu")
 		(net ${p.from.index})
+	)
+	(segment
+		(start ${p.eaxy(2.85, 3.315)})
+		(end ${p.eaxy(1.65, 3.315)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "F.Cu")
+		(net ${p.from.index})
+	)
+	(segment
+		(start ${p.eaxy(1.65, 3.315)})
+		(end ${p.eaxy(1.65, 4.25)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "F.Cu")
+		(net ${p.from.index})
+	)
+	(segment
+		(start ${p.eaxy(1.65, 4.25)})
+		(end ${p.eaxy(0, 5.9)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "F.Cu")
+		(net ${p.from.index})
+	)
+	(segment
+		(start ${p.eaxy(2.85, 3.315)})
+		(end ${p.eaxy(1.65, 3.315)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "B.Cu")
+		(net ${p.from.index})
+	)
+	(segment
+		(start ${p.eaxy(-5, 3.8)})
+		(end ${p.eaxy(-3.14, 1.94)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "F.Cu")
+		(net ${p.to.index})
+	)
+	(segment
+		(start ${p.eaxy(-3.14, 1.94)})
+		(end ${p.eaxy(-3.14, -1.85)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "F.Cu")
+		(net ${p.to.index})
+	)
+	(segment
+		(start ${p.eaxy(5, 3.8)})
+		(end ${p.eaxy(3.14, 1.94)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "B.Cu")
+		(net ${p.to.index})
+	)
+	(segment
+		(start ${p.eaxy(3.14, 1.94)})
+		(end ${p.eaxy(3.14, -1.85)})
+		(width ${p.trace_width})
+		(locked ${p.locked_traces_vias ? 'yes' : 'no'})
+		(layer "B.Cu")
+		(net ${p.to.index})
 	)
     `
 
@@ -780,9 +845,9 @@ module.exports = {
       }
     }
 
-    // Add diode routing trace when hotswap is enabled
-    if (p.hotswap) {
-      final += diode_routing_trace
+    // Add solder hole routing traces when both hotswap and solder are enabled
+    if (p.hotswap && p.solder) {
+      final += solder_routing_trace
     }
 
     return final;
