@@ -140,9 +140,10 @@ function findParentFootprints(pcbPath, parentFootprintName) {
 
 /**
  * Transform local coordinates to global based on footprint position and rotation
+ * KiCad uses clockwise rotation (positive angles go clockwise), so we negate the angle
  */
 function transformCoordinates(localX, localY, footprintX, footprintY, footprintRotation) {
-  const rad = (footprintRotation * Math.PI) / 180;
+  const rad = (-footprintRotation * Math.PI) / 180;
   const cos = Math.cos(rad);
   const sin = Math.sin(rad);
 
