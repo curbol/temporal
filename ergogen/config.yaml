@@ -1301,7 +1301,7 @@ pcbs:
         what: ceoloide/utility_text
         where:
           ref: thumb_far
-          shift: [0, -7]
+          shift: [0, -8]
         params:
           text: "curbol"
           height: 1.2
