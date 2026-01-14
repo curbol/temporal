@@ -32,6 +32,18 @@ A 40/44 key split ergonomic keyboard with wireless support. Features a breakoff 
 
 Temporal is designed to be used with ZMK. [You can find the ZMK-config repository and keymap here.](https://github.com/curbol/temporal-zmk)
 
+## Build Guide
+
+See [docs/build-guide.md](/docs/build-guide.md) for assembly instructions and ordering information.
+
+For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
+
+## Keycaps
+
+Temporal uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
+
+- [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
+
 ## Development
 
 ### Prerequisites
@@ -62,18 +74,6 @@ This will:
 - Export Gerbers for manufacturing
 
 **Note:** The main `pcbs/temporal/` PCB requires manual steps in KiCad after generation. See [pcbs/temporal/README.md](pcbs/temporal/README.md) for details.
-
-## Build Guide
-
-See [docs/build-guide.md](/docs/build-guide.md) for assembly instructions and ordering information.
-
-For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
-
-## Keycaps
-
-Temporal uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
-
-- [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
 
 ## Influences
 
