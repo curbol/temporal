@@ -119,7 +119,7 @@ units:
   m2_insert_inner_diameter: 2.7
   m2_insert_outer_diameter: 4.9
   m2_insert_post_height: pcb_thickness + choc_under_to_pcb - choc_top_plate
-  m2_insert_hole_depth: 3.95
+  m2_insert_hole_depth: 4
   m2_nut_width: 4.2
 
   # Preview layout offsets
