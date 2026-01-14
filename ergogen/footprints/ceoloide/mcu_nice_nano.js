@@ -82,6 +82,13 @@
 //    (only required jumpers)
 //  - Upgrade to KiCad 8
 //
+// @curbol's improvements:
+//  - Row 0 vias offset 0.5mm down to make space for a power switch under the USB connector
+//  - Row 0 (RAW) uses 0.5mm traces
+//  - Row 3 (VCC) uses 0.375mm traces
+//  - Trace widths via params (default_trace_width, raw_trace_width, vcc_trace_width)
+//  - Optional GND vias between jumper rows for better ground stitching (include_gnd_vias)
+//
 // # Placement and soldering of jumpers
 //
 // The reversible footprint is meant to be used with jumpers on the
@@ -113,6 +120,10 @@ module.exports = {
     include_resistor_pads: false,
     via_size: 0.6, // JLCPC min is 0.56 for 1-2 layer boards, KiCad defaults to 0.8
     via_drill: 0.3, // JLCPC min is 0.3 for 1-2 layer boards, KiCad defaults to 0.4
+    include_gnd_vias: false, // Add GND vias between jumper rows for better grounding
+    default_trace_width: 0.25, // Default trace width for signal traces
+    raw_trace_width: 0.5, // Trace width for RAW power traces
+    vcc_trace_width: 0.375, // Trace width for VCC power traces
 
     show_instructions: true,
     show_silk_labels: true,
@@ -221,6 +232,11 @@ module.exports = {
     };
 
     const gen_traces_row = (row_num) => {
+      // Trace width variables
+      const tw = p.default_trace_width;
+      const raw_tw = p.raw_trace_width;
+      const vcc_tw = p.vcc_trace_width;
+
       // For row 0 (top pins), shift vias and connected traces down 0.5mm to make room for power switch
       const via_y_offset = row_num === 0 ? 0.5 : 0;
 
@@ -229,107 +245,105 @@ module.exports = {
   (segment (start ${p.eaxy(
         p.use_rectangular_jumpers ? 4.58 : 4.775,
         -12.7 + row_num * 2.54
-      )}) (end ${p.eaxy(3.4 + via_y_offset, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
-  (segment (start ${p.eaxy(3.4 + via_y_offset, -12.7 + row_num * 2.54)}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54 + via_y_offset)}) (width 0.25) (layer "F.Cu"))
+      )}) (end ${p.eaxy(3.4 + via_y_offset, -12.7 + row_num * 2.54)}) (width 0.5) (layer "F.Cu"))
+  (segment (start ${p.eaxy(3.4 + via_y_offset, -12.7 + row_num * 2.54)}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54 + via_y_offset)}) (width 0.5) (layer "F.Cu"))
   (segment (start ${p.eaxy(
         p.use_rectangular_jumpers ? -4.58 : -4.775,
         -12.7 + row_num * 2.54
-      )}) (end ${p.eaxy(-3.4 - via_y_offset, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
-  (segment (start ${p.eaxy(-3.4 - via_y_offset, -12.7 + row_num * 2.54)}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54 + via_y_offset)}) (width 0.25) (layer "F.Cu"))
+      )}) (end ${p.eaxy(-3.4 - via_y_offset, -12.7 + row_num * 2.54)}) (width 0.5) (layer "F.Cu"))
+  (segment (start ${p.eaxy(-3.4 - via_y_offset, -12.7 + row_num * 2.54)}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54 + via_y_offset)}) (width 0.5) (layer "F.Cu"))
 ` : `
   (segment (start ${p.eaxy(
         p.use_rectangular_jumpers ? 4.58 : 4.775,
         -12.7 + row_num * 2.54
-      )}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+      )}) (end ${p.eaxy(3.4, -12.7 + row_num * 2.54)}) (width 0.5) (layer "F.Cu"))
   (segment (start ${p.eaxy(
         p.use_rectangular_jumpers ? -4.58 : -4.775,
         -12.7 + row_num * 2.54
-      )}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54)}) (width 0.25) (layer "F.Cu"))
+      )}) (end ${p.eaxy(-3.4, -12.7 + row_num * 2.54)}) (width 0.5) (layer "F.Cu"))
 `;
 
-      const other_traces = `
-  (segment (start ${p.eaxy(-7.62, -12.7 + row_num * 2.54)}) (end ${p.eaxy(
-        -5.5,
-        -12.7 + row_num * 2.54
-      )}) (width 0.25) (layer "F.Cu"))
-  (segment (start ${p.eaxy(-7.62, -12.7 + row_num * 2.54)}) (end ${p.eaxy(
-        -5.5,
-        -12.7 + row_num * 2.54
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(5.5, -12.7 + row_num * 2.54)}) (end ${p.eaxy(
-        7.62,
-        -12.7 + row_num * 2.54
-      )}) (width 0.25) (layer "F.Cu"))
-  (segment (start ${p.eaxy(7.62, -12.7 + row_num * 2.54)}) (end ${p.eaxy(
-        5.5,
-        -12.7 + row_num * 2.54
-      )}) (width 0.25) (layer "B.Cu"))
+      // Right side shifted down to avoid GND vias when they are included
+      const trace_y_offset = p.include_gnd_vias ? 0.2 : 0;
+      const row_y = -12.7 + row_num * 2.54;
+      const socket_to_jumper_traces = `
+  (segment (start ${p.eaxy(-7.62, row_y)}) (end ${p.eaxy(-5.5, row_y)}) (width 0.5) (layer "F.Cu"))
+  (segment (start ${p.eaxy(-7.62, row_y)}) (end ${p.eaxy(-5.5, row_y)}) (width 0.5) (layer "B.Cu"))
+  (segment (start ${p.eaxy(5.5, row_y + trace_y_offset)}) (end ${p.eaxy(7.62, row_y + trace_y_offset)}) (width 0.5) (layer "F.Cu"))
+  (segment (start ${p.eaxy(7.62, row_y + trace_y_offset)}) (end ${p.eaxy(5.5, row_y + trace_y_offset)}) (width 0.5) (layer "B.Cu"))`;
 
-  (segment (start ${p.eaxy(
-        -2.604695,
-        0.23 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        3.17,
-        0.23 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(-4.775, 0 + row_num * 2.54 - 12.7)}) (end ${p.eaxy(
-        -4.425305,
-        0 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(
-        -3.700305,
-        0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        -3.099695,
-        0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(
-        -4.425305,
-        0 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        -3.700305,
-        0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(
-        -3.099695,
-        0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        -2.604695,
-        0.23 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
+      // Back layer routing traces
+      const base_y = row_num * 2.54 - 12.7;
 
-  (segment (start ${p.eaxy(4.775, 0 + row_num * 2.54 - 12.7)}) (end ${p.eaxy(
-        4.425305,
-        0 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(
-        2.594695,
-        -0.22 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        -3.18,
-        -0.22 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(4.425305, 0 + row_num * 2.54 - 12.7 + via_y_offset)}) (end ${p.eaxy(
-        3.700305,
-        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(
-        3.700305,
-        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        3.099695,
-        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-  (segment (start ${p.eaxy(
-        3.099695,
-        -0.725 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (end ${p.eaxy(
-        2.594695,
-        -0.22 + row_num * 2.54 - 12.7 + via_y_offset
-      )}) (width 0.25) (layer "B.Cu"))
-        `;
+      // Row 0: Special routing with via offset and RAW using wider traces
+      if (row_num === 0) {
+        // Right side (pad 124, encoder_b) → left via: default trace width
+        // Pattern adjusted for 0.5mm via offset
+        const right_traces = `
+  (segment (start ${p.eaxy(4.58, base_y)}) (end ${p.eaxy(3.785298, base_y)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.785298, base_y)}) (end ${p.eaxy(3.659298, base_y - 0.126)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.659298, base_y - 0.126)}) (end ${p.eaxy(3.140702, base_y - 0.126)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.140702, base_y - 0.126)}) (end ${p.eaxy(2.734702, base_y + 0.28)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(2.734702, base_y + 0.28)}) (end ${p.eaxy(-3.18, base_y + 0.28)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.18, base_y + 0.28)}) (end ${p.eaxy(-3.4, base_y + 0.5)}) (width ${tw}) (layer "B.Cu"))`;
 
-      return front_traces + other_traces;
+        // Left side (pad 101, RAW) → right via: RAW trace width with special routing for clearance
+        const raw_traces = `
+  (segment (start ${p.eaxy(-4.58, base_y)}) (end ${p.eaxy(-4.58, base_y + 0.382)}) (width ${raw_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-4.58, base_y + 0.382)}) (end ${p.eaxy(-3.711, base_y + 1.251)}) (width ${raw_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.711, base_y + 1.251)}) (end ${p.eaxy(-3.089, base_y + 1.251)}) (width ${raw_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.089, base_y + 1.251)}) (end ${p.eaxy(-2.694, base_y + 0.856)}) (width ${raw_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-2.694, base_y + 0.856)}) (end ${p.eaxy(3.044, base_y + 0.856)}) (width ${raw_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.044, base_y + 0.856)}) (end ${p.eaxy(3.4, base_y + 0.5)}) (width ${raw_tw}) (layer "B.Cu"))`;
+
+        return front_traces + socket_to_jumper_traces + right_traces + raw_traces;
+      }
+
+      // Row 3: VCC on left side uses wider traces with adjusted routing for clearance
+      if (row_num === 3) {
+        // Right side (pad 121, P0.08) → left via: default trace width
+        const back_traces_right = `
+  (segment (start ${p.eaxy(4.58, base_y)}) (end ${p.eaxy(4.285298, base_y)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(4.285298, base_y)}) (end ${p.eaxy(3.659298, base_y - 0.626)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.659298, base_y - 0.626)}) (end ${p.eaxy(3.140702, base_y - 0.626)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.140702, base_y - 0.626)}) (end ${p.eaxy(2.734702, base_y - 0.23)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(2.734702, base_y - 0.23)}) (end ${p.eaxy(-3.18, base_y - 0.23)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.18, base_y - 0.23)}) (end ${p.eaxy(-3.4, base_y)}) (width ${tw}) (layer "B.Cu"))`;
+
+        // Left side (pad 104, VCC) → right via: VCC trace width with adjusted routing
+        // Routes higher (base_y + 0.6885) then crosses at base_y + 0.305 for clearance from GND vias/traces
+        const back_traces_left = `
+  (segment (start ${p.eaxy(-4.58, base_y)}) (end ${p.eaxy(-4.374, base_y)}) (width ${vcc_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-4.374, base_y)}) (end ${p.eaxy(-3.685, base_y + 0.6885)}) (width ${vcc_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.685, base_y + 0.6885)}) (end ${p.eaxy(-3.115, base_y + 0.6885)}) (width ${vcc_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.115, base_y + 0.6885)}) (end ${p.eaxy(-2.731, base_y + 0.305)}) (width ${vcc_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-2.731, base_y + 0.305)}) (end ${p.eaxy(3.101, base_y + 0.305)}) (width ${vcc_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.101, base_y + 0.305)}) (end ${p.eaxy(3.18, base_y + 0.226)}) (width ${vcc_tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.18, base_y + 0.226)}) (end ${p.eaxy(3.4, base_y)}) (width ${vcc_tw}) (layer "B.Cu"))`;
+
+        return front_traces + socket_to_jumper_traces + back_traces_right + back_traces_left;
+      }
+
+      // Rows 1, 2, 4-11: Standard cross pattern with default trace width
+      // Right side (right pad → left via)
+      const back_traces_right = `
+  (segment (start ${p.eaxy(4.58, base_y)}) (end ${p.eaxy(4.285298, base_y)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(4.285298, base_y)}) (end ${p.eaxy(3.659298, base_y - 0.626)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.659298, base_y - 0.626)}) (end ${p.eaxy(3.140702, base_y - 0.626)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.140702, base_y - 0.626)}) (end ${p.eaxy(2.734702, base_y - 0.23)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(2.734702, base_y - 0.23)}) (end ${p.eaxy(-3.18, base_y - 0.23)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.18, base_y - 0.23)}) (end ${p.eaxy(-3.4, base_y)}) (width ${tw}) (layer "B.Cu"))`;
+
+      // Left side (left pad → right via)
+      const back_traces_left = `
+  (segment (start ${p.eaxy(-4.58, base_y)}) (end ${p.eaxy(-4.285298, base_y)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-4.285298, base_y)}) (end ${p.eaxy(-3.659298, base_y + 0.626)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.659298, base_y + 0.626)}) (end ${p.eaxy(-3.140702, base_y + 0.626)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-3.140702, base_y + 0.626)}) (end ${p.eaxy(-2.734702, base_y + 0.23)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(-2.734702, base_y + 0.23)}) (end ${p.eaxy(3.18, base_y + 0.23)}) (width ${tw}) (layer "B.Cu"))
+  (segment (start ${p.eaxy(3.18, base_y + 0.23)}) (end ${p.eaxy(3.4, base_y)}) (width ${tw}) (layer "B.Cu"))`;
+
+      return front_traces + socket_to_jumper_traces + back_traces_right + back_traces_left;
     };
 
     const gen_traces = () => {
@@ -342,6 +356,72 @@ module.exports = {
       }
 
       return traces;
+    };
+
+    // Generate GND vias between jumper rows for better ground stitching
+    // Vias are placed on the right side between jumper pads and socket holes
+    const gen_gnd_vias = () => {
+      let vias = "";
+      const via_x = 6.3; // Between jumper pads (~5.5) and socket holes (7.62)
+
+      // Generate vias above rows 0-11 (12 vias total, one per row)
+      for (let row = 0; row <= 11; row++) {
+        const row_y = -12.7 + row * 2.54;
+        const via_offset = 0.55;
+        const via_y = row_y - via_offset;
+
+        vias += `
+    (via (at ${p.eaxy(via_x, via_y)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.GND.index}))`;
+      }
+
+      return vias;
+    };
+
+    // Generate jumper vias (actual vias instead of through-hole pads)
+    // These connect the jumper pads between front and back layers
+    const gen_jumper_vias = () => {
+      const pin_names = [
+        ["P1", "RAW"],
+        ["P0", "GND"],
+        ["GND", "RST"],
+        ["GND", "VCC"],
+        ["P2", "P21"],
+        ["P3", "P20"],
+        ["P4", "P19"],
+        ["P5", "P18"],
+        ["P6", "P15"],
+        ["P7", "P14"],
+        ["P8", "P16"],
+        ["P9", "P10"],
+      ];
+
+      const invert = (p.side == "B" && !p.reverse_mount && !p.reversible) ||
+        (p.side == "F" && p.reverse_mount && !p.reversible) ||
+        (!p.reverse_mount && p.reversible);
+
+      let vias = "";
+      for (let row = 0; row < pin_names.length; row++) {
+        // Only generate vias for reversible rows that need jumpers
+        if (!(p.reversible && (row < 4 || !p.only_required_jumpers))) {
+          continue;
+        }
+
+        const pin_name_left = pin_names[row][invert ? 1 : 0];
+        const pin_name_right = pin_names[row][invert ? 0 : 1];
+        const net_left_index = p[pin_name_left].index;
+        const net_right_index = p[pin_name_right].index;
+
+        const row_y = -12.7 + row * 2.54;
+        // For row 0 (top pins), shift vias down 0.5mm to make room for power switch
+        const via_y_offset = row === 0 ? 0.5 : 0;
+        const via_y = row_y + via_y_offset;
+
+        vias += `
+    (via (at ${p.eaxy(-3.4, via_y)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${net_left_index}))
+    (via (at ${p.eaxy(3.4, via_y)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${net_right_index}))`;
+      }
+
+      return vias;
     };
 
     const invert_pins =
@@ -391,15 +471,9 @@ module.exports = {
           : net_right
         })
       `;
-      let socket_row_vias = `
-    ${"" /* Inside VIAS */}
-    (pad "${via_num_left}" thru_hole circle (at -3.4 ${-12.7 + row_offset_y + via_y_offset} ${p.r
-        }) (size ${p.via_size} ${p.via_size}) (drill ${p.via_drill
-        }) (layers "*.Cu" "*.Mask") ${net_left})
-    (pad "${via_num_right}" thru_hole circle (at 3.4 ${-12.7 + row_offset_y + via_y_offset} ${p.r
-        }) (size ${p.via_size} ${p.via_size}) (drill ${p.via_drill
-        }) (layers "*.Cu" "*.Mask") ${net_right})
-      `;
+      // Vias are now generated as actual via elements in gen_jumper_vias()
+      // instead of through-hole pads inside the footprint
+      let socket_row_vias = ``;
 
       let socket_row_rectangular_jumpers = `
     ${"" /* Jumper Pads - Front Left */}
@@ -765,19 +839,19 @@ module.exports = {
     `;
 
     const instructions = `
-    (fp_text user "Right" (at -6.6 -15.8 ${p.r}) (layer "F.SilkS")
+    (fp_text user "Back" (at -6.6 -15.8 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "Back" (at -6.6 -14.4 ${p.r}) (layer "F.SilkS")
+    (fp_text user "Right" (at -6.6 -14.4 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
     (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at 6.6 -15.1 ${p.r}) (layer "F.SilkS")
       (effects ${get_font_str(false)})
     )
-    (fp_text user "Left" (at 6.6 -15.8 ${p.r}) (layer "B.SilkS")
+    (fp_text user "Back" (at 6.6 -15.8 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
-    (fp_text user "Back" (at 6.6 -14.4 ${p.r}) (layer "B.SilkS")
+    (fp_text user "Left" (at 6.6 -14.4 ${p.r}) (layer "B.SilkS")
       (effects ${get_font_str(false)} (justify mirror))
     )
     (fp_text user "(M${!p.reverse_mount ? "↑" : "↓"})" (at -6.6 -15.1 ${p.r}) (layer "B.SilkS")
@@ -787,6 +861,8 @@ module.exports = {
 
     const socket_rows = gen_socket_rows(p.show_via_labels, p.show_silk_labels);
     const traces = gen_traces();
+    const gnd_vias = gen_gnd_vias();
+    const jumper_vias = gen_jumper_vias();
 
     const extra_pins = `
     (pad "25" thru_hole circle (at ${invert_pins ? "" : "-"}5.08 10.16 ${p.r
@@ -828,8 +904,10 @@ module.exports = {
     ${p.mcu_3dmodel_filename ? mcu_3dmodel : ""}
   )
 
-  ${"" /* Traces */}
+  ${"" /* Traces and vias */}
   ${p.reversible && p.include_traces ? traces : ""}
+  ${p.reversible ? jumper_vias : ""}
+  ${p.include_gnd_vias && p.reversible ? gnd_vias : ""}
     `;
   },
 };
