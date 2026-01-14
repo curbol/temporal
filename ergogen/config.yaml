@@ -1,6 +1,10 @@
 # Temporal, by Curtis Bollinger - @curbol
 # https://github.com/curbol/temporal
 # v1 - fall 2025
+#
+# Key configurations: 36-42 keys depending on breakoffs and encoders
+#   - Full pinky column: 42/41/40 keys (0/1/2 encoders)
+#   - Breakoff pinky column: 38/37/36 keys (0/1/2 encoders)
 
 # ergogen docs: https://docs.ergogen.xyz/config-overview
 
@@ -402,10 +406,10 @@ outlines:
       adjust.shift: [2.9, -7.5]
 
   # Cutout collections
-  _socket_cutouts_40:
+  _socket_cutouts_38:
     - name: _socket
       where: [[key, -extra]]
-  _socket_cutouts_40_mirrored:
+  _socket_cutouts_38_mirrored:
     - name: _socket_mirrored
       where: [[key, -extra]]
 
@@ -542,7 +546,7 @@ outlines:
     - what: circle
       radius: m2_size / 2 + 0.1
 
-  _plate_holes_40:
+  _plate_holes_38:
     - name: _plate_hole
       where: &hole1_pos
         ref: finger_middle_top
@@ -564,8 +568,8 @@ outlines:
         ref: finger_pinky_top
         shift: [hole5_x, hole5_y]
 
-  _plate_holes_44:
-    - +_plate_holes_40
+  _plate_holes_42:
+    - +_plate_holes_38
     - name: _plate_hole
       where: &hole5_e_pos
         ref: finger_extra_top
@@ -719,7 +723,7 @@ outlines:
       adjust.shift: [1cx, 0]
 
   # Kickstand outlines
-  _kickstand_44_1:
+  _kickstand_42_1:
     - what: rectangle
       where: /finger_extra/
       size: [px, py]
@@ -736,23 +740,23 @@ outlines:
           affect: y
         - ref: finger_extra_home
           shift: [-2px, -2py]
-  _kickstand_44_1e:
-    - name: _kickstand_44_1
+  _kickstand_42_1e:
+    - name: _kickstand_42_1
       expand: case_expand + wall_thickness
       joints: 1
-  _kickstand_44_1ef:
-    - name: _kickstand_44_1e
+  _kickstand_42_1ef:
+    - name: _kickstand_42_1e
       fillet: pcb_fillet * 2
-  _kickstand_44_2:
-    - name: _kickstand_44_1e
+  _kickstand_42_2:
+    - name: _kickstand_42_1e
     - what: rectangle
       operation: subtract
       where: finger_extra_home
       size: [1px, py]
       adjust.shift: [-0.75px, -0.25px]
-    - +_kickstand_44_1ef
+    - +_kickstand_42_1ef
 
-  _kickstand_40_1:
+  _kickstand_38_1:
     - what: rectangle
       where:
         - finger_pinky_top
@@ -772,71 +776,71 @@ outlines:
           affect: y
         - ref: finger_pinky_bottom
           shift: [-2px, -2py]
-  _kickstand_40_1e:
-    - name: _kickstand_40_1
+  _kickstand_38_1e:
+    - name: _kickstand_38_1
       expand: case_expand + wall_thickness
       joints: 1
-  _kickstand_40_1ef:
-    - name: _kickstand_40_1e
+  _kickstand_38_1ef:
+    - name: _kickstand_38_1e
       fillet: pcb_fillet * 2
-  _kickstand_40_2:
-    - name: _kickstand_40_1e
+  _kickstand_38_2:
+    - name: _kickstand_38_1e
     - what: rectangle
       operation: subtract
       where: finger_pinky_bottom
       size: [1px, py]
       adjust.shift: [-0.75px, -0.25px]
-    - +_kickstand_40_1ef
+    - +_kickstand_38_1ef
 
   # Key areas
-  _keys_44:
+  _keys_42:
     - what: rectangle
       where: /key/
       size: [px, py]
 
-  _keys_40:
+  _keys_38:
     - what: rectangle
       where: [[key, -extra]]
       size: [px, py]
 
-  _key_plugs_44:
+  _key_plugs_42:
     - what: rectangle
       where: /key/
       size: [plug_w, plug_h]
       fillet: 0.25
     - +_encoder_pins_plate_cutouts
 
-  _key_plugs_40:
+  _key_plugs_38:
     - what: rectangle
       where: [[key, -extra]]
       size: [plug_w, plug_h]
       fillet: 0.25
     - +_encoder_pins_plate_cutouts
 
-  _keys_area_44:
-    - +_keys_44
+  _keys_area_42:
+    - +_keys_42
     - +_finger_fill
     - +_thumb
 
-  _keys_area_40:
-    - +_keys_40
+  _keys_area_38:
+    - +_keys_38
     - +_finger_fill
     - +_thumb
 
   # Board outlines
-  _board_44:
+  _board_42:
     - +_mcu_area
-    - +_keys_area_44
+    - +_keys_area_42
     - +_thumb_smooth
 
-  _board_40:
+  _board_38:
     - +_mcu_area
-    - +_keys_area_40
+    - +_keys_area_38
     - +_thumb_smooth
 
   # Breakoff tab for extra pinky
   _break_cut_inner:
-    - name: _board_40
+    - name: _board_38
       fillet: pcb_fillet
 
   _break_cut:
@@ -862,75 +866,75 @@ outlines:
     - +_break_cut
     - -_break_bridges
 
-  # 44-key case outlines
-  _case_inner_44_1:
-    - name: _board_44
+  # 42-key case outlines
+  _case_inner_42_1:
+    - name: _board_42
       fillet: pcb_fillet
-  _case_inner_44:
-    - name: _case_inner_44_1
+  _case_inner_42:
+    - name: _case_inner_42_1
       expand: case_expand
       joints: 1
 
-  _case_outer_44_1:
-    - name: _board_44
+  _case_outer_42_1:
+    - name: _board_42
       expand: case_expand + wall_thickness
       joints: 1
-  _case_outer_44:
-    - name: _case_outer_44_1
+  _case_outer_42:
+    - name: _case_outer_42_1
       fillet: pcb_fillet
 
-  _top_plate_44:
-    - name: _keys_area_44
+  _top_plate_42:
+    - name: _keys_area_42
       fillet: pcb_fillet
-    - -_key_plugs_44
-    - -_plate_holes_44
+    - -_key_plugs_42
+    - -_plate_holes_42
 
-  _back_plate_44:
-    - name: _board_44
+  _back_plate_42:
+    - name: _board_42
       fillet: pcb_fillet
-    - -_plate_holes_44
+    - -_plate_holes_42
 
-  _kickstand_44:
-    - name: _kickstand_44_2
+  _kickstand_42:
+    - name: _kickstand_42_2
       fillet: pcb_fillet
-    - -_case_inner_44
+    - -_case_inner_42
 
-  # 40-key case outlines
-  _case_inner_40_1:
-    - name: _board_40
+  # 38-key case outlines
+  _case_inner_38_1:
+    - name: _board_38
       fillet: pcb_fillet
-  _case_inner_40:
-    - name: _case_inner_40_1
+  _case_inner_38:
+    - name: _case_inner_38_1
       expand: case_expand
       joints: 1
 
-  _case_outer_40_1:
-    - name: _board_40
+  _case_outer_38_1:
+    - name: _board_38
       expand: case_expand + wall_thickness
       joints: 1
-  _case_outer_40:
-    - name: _case_outer_40_1
+  _case_outer_38:
+    - name: _case_outer_38_1
       fillet: pcb_fillet
 
-  _top_plate_40:
-    - name: _keys_area_40
+  _top_plate_38:
+    - name: _keys_area_38
       fillet: pcb_fillet
-    - -_key_plugs_40
-    - -_plate_holes_40
+    - -_key_plugs_38
+    - -_plate_holes_38
 
-  _back_plate_40:
-    - name: _board_40
+  _back_plate_38:
+    - name: _board_38
       fillet: pcb_fillet
-    - -_plate_holes_40
+    - -_plate_holes_38
 
-  _kickstand_40:
-    - name: _kickstand_40_2
+  _kickstand_38:
+    - name: _kickstand_38_2
       fillet: pcb_fillet
-    - -_case_inner_40
+    - -_case_inner_38
 
   # Common outlines
   _pcb:
-    - name: _board_44
+    - name: _board_42
       fillet: pcb_fillet
     - name: _break
       fillet: cut_fillet
@@ -938,7 +942,7 @@ outlines:
 
   _mcu_cover:
     - +_mcu_area
-    - -_keys_area_44
+    - -_keys_area_42
     - what: rectangle
       where: thumb_mid
       size: [2px, py]
@@ -951,38 +955,38 @@ outlines:
     - -_mcu_cover_holes
 
   # Preview layouts
-  _preview_44:
-    - +_case_outer_44
-    - -_case_inner_44
-    - name: _top_plate_44
+  _preview_42:
+    - +_case_outer_42
+    - -_case_inner_42
+    - name: _top_plate_42
       adjust.shift: [-0.01, -0.01]
     - name: _mcu_cover
       adjust.shift: [0.01, 0.01]
 
-  _preview_44_kickstand:
-    - +_preview_44
-    - +_kickstand_44
+  _preview_42_kickstand:
+    - +_preview_42
+    - +_kickstand_42
 
-  _preview_40:
-    - +_case_outer_40
-    - -_case_inner_40
-    - name: _top_plate_40
+  _preview_38:
+    - +_case_outer_38
+    - -_case_inner_38
+    - name: _top_plate_38
       adjust.shift: [-0.01, -0.01]
     - name: _mcu_cover
       adjust.shift: [0.01, 0.01]
 
-  _preview_40_kickstand:
-    - +_preview_40
-    - +_kickstand_40
+  _preview_38_kickstand:
+    - +_preview_38
+    - +_kickstand_38
 
   preview:
-    - name: _preview_44
+    - name: _preview_42
       adjust.shift: [-preview_x, preview_y]
-    - name: _preview_44_kickstand
+    - name: _preview_42_kickstand
       adjust.shift: [preview_x, preview_y]
-    - name: _preview_40
+    - name: _preview_38
       adjust.shift: [-preview_x, -preview_y]
-    - name: _preview_40_kickstand
+    - name: _preview_38_kickstand
       adjust.shift: [preview_x, -preview_y]
 
 # ============================================================================
@@ -1035,7 +1039,7 @@ cases:
 
   _asymmetric_bottom_cutouts:
     - what: outline
-      name: _socket_cutouts_40
+      name: _socket_cutouts_38
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline
@@ -1048,7 +1052,7 @@ cases:
       shift: [0, 0, -bottom_thickness * 1.5]
   _asymmetric_bottom_cutouts_mirrored:
     - what: outline
-      name: _socket_cutouts_40_mirrored
+      name: _socket_cutouts_38_mirrored
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
     - what: outline
@@ -1111,81 +1115,81 @@ cases:
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
       operation: subtract
 
-  # 44-key cases
-  _temporal_44_1:
+  # 42-key cases
+  _temporal_42_1:
     - what: outline
-      name: _case_outer_44
+      name: _case_outer_42
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
     - what: outline
-      name: _case_inner_44
+      name: _case_inner_42
       extrude: wall_height * 2
       operation: subtract
     - -_wall_cutouts
     - -_symmetric_bottom_cutouts
     - +_posts
     - +_posts_pinky
-  temporal_44:
-    - +_temporal_44_1
+  temporal_42:
+    - +_temporal_42_1
     - -_asymmetric_bottom_cutouts
     - -_asymmetric_pinky_cutouts
-  temporal_44_mirrored:
-    - +_temporal_44_1
+  temporal_42_mirrored:
+    - +_temporal_42_1
     - -_asymmetric_bottom_cutouts_mirrored
     - -_asymmetric_pinky_cutouts_mirrored
 
-  _temporal_44_kickstand_1:
+  _temporal_42_kickstand_1:
     - what: outline
-      name: _kickstand_44
+      name: _kickstand_42
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-  temporal_44_kickstand:
-    - +_temporal_44_kickstand_1
-    - +temporal_44
-  temporal_44_kickstand_mirrored:
-    - +_temporal_44_kickstand_1
-    - +temporal_44_mirrored
+  temporal_42_kickstand:
+    - +_temporal_42_kickstand_1
+    - +temporal_42
+  temporal_42_kickstand_mirrored:
+    - +_temporal_42_kickstand_1
+    - +temporal_42_mirrored
 
-  top_plate_44:
+  top_plate_42:
     - what: outline
-      name: _top_plate_44
+      name: _top_plate_42
       extrude: top_plate_thickness
 
-  # 40-key cases
-  _temporal_40_1:
+  # 38-key cases
+  _temporal_38_1:
     - what: outline
-      name: _case_outer_40
+      name: _case_outer_38
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
     - what: outline
-      name: _case_inner_40
+      name: _case_inner_38
       extrude: wall_height * 2
       operation: subtract
     - -_wall_cutouts
     - -_symmetric_bottom_cutouts
     - +_posts
-  temporal_40:
-    - +_temporal_40_1
+  temporal_38:
+    - +_temporal_38_1
     - -_asymmetric_bottom_cutouts
-  temporal_40_mirrored:
-    - +_temporal_40_1
+  temporal_38_mirrored:
+    - +_temporal_38_1
     - -_asymmetric_bottom_cutouts_mirrored
 
-  _temporal_40_kickstand_1:
+  _temporal_38_kickstand_1:
     - what: outline
-      name: _kickstand_40
+      name: _kickstand_38
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-  temporal_40_kickstand:
-    - +_temporal_40_kickstand_1
-    - +temporal_40
-  temporal_40_kickstand_mirrored:
-    - +_temporal_40_kickstand_1
-    - +temporal_40_mirrored
+  temporal_38_kickstand:
+    - +_temporal_38_kickstand_1
+    - +temporal_38
+  temporal_38_kickstand_mirrored:
+    - +_temporal_38_kickstand_1
+    - +temporal_38_mirrored
 
-  top_plate_40:
+  top_plate_38:
     - what: outline
-      name: _top_plate_40
+      name: _top_plate_38
       extrude: top_plate_thickness
 
 # ============================================================================
@@ -1382,11 +1386,11 @@ pcbs:
         where: *mcu_hole2_where
         params: *m2_hole_params
 
-  top_plate_44:
+  top_plate_42:
     template: kicad8
     outlines:
       main:
-        outline: _top_plate_44
+        outline: _top_plate_42
     footprints:
       hole_1: &plate_hole_1
         what: ceoloide/mounting_hole_npth
@@ -1405,11 +1409,11 @@ pcbs:
         where: *hole5_e_pos
       temporal: *temporal_text
 
-  back_plate_44:
+  back_plate_42:
     template: kicad8
     outlines:
       main:
-        outline: _back_plate_44
+        outline: _back_plate_42
     footprints:
       hole_1: *plate_hole_1
       hole_2: *plate_hole_2
@@ -1417,11 +1421,11 @@ pcbs:
       hole_4: *plate_hole_4
       hole_5_e: *plate_hole_5_e
 
-  top_plate_40:
+  top_plate_38:
     template: kicad8
     outlines:
       main:
-        outline: _top_plate_40
+        outline: _top_plate_38
     footprints:
       hole_1: *plate_hole_1
       hole_2: *plate_hole_2
@@ -1432,11 +1436,11 @@ pcbs:
         where: *hole5_pos
       temporal: *temporal_text
 
-  back_plate_40:
+  back_plate_38:
     template: kicad8
     outlines:
       main:
-        outline: _back_plate_40
+        outline: _back_plate_38
     footprints:
       hole_1: *plate_hole_1
       hole_2: *plate_hole_2

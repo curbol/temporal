@@ -4,7 +4,11 @@ The Temporal build process is straightforward and follows similar steps to [Type
 
 ## Key Configuration
 
-Before starting your build, decide on your key configuration (40 or 44 keys). The outer pinky columns can be snapped off the PCB if not needed.
+Before starting your build, decide on your key configuration (36-42 keys). The outer pinky columns can be snapped off the PCB if not needed, and each encoder replaces one key position in the thumb cluster.
+
+**Available configurations:**
+- **With full pinky column:** 42 keys, 41 keys + 1 encoder, or 40 keys + 2 encoders
+- **With breakoff pinky column:** 38 keys, 37 keys + 1 encoder, or 36 keys + 2 encoders
 
 > [!WARNING]
 > When removing keys, the break-off points may be sharp - file or sand them smooth. PCB dust is toxic, so wear a mask and work in a well-ventilated area or outside.

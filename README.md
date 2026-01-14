@@ -3,7 +3,7 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2025)
 ![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
-A 40/44 key split ergonomic keyboard with wireless support. Features a breakoff pinky column with an optional encoder in the thumb cluster.
+A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff pinky column and optional encoders in the thumb cluster.
 
 ![Temporal Preview](assets/preview.svg)
 
@@ -11,7 +11,9 @@ A 40/44 key split ergonomic keyboard with wireless support. Features a breakoff 
 
 ### Layout
 
-- 40/44 keys with breakoff pinky column
+- 36-42 keys depending on configuration:
+  - 42/41/40 keys (0/1/2 encoders) with full pinky column
+  - 38/37/36 keys (0/1/2 encoders) with breakoff pinky column
 - Column stagger and splay on pinky and ring columns
 
 ### Hardware
@@ -19,9 +21,10 @@ A 40/44 key split ergonomic keyboard with wireless support. Features a breakoff 
 - Kailh Choc v1 low-profile switches with hotswap sockets
 - nice!nano or Pro Micro compatible microcontrollers
 - Optional nice!view display
-- Optional EC12 rotary encoder in thumb cluster
+- Optional EC11/EC12 rotary encoders in thumb cluster (up to 2)
 - Wireless with battery support
 - Reversible PCB
+- 3D printable cases with optional kickstand for tenting
 
 ### Tools
 

@@ -10,10 +10,10 @@ This is the complete list of components needed to build one Temporal keyboard (b
 |-----------|----------|-------|--------|
 | nice!nano v2.0 | 2 | Wireless microcontroller | [Typeractive](https://typeractive.xyz/) |
 | nice!view | 2 | Optional display | [Typeractive](https://typeractive.xyz/) |
-| Kailh Choc Hotswap Sockets | 40-44 | Depends on your key configuration | [Typeractive](https://typeractive.xyz/) |
+| Kailh Choc Hotswap Sockets | 36-42 | Depends on your key configuration | [Typeractive](https://typeractive.xyz/) |
 | EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [Typeractive](https://typeractive.xyz/) |
-| SMD Diodes (1N4148W) | 40-44 | One per switch, depends on configuration | [Typeractive](https://typeractive.xyz/) |
-| ALPS EC12 Low Profile Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [Typeractive](https://typeractive.xyz/) |
+| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration | [Typeractive](https://typeractive.xyz/) |
+| ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [Typeractive](https://typeractive.xyz/) |
 | Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [Typeractive](https://typeractive.xyz/) |
 | Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [Typeractive](https://typeractive.xyz/) |
 | Battery Jack (JST PH 2.0mm) | 2 | For battery connection | [Typeractive](https://typeractive.xyz/) |
@@ -35,8 +35,8 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 | Component | Quantity | Notes |
 |-----------|----------|-------|
-| Choc v1 Switches | 40-44 | Low-profile switches, depends on configuration |
-| Choc v1 Keycaps | 40-44 | Compatible with Choc switches |
+| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration |
+| Choc v1 Keycaps | 36-42 | Compatible with Choc switches |
 
 I recommend using sculpted keycaps as it significantly improves the feel, but ultimately it's personal preference.
 
@@ -56,8 +56,8 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 | Component | Quantity | Notes |
 |-----------|----------|-------|
 | Temporal PCB | 2 | Order using gerbers/temporal.zip |
-| 3D Printed Case | 1 | Choose your key configuration (40/44) |
-| 3D Printed Case (Mirror) | 1 | Choose your key configuration (40/44) |
+| 3D Printed Case (Left) | 1 | Choose your key configuration (38/42) |
+| 3D Printed Case (Right) | 1 | Choose your key configuration (38/42) |
 | MCU Cover | 2 | Optional, protects the microcontroller |
 
 Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
@@ -66,7 +66,7 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 - Surface finish: LeadFree HASL
 - See [`pcbs/README.md`](/pcbs/README.md) for detailed manufacturing specifications
 
-3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for 40 and 44 key configurations.
+3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for 38 and 42 key configurations, with optional kickstand variants for tenting.
 
 **For home 3D printing:**
 
@@ -105,7 +105,12 @@ Use the gerber files in [`gerbers/`](/gerbers/) when ordering.
 
 #### JLCPCB Assembly (Optional)
 
-JLCPCB can pre-assemble the SMD diodes onto your PCBs, saving you from hand-soldering 40-44 tiny components. To use this service:
+JLCPCB can pre-assemble SMD components onto your PCBs. This includes:
+
+- **SMD Diodes** - Saves hand-soldering 21 tiny components per board
+- **Jumpers** - 30 0-ohm resistors per board can bridge the solder jumper pads for MCU, display, and battery connections (eliminating manual jumper soldering)
+
+To use this service:
 
 1. Select "PCB Assembly" when ordering
 2. Upload files from [`jlcpcb/`](/jlcpcb/):

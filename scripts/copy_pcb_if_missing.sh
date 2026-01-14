@@ -11,10 +11,10 @@ ERGOGEN_OUTPUT="ergogen/output/pcbs"
 # List of all PCB files to copy
 PCB_FILES=(
   "temporal"
-  "top_plate_40"
-  "top_plate_44"
-  "back_plate_40"
-  "back_plate_44"
+  "top_plate_38"
+  "top_plate_42"
+  "back_plate_38"
+  "back_plate_42"
   "mcu_cover"
 )
 
