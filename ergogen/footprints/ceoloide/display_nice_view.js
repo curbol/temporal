@@ -499,11 +499,6 @@ module.exports = {
   (segment (start ${p.eaxy(2.790128, 18.394034)}) (end ${p.eaxy(2.530128, 18.394034)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[4].index}))
   (via (at ${p.eaxy(2.530128, 18.394034)}) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net ${dst_nets[4].index}))
 
-  (segment (start ${p.eaxy(-4.775, 11.94)}) (end ${p.eaxy(-4.425305, 11.94)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
-  (segment (start ${p.eaxy(-4.425305, 11.94)}) (end ${p.eaxy(-3.700305, 12.665)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
-  (segment (start ${p.eaxy(-3.700305, 12.665)}) (end ${p.eaxy(-3.099695, 12.665)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
-  (segment (start ${p.eaxy(-3.099695, 12.665)}) (end ${p.eaxy(-2.604695, 12.17)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
-  (segment (start ${p.eaxy(-2.604695, 12.17)}) (end ${p.eaxy(3.17, 12.17)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
   (segment (start ${p.eaxy(5.08, 14.05)}) (end ${p.eaxy(4.454034, 13.424034)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
   (segment (start ${p.eaxy(4.454034, 13.424034)}) (end ${p.eaxy(-4.905964, 13.424034)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
   (segment (start ${p.eaxy(-4.905964, 13.424034)}) (end ${p.eaxy(-5.08, 13.25)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
