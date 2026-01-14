@@ -91,24 +91,30 @@ units:
   cut_fillet: cut_w / 2 - 0.01
   break_bridge_size: 3.7
 
+  # Choc
+  choc_under_to_pcb: 2.2
+  choc_top_plate: 1.3
+  choc_pins: 2.65
+  diode_h: 1.15
+
   # Case dimensions
   case_expand: 0.1
-  wall_height: pcb_thickness + 2.2 + 0.1
-  wall_thickness: 1.2001
-  case_fillet: pcb_fillet + wall_thickness
+  buffer: 0.2
+  wall_height: pcb_thickness + choc_under_to_pcb + 0.1 + buffer
+  wall_thickness: 1.2001 # This is finiky. Tweak until all pointy corners go away.
   side_cut_width: 12
-  side_cut_radius: (wall_height - pcb_thickness) / 2
-  bottom_thickness: 1.9
-  choc_depth: 1.2
-  diode_depth: 1.2
-  pin_depth: 0.8
-  jumper_depth: 0.8
+  side_cut_radius: wall_height / 2
+  bottom_thickness: 2
+  choc_depth: choc_pins - pcb_thickness + buffer
+  diode_depth: diode_h + buffer
+  pin_depth: 0.5 + buffer
+  jumper_depth: 0.5 + buffer
 
   # M2 hardware
   m2_size: 2
-  post_hole_diameter: 2.7
+  m2_insert_inner_diameter: 2.7
   m2_insert_outer_diameter: 4.9
-  m2_insert_post_height: pcb_thickness + 0.9
+  m2_insert_post_height: pcb_thickness + choc_under_to_pcb - choc_top_plate
   m2_insert_hole_depth: 3.95
   m2_nut_width: 4.2
 
@@ -576,7 +582,7 @@ outlines:
 
   _post_hole:
     - what: circle
-      radius: post_hole_diameter / 2
+      radius: m2_insert_inner_diameter / 2
 
   _posts_core:
     - name: _post
@@ -730,10 +736,21 @@ outlines:
           affect: y
         - ref: finger_extra_home
           shift: [-2px, -2py]
-  _kickstand_44_2:
+  _kickstand_44_1e:
     - name: _kickstand_44_1
       expand: case_expand + wall_thickness
       joints: 1
+  _kickstand_44_1ef:
+    - name: _kickstand_44_1e
+      fillet: pcb_fillet * 2
+  _kickstand_44_2:
+    - name: _kickstand_44_1e
+    - what: rectangle
+      operation: subtract
+      where: finger_extra_home
+      size: [1px, py]
+      adjust.shift: [-0.75px, -0.25px]
+    - +_kickstand_44_1ef
 
   _kickstand_40_1:
     - what: rectangle
@@ -755,10 +772,21 @@ outlines:
           affect: y
         - ref: finger_pinky_bottom
           shift: [-2px, -2py]
-  _kickstand_40_2:
+  _kickstand_40_1e:
     - name: _kickstand_40_1
       expand: case_expand + wall_thickness
       joints: 1
+  _kickstand_40_1ef:
+    - name: _kickstand_40_1e
+      fillet: pcb_fillet * 2
+  _kickstand_40_2:
+    - name: _kickstand_40_1e
+    - what: rectangle
+      operation: subtract
+      where: finger_pinky_bottom
+      size: [1px, py]
+      adjust.shift: [-0.75px, -0.25px]
+    - +_kickstand_40_1ef
 
   # Key areas
   _keys_44:
