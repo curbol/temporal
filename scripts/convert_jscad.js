@@ -19,7 +19,7 @@ const execAsync = promisify(exec);
 
 // Arc resolution scaling: 10 segments per mm of radius
 function getArcSegments(radius) {
-  return Math.round(radius * 10);
+  return Math.ceil(radius * 10);
 }
 
 const MIRROR_SCAD = path.join(__dirname, '..', 'ergogen', 'mirror_case.scad');
