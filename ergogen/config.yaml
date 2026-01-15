@@ -983,9 +983,9 @@ outlines:
     - name: _preview_42
       adjust.shift: [-preview_x, preview_y]
     - name: _preview_42_kickstand
-      adjust.shift: [preview_x, preview_y]
-    - name: _preview_38
       adjust.shift: [-preview_x, -preview_y]
+    - name: _preview_38
+      adjust.shift: [preview_x, preview_y]
     - name: _preview_38_kickstand
       adjust.shift: [preview_x, -preview_y]
 
