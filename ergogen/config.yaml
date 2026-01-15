@@ -64,9 +64,8 @@ units:
   # MCU positioning (relative to finger_inner_home)
   mcu_y: -12.3
   mcu_x: 19.8
-  mcu_area_x: 19.4
-  mcu_area_w: 20.25
-  mcu_area_h: 66.25
+  mcu_area_w: 19.45
+  mcu_area_h: 56.25
   mcu_pin_spacing: 7.62
 
   # Display positioning
@@ -108,9 +107,11 @@ units:
   case_expand: 0.1
   buffer: 0.2
   wall_height: pcb_thickness + choc_under_to_pcb + 0.1 + buffer
+  wall_above_pcb: wall_height - pcb_thickness
   wall_thickness: 1.2001 # This is finiky. Tweak until all pointy corners go away.
-  side_cut_width: 12
-  side_cut_radius: wall_height / 2
+  side_cut_width: 10.4
+  side_cut_radius: (wall_above_pcb + pcb_thickness / 2) / 2
+  mcu_catch_radius: 0.68
   bottom_thickness: 2
   choc_depth: choc_pins - pcb_thickness + buffer
   diode_depth: diode_h + buffer
@@ -225,8 +226,8 @@ outlines:
     - what: rectangle
       where:
         ref: finger_inner_home
-        shift: [mcu_area_x, -5 + mcu_y]
-      size: [mcu_area_w, mcu_area_h]
+        shift: [mcu_x, mcu_y - 5]
+      size: [mcu_area_w, mcu_area_h + 10]
 
   _display:
     - what: rectangle
@@ -575,14 +576,28 @@ outlines:
     - name: _case_cutout
       where:
         ref: finger_inner_home
-        shift: [mcu_x, 25 + side_cut_radius * 2 + mcu_y]
+        shift: [mcu_x, mcu_y + mcu_area_h / 2]
 
   _side_case_cutout:
     - name: _case_cutout_half
       where:
         ref: finger_inner_home
-        shift: [27.5 + side_cut_radius * 2, reset_y]
-        rotate: 90
+        shift: [mcu_x + mcu_area_w / 2, reset_y]
+        rotate: -90
+
+  # MCU Catch
+  _mcu_catch_slice:
+    - what: circle
+      radius: mcu_catch_radius
+    - what: rectangle
+      operation: subtract
+      size: [mcu_catch_radius * 2, mcu_catch_radius * 3]
+      adjust.shift: [mcu_catch_radius + wall_thickness / 2, 0]
+  _mcu_catch:
+    - name: _mcu_catch_slice
+      where:
+        ref: finger_inner_home
+        shift: [mcu_x + mcu_area_w / 2, reset_y]
 
   # Mounting holes
   _plate_hole:
@@ -1006,6 +1021,10 @@ outlines:
     # - -_choc_posts_cutouts_mirrored
     # - -_choc_posts_cutouts_pinky_mirrored
     # - -_encoder_posts_cutouts_mirrored
+    # Case walls:
+    # - -_usbc_case_cutout
+    # - -_side_case_cutout
+    # - -_mcu_catch
 
   _mcu_cover:
     - +_mcu_area
@@ -1178,17 +1197,36 @@ cases:
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
 
+  _case_outer_42:
+    - what: outline
+      name: _case_outer_42
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+  _case_outer_38:
+    - what: outline
+      name: _case_outer_38
+      extrude: bottom_thickness + wall_height
+      shift: [0, 0, -bottom_thickness]
+
+  _mcu_catch:
+    - what: outline
+      name: _mcu_catch
+      extrude: mcu_area_h
+      shift: [0, 0, pcb_thickness + mcu_catch_radius]
+      rotate: [-90, 0, 0]
+    - ~_case_outer_38
+
   _wall_cutouts:
     - what: outline
       name: _usbc_case_cutout
-      extrude: 20
-      shift: [0, 10, wall_height]
+      extrude: wall_thickness * 3
+      shift: [0, wall_thickness * 2, wall_height]
       rotate: [90, 0, 0]
     - what: outline
       name: _side_case_cutout
-      extrude: 10
-      shift: [-5, 0, wall_height]
-      rotate: [0, 90, 0]
+      extrude: wall_thickness * 3
+      shift: [wall_thickness * 2, 0, wall_height]
+      rotate: [0, -90, 0]
 
   _posts:
     - what: outline
@@ -1212,14 +1250,12 @@ cases:
 
   # 42-key cases
   _temporal_42_1:
-    - what: outline
-      name: _case_outer_42
-      extrude: bottom_thickness + wall_height
-      shift: [0, 0, -bottom_thickness]
+    - +_case_outer_42
     - what: outline
       name: _case_inner_42
       extrude: wall_height * 2
       operation: subtract
+    - +_mcu_catch
     - -_wall_cutouts
     - -_symmetric_bottom_cutouts
     - +_posts
@@ -1274,14 +1310,12 @@ cases:
 
   # 38-key cases
   _temporal_38_1:
-    - what: outline
-      name: _case_outer_38
-      extrude: bottom_thickness + wall_height
-      shift: [0, 0, -bottom_thickness]
+    - +_case_outer_38
     - what: outline
       name: _case_inner_38
       extrude: wall_height * 2
       operation: subtract
+    - +_mcu_catch
     - -_wall_cutouts
     - -_symmetric_bottom_cutouts
     - +_posts
