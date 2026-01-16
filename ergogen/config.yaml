@@ -336,23 +336,18 @@ outlines:
       adjust.shift: [0, diode_y]
       fillet: 0.3
 
-  _choc_side_posts_left:
+  _choc_side_posts:
     - what: circle
       radius: 1.25
       adjust.shift: [-5.5, 0]
     - what: circle
       radius: 1.25
       adjust.shift: [5.5, 0]
+  _choc_post_bridge_left: # Bridge choc post to hotswap socket
     - what: rectangle
       size: [2.5, 2.5]
       adjust.shift: [5.5, 1.25]
-  _choc_side_posts_m_right:
-    - what: circle
-      radius: 1.25
-      adjust.shift: [5.5, 0]
-    - what: circle
-      radius: 1.25
-      adjust.shift: [-5.5, 0]
+  _choc_post_bridge_m_right:
     - what: rectangle
       size: [2.5, 2.5]
       adjust.shift: [-5.5, 1.25]
@@ -365,10 +360,12 @@ outlines:
       adjust.shift: [0, -2]
   _choc_posts_left:
     - +_choc_center_post
-    - +_choc_side_posts_left
+    - +_choc_side_posts
+    - +_choc_post_bridge_left
   _choc_posts_m_right:
     - +_choc_center_post
-    - +_choc_side_posts_m_right
+    - +_choc_side_posts
+    - +_choc_post_bridge_m_right
 
   _mcu_pins_trench:
     - what: circle
@@ -485,11 +482,8 @@ outlines:
     - name: _choc_posts_m_right
       where: extra
 
-  _encoder_posts_cutouts_left:
-    - name: _choc_side_posts_left
-      where: thumb_enc
-  _encoder_posts_cutouts_m_right:
-    - name: _choc_side_posts_m_right
+  _encoder_posts_cutouts:
+    - name: _choc_side_posts
       where: thumb_enc
 
   _encoder_pins_cutouts:
@@ -1008,7 +1002,7 @@ outlines:
     # - -_diode_cutouts
     # - -_choc_posts_cutouts_left
     # - -_choc_posts_cutouts_pinky_left
-    # - -_encoder_posts_cutouts_left
+    # - -_encoder_posts_cutouts
     # - -_encoder_pins_cutouts
     # - -_mcu_pins_cutouts
     # - -_mcu_jumpers_cutouts
@@ -1023,7 +1017,6 @@ outlines:
     # - -_solder_pins_cutouts_pinky_m_right
     # - -_choc_posts_cutouts_m_right
     # - -_choc_posts_cutouts_pinky_m_right
-    # - -_encoder_posts_cutouts_m_right
     # Case walls:
     # - -_usbc_case_cutout
     # - -_side_case_cutout
@@ -1132,7 +1125,7 @@ cases:
       extrude: bottom_thickness * 2
       shift: [0, 0, -choc_depth]
     - what: outline
-      name: _encoder_posts_cutouts_left
+      name: _encoder_posts_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
   _asymmetric_bottom_cutouts_m_right:
@@ -1141,7 +1134,7 @@ cases:
       extrude: bottom_thickness * 2
       shift: [0, 0, -choc_depth]
     - what: outline
-      name: _encoder_posts_cutouts_m_right
+      name: _encoder_posts_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
 
