@@ -5,6 +5,10 @@
 # Key configurations: 36-42 keys depending on breakoffs and encoders
 #   - Full pinky column: 42/41/40 keys (0/1/2 encoders)
 #   - Breakoff pinky column: 38/37/36 keys (0/1/2 encoders)
+#
+# Case naming convention:
+#   - _left: Left-hand side case (generated directly)
+#   - _m_right: Right-hand side case (needs to be mirrored after ergogen generation)
 
 # ergogen docs: https://docs.ergogen.xyz/config-overview
 
@@ -116,7 +120,6 @@ units:
   choc_depth: choc_pins - pcb_thickness + buffer
   diode_depth: diode_h + buffer
   pin_depth: 0.5 + buffer
-  jumper_depth: 0.5 + buffer
 
   # M2 hardware
   m2_size: 2
@@ -266,7 +269,7 @@ outlines:
       where: *mcu_hole2_where
 
   # Component cutout primitives
-  _socket:
+  _socket_left:
     - what: rectangle
       size: [2.6, 2.6]
       adjust.shift: [-3.3, 5.95]
@@ -284,7 +287,7 @@ outlines:
       adjust.shift: [8.3, 3.735]
       expand: 0.3
       fillet: 0.3
-  _socket_mirrored:
+  _socket_m_right:
     - what: rectangle
       size: [2.6, 2.6]
       adjust.shift: [3.3, 5.95]
@@ -312,12 +315,12 @@ outlines:
     - what: circle
       radius: 0.95
       adjust.shift: [0.266, 0]
-  _solder_pins:
+  _solder_pins_left:
     - name: _solder_pin
       adjust.shift: [-5, -3.8]
     - name: _solder_pin
       adjust.shift: [0, -5.9]
-  _solder_pins_mirrored:
+  _solder_pins_m_right:
     - name: _solder_pin
       adjust.shift: [5, -3.8]
     - name: _solder_pin
@@ -333,7 +336,7 @@ outlines:
       adjust.shift: [0, diode_y]
       fillet: 0.3
 
-  _choc_side_posts:
+  _choc_side_posts_left:
     - what: circle
       radius: 1.25
       adjust.shift: [-5.5, 0]
@@ -343,7 +346,7 @@ outlines:
     - what: rectangle
       size: [2.5, 2.5]
       adjust.shift: [5.5, 1.25]
-  _choc_side_posts_mirrored:
+  _choc_side_posts_m_right:
     - what: circle
       radius: 1.25
       adjust.shift: [5.5, 0]
@@ -360,12 +363,12 @@ outlines:
     - what: rectangle
       size: [2, 2]
       adjust.shift: [0, -2]
-  _choc_posts:
+  _choc_posts_left:
     - +_choc_center_post
-    - +_choc_side_posts
-  _choc_posts_mirrored:
+    - +_choc_side_posts_left
+  _choc_posts_m_right:
     - +_choc_center_post
-    - +_choc_side_posts_mirrored
+    - +_choc_side_posts_m_right
 
   _mcu_pins_trench:
     - what: circle
@@ -436,57 +439,57 @@ outlines:
       adjust.shift: [0, -6.85]
 
   # Cutout collections
-  _socket_cutouts_38:
-    - name: _socket
+  _socket_cutouts_38_left:
+    - name: _socket_left
       where: [[key, -extra]]
-  _socket_cutouts_38_mirrored:
-    - name: _socket_mirrored
-      where: [[key, -extra]]
-
-  _socket_cutouts_pinky:
-    - name: _socket
-      where: extra
-  _socket_cutouts_pinky_mirrored:
-    - name: _socket_mirrored
-      where: extra
-
-  _solder_pins_cutouts_38:
-    - name: _solder_pins
-      where: [[key, -extra]]
-  _solder_pins_cutouts_38_mirrored:
-    - name: _solder_pins_mirrored
+  _socket_cutouts_38_m_right:
+    - name: _socket_m_right
       where: [[key, -extra]]
 
-  _solder_pins_cutouts_pinky:
-    - name: _solder_pins
+  _socket_cutouts_pinky_left:
+    - name: _socket_left
       where: extra
-  _solder_pins_cutouts_pinky_mirrored:
-    - name: _solder_pins_mirrored
+  _socket_cutouts_pinky_m_right:
+    - name: _socket_m_right
+      where: extra
+
+  _solder_pins_cutouts_38_left:
+    - name: _solder_pins_left
+      where: [[key, -extra]]
+  _solder_pins_cutouts_38_m_right:
+    - name: _solder_pins_m_right
+      where: [[key, -extra]]
+
+  _solder_pins_cutouts_pinky_left:
+    - name: _solder_pins_left
+      where: extra
+  _solder_pins_cutouts_pinky_m_right:
+    - name: _solder_pins_m_right
       where: extra
 
   _diode_cutouts:
     - name: _diode
       where: /key/
 
-  _choc_posts_cutouts:
-    - name: _choc_posts
+  _choc_posts_cutouts_left:
+    - name: _choc_posts_left
       where: [[key, -extra]]
-  _choc_posts_cutouts_mirrored:
-    - name: _choc_posts_mirrored
+  _choc_posts_cutouts_m_right:
+    - name: _choc_posts_m_right
       where: [[key, -extra]]
 
-  _choc_posts_cutouts_pinky:
-    - name: _choc_posts
+  _choc_posts_cutouts_pinky_left:
+    - name: _choc_posts_left
       where: extra
-  _choc_posts_cutouts_pinky_mirrored:
-    - name: _choc_posts_mirrored
+  _choc_posts_cutouts_pinky_m_right:
+    - name: _choc_posts_m_right
       where: extra
 
-  _encoder_posts_cutouts:
-    - name: _choc_side_posts
+  _encoder_posts_cutouts_left:
+    - name: _choc_side_posts_left
       where: thumb_enc
-  _encoder_posts_cutouts_mirrored:
-    - name: _choc_side_posts_mirrored
+  _encoder_posts_cutouts_m_right:
+    - name: _choc_side_posts_m_right
       where: thumb_enc
 
   _encoder_pins_cutouts:
@@ -998,14 +1001,14 @@ outlines:
       fillet: cut_fillet
       operation: subtract
     # Uncomment below to debug cutouts:
-    # - -_socket_cutouts_38
-    # - -_socket_cutouts_pinky
-    # - -_solder_pins_cutouts_38
-    # - -_solder_pins_cutouts_pinky
+    # - -_socket_cutouts_38_left
+    # - -_socket_cutouts_pinky_left
+    # - -_solder_pins_cutouts_38_left
+    # - -_solder_pins_cutouts_pinky_left
     # - -_diode_cutouts
-    # - -_choc_posts_cutouts
-    # - -_choc_posts_cutouts_pinky
-    # - -_encoder_posts_cutouts
+    # - -_choc_posts_cutouts_left
+    # - -_choc_posts_cutouts_pinky_left
+    # - -_encoder_posts_cutouts_left
     # - -_encoder_pins_cutouts
     # - -_mcu_pins_cutouts
     # - -_mcu_jumpers_cutouts
@@ -1013,14 +1016,14 @@ outlines:
     # - -_display_jumpers_cutouts
     # - -_battery_pins_cutouts
     # - -_battery_jumpers_cutouts
-    # Mirrored variants:
-    # - -_socket_cutouts_38_mirrored
-    # - -_socket_cutouts_pinky_mirrored
-    # - -_solder_pins_cutouts_38_mirrored
-    # - -_solder_pins_cutouts_pinky_mirrored
-    # - -_choc_posts_cutouts_mirrored
-    # - -_choc_posts_cutouts_pinky_mirrored
-    # - -_encoder_posts_cutouts_mirrored
+    # Mirrored variants (note: _m_right cases need to be mirrored after ergogen generation):
+    # - -_socket_cutouts_38_m_right
+    # - -_socket_cutouts_pinky_m_right
+    # - -_solder_pins_cutouts_38_m_right
+    # - -_solder_pins_cutouts_pinky_m_right
+    # - -_choc_posts_cutouts_m_right
+    # - -_choc_posts_cutouts_pinky_m_right
+    # - -_encoder_posts_cutouts_m_right
     # Case walls:
     # - -_usbc_case_cutout
     # - -_side_case_cutout
@@ -1101,7 +1104,7 @@ cases:
     - what: outline
       name: _mcu_jumpers_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -jumper_depth]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _display_pins_cutouts
       extrude: bottom_thickness * 2
@@ -1109,7 +1112,7 @@ cases:
     - what: outline
       name: _display_jumpers_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -jumper_depth]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _battery_pins_cutouts
       extrude: bottom_thickness * 2
@@ -1117,83 +1120,83 @@ cases:
     - what: outline
       name: _battery_jumpers_cutouts
       extrude: bottom_thickness * 2
-      shift: [0, 0, -jumper_depth]
+      shift: [0, 0, -pin_depth]
     - what: outline
       name: _encoder_pins_cutouts
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
 
-  _asymmetric_bottom_cutouts:
+  _asymmetric_bottom_cutouts_left:
     - what: outline
-      name: _choc_posts_cutouts
+      name: _choc_posts_cutouts_left
       extrude: bottom_thickness * 2
       shift: [0, 0, -choc_depth]
     - what: outline
-      name: _encoder_posts_cutouts
+      name: _encoder_posts_cutouts_left
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-  _asymmetric_bottom_cutouts_mirrored:
+  _asymmetric_bottom_cutouts_m_right:
     - what: outline
-      name: _choc_posts_cutouts_mirrored
+      name: _choc_posts_cutouts_m_right
       extrude: bottom_thickness * 2
       shift: [0, 0, -choc_depth]
     - what: outline
-      name: _encoder_posts_cutouts_mirrored
+      name: _encoder_posts_cutouts_m_right
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
 
-  _asymmetric_pinky_cutouts:
+  _asymmetric_pinky_cutouts_left:
     - what: outline
-      name: _choc_posts_cutouts_pinky
+      name: _choc_posts_cutouts_pinky_left
       extrude: bottom_thickness * 2
       shift: [0, 0, -choc_depth]
-  _asymmetric_pinky_cutouts_mirrored:
+  _asymmetric_pinky_cutouts_m_right:
     - what: outline
-      name: _choc_posts_cutouts_pinky_mirrored
+      name: _choc_posts_cutouts_pinky_m_right
       extrude: bottom_thickness * 2
       shift: [0, 0, -choc_depth]
 
-  _socket_bottom_cutouts:
+  _socket_bottom_cutouts_left:
     - what: outline
-      name: _socket_cutouts_38
+      name: _socket_cutouts_38_left
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
-  _socket_bottom_cutouts_mirrored:
+  _socket_bottom_cutouts_m_right:
     - what: outline
-      name: _socket_cutouts_38_mirrored
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
-
-  _socket_pinky_cutouts:
-    - what: outline
-      name: _socket_cutouts_pinky
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
-  _socket_pinky_cutouts_mirrored:
-    - what: outline
-      name: _socket_cutouts_pinky_mirrored
+      name: _socket_cutouts_38_m_right
       extrude: bottom_thickness * 2
       shift: [0, 0, -bottom_thickness * 1.5]
 
-  _solder_bottom_cutouts:
+  _socket_pinky_cutouts_left:
     - what: outline
-      name: _solder_pins_cutouts_38
+      name: _socket_cutouts_pinky_left
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+  _socket_pinky_cutouts_m_right:
+    - what: outline
+      name: _socket_cutouts_pinky_m_right
+      extrude: bottom_thickness * 2
+      shift: [0, 0, -bottom_thickness * 1.5]
+
+  _solder_bottom_cutouts_left:
+    - what: outline
+      name: _solder_pins_cutouts_38_left
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
-  _solder_bottom_cutouts_mirrored:
+  _solder_bottom_cutouts_m_right:
     - what: outline
-      name: _solder_pins_cutouts_38_mirrored
+      name: _solder_pins_cutouts_38_m_right
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
 
-  _solder_pinky_cutouts:
+  _solder_pinky_cutouts_left:
     - what: outline
-      name: _solder_pins_cutouts_pinky
+      name: _solder_pins_cutouts_pinky_left
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
-  _solder_pinky_cutouts_mirrored:
+  _solder_pinky_cutouts_m_right:
     - what: outline
-      name: _solder_pins_cutouts_pinky_mirrored
+      name: _solder_pins_cutouts_pinky_m_right
       extrude: bottom_thickness * 2
       shift: [0, 0, -pin_depth]
 
@@ -1260,48 +1263,48 @@ cases:
     - -_symmetric_bottom_cutouts
     - +_posts
     - +_posts_pinky
-  temporal_socket_42:
+  temporal_socket_42_left:
     - +_temporal_42_1
-    - -_socket_bottom_cutouts
-    - -_socket_pinky_cutouts
-    - -_asymmetric_bottom_cutouts
-    - -_asymmetric_pinky_cutouts
-  temporal_socket_42_mirrored:
+    - -_socket_bottom_cutouts_left
+    - -_socket_pinky_cutouts_left
+    - -_asymmetric_bottom_cutouts_left
+    - -_asymmetric_pinky_cutouts_left
+  temporal_socket_42_m_right:
     - +_temporal_42_1
-    - -_socket_bottom_cutouts_mirrored
-    - -_socket_pinky_cutouts_mirrored
-    - -_asymmetric_bottom_cutouts_mirrored
-    - -_asymmetric_pinky_cutouts_mirrored
-  temporal_solder_42:
+    - -_socket_bottom_cutouts_m_right
+    - -_socket_pinky_cutouts_m_right
+    - -_asymmetric_bottom_cutouts_m_right
+    - -_asymmetric_pinky_cutouts_m_right
+  temporal_solder_42_left:
     - +_temporal_42_1
-    - -_solder_bottom_cutouts
-    - -_solder_pinky_cutouts
-    - -_asymmetric_bottom_cutouts
-    - -_asymmetric_pinky_cutouts
-  temporal_solder_42_mirrored:
+    - -_solder_bottom_cutouts_left
+    - -_solder_pinky_cutouts_left
+    - -_asymmetric_bottom_cutouts_left
+    - -_asymmetric_pinky_cutouts_left
+  temporal_solder_42_m_right:
     - +_temporal_42_1
-    - -_solder_bottom_cutouts_mirrored
-    - -_solder_pinky_cutouts_mirrored
-    - -_asymmetric_bottom_cutouts_mirrored
-    - -_asymmetric_pinky_cutouts_mirrored
+    - -_solder_bottom_cutouts_m_right
+    - -_solder_pinky_cutouts_m_right
+    - -_asymmetric_bottom_cutouts_m_right
+    - -_asymmetric_pinky_cutouts_m_right
 
   _temporal_42_kickstand_1:
     - what: outline
       name: _kickstand_42
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-  temporal_socket_42_kickstand:
+  temporal_socket_42_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_socket_42
-  temporal_socket_42_kickstand_mirrored:
+    - +temporal_socket_42_left
+  temporal_socket_42_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_socket_42_mirrored
-  temporal_solder_42_kickstand:
+    - +temporal_socket_42_m_right
+  temporal_solder_42_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_solder_42
-  temporal_solder_42_kickstand_mirrored:
+    - +temporal_solder_42_left
+  temporal_solder_42_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_solder_42_mirrored
+    - +temporal_solder_42_m_right
 
   top_plate_42:
     - what: outline
@@ -1319,40 +1322,40 @@ cases:
     - -_wall_cutouts
     - -_symmetric_bottom_cutouts
     - +_posts
-  temporal_socket_38:
+  temporal_socket_38_left:
     - +_temporal_38_1
-    - -_socket_bottom_cutouts
-    - -_asymmetric_bottom_cutouts
-  temporal_socket_38_mirrored:
+    - -_socket_bottom_cutouts_left
+    - -_asymmetric_bottom_cutouts_left
+  temporal_socket_38_m_right:
     - +_temporal_38_1
-    - -_socket_bottom_cutouts_mirrored
-    - -_asymmetric_bottom_cutouts_mirrored
-  temporal_solder_38:
+    - -_socket_bottom_cutouts_m_right
+    - -_asymmetric_bottom_cutouts_m_right
+  temporal_solder_38_left:
     - +_temporal_38_1
-    - -_solder_bottom_cutouts
-    - -_asymmetric_bottom_cutouts
-  temporal_solder_38_mirrored:
+    - -_solder_bottom_cutouts_left
+    - -_asymmetric_bottom_cutouts_left
+  temporal_solder_38_m_right:
     - +_temporal_38_1
-    - -_solder_bottom_cutouts_mirrored
-    - -_asymmetric_bottom_cutouts_mirrored
+    - -_solder_bottom_cutouts_m_right
+    - -_asymmetric_bottom_cutouts_m_right
 
   _temporal_38_kickstand_1:
     - what: outline
       name: _kickstand_38
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-  temporal_socket_38_kickstand:
+  temporal_socket_38_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_socket_38
-  temporal_socket_38_kickstand_mirrored:
+    - +temporal_socket_38_left
+  temporal_socket_38_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_socket_38_mirrored
-  temporal_solder_38_kickstand:
+    - +temporal_socket_38_m_right
+  temporal_solder_38_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_solder_38
-  temporal_solder_38_kickstand_mirrored:
+    - +temporal_solder_38_left
+  temporal_solder_38_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_solder_38_mirrored
+    - +temporal_solder_38_m_right
 
   top_plate_38:
     - what: outline
