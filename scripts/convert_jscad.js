@@ -17,9 +17,10 @@ const { glob } = require('glob');
 
 const execAsync = promisify(exec);
 
-// Arc resolution scaling: 10 segments per mm of radius
+const arcResolution = 10;
+
 function getArcSegments(radius) {
-  return Math.ceil(radius * 10);
+  return Math.ceil(radius * arcResolution);
 }
 
 const MIRROR_SCAD = path.join(__dirname, '..', 'ergogen', 'mirror_case.scad');
@@ -60,11 +61,30 @@ async function main() {
     // Read original JSCAD content
     let content = fs.readFileSync(inputPath, 'utf8');
 
+    // Add resolution to .appendArc() calls
     content = content.replace(
       /\.appendArc\(\[([^\]]+)\],\{"radius":([^,]+),"clockwise":(true|false),"large":(true|false)\}\)/g,
       (match, endpoint, radius, clockwise, large) => {
         const segments = getArcSegments(parseFloat(radius));
         return `.appendArc([${endpoint}],{"radius":${radius},"clockwise":${clockwise},"large":${large},"resolution":${segments}})`;
+      }
+    );
+
+    // Add resolution to CSG.Path2D.arc() calls (initial arcs that start paths)
+    content = content.replace(
+      /CSG\.Path2D\.arc\(\{"center":\[([^\]]+)\],"radius":([^,]+),"startangle":([^,]+),"endangle":([^}]+)\}\)/g,
+      (match, center, radius, startangle, endangle) => {
+        const segments = getArcSegments(parseFloat(radius));
+        return `CSG.Path2D.arc({"center":[${center}],"radius":${radius},"startangle":${startangle},"endangle":${endangle},"resolution":${segments}})`;
+      }
+    );
+
+    // Add resolution to CAG.circle() calls
+    content = content.replace(
+      /CAG\.circle\(\{"center":\[([^\]]+)\],"radius":([^}]+)\}\)/g,
+      (match, center, radius) => {
+        const segments = getArcSegments(parseFloat(radius)) * 4; // Full circle needs 4x arc segments
+        return `CAG.circle({"center":[${center}],"radius":${radius},"resolution":${segments}})`;
       }
     );
 
