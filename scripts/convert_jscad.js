@@ -5,8 +5,8 @@
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
  *
- * Files ending in _mirrored are converted to a temp STL, then mirrored
- * using OpenSCAD to produce the final mirrored STL.
+ * Files ending in _m_right are converted to a temp STL, then mirrored
+ * using OpenSCAD to produce the final _right STL.
  */
 
 const fs = require('fs');
@@ -36,15 +36,6 @@ async function main() {
   // Find all JSCAD files
   const jscadFiles = await glob('*.jscad', { cwd: jscadDir });
 
-  // Build set of base names that have mirrored versions
-  const hasMirroredVersion = new Set();
-  for (const file of jscadFiles) {
-    const baseName = file.replace('.jscad', '');
-    if (baseName.endsWith('_mirrored')) {
-      hasMirroredVersion.add(baseName.replace(/_mirrored$/, ''));
-    }
-  }
-
   if (jscadFiles.length === 0) {
     console.log('No JSCAD files found in', jscadDir);
     return;
@@ -54,19 +45,15 @@ async function main() {
   const conversions = jscadFiles.map(async (file) => {
     const inputPath = path.join(jscadDir, file);
     const baseName = file.replace('.jscad', '');
-    const isMirrored = baseName.endsWith('_mirrored');
-    const baseWithoutMirrored = baseName.replace(/_mirrored$/, '');
-    const isPairedPart = hasMirroredVersion.has(baseWithoutMirrored);
+    const needsMirroring = baseName.endsWith('_m_right');
 
     // Naming rules:
-    // - foo_mirrored → foo_right (mirrored half of a pair)
-    // - foo (with _mirrored pair) → foo_left (non-mirrored half of a pair)
-    // - foo (no _mirrored pair) → foo (universal part, no suffix)
-    const outputBaseName = isMirrored
-      ? baseWithoutMirrored + '_right'
-      : isPairedPart
-        ? baseName + '_left'
-        : baseName;
+    // - foo_m_right → foo_right (needs mirroring after conversion)
+    // - foo_left → foo_left (left-hand side, no change needed)
+    // - foo → foo (universal part, no change needed)
+    const outputBaseName = needsMirroring
+      ? baseName.replace(/_m_right$/, '_right')
+      : baseName;
     const outputName = outputBaseName + '.stl';
     const outputPath = path.join(casesDir, outputName);
 
@@ -86,7 +73,7 @@ async function main() {
     fs.writeFileSync(patchedPath, content);
 
     try {
-      if (isMirrored) {
+      if (needsMirroring) {
         // Convert to temp STL, then mirror
         const tempPath = path.join(casesDir, baseName + '_temp.stl');
         await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
