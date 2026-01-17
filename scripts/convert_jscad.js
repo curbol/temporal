@@ -5,8 +5,8 @@
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
  *
- * Files ending in _m_right are mirrored using OpenSCAD to produce the final
- * _right STL.
+ * All STLs are processed with admesh to repair mesh issues (fill holes, fix
+ * normals). Files ending in _m_right are also mirrored to produce _right STL.
  */
 
 const fs = require('fs');
@@ -24,20 +24,13 @@ function getArcSegments(radius) {
 }
 
 /**
- * Mirror STL using OpenSCAD
+ * Process STL with admesh (repair mesh and optionally mirror)
  */
-async function mirrorSTL(inputPath, outputPath) {
-  // Create a temporary OpenSCAD script that imports and mirrors the STL
-  const scadContent = `mirror([1, 0, 0]) import("${inputPath}");`;
-  const scadPath = inputPath.replace('.stl', '_mirror.scad');
-
-  fs.writeFileSync(scadPath, scadContent);
-
-  try {
-    await execAsync(`openscad -o "${outputPath}" "${scadPath}"`);
-  } finally {
-    fs.unlinkSync(scadPath);
-  }
+async function processSTL(inputPath, outputPath, mirror = false) {
+  const mirrorFlag = mirror ? '--yz-mirror ' : '';
+  await execAsync(
+    `admesh ${mirrorFlag}--fill-holes --normal-values --normal-directions --write-binary-stl="${outputPath}" "${inputPath}"`
+  );
 }
 
 async function main() {
@@ -108,18 +101,15 @@ async function main() {
     fs.writeFileSync(patchedPath, content);
 
     try {
-      if (needsMirroring) {
-        // Convert to temp STL, then mirror with OpenSCAD
-        const tempPath = path.join(casesDir, baseName + '_temp.stl');
-        await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
-        await mirrorSTL(tempPath, outputPath);
-        fs.unlinkSync(tempPath);
-        console.log(`✓ Converted and mirrored ${file} -> ${outputName}`);
-      } else {
-        // Convert directly to STL
-        await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${outputPath}"`);
-        console.log(`✓ Converted ${file} -> ${outputName}`);
-      }
+      // Convert JSCAD to STL
+      const tempPath = path.join(casesDir, baseName + '_temp.stl');
+      await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
+
+      // Process with admesh (repair mesh, mirror if needed)
+      await processSTL(tempPath, outputPath, needsMirroring);
+      fs.unlinkSync(tempPath);
+
+      console.log(`✓ Converted ${file} -> ${outputName}`);
     } catch (error) {
       console.error(`✗ Failed to convert ${file}:`, error.message);
     } finally {

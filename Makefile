@@ -10,18 +10,16 @@ CASES_DIR := cases
 GERBERS_DIR := gerbers
 JLCPCB_DIR := jlcpcb
 ASSETS_DIR := assets
-MIRROR_SCAD := $(ERGOGEN_DIR)/mirror_case.scad
-
 .PHONY: deps gen convert gerbers assembly clean
 
 # Install all dependencies
 deps:
 	npm install
-	@if ! command -v openscad >/dev/null 2>&1; then \
-		echo "Installing OpenSCAD..."; \
-		brew install --cask openscad; \
+	@if ! command -v admesh >/dev/null 2>&1; then \
+		echo "Installing admesh..."; \
+		brew install admesh; \
 	else \
-		echo "OpenSCAD already installed"; \
+		echo "admesh already installed"; \
 	fi
 	@if ! command -v kicad-cli >/dev/null 2>&1; then \
 		echo "Installing KiCad..."; \
