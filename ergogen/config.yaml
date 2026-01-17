@@ -24,6 +24,7 @@ meta:
 units:
   # Math constants
   sqrt_3: 1.73205080757
+  nudge: 0.0001 # Hack used to fix floating point rounding issues
 
   # Override choc defaults
   $default_width: 18
@@ -109,15 +110,15 @@ units:
 
   # Case dimensions
   case_expand: 0.1
-  buffer: 0.2
+  buffer: 0.1
   wall_height: pcb_thickness + choc_under_to_pcb + 0.1 + buffer
   wall_above_pcb: wall_height - pcb_thickness
-  wall_thickness: 1.2001 # This is finiky. Tweak until all pointy corners go away.
+  wall_thickness: 1.2 + nudge
   side_cut_width: 10.4
   side_cut_radius: (wall_above_pcb + pcb_thickness / 2) / 2
   mcu_catch_radius: 0.68
-  bottom_thickness: 2
-  cutout_fillet: 0.17
+  bottom_thickness: 1.95
+  cutout_fillet: 0.15
   diode_depth: diode_h + buffer
   choc_depth: choc_pins - pcb_thickness + buffer
   pin_depth: 0.5 + buffer
@@ -309,13 +310,13 @@ outlines:
 
   _solder_pin:
     - what: circle
-      radius: 0.95
-      adjust.shift: [-0.266, 0]
+      radius: 1
+      adjust.shift: [-0.25, 0]
     - what: rectangle
-      size: [0.532, 1.9]
+      size: [0.5 + nudge*100, 2]
     - what: circle
-      radius: 0.95
-      adjust.shift: [0.266, 0]
+      radius: 1
+      adjust.shift: [0.25, 0]
   _solder_pins_left:
     - name: _solder_pin
       adjust.shift: [-5, -3.8]
@@ -429,7 +430,7 @@ outlines:
       adjust.shift: [2.8, -7.5]
   _encoder_pins_bridge: # Bridge to choc solder hole
     - what: rectangle
-      size: [2.432, 1.9]
+      size: [2.5, 2]
       adjust.shift: [0, -6.85]
 
   # Top-plate cutouts
@@ -865,18 +866,19 @@ outlines:
       where: [[key, -extra]]
       size: [px, py]
 
+  _key_plug:
+    - what: rectangle
+      size: [plug_w, plug_h]
+      fillet: cutout_fillet * 2
   _key_plugs_42:
     - +_encoder_pins_plate_cutouts
-    - what: rectangle
+    - name: _key_plug
       where: /key/
-      size: [plug_w, plug_h]
       fillet: cutout_fillet
-
   _key_plugs_38:
     - +_encoder_pins_plate_cutouts
-    - what: rectangle
+    - name: _key_plug
       where: [[key, -extra]]
-      size: [plug_w, plug_h]
       fillet: cutout_fillet
 
   _keys_area_42:
@@ -1031,11 +1033,11 @@ outlines:
     - what: rectangle
       where: thumb_mid
       size: [2px, py]
-      adjust.shift: [px, 0.0001]
+      adjust.shift: [px, 0 + nudge]
       fillet: pcb_fillet
       operation: subtract
     - name: _display
-      fillet: cutout_fillet
+      fillet: cutout_fillet * 2
       operation: subtract
     - -_mcu_cover_holes
 
