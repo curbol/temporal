@@ -96,7 +96,7 @@ units:
 
   # Breakoff tab
   break_cut_w: 0.8
-  break_cut_fillet: break_cut_w / 2 - 0.01
+  break_cut_fillet: break_cut_w / 2 - nudge
   break_bridge_size: 3.7
 
   # Choc
@@ -1046,17 +1046,14 @@ outlines:
       fillet: break_cut_fillet
       operation: subtract
     # Uncomment below to debug cutouts:
-    - -_full_depth_38
-    - -_socket_full_depth_38_left
-    - -_socket_full_depth_pinky_left
-    - -_choc_depth_38
-    - -_choc_depth_pinky
-    - -_socket_choc_depth_left
-    - -_socket_choc_depth_pinky_left
-    - -_diode_depth
-    - -_pin_depth_38
-    - -_solder_pin_depth_38_left
-    - -_solder_pin_depth_pinky_left
+    # - -_diode_depth
+    # - -_pin_depth_38
+    # - -_socket_full_depth_38_left
+    # - -_socket_full_depth_pinky_left
+    # - -_socket_choc_depth_left
+    # - -_socket_choc_depth_pinky_left
+    # - -_solder_pin_depth_38_left
+    # - -_solder_pin_depth_pinky_left
     # Mirrored variants (note: _m_right cases need to be mirrored after ergogen generation):
     # - -_socket_full_depth_38_m_right
     # - -_socket_full_depth_pinky_m_right
