@@ -5,8 +5,8 @@
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
  *
- * Files ending in _m_right are converted to a temp STL, then mirrored
- * using OpenSCAD to produce the final _right STL.
+ * Files ending in _m_right are mirrored using OpenSCAD to produce the final
+ * _right STL.
  */
 
 const fs = require('fs');
@@ -23,7 +23,22 @@ function getArcSegments(radius) {
   return Math.ceil(radius * arcResolution);
 }
 
-const MIRROR_SCAD = path.join(__dirname, '..', 'ergogen', 'mirror_case.scad');
+/**
+ * Mirror STL using OpenSCAD
+ */
+async function mirrorSTL(inputPath, outputPath) {
+  // Create a temporary OpenSCAD script that imports and mirrors the STL
+  const scadContent = `mirror([1, 0, 0]) import("${inputPath}");`;
+  const scadPath = inputPath.replace('.stl', '_mirror.scad');
+
+  fs.writeFileSync(scadPath, scadContent);
+
+  try {
+    await execAsync(`openscad -o "${outputPath}" "${scadPath}"`);
+  } finally {
+    fs.unlinkSync(scadPath);
+  }
+}
 
 async function main() {
   const casesDir = path.join(__dirname, '..', 'cases');
@@ -94,10 +109,10 @@ async function main() {
 
     try {
       if (needsMirroring) {
-        // Convert to temp STL, then mirror
+        // Convert to temp STL, then mirror with OpenSCAD
         const tempPath = path.join(casesDir, baseName + '_temp.stl');
         await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
-        await execAsync(`openscad -o "${outputPath}" -D "input=\\"${tempPath}\\"" "${MIRROR_SCAD}"`);
+        await mirrorSTL(tempPath, outputPath);
         fs.unlinkSync(tempPath);
         console.log(`✓ Converted and mirrored ${file} -> ${outputName}`);
       } else {
