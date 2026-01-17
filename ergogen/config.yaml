@@ -271,42 +271,84 @@ outlines:
       where: *mcu_hole2_where
 
   # Component cutout primitives
-  _socket_left:
-    - what: rectangle
-      size: [2.6, 2.6]
-      adjust.shift: [-3.3, 5.95]
-    - what: rectangle
+  _socket_left_1:
+    - what: rectangle # Left block
       size: [4.1, 4.6]
-      adjust.shift: [0, 5.95]
-    - what: rectangle
-      size: [2.7, 5]
-      adjust: { rotate: 42, shift: [2, 5] }
-    - what: rectangle
-      size: [4.6, 4.7]
-      adjust.shift: [4.75, 3.85]
-    - what: rectangle
+      adjust.shift: [0, 1]
+    - what: rectangle # Chamfer
+      operation: intersect
+      size: [5.5, 5.5]
+      adjust: { shift: [0, 1], rotate: 45 }
+    - what: rectangle # Left pad
       size: [2.6, 2.6]
-      adjust.shift: [8.3, 3.735]
+      adjust.shift: [-3.3, 1]
+    - what: rectangle # Top curve
+      size: [1, 1]
+      adjust.shift: [2.05, 1.3]
+    - what: circle
+      operation: subtract
+      radius: 0.5
+      adjust.shift: [2.55, 1.8]
+    - what: rectangle # Center
+      size: [2.6, 2.6]
+      adjust.shift: [2.25, 0]
+    - what: rectangle # Bottom curve
+      size: [3, 3]
+      adjust.shift: [2.45, -1.3]
+    - what: circle
+      operation: subtract
+      radius: 1.5
+      adjust.shift: [0.95, -2.8]
+    - what: rectangle # Right block
+      size: [4.6, 4.8]
+      adjust.shift: [4.75, -1.1]
+    - what: rectangle # Right pad
+      size: [2.6, 2.6]
+      adjust.shift: [8.3, -1.2]
+      expand: 0.3
+      fillet: cutout_fillet
+  _socket_left:
+    - name: _socket_left_1
+      adjust.shift: [0, 4.95]
+  _socket_m_right_1:
+    - what: rectangle # Right block
+      size: [4.1, 4.6]
+      adjust.shift: [0, 1]
+    - what: rectangle # Chamfer
+      operation: intersect
+      size: [5.5, 5.5]
+      adjust: { shift: [0, 1], rotate: -45 }
+    - what: rectangle # Right pad
+      size: [2.6, 2.6]
+      adjust.shift: [3.3, 1]
+    - what: rectangle # Top curve
+      size: [1, 1]
+      adjust.shift: [-2.05, 1.3]
+    - what: circle
+      operation: subtract
+      radius: 0.5
+      adjust.shift: [-2.55, 1.8]
+    - what: rectangle # Center
+      size: [2.6, 2.6]
+      adjust.shift: [-2.25, 0]
+    - what: rectangle # Bottom curve
+      size: [3, 3]
+      adjust.shift: [-2.45, -1.3]
+    - what: circle
+      operation: subtract
+      radius: 1.5
+      adjust.shift: [-0.95, -2.8]
+    - what: rectangle # Left block
+      size: [4.6, 4.8]
+      adjust.shift: [-4.75, -1.1]
+    - what: rectangle # Left pad
+      size: [2.6, 2.6]
+      adjust.shift: [-8.3, -1.2]
       expand: 0.3
       fillet: cutout_fillet
   _socket_m_right:
-    - what: rectangle
-      size: [2.6, 2.6]
-      adjust.shift: [3.3, 5.95]
-    - what: rectangle
-      size: [4.1, 4.6]
-      adjust.shift: [0, 5.95]
-    - what: rectangle
-      size: [2.7, 5]
-      adjust: { rotate: -42, shift: [-2, 5] }
-    - what: rectangle
-      size: [4.6, 4.7]
-      adjust.shift: [-4.75, 3.85]
-    - what: rectangle
-      size: [2.6, 2.6]
-      adjust.shift: [-8.3, 3.735]
-      expand: 0.3
-      fillet: cutout_fillet
+    - name: _socket_m_right_1
+      adjust.shift: [0, 4.95]
 
   _solder_pin:
     - what: circle
@@ -1004,17 +1046,17 @@ outlines:
       fillet: break_cut_fillet
       operation: subtract
     # Uncomment below to debug cutouts:
-    # - -_full_depth_38
-    # - -_socket_full_depth_38_left
-    # - -_socket_full_depth_pinky_left
-    # - -_choc_depth_38
-    # - -_choc_depth_pinky
-    # - -_socket_choc_depth_left
-    # - -_socket_choc_depth_pinky_left
-    # - -_diode_depth
-    # - -_pin_depth_38
-    # - -_solder_pin_depth_38_left
-    # - -_solder_pin_depth_pinky_left
+    - -_full_depth_38
+    - -_socket_full_depth_38_left
+    - -_socket_full_depth_pinky_left
+    - -_choc_depth_38
+    - -_choc_depth_pinky
+    - -_socket_choc_depth_left
+    - -_socket_choc_depth_pinky_left
+    - -_diode_depth
+    - -_pin_depth_38
+    - -_solder_pin_depth_38_left
+    - -_solder_pin_depth_pinky_left
     # Mirrored variants (note: _m_right cases need to be mirrored after ergogen generation):
     # - -_socket_full_depth_38_m_right
     # - -_socket_full_depth_pinky_m_right
