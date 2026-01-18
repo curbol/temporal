@@ -10,9 +10,9 @@ This is the complete list of components needed to build one Temporal keyboard (b
 |-----------|----------|-------|--------|
 | nice!nano v2.0 | 2 | Wireless microcontroller | [Typeractive](https://typeractive.xyz/) |
 | nice!view | 2 | Optional display | [Typeractive](https://typeractive.xyz/) |
-| Kailh Choc Hotswap Sockets | 36-42 | Depends on your key configuration | [Typeractive](https://typeractive.xyz/) |
+| Kailh Choc Hotswap Sockets | 36-42 | Optional - allows switch swapping without desoldering | [Typeractive](https://typeractive.xyz/) |
 | EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [Typeractive](https://typeractive.xyz/) |
-| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration | [Typeractive](https://typeractive.xyz/) |
+| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration (not needed if using JLCPCB assembly) | [Typeractive](https://typeractive.xyz/) |
 | ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [Typeractive](https://typeractive.xyz/) |
 | Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [Typeractive](https://typeractive.xyz/) |
 | Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [Typeractive](https://typeractive.xyz/) |
@@ -21,6 +21,7 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [Typeractive](https://typeractive.xyz/) |
 
 - Encoders are optional. You can use regular switches in the encoder positions if you prefer.
+- Hotswap sockets are optional. You can solder switches directly to the PCB for a permanent installation.
 
 ### Hardware
 
