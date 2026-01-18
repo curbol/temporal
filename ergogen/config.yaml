@@ -283,17 +283,17 @@ outlines:
       size: [3.2, 3.2]
       adjust.shift: [-3.3, 5.95]
     - what: rectangle # Top curve
-      size: [0.7, 0.7]
+      size: [0.7 - nudge, 0.7 - nudge]
       adjust.shift: [2.35, 6.55]
     - what: circle
       operation: subtract
       radius: 0.35
       adjust.shift: [2.7, 6.9]
     - what: rectangle # Center
-      size: [3.2, 3.2]
+      size: [1, 3.2]
       adjust.shift: [2.25, 4.95]
     - what: rectangle # Bottom curve
-      size: [2.7, 2.7]
+      size: [2.7 - nudge, 2.7 - nudge]
       adjust.shift: [2.15, 3.35]
     - what: circle
       operation: subtract
@@ -318,17 +318,17 @@ outlines:
       size: [3.2, 3.2]
       adjust.shift: [3.3, 5.95]
     - what: rectangle # Top curve
-      size: [0.7, 0.7]
+      size: [0.7 - nudge, 0.7 - nudge]
       adjust.shift: [-2.35, 6.55]
     - what: circle
       operation: subtract
       radius: 0.35
       adjust.shift: [-2.7, 6.9]
     - what: rectangle # Center
-      size: [3.2, 3.2]
+      size: [1, 3.2]
       adjust.shift: [-2.25, 4.95]
     - what: rectangle # Bottom curve
-      size: [2.7, 2.7]
+      size: [2.7 - nudge, 2.7 - nudge]
       adjust.shift: [-2.15, 3.35]
     - what: circle
       operation: subtract
@@ -1275,36 +1275,36 @@ cases:
       operation: subtract
     - +_mcu_catch
     - -_wall_cutouts
-    - -_full_depth_cutouts
     - -_diode_depth_cutouts
+    - -_full_depth_cutouts
     - +_posts
     - +_posts_pinky
   temporal_socket_42_left:
     - +_temporal_42_1
-    - -_socket_full_depth_cutouts_left
-    - -_socket_full_depth_pinky_cutouts_left
+    - -_pin_depth_cutouts
     - -_socket_choc_depth_cutouts_left
     - -_socket_choc_depth_pinky_cutouts_left
-    - -_pin_depth_cutouts
+    - -_socket_full_depth_cutouts_left
+    - -_socket_full_depth_pinky_cutouts_left
   temporal_socket_42_m_right:
     - +_temporal_42_1
-    - -_socket_full_depth_cutouts_m_right
-    - -_socket_full_depth_pinky_cutouts_m_right
+    - -_pin_depth_cutouts
     - -_socket_choc_depth_cutouts_m_right
     - -_socket_choc_depth_pinky_cutouts_m_right
-    - -_pin_depth_cutouts
+    - -_socket_full_depth_cutouts_m_right
+    - -_socket_full_depth_pinky_cutouts_m_right
   temporal_solder_42_left:
     - +_temporal_42_1
-    - -_choc_depth_cutouts
-    - -_choc_depth_pinky_cutouts
     - -_solder_pin_depth_cutouts_left
     - -_solder_pin_depth_pinky_cutouts_left
-  temporal_solder_42_m_right:
-    - +_temporal_42_1
     - -_choc_depth_cutouts
     - -_choc_depth_pinky_cutouts
+  temporal_solder_42_m_right:
+    - +_temporal_42_1
     - -_solder_pin_depth_cutouts_m_right
     - -_solder_pin_depth_pinky_cutouts_m_right
+    - -_choc_depth_cutouts
+    - -_choc_depth_pinky_cutouts
 
   _temporal_42_kickstand_1:
     - what: outline
@@ -1343,22 +1343,22 @@ cases:
     - +_posts
   temporal_socket_38_left:
     - +_temporal_38_1
-    - -_socket_full_depth_cutouts_left
-    - -_socket_choc_depth_cutouts_left
     - -_pin_depth_cutouts
+    - -_socket_choc_depth_cutouts_left
+    - -_socket_full_depth_cutouts_left
   temporal_socket_38_m_right:
     - +_temporal_38_1
-    - -_socket_full_depth_cutouts_m_right
-    - -_socket_choc_depth_cutouts_m_right
     - -_pin_depth_cutouts
+    - -_socket_choc_depth_cutouts_m_right
+    - -_socket_full_depth_cutouts_m_right
   temporal_solder_38_left:
     - +_temporal_38_1
-    - -_choc_depth_cutouts
     - -_solder_pin_depth_cutouts_left
+    - -_choc_depth_cutouts
   temporal_solder_38_m_right:
     - +_temporal_38_1
-    - -_choc_depth_cutouts
     - -_solder_pin_depth_cutouts_m_right
+    - -_choc_depth_cutouts
 
   _temporal_38_kickstand_1:
     - what: outline
