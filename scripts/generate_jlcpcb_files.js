@@ -363,9 +363,20 @@ function main() {
   generateCPL(allTopComponents, cplTopPath, false);
   generateCPL(allBottomComponents, cplBottomPath, true);
 
-  const resistorCount = topResistors.length + bottomResistors.length;
-  const standardCount = components.length;
-  console.log(`✓ Generated JLCPCB assembly files (${standardCount} standard + ${resistorCount} resistors)`);
+  // Count components by description
+  const counts = {};
+  allComponents.forEach(comp => {
+    const desc = comp.description.toLowerCase();
+    counts[desc] = (counts[desc] || 0) + 1;
+  });
+
+  // Format counts as "N description" pairs
+  const countStr = Object.entries(counts)
+    .sort((a, b) => b[1] - a[1]) // Sort by count descending
+    .map(([desc, count]) => `${count} ${desc}${count > 1 ? 's' : ''}`)
+    .join(', ');
+
+  console.log(`✓ Generated JLCPCB assembly files (${countStr})`);
 }
 
 main();
