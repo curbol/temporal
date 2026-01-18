@@ -271,82 +271,76 @@ outlines:
       where: *mcu_hole2_where
 
   # Component cutout primitives
-  _socket_left_1:
-    - what: rectangle # Left block
-      size: [4.7, 5.2]
-      adjust.shift: [0, 1]
-    - what: rectangle # Chamfer
-      operation: intersect
-      size: [6.1, 6.1]
-      adjust: { shift: [0, 1], rotate: 45 }
-    - what: rectangle # Left pad
-      size: [3.2, 3.2]
-      adjust.shift: [-3.3, 1]
-    - what: rectangle # Top curve
-      size: [0.7, 0.7]
-      adjust.shift: [2.35, 1.6]
-    - what: circle
-      operation: subtract
-      radius: 0.35
-      adjust.shift: [2.7, 1.95]
-    - what: rectangle # Center
-      size: [3.2, 3.2]
-      adjust.shift: [2.25, 0]
-    - what: rectangle # Bottom curve
-      size: [2.7, 2.7]
-      adjust.shift: [2.15, -1.6]
-    - what: circle
-      operation: subtract
-      radius: 1.35
-      adjust.shift: [0.8, -2.95]
-    - what: rectangle # Right block
-      size: [5.2, 5.4]
-      adjust.shift: [4.75, -1.1]
-    - what: rectangle # Right pad
-      size: [3.2, 3.2]
-      adjust.shift: [8.3, -1.2]
-      fillet: cutout_fillet
   _socket_left:
-    - name: _socket_left_1
-      adjust.shift: [0, 4.95]
-  _socket_m_right_1:
-    - what: rectangle # Right block
+    - what: rectangle # Left block
       size: [4.7, 5.2]
-      adjust.shift: [0, 1]
+      adjust.shift: [0, 5.95]
     - what: rectangle # Chamfer
       operation: intersect
       size: [6.1, 6.1]
-      adjust: { shift: [0, 1], rotate: -45 }
-    - what: rectangle # Right pad
+      adjust: { shift: [0, 5.95], rotate: 45 }
+    - what: rectangle # Left pad
       size: [3.2, 3.2]
-      adjust.shift: [3.3, 1]
+      adjust.shift: [-3.3, 5.95]
     - what: rectangle # Top curve
       size: [0.7, 0.7]
-      adjust.shift: [-2.35, 1.6]
+      adjust.shift: [2.35, 6.55]
     - what: circle
       operation: subtract
       radius: 0.35
-      adjust.shift: [-2.7, 1.95]
+      adjust.shift: [2.7, 6.9]
     - what: rectangle # Center
       size: [3.2, 3.2]
-      adjust.shift: [-2.25, 0]
+      adjust.shift: [2.25, 4.95]
     - what: rectangle # Bottom curve
       size: [2.7, 2.7]
-      adjust.shift: [-2.15, -1.6]
+      adjust.shift: [2.15, 3.35]
     - what: circle
       operation: subtract
       radius: 1.35
-      adjust.shift: [-0.8, -2.95]
-    - what: rectangle # Left block
+      adjust.shift: [0.8, 2]
+    - what: rectangle # Right block
       size: [5.2, 5.4]
-      adjust.shift: [-4.75, -1.1]
-    - what: rectangle # Left pad
+      adjust.shift: [4.75, 3.85]
+    - what: rectangle # Right pad
       size: [3.2, 3.2]
-      adjust.shift: [-8.3, -1.2]
+      adjust.shift: [8.3, 3.75]
       fillet: cutout_fillet
   _socket_m_right:
-    - name: _socket_m_right_1
-      adjust.shift: [0, 4.95]
+    - what: rectangle # Right block
+      size: [4.7, 5.2]
+      adjust.shift: [0, 5.95]
+    - what: rectangle # Chamfer
+      operation: intersect
+      size: [6.1, 6.1]
+      adjust: { shift: [0, 5.95], rotate: -45 }
+    - what: rectangle # Right pad
+      size: [3.2, 3.2]
+      adjust.shift: [3.3, 5.95]
+    - what: rectangle # Top curve
+      size: [0.7, 0.7]
+      adjust.shift: [-2.35, 6.55]
+    - what: circle
+      operation: subtract
+      radius: 0.35
+      adjust.shift: [-2.7, 6.9]
+    - what: rectangle # Center
+      size: [3.2, 3.2]
+      adjust.shift: [-2.25, 4.95]
+    - what: rectangle # Bottom curve
+      size: [2.7, 2.7]
+      adjust.shift: [-2.15, 3.35]
+    - what: circle
+      operation: subtract
+      radius: 1.35
+      adjust.shift: [-0.8, 2]
+    - what: rectangle # Left block
+      size: [5.2, 5.4]
+      adjust.shift: [-4.75, 3.85]
+    - what: rectangle # Left pad
+      size: [3.2, 3.2]
+      adjust.shift: [-8.3, 3.75]
+      fillet: cutout_fillet
 
   _solder_pin:
     - what: circle
