@@ -47,7 +47,7 @@ The Temporal PCBs are reversible. Before soldering, decide which PCB will be lef
 
 ## Assembly Overview
 
-The build order matters for some components because they stack on top of each other. Follow this general order:
+Follow this general order:
 
 1. **Back side first:** Diodes, hotswap sockets, jumpers
 2. **Front side:** Power switch, reset button
@@ -60,7 +60,7 @@ The build order matters for some components because they stack on top of each ot
 
 ## Step 1: Solder Back Components
 
-All components in this step are soldered to the **back side** of the PCB (the side with "Left" or "Right" markings opposite to the side you're working on).
+All components in this step are soldered to the **back side** of the PCB.
 
 ### Soldering Technique
 
@@ -71,13 +71,10 @@ For SMD components (diodes, sockets, jumpers), use this technique:
 3. The component will sink into the molten solder - hold it in place until the solder solidifies
 4. Solder the remaining pad(s), touching both the pad and component lead simultaneously
 
-> [!TIP]
-> This "tack and solder" technique keeps components aligned while you work. Take your time positioning before the solder cools.
-
 ### Diodes (21 per half)
 
 > [!NOTE]
-> If you ordered PCBs with JLCPCB assembly, diodes may already be installed.
+> If the diodes are already installed using JLCPCB assembly, skip this step.
 
 Diodes are directional - the line on the diode must match the line on the PCB silkscreen.
 
@@ -88,7 +85,7 @@ Diodes are directional - the line on the diode must match the line on the PCB si
 
 ### Hotswap Sockets (21 per half)
 
-Hotswap sockets can only be installed one way - the metal contacts should face the PCB holes.
+Hotswap sockets should only be installed one way. Make sure to match up the side with chamfered corners with the matching silkscreen.
 
 1. Pre-tin one pad
 2. Place the socket in the silkscreen outline
@@ -107,16 +104,16 @@ Hotswap sockets can only be installed one way - the metal contacts should face t
 ### Jumpers
 
 > [!NOTE]
-> If you ordered PCBs with JLCPCB assembly and included the 0-ohm resistors, the jumpers are already bridged.
+> If the jumpers are already bridged with 0-ohm resistors from JLCPCB assembly, skip this step.
+
+> [!IMPORTANT]
+> Only bridge jumpers on the **BACK side** of the board. This is the same side as your diodes and hotswap sockets.
 
 Bridge all jumper pads on the back side. There are jumpers for the MCU, display, and battery connections.
 
 1. Apply solder to one pad
 2. Add more solder while dragging across to the second pad to create a bridge
 3. The bridge should be a smooth dome of solder connecting both pads
-
-> [!IMPORTANT]
-> Only bridge jumpers on the **BACK side** of the board. This is the same side as your diodes and hotswap sockets.
 
 ---
 
@@ -126,8 +123,11 @@ These components are soldered to the **front side** of the PCB.
 
 ### Power Switch (MSK12C02)
 
-1. Pre-tin one of the larger pads
-2. Position the switch and heat the pre-tinned pad while holding with tweezers
+> [!TIP]
+> These components have multiple legs - once one leg is tacked down, the rest are easy to solder.
+
+1. Pre-tin one of the pads
+2. Position the switch and heat the pre-tinned pad while holding the switch in place with tweezers
 3. Solder the remaining pads
 
 ### Reset Button
@@ -136,16 +136,19 @@ These components are soldered to the **front side** of the PCB.
 2. Align the button and heat the pre-tinned pad
 3. Solder the remaining pads
 
-> [!TIP]
-> These components have multiple legs - once one leg is tacked down, the rest are easy to solder.
-
 ---
 
 ## Step 3: Solder MCU, Display, and Battery Components
 
 These components are installed on the **front side** of the PCB. The sockets and headers use through-hole pins that are soldered from the back.
 
+> [!TIP]
+> For all through-hole components: after tacking two corner pins, verify the component is straight and fully seated before soldering the rest.
+
 ### MCU Sockets (Machine Pin Sockets)
+
+> [!IMPORTANT]
+> The microcontroller will be placed **facing DOWN** (components facing the PCB). Ensure your sockets are positioned correctly.
 
 1. Insert the sockets into the front of the PCB
 2. Tape them in place to prevent them from falling out when you flip the board
@@ -154,9 +157,6 @@ These components are installed on the **front side** of the PCB. The sockets and
 5. Solder the remaining pins
 6. Trim the pins flush with the solder joints using wire snips
 
-> [!IMPORTANT]
-> The microcontroller will be placed **facing DOWN** (components facing the PCB). Ensure your sockets are positioned correctly.
-
 ### Display Header
 
 1. Insert the header pins into the front of the PCB
@@ -164,15 +164,12 @@ These components are installed on the **front side** of the PCB. The sockets and
 3. Solder from the back using the same technique as the MCU sockets
 4. Trim the pins
 
-### Battery Connector (JST PH 2.0mm)
+### Battery Connector
 
 1. Insert the connector into the front of the PCB
 2. Tape in place
 3. Solder from the back
 4. Trim the pins
-
-> [!TIP]
-> For all through-hole components: after tacking two corner pins, verify the component is straight and fully seated before soldering the rest.
 
 ---
 
@@ -197,9 +194,6 @@ If your encoder has a push-button switch (5 pins total instead of 3):
 3. Bend and trim the switch pins so they can lay flat on the SMD pads
 4. Solder the switch pins to the SMD pads on the front
 
-> [!IMPORTANT]
-> The two switch pins cannot go through the PCB - they must be bent/trimmed and surface mounted to the SMD pads on the front.
-
 ---
 
 ## Step 5: Install the Microcontroller
@@ -207,7 +201,7 @@ If your encoder has a push-button switch (5 pins total instead of 3):
 ### nice!nano Installation
 
 > [!IMPORTANT]
-> The nice!nano must be face-down (components facing the PCB). The jumpers on the back require this orientation, and it provides clearance for the display to sit on top.
+> The microcontroller will be placed **facing DOWN** (components facing the PCB). Ensure your sockets are positioned correctly.
 
 1. Insert the mill-max pins into the sockets (not into the nice!nano yet)
 2. Place the nice!nano **face down** (components facing the PCB) onto the pins
@@ -226,21 +220,21 @@ If using a nice!view or other display:
 
 ## Step 6: Case Assembly
 
-### 3D Printed Case
-
-1. Install 5 heat-set inserts into the case posts using a soldering iron or heat-set tool
-2. Place the PCB into the case - the case posts go through the mounting holes in the PCB
-3. Place the top plate over the PCB, aligning with the case posts
-4. Secure with 5 M2 screws (4mm length) through the top plate into the heat-set inserts
-
-> [!TIP]
-> Insert a few switches into the top plate before placing it on the PCB. This helps maintain proper spacing and alignment.
-
 ### MCU Cover
 
 1. Attach the MCU cover using 10mm standoffs
 2. Use 2 M2 screws (4mm length) from the back of the PCB into the standoffs
 3. Use 2 more M2 screws (4mm length) from the front through the cover into the standoffs
+
+### 3D Printed Case
+
+1. Install 5 heat-set inserts into the case posts using a soldering iron or heat-set tool
+2. Place the PCB into the case - the case posts go through the mounting holes in the PCB
+3. Place the top plate over the PCB, aligning with the case posts
+4. Secure with M2 screws (4mm length) through the top plate into the heat-set inserts
+
+> [!TIP]
+> Insert a few switches into the top plate before placing it on the PCB. This helps maintain proper spacing and alignment.
 
 ### FR-4 Plate Alternative
 
@@ -258,9 +252,6 @@ If using FR-4 plates instead of a 3D printed case:
 2. Press firmly until the switches click into the hotswap sockets
 3. Install keycaps onto the switches
 4. If using encoders, press the knobs onto the encoder shafts
-
-> [!TIP]
-> Support the hotswap socket from behind when inserting switches to prevent them from being pushed off the PCB.
 
 ---
 
@@ -306,7 +297,7 @@ You can use [Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) to vis
 2. Repeat for the right half with `temporal_right-nice_nano_v2-zmk.uf2`
 
 > [!NOTE]
-> You must flash both halves on first setup. After initial pairing, keymap changes typically only require flashing the left (central) half.
+> You must flash both halves on first setup. After initial pairing, keymap changes typically only require flashing the left half.
 
 ---
 
