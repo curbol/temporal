@@ -8,17 +8,17 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 | Component | Quantity | Notes | Source | Image |
 |-----------|----------|-------|--------|-------|
-| nice!nano v2.0 | 2 | Wireless microcontroller | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_nice_nano.jpg" width="100" alt="nice!nano"> |
-| nice!view | 2 | Optional display | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/display_nice_view.jpg" width="100" alt="nice!view"> |
-| Kailh Choc Hotswap Sockets | 36-42 | Optional - allows switch swapping without desoldering | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/choc_socket.jpg" width="100" alt="Choc socket"> |
-| EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_ezsolder_socket.jpg" width="100" alt="EZ-Solder sockets"> |
-| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration (not needed if using JLCPCB assembly) | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/diode.jpg" width="100" alt="SMD diode"> |
-| ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [KEEBD](https://keebd.com/en-us/collections/tools) | <img src="/assets/bom/enc_ec12.jpg" width="100" alt="Encoder"> |
-| Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [KEEBD](https://keebd.com/en-us/collections/tools) | <img src="/assets/bom/enc_knob.jpg" width="100" alt="Encoder knob"> |
-| Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_110mAh.jpg" width="100" alt="Battery"> |
-| Battery Jack (JST PH 2.0mm) | 2 | For battery connection | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_connector.jpg" width="100" alt="Battery connector"> |
-| Power Switch (MSK12C02) | 2 | Power on/off switch | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/pwr_switch.jpg" width="100" alt="Power switch"> |
-| Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/rst_switch.jpg" width="100" alt="Reset switch"> |
+| nice!nano v2.0 | 2 | Wireless microcontroller | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_nice_nano.jpg" width="100" alt="nice!nano"> |
+| nice!view | 2 | Optional display | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/display_nice_view.jpg" width="100" alt="nice!view"> |
+| Kailh Choc Hotswap Sockets | 36-42 | Optional - allows switch swapping without desoldering | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/choc_socket.jpg" width="100" alt="Choc socket"> |
+| EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_ezsolder_socket.jpg" width="100" alt="EZ-Solder sockets"> |
+| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration (not needed if using JLCPCB assembly) | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/diode.jpg" width="100" alt="SMD diode"> |
+| ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [KEEBD](https://keebd.com/en-us/collections/components) | <img src="/assets/bom/enc_ec12.jpg" width="100" alt="Encoder"> |
+| Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [KEEBD](https://keebd.com/en-us/collections/components) | <img src="/assets/bom/enc_knob.jpg" width="100" alt="Encoder knob"> |
+| Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_110mAh.jpg" width="100" alt="Battery"> |
+| Battery Jack (JST PH 2.0mm) | 2 | For battery connection | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_connector.jpg" width="100" alt="Battery connector"> |
+| Power Switch (MSK12C02) | 2 | Power on/off switch | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/pwr_switch.jpg" width="100" alt="Power switch"> |
+| Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/rst_switch.jpg" width="100" alt="Reset switch"> |
 
 - Encoders are optional. You can use regular switches in the encoder positions if you prefer.
 - Hotswap sockets are optional. You can solder switches directly to the PCB for a permanent installation.
@@ -36,7 +36,7 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 | Component | Quantity | Notes | Source | Image |
 |-----------|----------|-------|--------|-------|
-| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration | [Low Pro KB](https://lowprokb.ca/) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
+| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration | [KEEBD](https://keebd.com/en-us/collections/choc-switches) [Low Pro KB](https://lowprokb.ca/) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
 | Choc v1 Keycaps | 36-42 | Compatible with Choc switches | | |
 
 I recommend [Ambients Silent Choc switches](https://lowprokb.ca/collections/switches/products/ambients-silent-choc-switches) for a quiet, smooth typing experience.
@@ -95,8 +95,8 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 
 ## Where to Buy
 
-- [Typeractive](https://typeractive.xyz/) - nice!nano, nice!view, switches, sockets, and other components
-- [KEEBD](https://keebd.com/) - encoders and an alternative source for other keyboard components
+- [KEEBD](https://keebd.com/) - nice!nano, nice!view, switches, sockets, encoders, and other components
+- [Typeractive](https://typeractive.xyz/) - Alternative source for keyboard components
 - **Amazon** - Good for heat set inserts, screws, and general hardware
 - **AliExpress** - Budget alternative for many components (longer shipping times)
 
