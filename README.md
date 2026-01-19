@@ -7,7 +7,8 @@ A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff 
 
 ![Temporal Preview](assets/preview.svg)
 
-<img src="assets/temporal_tilt_shot.jpg" width="400" alt="Temporal tilt shot"> <img src="assets/temporal_angle_shot.jpg" width="400" alt="Temporal angle shot">
+<img src="assets/temporal_tilt_shot.jpg" alt="Temporal tilt shot">
+<img src="assets/temporal_angle_shot.jpg" alt="Temporal angle shot">
 
 ## Design
 
