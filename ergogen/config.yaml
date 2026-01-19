@@ -109,9 +109,8 @@ units:
   diode_h: 1.15
 
   # Case dimensions
-  case_expand: 0.1 # Gap between pcb and case walls
   buffer: 0.1
-  wall_height: pcb_thickness + choc_under_to_pcb + 0.1 + buffer
+  wall_height: pcb_thickness + choc_under_to_pcb + buffer
   wall_above_pcb: wall_height - pcb_thickness
   wall_thickness: 1.2 + nudge
   side_cut_width: 10.4
@@ -126,7 +125,7 @@ units:
   # M2 hardware
   m2_size: 2
   m2_insert_inner_diameter: 2.7
-  m2_insert_outer_diameter: 4.9
+  m2_insert_outer_diameter: pcb_hole_diameter - buffer
   m2_insert_post_height: pcb_thickness + choc_under_to_pcb - choc_top_plate
   m2_insert_hole_depth: 4
   m2_nut_width: 4.2
@@ -838,7 +837,7 @@ outlines:
           shift: [-2px, -2py]
   _kickstand_42_1e:
     - name: _kickstand_42_1
-      expand: case_expand + wall_thickness
+      expand: wall_thickness + buffer
       joints: 1
   _kickstand_42_1ef:
     - name: _kickstand_42_1e
@@ -874,7 +873,7 @@ outlines:
           shift: [-2px, -2py]
   _kickstand_38_1e:
     - name: _kickstand_38_1
-      expand: case_expand + wall_thickness
+      expand: wall_thickness + buffer
       joints: 1
   _kickstand_38_1ef:
     - name: _kickstand_38_1e
@@ -969,12 +968,12 @@ outlines:
       fillet: pcb_fillet
   _case_inner_42:
     - name: _case_inner_42_1
-      expand: case_expand
+      expand: buffer
       joints: 1
 
   _case_outer_42_1:
     - name: _board_42
-      expand: case_expand + wall_thickness
+      expand: wall_thickness + buffer
       joints: 1
   _case_outer_42:
     - name: _case_outer_42_1
@@ -1002,12 +1001,12 @@ outlines:
       fillet: pcb_fillet
   _case_inner_38:
     - name: _case_inner_38_1
-      expand: case_expand
+      expand: buffer
       joints: 1
 
   _case_outer_38_1:
     - name: _board_38
-      expand: case_expand + wall_thickness
+      expand: wall_thickness + buffer
       joints: 1
   _case_outer_38:
     - name: _case_outer_38_1
