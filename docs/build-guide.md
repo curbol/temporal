@@ -95,13 +95,13 @@ Install one socket per key position (matching your diode count). Hotswap sockets
 3. Heat and position the socket
 4. Solder the second pad - use enough solder to create a solid connection
 
-<img src="/assets/build_guide/sockets_soldered.jpg" width="400" alt="Hotswap sockets soldered">
-
 > [!TIP]
 > Apply gentle pressure while soldering to ensure the socket sits flat against the PCB.
 
 > [!TIP]
 > Install sockets in encoder positions even if using encoders - they don't interfere with the encoder and fill in the socket cutout in the case for a cleaner look.
+
+<img src="/assets/build_guide/sockets_soldered.jpg" width="400" alt="Hotswap sockets soldered">
 
 > [!NOTE]
 > Hotswap sockets are optional. You can solder switches directly to the PCB if you prefer a permanent installation. This saves the cost of sockets but means you cannot swap switches later without desoldering.
@@ -126,12 +126,12 @@ Bridge all jumper pads on the back side. There are jumpers for the MCU, display,
 
 These components are soldered to the **front side** of the PCB.
 
+<img src="/assets/build_guide/pwr_rst_prepared.jpg" width="400" alt="Power and reset switches prepared">
+
 ### Power Switch (MSK12C02)
 
 > [!TIP]
 > These components have multiple legs - once one leg is tacked down, the rest are easy to solder.
-
-<img src="/assets/build_guide/pwr_rst_prepared.jpg" width="400" alt="Power and reset switches prepared">
 
 1. Pre-tin one of the pads
 2. Position the switch and heat the pre-tinned pad while holding the switch in place with tweezers
@@ -154,7 +154,7 @@ These components are installed on the **front side** of the PCB. The sockets and
 > [!TIP]
 > For all through-hole components: after tacking two corner pins, verify the component is straight and fully seated before soldering the rest.
 
-### MCU Sockets (Machine Pin Sockets)
+### MCU Sockets
 
 > [!IMPORTANT]
 > The microcontroller will be placed **facing DOWN** (components facing the PCB). Ensure your sockets are positioned correctly.
@@ -168,9 +168,6 @@ These components are installed on the **front side** of the PCB. The sockets and
 
 3. Flip the PCB and solder two pins on opposite corners first while pressing the socket flat against your work surface to ensure it's fully seated
 4. Solder the remaining pins
-
-<img src="/assets/build_guide/mcu_solder_pins.jpg" width="400" alt="MCU socket pins soldered">
-
 5. Trim the pins flush with the solder joints using wire snips
 
 ### Display Header
@@ -246,6 +243,9 @@ If your encoder has a push-button switch (5 pins total instead of 3):
 1. Insert the mill-max pins into the sockets (not into the nice!nano yet)
 2. Place the nice!nano **face down** (components facing the PCB) onto the pins
 3. Solder the pins to the nice!nano
+
+<img src="/assets/build_guide/mcu_solder_pins.jpg" width="400" alt="MCU socket pins soldered">
+
 4. The nice!nano should now be removable from the sockets
 
 <img src="/assets/build_guide/mcu_fully_soldered.jpg" width="400" alt="MCU fully soldered">
@@ -273,6 +273,7 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 <img src="/assets/build_guide/pcb_cleaning_complete.jpg" width="400" alt="PCB cleaning complete">
 
 <img src="/assets/build_guide/mcu_cleaned.jpg" width="400" alt="MCU area cleaned">
+(left: after cleaning, right: before cleaning)
 
 ---
 
@@ -301,11 +302,9 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 > [!TIP]
 > Insert a few switches into the top plate before placing it on the PCB. This helps maintain proper spacing and alignment.
 
-<img src="/assets/build_guide/top_plate_switches.jpg" width="400" alt="Top plate with switches">
+<img src="/assets/build_guide/top_plate_on.jpg" width="400" alt="Top plate installed">
 
 4. Secure with M2 screws (4mm length) through the top plate into the heat-set inserts
-
-<img src="/assets/build_guide/top_plate_on.jpg" width="400" alt="Top plate installed">
 
 ### FR-4 Plate Alternative
 
