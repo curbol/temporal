@@ -53,7 +53,7 @@ Follow this general order:
 2. **Front side:** Power switch, reset button
 3. **Front side:** MCU sockets, display header, battery connector
 4. **Front side:** Encoder (if using)
-5. **Install microcontroller and display**
+5. **Install microcontroller and display**, then clean the PCB
 6. **Case assembly**
 7. **Switches and keycaps**
 
@@ -218,6 +218,14 @@ If using a nice!view or other display:
 1. Insert pins into the display header
 2. Place the display onto the pins
 3. Solder and trim
+
+### Clean the PCB
+
+After all soldering is complete, clean the board to remove flux residue. Flux left on the PCB can be corrosive over time and looks untidy.
+
+1. Dip a toothbrush in isopropyl alcohol (90% or higher works best)
+2. Scrub all solder joints thoroughly
+3. Allow the board to dry completely before powering on
 
 ---
 
