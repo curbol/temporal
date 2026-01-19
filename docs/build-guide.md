@@ -88,10 +88,14 @@ Install one diode per key position (18-21 per half depending on your configurati
 
 Install one socket per key position (matching your diode count). Hotswap sockets should only be installed one way. Make sure to match up the side with chamfered corners with the matching silkscreen.
 
+<img src="/assets/build_guide/sockets_prepared.jpg" width="400" alt="Hotswap sockets prepared">
+
 1. Pre-tin one pad
 2. Place the socket in the silkscreen outline
 3. Heat and position the socket
 4. Solder the second pad - use enough solder to create a solid connection
+
+<img src="/assets/build_guide/sockets_soldered.jpg" width="400" alt="Hotswap sockets soldered">
 
 > [!TIP]
 > Apply gentle pressure while soldering to ensure the socket sits flat against the PCB.
@@ -127,6 +131,8 @@ These components are soldered to the **front side** of the PCB.
 > [!TIP]
 > These components have multiple legs - once one leg is tacked down, the rest are easy to solder.
 
+<img src="/assets/build_guide/pwr_rst_prepared.jpg" width="400" alt="Power and reset switches prepared">
+
 1. Pre-tin one of the pads
 2. Position the switch and heat the pre-tinned pad while holding the switch in place with tweezers
 3. Solder the remaining pads
@@ -136,6 +142,8 @@ These components are soldered to the **front side** of the PCB.
 1. Pre-tin one pad
 2. Align the button and heat the pre-tinned pad
 3. Solder the remaining pads
+
+<img src="/assets/build_guide/pwr_rst_soldered.jpg" width="400" alt="Power and reset switches soldered">
 
 ---
 
@@ -151,25 +159,50 @@ These components are installed on the **front side** of the PCB. The sockets and
 > [!IMPORTANT]
 > The microcontroller will be placed **facing DOWN** (components facing the PCB). Ensure your sockets are positioned correctly.
 
+<img src="/assets/build_guide/mcu_socket_prepared.jpg" width="400" alt="MCU sockets prepared">
+
 1. Insert the sockets into the front of the PCB
 2. Tape them in place to prevent them from falling out when you flip the board
+
+<img src="/assets/build_guide/mcu_socket_taped.jpg" width="400" alt="MCU sockets taped">
+
 3. Flip the PCB and solder two pins on opposite corners first while pressing the socket flat against your work surface to ensure it's fully seated
 4. Solder the remaining pins
+
+<img src="/assets/build_guide/mcu_solder_pins.jpg" width="400" alt="MCU socket pins soldered">
+
 5. Trim the pins flush with the solder joints using wire snips
 
 ### Display Header
 
+<img src="/assets/build_guide/display_socket_prepared.jpg" width="400" alt="Display header prepared">
+
 1. Insert the header pins into the front of the PCB
 2. Tape in place
+
+<img src="/assets/build_guide/display_socket_taped.jpg" width="400" alt="Display header taped">
+
 3. Solder from the back using the same technique as the MCU sockets
+
+<img src="/assets/build_guide/display_solder_pins.jpg" width="400" alt="Display header pins soldered">
+
 4. Trim the pins
+
+<img src="/assets/build_guide/display_snip_pins.jpg" width="400" alt="Display header pins trimmed">
 
 ### Battery Connector
 
+<img src="/assets/build_guide/batt_prepared.jpg" width="400" alt="Battery connector prepared">
+
 1. Insert the connector into the front of the PCB
 2. Tape in place
+
+<img src="/assets/build_guide/batt_taped.jpg" width="400" alt="Battery connector taped">
+
 3. Solder from the back
 4. Trim the pins
+
+<img src="/assets/build_guide/batt_snip.jpg" width="400" alt="Battery connector pins trimmed">
 
 > [!IMPORTANT]
 > When connecting the battery later, verify polarity matches the PCB markings (+ and -). Reversed polarity can damage the microcontroller. Most 301230 or 401230 LiPo batteries with JST connectors work well.
@@ -184,9 +217,13 @@ If you're using rotary encoders instead of switches in the thumb cluster positio
 
 The encoder has side clips that snap into the PCB, so taping is not necessary.
 
+<img src="/assets/build_guide/enc_prepared.jpg" width="400" alt="Encoder prepared">
+
 1. Insert the encoder from the front - the clips should snap into the mounting holes
 2. Flip the board and solder the 3 encoder pins on the back
 3. Trim the pins
+
+<img src="/assets/build_guide/enc_soldered.jpg" width="400" alt="Encoder soldered">
 
 ### Encoders with Switch Function
 
@@ -211,6 +248,8 @@ If your encoder has a push-button switch (5 pins total instead of 3):
 3. Solder the pins to the nice!nano
 4. The nice!nano should now be removable from the sockets
 
+<img src="/assets/build_guide/mcu_fully_soldered.jpg" width="400" alt="MCU fully soldered">
+
 ### Display Installation (Optional)
 
 If using a nice!view or other display:
@@ -219,13 +258,21 @@ If using a nice!view or other display:
 2. Place the display onto the pins
 3. Solder and trim
 
+<img src="/assets/build_guide/display_fully_soldered.jpg" width="400" alt="Display fully soldered">
+
 ### Clean the PCB
 
 After all soldering is complete, clean the board to remove flux residue. Flux left on the PCB can be corrosive over time and looks untidy.
 
+<img src="/assets/build_guide/pcb_cleaning_prepared.jpg" width="400" alt="PCB cleaning prepared">
+
 1. Dip a toothbrush in isopropyl alcohol (90% or higher works best)
 2. Scrub all solder joints thoroughly
 3. Allow the board to dry completely before powering on
+
+<img src="/assets/build_guide/pcb_cleaning_complete.jpg" width="400" alt="PCB cleaning complete">
+
+<img src="/assets/build_guide/mcu_cleaned.jpg" width="400" alt="MCU area cleaned">
 
 ---
 
@@ -239,13 +286,26 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 
 ### 3D Printed Case
 
+<img src="/assets/build_guide/heatset_prepared.jpg" width="400" alt="Heat set inserts prepared">
+
 1. Install 5 heat-set inserts into the case posts using a soldering iron or heat-set tool
+
+<img src="/assets/build_guide/heatset_complete.jpg" width="400" alt="Heat set inserts installed">
+
 2. Place the PCB into the case - the case posts go through the mounting holes in the PCB
+
+<img src="/assets/build_guide/top_plate_prepared.jpg" width="400" alt="Top plate prepared">
+
 3. Place the top plate over the PCB, aligning with the case posts
-4. Secure with M2 screws (4mm length) through the top plate into the heat-set inserts
 
 > [!TIP]
 > Insert a few switches into the top plate before placing it on the PCB. This helps maintain proper spacing and alignment.
+
+<img src="/assets/build_guide/top_plate_switches.jpg" width="400" alt="Top plate with switches">
+
+4. Secure with M2 screws (4mm length) through the top plate into the heat-set inserts
+
+<img src="/assets/build_guide/top_plate_on.jpg" width="400" alt="Top plate installed">
 
 ### FR-4 Plate Alternative
 
@@ -263,6 +323,8 @@ If using FR-4 plates instead of a 3D printed case:
 2. Press firmly until the switches click into the hotswap sockets
 3. Install keycaps onto the switches
 4. If using encoders, press the knobs onto the encoder shafts
+
+<img src="/assets/build_guide/temporal_complete.jpg" width="400" alt="Temporal keyboard complete">
 
 ---
 
