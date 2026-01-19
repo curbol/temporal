@@ -6,38 +6,40 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 ### Electronics
 
-| Component | Quantity | Notes | Source |
-|-----------|----------|-------|--------|
-| nice!nano v2.0 | 2 | Wireless microcontroller | [Typeractive](https://typeractive.xyz/) |
-| nice!view | 2 | Optional display | [Typeractive](https://typeractive.xyz/) |
-| Kailh Choc Hotswap Sockets | 36-42 | Optional - allows switch swapping without desoldering | [Typeractive](https://typeractive.xyz/) |
-| EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [Typeractive](https://typeractive.xyz/) |
-| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration (not needed if using JLCPCB assembly) | [Typeractive](https://typeractive.xyz/) |
-| ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [Typeractive](https://typeractive.xyz/) |
-| Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [Typeractive](https://typeractive.xyz/) |
-| Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [Typeractive](https://typeractive.xyz/) |
-| Battery Jack (JST PH 2.0mm) | 2 | For battery connection | [Typeractive](https://typeractive.xyz/) |
-| Power Switch (MSK12C02) | 2 | Power on/off switch | [Typeractive](https://typeractive.xyz/) |
-| Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [Typeractive](https://typeractive.xyz/) |
+| Component | Quantity | Notes | Source | Image |
+|-----------|----------|-------|--------|-------|
+| nice!nano v2.0 | 2 | Wireless microcontroller | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_nice_nano.jpg" width="100" alt="nice!nano"> |
+| nice!view | 2 | Optional display | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/display_nice_view.jpg" width="100" alt="nice!view"> |
+| Kailh Choc Hotswap Sockets | 36-42 | Optional - allows switch swapping without desoldering | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/choc_socket.jpg" width="100" alt="Choc socket"> |
+| EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_ezsolder_socket.jpg" width="100" alt="EZ-Solder sockets"> |
+| SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration (not needed if using JLCPCB assembly) | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/diode.jpg" width="100" alt="SMD diode"> |
+| ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [KEEBD](https://keebd.com/en-us/collections/tools) | <img src="/assets/bom/enc_ec12.jpg" width="100" alt="Encoder"> |
+| Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [KEEBD](https://keebd.com/en-us/collections/tools) | <img src="/assets/bom/enc_knob.jpg" width="100" alt="Encoder knob"> |
+| Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_110mAh.jpg" width="100" alt="Battery"> |
+| Battery Jack (JST PH 2.0mm) | 2 | For battery connection | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_connector.jpg" width="100" alt="Battery connector"> |
+| Power Switch (MSK12C02) | 2 | Power on/off switch | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/pwr_switch.jpg" width="100" alt="Power switch"> |
+| Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/rst_switch.jpg" width="100" alt="Reset switch"> |
 
 - Encoders are optional. You can use regular switches in the encoder positions if you prefer.
 - Hotswap sockets are optional. You can solder switches directly to the PCB for a permanent installation.
 
 ### Hardware
 
-| Component | Quantity | Notes | Source |
-|-----------|-------------------|-------|--------|
-| M2 Heat Set Inserts | 10 | 3mm OD × 3mm height (2mm height also works) | [KEEBD](https://keebd.com/) |
-| M2 Screws (4mm length) | 18 | Button-head recommended | Amazon |
+| Component | Quantity | Notes | Source | Image |
+|-----------|-------------------|-------|--------|-------|
+| M2 Heat Set Inserts | 10 | 3mm OD × 3mm height (2mm height also works) | [KEEBD](https://keebd.com/) | <img src="/assets/bom/heatset_m2_3mm_insert.jpg" width="100" alt="Heat set insert"> |
+| M2 Screws (4mm length) | 18 | Button-head recommended | Amazon | <img src="/assets/bom/m2_button_head.jpg" width="100" alt="M2 screw"> |
 
 - Try to get M2 inserts with 3mm outer diameter and 3mm height. 2mm height also works. Avoid inserts with 3.2mm+ outer diameter as they may not fit properly.
 
 ### Switches & Keycaps
 
-| Component | Quantity | Notes |
-|-----------|----------|-------|
-| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration |
-| Choc v1 Keycaps | 36-42 | Compatible with Choc switches |
+| Component | Quantity | Notes | Source | Image |
+|-----------|----------|-------|--------|-------|
+| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration | [Low Pro KB](https://lowprokb.ca/) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
+| Choc v1 Keycaps | 36-42 | Compatible with Choc switches | | |
+
+I recommend [Ambients Silent Choc switches](https://lowprokb.ca/collections/switches/products/ambients-silent-choc-switches) for a quiet, smooth typing experience.
 
 I recommend using sculpted keycaps as it significantly improves the feel, but ultimately it's personal preference.
 
@@ -86,9 +88,10 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 
 ## Optional Tools
 
-| Tool | Purpose | Source |
-|------|---------|--------|
-| NovelLife Heat Set Insert Tool | Makes installing heat set inserts easier with soldering iron | Amazon |
+| Tool | Purpose | Source | Image |
+|------|---------|--------|-------|
+| NovelLife Heat Set Insert Tool | Makes installing heat set inserts easier with soldering iron | Amazon | <img src="/assets/bom/heatset_insert_tool.jpg" width="100" alt="Heat set insert tool"> |
+| Flux Pen | Helps solder flow nicely, especially for jumpers | [KEEBD](https://keebd.com/en-us/products/kester-951-no-clean-solder-flux-pen) | |
 
 ## Where to Buy
 
