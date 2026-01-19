@@ -85,6 +85,6 @@ This will:
 
 Temporal is inspired by and takes influence from:
 
-- [TEMPEST](https://github.com/thrly/tempest) by thrly
-- [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) and [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST
 - [Hillside](https://github.com/mmccoyd/hillside) by mmccoyd
+- [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) and [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST
+- [TEMPEST](https://github.com/thrly/tempest) by thrly
