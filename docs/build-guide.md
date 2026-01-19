@@ -53,8 +53,9 @@ Follow this general order:
 2. **Front side:** Power switch, reset button
 3. **Front side:** MCU sockets, display header, battery connector
 4. **Front side:** Encoder (if using)
-5. **Case assembly**
-6. **Switches and keycaps**
+5. **Install microcontroller and display**
+6. **Case assembly**
+7. **Switches and keycaps**
 
 ---
 
@@ -71,21 +72,21 @@ For SMD components (diodes, sockets, jumpers), use this technique:
 3. The component will sink into the molten solder - hold it in place until the solder solidifies
 4. Solder the remaining pad(s), touching both the pad and component lead simultaneously
 
-### Diodes (21 per half)
+### Diodes
 
 > [!NOTE]
 > If the diodes are already installed using JLCPCB assembly, skip this step.
 
-Diodes are directional - the line on the diode must match the line on the PCB silkscreen.
+Install one diode per key position (18-21 per half depending on your configuration). Diodes are directional - the line on the diode must match the line on the PCB silkscreen.
 
 1. Pre-tin one pad of each diode location
 2. Place the diode with the line matching the PCB marking
 3. Heat the pre-tinned pad while holding the diode with tweezers
 4. Solder the second pad
 
-### Hotswap Sockets (21 per half)
+### Hotswap Sockets
 
-Hotswap sockets should only be installed one way. Make sure to match up the side with chamfered corners with the matching silkscreen.
+Install one socket per key position (matching your diode count). Hotswap sockets should only be installed one way. Make sure to match up the side with chamfered corners with the matching silkscreen.
 
 1. Pre-tin one pad
 2. Place the socket in the silkscreen outline
@@ -152,10 +153,9 @@ These components are installed on the **front side** of the PCB. The sockets and
 
 1. Insert the sockets into the front of the PCB
 2. Tape them in place to prevent them from falling out when you flip the board
-3. Flip the PCB and solder the pins from the back
-4. Push the socket against a flat surface (like a roll of tape) while soldering two pins on opposite corners to ensure the socket is fully seated
-5. Solder the remaining pins
-6. Trim the pins flush with the solder joints using wire snips
+3. Flip the PCB and solder two pins on opposite corners first while pressing the socket flat against your work surface to ensure it's fully seated
+4. Solder the remaining pins
+5. Trim the pins flush with the solder joints using wire snips
 
 ### Display Header
 
@@ -170,6 +170,9 @@ These components are installed on the **front side** of the PCB. The sockets and
 2. Tape in place
 3. Solder from the back
 4. Trim the pins
+
+> [!IMPORTANT]
+> When connecting the battery later, verify polarity matches the PCB markings (+ and -). Reversed polarity can damage the microcontroller. Most 301230 or 401230 LiPo batteries with JST connectors work well.
 
 ---
 
@@ -261,7 +264,7 @@ The Temporal uses ZMK firmware for wireless functionality.
 
 ### Initial Setup
 
-1. Create a ZMK config repository by following the [ZMK User Setup Guide](https://v0-3-branch.zmk.dev/docs/user-setup)
+1. Create a ZMK config repository by following the [ZMK User Setup Guide](https://zmk.dev/docs/user-setup)
 
 2. Add the Temporal shield to your config. Use the [temporal-zmk](https://github.com/curbol/temporal-zmk) repository as a shield module.
 
