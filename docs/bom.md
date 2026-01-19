@@ -91,12 +91,12 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 | Tool | Purpose | Source | Image |
 |------|---------|--------|-------|
 | NovelLife Heat Set Insert Tool | Makes installing heat set inserts easier with soldering iron | Amazon | <img src="/assets/bom/heatset_insert_tool.jpg" width="100" alt="Heat set insert tool"> |
-| Flux Pen | Helps solder flow nicely, especially for jumpers | [KEEBD](https://keebd.com/en-us/products/kester-951-no-clean-solder-flux-pen) | |
+| Flux Pen | Helps solder flow nicely, especially for jumpers | [KEEBD](https://keebd.com/en-us/products/kester-951-no-clean-solder-flux-pen) | <img src="/assets/bom/flux_pen.jpg" width="100" alt="Flux pen"> |
 
 ## Where to Buy
 
-- [Typeractive](https://typeractive.xyz/) - nice!nano, nice!view, switches, sockets, encoders, and other components
-- [KEEBD](https://keebd.com/) - Alternative source for keyboard components
+- [Typeractive](https://typeractive.xyz/) - nice!nano, nice!view, switches, sockets, and other components
+- [KEEBD](https://keebd.com/) - encoders and an alternative source for other keyboard components
 - **Amazon** - Good for heat set inserts, screws, and general hardware
 - **AliExpress** - Budget alternative for many components (longer shipping times)
 
