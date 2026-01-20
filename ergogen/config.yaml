@@ -114,7 +114,7 @@ units:
   wall_thickness: 1.2 + nudge
   side_cut_width: 10.4
   side_cut_radius: (wall_above_pcb + pcb_thickness / 2) / 2
-  mcu_catch_radius: (choc_under_to_pcb - 1.6) / 2
+  mcu_catch_radius: (choc_under_to_pcb - choc_top_plate) / 2
   bottom_thickness: 1.95
   cutout_fillet: 0.15
   diode_depth: diode_h + buffer
