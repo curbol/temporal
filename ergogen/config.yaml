@@ -1231,6 +1231,12 @@ cases:
       extrude: mcu_area_h
       shift: [0, 0, pcb_thickness + mcu_catch_radius]
       rotate: [-90, 0, 0]
+    - what: outline
+      name: _side_case_cutout
+      operation: subtract
+      extrude: wall_height
+      shift: [-mcu_catch_radius, 0, 0]
+      rotate: [0, 0, 180]
     - ~_case_outer_38
 
   _wall_cutouts:
