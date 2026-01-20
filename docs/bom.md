@@ -69,6 +69,10 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 - Surface finish: LeadFree HASL
 - See [`pcbs/README.md`](/pcbs/README.md) for detailed manufacturing specifications
 
+> **Tip:** For top plates, back plates, and MCU covers, you can choose HASL (with lead) instead of LeadFree HASL - it's usually cheaper and these parts have no exposed copper pads, so the surface finish doesn't matter.
+
+> **Tip:** Order top plates at 1.2mm thickness instead of 1.6mm for the best fit with Choc switches.
+
 3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for 38 and 42 key configurations, with optional kickstand variants for tenting.
 
 **For home 3D printing:**
