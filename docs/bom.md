@@ -111,6 +111,10 @@ Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fa
 
 Use the gerber files in [`gerbers/`](/gerbers/) when ordering.
 
+> **Tip:** Here's how different PCB colors look from JLCPCB:
+>
+> <img src="/assets/bom/pcb_colors.webp" width="400" alt="PCB color options">
+
 #### JLCPCB Assembly (Optional)
 
 JLCPCB can pre-assemble SMD components onto your PCBs. This includes:
