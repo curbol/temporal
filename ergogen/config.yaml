@@ -1274,17 +1274,22 @@ cases:
       shift: [wall_thickness * 2, 0, wall_height]
       rotate: [0, -90, 0]
 
-  _posts:
+  _posts_38:
     - what: outline
       name: _posts_core
       extrude: m2_insert_post_height
+    - what: outline
+      name: _posts_pinky
+      extrude: m2_insert_post_height
+    - ~_shell_38_outer
     - what: outline
       name: _post_holes_core
       operation: subtract
       extrude: m2_insert_hole_depth * 2
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
 
-  _posts_pinky:
+  _posts_42:
+    - +_posts_38
     - what: outline
       name: _posts_pinky
       extrude: m2_insert_post_height
@@ -1297,8 +1302,7 @@ cases:
   # 42-key cases
   _temporal_42_1:
     - +_shell_42
-    - +_posts
-    - +_posts_pinky
+    - +_posts_42
     - +_mcu_catch
     - -_wall_cutouts
     - -_diode_depth_cutouts
@@ -1356,7 +1360,7 @@ cases:
   # 38-key cases
   _temporal_38_1:
     - +_shell_38
-    - +_posts
+    - +_posts_38
     - +_mcu_catch
     - -_wall_cutouts
     - -_full_depth_cutouts
