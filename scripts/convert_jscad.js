@@ -5,8 +5,7 @@
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
  *
- * All STLs are processed with admesh to repair mesh issues (fill holes, fix
- * normals). Files ending in _m_right are also mirrored to produce _right STL.
+ * All STLs are processed with admesh. Files ending in _m_right are also mirrored to produce _right STL.
  */
 
 const fs = require('fs');
@@ -17,10 +16,11 @@ const { glob } = require('glob');
 
 const execAsync = promisify(exec);
 
-const arcResolution = 10;
-
 function getArcSegments(radius) {
-  return Math.ceil(radius * arcResolution);
+  const arcSegmentsBase = 50; // Base segments for small arcs
+  const arcSegmentsMult = 10; // Multiplier for larger arcs
+
+  return arcSegmentsBase + Math.ceil(radius * arcSegmentsMult);
 }
 
 /**
@@ -73,8 +73,8 @@ async function main() {
     content = content.replace(
       /\.appendArc\(\[([^\]]+)\],\{"radius":([^,]+),"clockwise":(true|false),"large":(true|false)\}\)/g,
       (match, endpoint, radius, clockwise, large) => {
-        const segments = getArcSegments(parseFloat(radius));
-        return `.appendArc([${endpoint}],{"radius":${radius},"clockwise":${clockwise},"large":${large},"resolution":${segments}})`;
+        const resolution = getArcSegments(parseFloat(radius));
+        return `.appendArc([${endpoint}],{"radius":${radius},"clockwise":${clockwise},"large":${large},"resolution":${resolution}})`;
       }
     );
 
@@ -82,8 +82,8 @@ async function main() {
     content = content.replace(
       /CSG\.Path2D\.arc\(\{"center":\[([^\]]+)\],"radius":([^,]+),"startangle":([^,]+),"endangle":([^}]+)\}\)/g,
       (match, center, radius, startangle, endangle) => {
-        const segments = getArcSegments(parseFloat(radius));
-        return `CSG.Path2D.arc({"center":[${center}],"radius":${radius},"startangle":${startangle},"endangle":${endangle},"resolution":${segments}})`;
+        const resolution = getArcSegments(parseFloat(radius));
+        return `CSG.Path2D.arc({"center":[${center}],"radius":${radius},"startangle":${startangle},"endangle":${endangle},"resolution":${resolution}})`;
       }
     );
 
@@ -91,8 +91,8 @@ async function main() {
     content = content.replace(
       /CAG\.circle\(\{"center":\[([^\]]+)\],"radius":([^}]+)\}\)/g,
       (match, center, radius) => {
-        const segments = getArcSegments(parseFloat(radius)) * 4; // Full circle needs 4x arc segments
-        return `CAG.circle({"center":[${center}],"radius":${radius},"resolution":${segments}})`;
+        const resolution = getArcSegments(parseFloat(radius));
+        return `CAG.circle({"center":[${center}],"radius":${radius},"resolution":${resolution}})`;
       }
     );
 
