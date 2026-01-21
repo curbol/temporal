@@ -101,11 +101,17 @@ units:
   # Choc
   choc_under_to_pcb: 2.2
   choc_top_plate: 1.3
-  choc_pins: 2.65
+  choc_post_d: 2.65
+  choc_center_post_w: 3.4
+  choc_side_post_w: 1.9
 
   # Diode
   diode_y: -3.315
-  diode_h: 1.15
+  diode_d: 1.15
+  diode_pads_w: 3.85
+  diode_pads_h: 0.6
+  diode_w: 2.7
+  diode_h: 1.65
 
   # Case dimensions
   buffer: 0.1
@@ -116,9 +122,10 @@ units:
   side_cut_radius: (wall_above_pcb + pcb_thickness / 2) / 2
   mcu_catch_radius: (choc_under_to_pcb - choc_top_plate) / 2
   bottom_thickness: 1.95
-  cutout_fillet: 0.15
-  diode_depth: diode_h + buffer
-  choc_depth: choc_pins - pcb_thickness + buffer
+  cutout_fillet: 0.3
+  cutout_padding: 0.6
+  diode_depth: diode_d + buffer
+  choc_depth: choc_post_d - pcb_thickness + buffer
   pin_depth: 0.5 + buffer
 
   # M2 hardware
@@ -269,15 +276,21 @@ outlines:
       where: *mcu_hole2_where
 
   # Component cutout primitives
-  _socket_left:
-    - what: rectangle # Left block
+  _socket_left_small_block:
+    - what: rectangle
       size: [4.7, 5.2]
       adjust.shift: [0, 5.95]
     - what: rectangle # Chamfer
       operation: intersect
       size: [6.1, 6.1]
       adjust: { shift: [0, 5.95], rotate: 45 }
-    - what: rectangle # Left pad
+      fillet: cutout_fillet
+  _socket_left:
+    - what: rectangle # Large block
+      size: [5.2, 5.4]
+      adjust.shift: [4.75, 3.85]
+    - +_socket_left_small_block
+    - what: rectangle # Top pad
       size: [3.2, 3.2]
       adjust.shift: [-3.3, 5.95]
     - what: rectangle # Top curve
@@ -290,6 +303,9 @@ outlines:
     - what: rectangle # Center
       size: [1, 3.2]
       adjust.shift: [2.25, 4.95]
+    - what: rectangle # Bottom pad
+      size: [3.2, 3.2]
+      adjust.shift: [8.3, 3.75]
     - what: rectangle # Bottom curve
       size: [2.7 - nudge, 2.7 - nudge]
       adjust.shift: [2.15, 3.35]
@@ -297,22 +313,22 @@ outlines:
       operation: subtract
       radius: 1.35
       adjust.shift: [0.8, 2]
-    - what: rectangle # Right block
-      size: [5.2, 5.4]
-      adjust.shift: [4.75, 3.85]
-    - what: rectangle # Right pad
-      size: [3.2, 3.2]
-      adjust.shift: [8.3, 3.75]
       fillet: cutout_fillet
-  _socket_m_right:
-    - what: rectangle # Right block
+  _socket_m_right_small_block:
+    - what: rectangle
       size: [4.7, 5.2]
       adjust.shift: [0, 5.95]
     - what: rectangle # Chamfer
       operation: intersect
       size: [6.1, 6.1]
       adjust: { shift: [0, 5.95], rotate: -45 }
-    - what: rectangle # Right pad
+      fillet: cutout_fillet
+  _socket_m_right:
+    - what: rectangle # Large block
+      size: [5.2, 5.4]
+      adjust.shift: [-4.75, 3.85]
+    - +_socket_m_right_small_block
+    - what: rectangle # Top pad
       size: [3.2, 3.2]
       adjust.shift: [3.3, 5.95]
     - what: rectangle # Top curve
@@ -325,6 +341,9 @@ outlines:
     - what: rectangle # Center
       size: [1, 3.2]
       adjust.shift: [-2.25, 4.95]
+    - what: rectangle # Bottom pad
+      size: [3.2, 3.2]
+      adjust.shift: [-8.3, 3.75]
     - what: rectangle # Bottom curve
       size: [2.7 - nudge, 2.7 - nudge]
       adjust.shift: [-2.15, 3.35]
@@ -332,12 +351,6 @@ outlines:
       operation: subtract
       radius: 1.35
       adjust.shift: [-0.8, 2]
-    - what: rectangle # Left block
-      size: [5.2, 5.4]
-      adjust.shift: [-4.75, 3.85]
-    - what: rectangle # Left pad
-      size: [3.2, 3.2]
-      adjust.shift: [-8.3, 3.75]
       fillet: cutout_fillet
 
   _solder_pin:
@@ -360,21 +373,23 @@ outlines:
     - name: _solder_pin
       adjust.shift: [0, -5.9]
 
+  _diode_pads:
+    - what: rectangle
+      size: [diode_pads_w + cutout_padding, diode_pads_h + cutout_padding + 0.3]
+      adjust.shift: [0, diode_y]
+      fillet: cutout_fillet
   _diode:
     - what: rectangle
-      size: [4.8, 1.8]
-      adjust.shift: [0, diode_y]
-    - what: rectangle
-      size: [3.4, 2.4]
+      size: [diode_w + cutout_padding, diode_h + cutout_padding]
       adjust.shift: [0, diode_y]
       fillet: cutout_fillet
 
   _choc_side_posts:
     - what: circle
-      radius: 1.25
+      radius: (choc_side_post_w + cutout_padding) / 2
       adjust.shift: [-5.5, 0]
     - what: circle
-      radius: 1.25
+      radius: (choc_side_post_w + cutout_padding) / 2
       adjust.shift: [5.5, 0]
   _choc_post_bridge_left: # Bridge choc post to hotswap socket
     - what: rectangle
@@ -387,10 +402,7 @@ outlines:
 
   _choc_center_post:
     - what: circle
-      radius: 2
-    - what: rectangle
-      size: [2, 2]
-      adjust.shift: [0, -2]
+      radius: (choc_center_post_w + cutout_padding) / 2
   _choc_posts:
     - +_choc_center_post
     - +_choc_side_posts
@@ -492,6 +504,8 @@ outlines:
       where: extra
 
   _pin_depth_38:
+    - name: _diode_pads
+      where: /key/
     - name: _encoder_pins
       where: thumb_enc
     - name: _mcu_pins
@@ -577,9 +591,9 @@ outlines:
     - what: rectangle
       size: [side_cut_radius * 2, side_cut_radius * 2]
     - what: circle
+      operation: subtract
       radius: side_cut_radius
       adjust.shift: [-side_cut_radius, -side_cut_radius]
-      operation: subtract
 
   _case_cutout_right:
     - what: circle
@@ -588,9 +602,9 @@ outlines:
     - what: rectangle
       size: [side_cut_radius * 2, side_cut_radius * 2]
     - what: circle
+      operation: subtract
       radius: side_cut_radius
       adjust.shift: [side_cut_radius, -side_cut_radius]
-      operation: subtract
 
   _case_cutout:
     - name: _case_cutout_left
@@ -669,9 +683,9 @@ outlines:
         ref: finger_extra_top
         shift: [hole5_e_x, hole5_e_y]
     - what: circle
+      operation: subtract
       radius: m2_size
       where: *hole5_pos
-      operation: subtract
 
   # M2 insert posts
   _post:
@@ -730,15 +744,15 @@ outlines:
   _top_plate_smooth_1:
     - +_thumb_smooth
     - what: rectangle
+      operation: subtract
       where: thumb_mid
       size: [3px, py]
       adjust.shift: [0, py]
-      operation: subtract
     - what: rectangle
+      operation: subtract
       where: thumb_mid
       size: [pcb_fillet, pcb_fillet]
       adjust.shift: [1py - 0.6, 0.5py + 0.3]
-      operation: subtract
     - what: circle
       where: thumb_mid
       radius: pcb_fillet
@@ -756,20 +770,20 @@ outlines:
       size: [4px, py]
       fillet: 66.62
     - what: rectangle
+      operation: subtract
       where: thumb_mid
       size: [5px, py]
       adjust.shift: [0, 0.5py]
-      operation: subtract
     - what: rectangle
+      operation: subtract
       where: thumb_enc
       size: [2px, 2py]
       adjust.shift: [-1.5px, 0]
-      operation: subtract
     - what: rectangle
+      operation: subtract
       where: thumb_far
       size: [2px, 2py]
       adjust.shift: [1.5px, 0]
-      operation: subtract
 
   _thumb:
     - what: rectangle
@@ -900,17 +914,17 @@ outlines:
   _key_plug:
     - what: rectangle
       size: [plug_w, plug_h]
-      fillet: cutout_fillet * 2
+      fillet: cutout_fillet
   _key_plugs_42:
     - +_encoder_pins_plate_cutouts
     - name: _key_plug
       where: /key/
-      fillet: cutout_fillet
+      fillet: cutout_fillet / 2
   _key_plugs_38:
     - +_encoder_pins_plate_cutouts
     - name: _key_plug
       where: [[key, -extra]]
-      fillet: cutout_fillet
+      fillet: cutout_fillet / 2
 
   _keys_area_42:
     - +_keys_42
@@ -1032,8 +1046,8 @@ outlines:
     - name: _board_42
       fillet: pcb_fillet
     - name: _break
-      fillet: break_cut_fillet
       operation: subtract
+      fillet: break_cut_fillet
     # Uncomment below to debug cutouts:
     # - -_diode_depth
     # - -_pin_depth_38
@@ -1059,14 +1073,14 @@ outlines:
     - +_mcu_area
     - -_keys_area_42
     - what: rectangle
+      operation: subtract
       where: thumb_mid
       size: [2px, py]
       adjust.shift: [px, 0 + nudge]
       fillet: pcb_fillet
-      operation: subtract
     - name: _display
-      fillet: cutout_fillet * 2
       operation: subtract
+      fillet: cutout_fillet
     - -_mcu_cover_holes
 
   # Preview layouts
@@ -1117,112 +1131,122 @@ cases:
   _full_depth_cutouts:
     - what: outline
       name: _mcu_cover_nut_cutout
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
+      extrude: bottom_thickness + 2
+      shift: [0, 0, -bottom_thickness - 1]
     - what: outline
       name: _full_depth_38
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
+      extrude: bottom_thickness + 2
+      shift: [0, 0, -bottom_thickness - 1]
 
   _socket_full_depth_cutouts_left:
     - what: outline
       name: _socket_full_depth_38_left
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
+      extrude: bottom_thickness + 2
+      shift: [0, 0, -bottom_thickness - 1]
   _socket_full_depth_cutouts_m_right:
     - what: outline
       name: _socket_full_depth_38_m_right
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
+      extrude: bottom_thickness + 2
+      shift: [0, 0, -bottom_thickness - 1]
   _socket_full_depth_pinky_cutouts_left:
     - what: outline
       name: _socket_full_depth_pinky_left
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
+      extrude: bottom_thickness + 2
+      shift: [0, 0, -bottom_thickness - 1]
   _socket_full_depth_pinky_cutouts_m_right:
     - what: outline
       name: _socket_full_depth_pinky_m_right
-      extrude: bottom_thickness * 2
-      shift: [0, 0, -bottom_thickness * 1.5]
+      extrude: bottom_thickness + 2
+      shift: [0, 0, -bottom_thickness - 1]
 
   # Case bottom cutouts - Choc depth
   _choc_depth_cutouts:
     - what: outline
       name: _choc_depth_38
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -choc_depth]
   _choc_depth_pinky_cutouts:
     - what: outline
       name: _choc_depth_pinky
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -choc_depth]
 
   _socket_choc_depth_cutouts_left:
     - what: outline
       name: _socket_choc_depth_left
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -choc_depth]
   _socket_choc_depth_cutouts_m_right:
     - what: outline
       name: _socket_choc_depth_m_right
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -choc_depth]
   _socket_choc_depth_pinky_cutouts_left:
     - what: outline
       name: _socket_choc_depth_pinky_left
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -choc_depth]
   _socket_choc_depth_pinky_cutouts_m_right:
     - what: outline
       name: _socket_choc_depth_pinky_m_right
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -choc_depth]
 
   # Case bottom cutouts - Diode depth
   _diode_depth_cutouts:
     - what: outline
       name: _diode_depth
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -diode_depth]
 
   # Case bottom cutouts - Pin depth
   _pin_depth_cutouts:
     - what: outline
       name: _pin_depth_38
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -pin_depth]
 
   _solder_pin_depth_cutouts_left:
     - what: outline
       name: _solder_pin_depth_38_left
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -pin_depth]
   _solder_pin_depth_cutouts_m_right:
     - what: outline
       name: _solder_pin_depth_38_m_right
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -pin_depth]
   _solder_pin_depth_pinky_cutouts_left:
     - what: outline
       name: _solder_pin_depth_pinky_left
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -pin_depth]
   _solder_pin_depth_pinky_cutouts_m_right:
     - what: outline
       name: _solder_pin_depth_pinky_m_right
-      extrude: bottom_thickness * 2
+      extrude: bottom_thickness
       shift: [0, 0, -pin_depth]
 
-  _case_outer_42:
+  _shell_42:
     - what: outline
       name: _case_outer_42
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
-  _case_outer_38:
+    - what: outline
+      operation: subtract
+      name: _case_inner_42
+      extrude: wall_height * 2
+  _shell_38_outer:
     - what: outline
       name: _case_outer_38
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
+  _shell_38:
+    - +_shell_38_outer
+    - what: outline
+      operation: subtract
+      name: _case_inner_38
+      extrude: wall_height * 2
 
   _mcu_catch:
     - what: outline
@@ -1236,7 +1260,7 @@ cases:
       extrude: wall_height
       shift: [-mcu_catch_radius, 0, 0]
       rotate: [0, 0, 180]
-    - ~_case_outer_38
+    - ~_shell_38_outer
 
   _wall_cutouts:
     - what: outline
@@ -1256,9 +1280,9 @@ cases:
       extrude: m2_insert_post_height
     - what: outline
       name: _post_holes_core
+      operation: subtract
       extrude: m2_insert_hole_depth * 2
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
-      operation: subtract
 
   _posts_pinky:
     - what: outline
@@ -1266,23 +1290,19 @@ cases:
       extrude: m2_insert_post_height
     - what: outline
       name: _posts_holes_pinky
+      operation: subtract
       extrude: m2_insert_hole_depth * 2
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
-      operation: subtract
 
   # 42-key cases
   _temporal_42_1:
-    - +_case_outer_42
-    - what: outline
-      name: _case_inner_42
-      extrude: wall_height * 2
-      operation: subtract
+    - +_shell_42
+    - +_posts
+    - +_posts_pinky
     - +_mcu_catch
     - -_wall_cutouts
     - -_diode_depth_cutouts
     - -_full_depth_cutouts
-    - +_posts
-    - +_posts_pinky
   temporal_socket_42_left:
     - +_temporal_42_1
     - -_pin_depth_cutouts
@@ -1335,16 +1355,12 @@ cases:
 
   # 38-key cases
   _temporal_38_1:
-    - +_case_outer_38
-    - what: outline
-      name: _case_inner_38
-      extrude: wall_height * 2
-      operation: subtract
+    - +_shell_38
+    - +_posts
     - +_mcu_catch
     - -_wall_cutouts
     - -_full_depth_cutouts
     - -_diode_depth_cutouts
-    - +_posts
   temporal_socket_38_left:
     - +_temporal_38_1
     - -_pin_depth_cutouts
