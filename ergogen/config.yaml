@@ -1170,68 +1170,68 @@ cases:
   _choc_depth_cutouts:
     - what: outline
       name: _choc_depth_38
-      extrude: bottom_thickness
+      extrude: choc_depth + 1
       shift: [0, 0, -choc_depth]
   _choc_depth_pinky_cutouts:
     - what: outline
       name: _choc_depth_pinky
-      extrude: bottom_thickness
+      extrude: choc_depth + 1
       shift: [0, 0, -choc_depth]
 
   _socket_choc_depth_cutouts_left:
     - what: outline
       name: _socket_choc_depth_left
-      extrude: bottom_thickness
+      extrude: choc_depth + 1
       shift: [0, 0, -choc_depth]
   _socket_choc_depth_cutouts_m_right:
     - what: outline
       name: _socket_choc_depth_m_right
-      extrude: bottom_thickness
+      extrude: choc_depth + 1
       shift: [0, 0, -choc_depth]
   _socket_choc_depth_pinky_cutouts_left:
     - what: outline
       name: _socket_choc_depth_pinky_left
-      extrude: bottom_thickness
+      extrude: choc_depth + 1
       shift: [0, 0, -choc_depth]
   _socket_choc_depth_pinky_cutouts_m_right:
     - what: outline
       name: _socket_choc_depth_pinky_m_right
-      extrude: bottom_thickness
+      extrude: choc_depth + 1
       shift: [0, 0, -choc_depth]
 
   # Case bottom cutouts - Diode depth
   _diode_depth_cutouts:
     - what: outline
       name: _diode_depth
-      extrude: bottom_thickness
+      extrude: diode_depth + 1
       shift: [0, 0, -diode_depth]
 
   # Case bottom cutouts - Pin depth
   _pin_depth_cutouts:
     - what: outline
       name: _pin_depth_38
-      extrude: bottom_thickness
+      extrude: pin_depth + 1
       shift: [0, 0, -pin_depth]
 
   _solder_pin_depth_cutouts_left:
     - what: outline
       name: _solder_pin_depth_38_left
-      extrude: bottom_thickness
+      extrude: pin_depth + 1
       shift: [0, 0, -pin_depth]
   _solder_pin_depth_cutouts_m_right:
     - what: outline
       name: _solder_pin_depth_38_m_right
-      extrude: bottom_thickness
+      extrude: pin_depth + 1
       shift: [0, 0, -pin_depth]
   _solder_pin_depth_pinky_cutouts_left:
     - what: outline
       name: _solder_pin_depth_pinky_left
-      extrude: bottom_thickness
+      extrude: pin_depth + 1
       shift: [0, 0, -pin_depth]
   _solder_pin_depth_pinky_cutouts_m_right:
     - what: outline
       name: _solder_pin_depth_pinky_m_right
-      extrude: bottom_thickness
+      extrude: pin_depth + 1
       shift: [0, 0, -pin_depth]
 
   _shell_42:
