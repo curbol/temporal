@@ -146,7 +146,7 @@ units:
 points:
   zones:
     finger:
-      anchor.shift: [50, -100]
+      anchor.shift: [160, -180] # Shifted to avoid JSCAD geometry bug at around (120, -40)
       key:
         tags: [key, finger]
         padding: 1cy
