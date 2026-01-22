@@ -15,11 +15,11 @@ ASSETS_DIR := assets
 # Install all dependencies
 deps:
 	npm install
-	@if ! command -v admesh >/dev/null 2>&1; then \
-		echo "Installing admesh..."; \
-		brew install admesh; \
+	@if ! command -v openscad >/dev/null 2>&1; then \
+		echo "Installing OpenSCAD..."; \
+		brew install --cask openscad; \
 	else \
-		echo "admesh already installed"; \
+		echo "OpenSCAD already installed"; \
 	fi
 	@if ! command -v kicad-cli >/dev/null 2>&1; then \
 		echo "Installing KiCad..."; \
@@ -100,7 +100,7 @@ gen:
 	$(MAKE) --no-print-directory gerbers; \
 	next "Generating JLCPCB assembly files..."; \
 	$(MAKE) --no-print-directory assembly; \
-	next "Converting cases to STL..."; \
+	next "Converting cases to STL (this can take a few minutes)..."; \
 	$(MAKE) --no-print-directory convert; \
 	echo ""; \
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
@@ -109,7 +109,7 @@ gen:
 
 # Convert JSCAD files to STL
 convert:
-	@npm run convert 2>/dev/null || npm run convert
+	@npm run convert
 	@echo "✓ Converted cases to STL"
 
 # Generate JLCPCB assembly files
