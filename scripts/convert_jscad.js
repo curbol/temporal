@@ -5,7 +5,7 @@
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
  *
- * All STLs are processed with admesh. Files ending in _m_right are also mirrored to produce _right STL.
+ * All STLs are processed with pymeshfix. Files ending in _m_right are also mirrored to produce _right STL.
  */
 
 const fs = require('fs');
@@ -17,20 +17,26 @@ const { glob } = require('glob');
 const execAsync = promisify(exec);
 
 function getArcSegments(radius) {
-  const arcSegmentsBase = 50; // Base segments for small arcs
+  const arcSegmentsBase = 10; // Base segments for small arcs
   const arcSegmentsMult = 10; // Multiplier for larger arcs
 
   return arcSegmentsBase + Math.ceil(radius * arcSegmentsMult);
 }
 
 /**
- * Process STL with admesh (repair mesh and optionally mirror)
+ * Process STL with pymeshfix (repair mesh and optionally mirror)
  */
 async function processSTL(inputPath, outputPath, mirror = false) {
-  const mirrorFlag = mirror ? '--yz-mirror ' : '';
-  await execAsync(
-    `admesh ${mirrorFlag}--fill-holes --normal-values --normal-directions --write-binary-stl="${outputPath}" "${inputPath}"`
+  const mirrorFlag = mirror ? ' --mirror' : '';
+  const { stdout, stderr } = await execAsync(
+    `python3 -u "${path.join(__dirname, 'meshfix.py')}" "${inputPath}" "${outputPath}"${mirrorFlag}`
   );
+  if (stderr.trim()) {
+    process.stderr.write(stderr);
+  }
+  if (stdout.trim()) {
+    process.stdout.write(stdout);
+  }
 }
 
 async function main() {
@@ -105,7 +111,7 @@ async function main() {
       const tempPath = path.join(casesDir, baseName + '_temp.stl');
       await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
 
-      // Process with admesh (repair mesh, mirror if needed)
+      // Process with pymeshfix (repair mesh, mirror if needed)
       await processSTL(tempPath, outputPath, needsMirroring);
       fs.unlinkSync(tempPath);
 
