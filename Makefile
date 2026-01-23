@@ -79,6 +79,7 @@ gen:
 	node scripts/fill_zones.js; \
 	bash scripts/copy_pcb_if_missing.sh; \
 	node scripts/setup_kicad_project.js; \
+	node scripts/create_stealth_variants.js; \
 	next "Generating preview assets..."; \
 	mkdir -p $(ASSETS_DIR); \
 	if [ -f $(OUTPUT_DIR)/outlines/preview.svg ]; then \
