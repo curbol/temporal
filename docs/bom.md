@@ -37,7 +37,7 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 | Component | Quantity | Notes | Source | Image |
 |-----------|----------|-------|--------|-------|
-| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration | [KEEBD](https://keebd.com/en-us/collections/choc-switches) [Low Pro KB](https://lowprokb.ca/) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
+| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration | [Low Pro KB](https://lowprokb.ca/) [KEEBD](https://keebd.com/en-us/collections/choc-switches) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
 | Choc v1 Keycaps | 36-42 | Compatible with Choc switches | | |
 
 I recommend [Ambients Silent Choc switches](https://lowprokb.ca/collections/switches/products/ambients-silent-choc-switches) for a quiet, smooth typing experience.
