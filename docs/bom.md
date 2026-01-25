@@ -13,12 +13,13 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | Power Switch (MSK12C02) | 2 | Power on/off switch | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/pwr_switch.jpg" width="100" alt="Power switch"> |
 | Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/rst_switch.jpg" width="100" alt="Reset switch"> |
 | EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_ezsolder_socket.jpg" width="100" alt="EZ-Solder sockets"> |
+| nice!nano v2.0 | 2 | Wireless microcontroller | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_nice_nano.jpg" width="100" alt="nice!nano"> |
+| Display Header Socket (5-pin 2.54mm) | 2 | If your display doesn't already come with the correct header | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/display_socket.jpg" width="100" alt="Display socket"> |
+| nice!view | 2 | Optional display | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/display_nice_view.jpg" width="100" alt="nice!view"> |
 | Battery Jack (JST PH 2.0mm) | 2 | For battery connection | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_connector.jpg" width="100" alt="Battery connector"> |
+| Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_110mAh.jpg" width="100" alt="Battery"> |
 | ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [KEEBD](https://keebd.com/en-us/collections/components) | <img src="/assets/bom/enc_ec12.jpg" width="100" alt="Encoder"> |
 | Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [KEEBD](https://keebd.com/en-us/collections/components) | <img src="/assets/bom/enc_knob.jpg" width="100" alt="Encoder knob"> |
-| nice!nano v2.0 | 2 | Wireless microcontroller | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_nice_nano.jpg" width="100" alt="nice!nano"> |
-| nice!view | 2 | Optional display | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/display_nice_view.jpg" width="100" alt="nice!view"> |
-| Lithium Battery 110mAh | 2 | PH 2.0mm connector (or similar capacity) | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/batt_110mAh.jpg" width="100" alt="Battery"> |
 
 - Encoders are optional. You can use regular switches in the encoder positions if you prefer.
 - Hotswap sockets are optional. You can solder switches directly to the PCB for a permanent installation.
