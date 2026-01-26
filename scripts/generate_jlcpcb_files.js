@@ -160,6 +160,9 @@ function transformCoordinates(localX, localY, footprintX, footprintY, footprintR
 
 /**
  * Generate embedded resistor components from parent footprints
+ * For reversible PCBs, the same resistor positions serve both sides.
+ * When assemblySide is 'Bottom', we use Top-layer footprints since
+ * flipping the board makes F.Cu accessible from the bottom.
  */
 function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
   const components = [];
@@ -167,14 +170,18 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
   const description = embeddedConfig.description;
   let resistorIndex = 1;
 
+  // For reversible PCBs: Top-layer footprints serve both assembly sides
+  // When the board is flipped for right-hand use, F.Cu becomes the bottom
+  const footprintSide = 'Top';
+
   // Process MCU resistors
   if (embeddedConfig.mcu_nice_nano) {
     const mcuConfig = embeddedConfig.mcu_nice_nano;
     const mcuFootprints = findParentFootprints(pcbPath, mcuConfig.parent_footprint);
 
     mcuFootprints.forEach(fp => {
-      // Only include resistors on the assembly side
-      if (fp.side !== assemblySide) return;
+      // For reversible PCBs, use Top-layer footprints for both assembly sides
+      if (fp.side !== footprintSide) return;
 
       mcuConfig.resistor_x_offsets.forEach(xOffset => {
         mcuConfig.resistor_y_offsets.forEach(yOffset => {
@@ -189,7 +196,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
             x: global.x,
             y: global.y,
             rotation: rotation,
-            side: fp.side
+            side: assemblySide
           });
         });
       });
@@ -202,7 +209,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
     const displayFootprints = findParentFootprints(pcbPath, displayConfig.parent_footprint);
 
     displayFootprints.forEach(fp => {
-      if (fp.side !== assemblySide) return;
+      if (fp.side !== footprintSide) return;
 
       displayConfig.positions.forEach(pos => {
         const global = transformCoordinates(pos[0], pos[1], fp.x, fp.y, fp.rotation);
@@ -216,7 +223,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
           x: global.x,
           y: global.y,
           rotation: rotation,
-          side: fp.side
+          side: assemblySide
         });
       });
     });
@@ -228,7 +235,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
     const batteryFootprints = findParentFootprints(pcbPath, batteryConfig.parent_footprint);
 
     batteryFootprints.forEach(fp => {
-      if (fp.side !== assemblySide) return;
+      if (fp.side !== footprintSide) return;
 
       batteryConfig.positions.forEach(pos => {
         const global = transformCoordinates(pos[0], pos[1], fp.x, fp.y, fp.rotation);
@@ -242,7 +249,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
           x: global.x,
           y: global.y,
           rotation: rotation,
-          side: fp.side
+          side: assemblySide
         });
       });
     });
@@ -332,22 +339,27 @@ function main() {
   // Parse PCB file for standard assembly parts
   const components = parseKiCadPCB(pcbFile, config.assembly_parts);
 
-  // Generate embedded resistors if configured
-  let topResistors = [];
-  let bottomResistors = [];
+  // Generate embedded resistors if configured (only once, for Top layer footprints)
+  let embeddedResistors = [];
   if (config.embedded_resistors) {
-    topResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Top');
-    bottomResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Bottom');
+    embeddedResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Top');
   }
 
-  // Separate standard components by side
-  const topComponents = components.filter(c => c.side === 'Top');
-  const bottomComponents = components.filter(c => c.side === 'Bottom');
+  // For a reversible PCB, all F.Cu components are used for both top and bottom assembly.
+  // The same physical components serve both the left hand (top assembly) and
+  // right hand (bottom assembly when the board is flipped).
+  const topLayerComponents = components.filter(c => c.side === 'Top');
+  const bottomLayerComponents = components.filter(c => c.side === 'Bottom');
 
-  // Combine with embedded resistors
-  const allTopComponents = [...topComponents, ...topResistors];
-  const allBottomComponents = [...bottomComponents, ...bottomResistors];
-  const allComponents = [...components, ...topResistors, ...bottomResistors];
+  // Combine standard components with embedded resistors
+  // For BOM: all unique components (F.Cu components + embedded resistors)
+  const allComponents = [...topLayerComponents, ...bottomLayerComponents, ...embeddedResistors];
+
+  // For reversible PCB: both CPL files use F.Cu components
+  // CPL_top = F.Cu components for left-hand assembly
+  // CPL_bottom = same F.Cu components for right-hand assembly (board is flipped)
+  const allTopComponents = [...topLayerComponents, ...embeddedResistors];
+  const allBottomComponents = [...topLayerComponents, ...embeddedResistors];
 
   if (allComponents.length === 0) {
     console.log('⚠ No assembly components found');
