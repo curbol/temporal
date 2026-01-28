@@ -410,6 +410,13 @@ outlines:
   _choc_center_post:
     - what: circle
       radius: (choc_center_post_w + cutout_padding) / 2
+    - what: rectangle
+      size:
+        [
+          (choc_center_post_w + cutout_padding) / 2,
+          (choc_center_post_w + cutout_padding) / 2,
+        ]
+      adjust.shift: [0, -(choc_center_post_w + cutout_padding) / 2]
   _choc_posts:
     - +_choc_center_post
     - +_choc_side_posts
