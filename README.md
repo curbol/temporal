@@ -1,6 +1,5 @@
 # Temporal
 
-![Maintenance](https://img.shields.io/maintenance/yes/2025)
 ![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
 A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff pinky column and optional encoders in the thumb cluster.
