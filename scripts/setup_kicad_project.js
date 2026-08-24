@@ -15,6 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
 const yaml = require('js-yaml');
+const { writeDrcRules } = require('./drc_rules');
 
 /**
  * Load defaults from YAML config file.
@@ -453,6 +454,8 @@ function setupProjectFile(pcbPath, config) {
 
   // Write project file
   fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2), 'utf-8');
+
+  writeDrcRules(pcbPath, config.custom_rules ?? []);
 
   return true;
 }

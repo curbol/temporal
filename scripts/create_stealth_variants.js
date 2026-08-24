@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { writeDrcRules } = require('./drc_rules');
 
 const PCBS_DIR = path.join(__dirname, '..', 'pcbs');
 const SOURCE_PCBS = ['top_plate_38', 'top_plate_42'];
@@ -141,6 +142,8 @@ function createStealthVariant(sourceName) {
     const stealthProPath = path.join(stealthDir, `${stealthName}.kicad_pro`);
     fs.writeFileSync(stealthProPath, JSON.stringify(proJson, null, 2));
   }
+
+  writeDrcRules(stealthPcbPath);
 
   return { name: stealthName, removedCount };
 }

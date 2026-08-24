@@ -13,5 +13,8 @@
   "devDependencies": {
     "@jscad/cli": "^1.10.0",
     "ergogen": "^4.1.0"
+  },
+  "overrides": {
+    "xmldom": "npm:@xmldom/xmldom@^0.9.12"
   }
 }

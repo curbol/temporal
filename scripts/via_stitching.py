@@ -35,6 +35,57 @@ except ImportError:
     )
     sys.exit(1)
 
+# KiCad 10 made aInferOutlineIfNecessary a required positional argument, while the
+# ViaStitching plugin calls this with the outline alone.
+_orig_get_outlines = pcbnew.BOARD.GetBoardPolygonOutlines
+
+
+def _get_outlines_compat(self, aOutlines, *args, **kwargs):
+    if not args and not kwargs:
+        return _orig_get_outlines(self, aOutlines, True)
+    return _orig_get_outlines(self, aOutlines, *args, **kwargs)
+
+
+pcbnew.BOARD.GetBoardPolygonOutlines = _get_outlines_compat
+
+# ViaStitching gates four code paths on `Version() < "7"`, comparing pcbnew's version
+# string lexicographically. That makes "10.0.5" sort below "7", so KiCad 10 takes the
+# pre-7 branches, which hit-test against filled zone polygons instead of zone outlines.
+_orig_version = pcbnew.Version
+
+
+def _version_parts(value):
+    parts = []
+    for chunk in str(value).split("."):
+        digits = ""
+        for char in chunk:
+            if not char.isdigit():
+                break
+            digits += char
+        parts.append(int(digits) if digits else 0)
+    return parts
+
+
+class _ComparableVersion(str):
+    def __lt__(self, other):
+        return _version_parts(self) < _version_parts(other)
+
+    def __le__(self, other):
+        return _version_parts(self) <= _version_parts(other)
+
+    def __gt__(self, other):
+        return _version_parts(self) > _version_parts(other)
+
+    def __ge__(self, other):
+        return _version_parts(self) >= _version_parts(other)
+
+
+def _version_compat():
+    return _ComparableVersion(_orig_version())
+
+
+pcbnew.Version = _version_compat
+
 # Initialize wxPython application (required for pcbnew API)
 app = wx.App()
 

@@ -106,7 +106,7 @@ units:
   choc_side_post_w: 1.9
 
   # Diode
-  diode_y: -3.315
+  diode_y: -3.864
   diode_d: 1.15
   diode_pads_w: 3.85
   diode_pads_h: 0.6
@@ -1444,7 +1444,8 @@ pcbs:
           reversible: true
           hotswap: true
           solder: true
-          choc_v2_support: false
+          choc_v2_support: true
+          diode_offset_y: -diode_y
           trace_width: 0.25
           via_size: 0.6
           via_drill: 0.3
@@ -1488,6 +1489,7 @@ pcbs:
           include_gnd_vias: true
           show_silk_labels: false
           label_font_face: "Maple Mono NF ExtraBold"
+          label_font_size: 1.1
           P4: row_top
           P5: row_home
           P6: row_bottom
@@ -1553,8 +1555,8 @@ pcbs:
           shift: [0, -0.5cy - 2.9]
         params:
           text: "Temporal"
-          height: 2
-          width: 2
+          height: 2.2
+          width: 2.2
           face: "Maple Mono NF Medium"
           reversible: true
 

@@ -10,6 +10,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const { glob } = require('glob');
 const { getKiCadPythonOrThrow } = require('./kicad_python');
+const { loadCustomRules, writeDrcRules } = require('./drc_rules');
 
 /**
  * Fill zones in a KiCad PCB file using the Python API.
@@ -55,8 +56,12 @@ async function main() {
     process.exit(1);
   }
 
+  const customRules = loadCustomRules();
+
   let processed = 0;
   for (const pcbFile of pcbFiles) {
+    writeDrcRules(pcbFile, customRules);
+
     if (fillZonesInPcb(pcbFile, pythonPath)) {
       processed++;
     }

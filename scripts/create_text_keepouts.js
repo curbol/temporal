@@ -137,7 +137,11 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
 
                 # Set as rule area
                 zone.SetIsRuleArea(True)
-                zone.SetDoNotAllowCopperPour(True)  # Keep out zone fills
+                # KiCad 10 renamed this setter
+                if hasattr(zone, 'SetDoNotAllowZoneFills'):
+                    zone.SetDoNotAllowZoneFills(True)
+                else:
+                    zone.SetDoNotAllowCopperPour(True)
                 zone.SetDoNotAllowTracks(False)
                 zone.SetDoNotAllowVias(False)
                 zone.SetDoNotAllowPads(False)

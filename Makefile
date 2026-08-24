@@ -10,38 +10,50 @@ CASES_DIR := cases
 GERBERS_DIR := gerbers
 JLCPCB_DIR := jlcpcb
 ASSETS_DIR := assets
+
+# Platform-specific tooling
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+SED_I := sed -i ''
+KICAD_USER_DIR := $(HOME)/Documents/KiCad
+PKG_INSTALL := brew install --cask
+FONT_INSTALL := brew install --cask font-maple-mono-nf
+else
+SED_I := sed -i
+KICAD_USER_DIR := $(HOME)/.local/share/kicad
+PKG_INSTALL := sudo pacman -S --needed
+FONT_INSTALL := yay -S --needed maplemono-nf
+endif
 .PHONY: deps gen convert gerbers assembly clean
 
 # Install all dependencies
 deps:
 	npm install
-	@if ! command -v openscad >/dev/null 2>&1; then \
-		echo "Installing OpenSCAD..."; \
-		brew install --cask openscad; \
-	else \
-		echo "OpenSCAD already installed"; \
-	fi
-	@if ! command -v kicad-cli >/dev/null 2>&1; then \
-		echo "Installing KiCad..."; \
-		brew install --cask kicad; \
-	else \
-		echo "KiCad already installed"; \
-	fi
-	@if ! command -v inkscape >/dev/null 2>&1; then \
-		echo "Installing Inkscape..."; \
-		brew install --cask inkscape; \
-	else \
-		echo "Inkscape already installed"; \
-	fi
-	@if ls ~/Library/Fonts/MapleMono*NF* >/dev/null 2>&1; then \
+	@for entry in "openscad:openscad" "kicad-cli:kicad" "inkscape:inkscape"; do \
+		bin=$${entry%%:*}; pkg=$${entry##*:}; \
+		if command -v $$bin >/dev/null 2>&1; then \
+			echo "$$pkg already installed"; \
+		else \
+			echo "Installing $$pkg..."; \
+			$(PKG_INSTALL) $$pkg || { echo "Could not install $$pkg automatically; install it manually and re-run 'make deps'."; exit 1; }; \
+		fi; \
+	done
+	@if { command -v fc-list >/dev/null 2>&1 && fc-list : family | tr ',' '\n' | grep -qx "Maple Mono NF"; } || ls ~/Library/Fonts/MapleMono*NF* >/dev/null 2>&1; then \
 		echo "Maple Mono NF font already installed"; \
 	else \
 		echo "Installing Maple Mono NF font..."; \
-		brew install --cask font-maple-mono-nf; \
+		$(FONT_INSTALL) || { echo "Could not install Maple Mono NF automatically; see https://github.com/subframe7536/maple-font"; exit 1; }; \
 	fi
-	@KICAD_PLUGINS=$$(ls -d ~/Documents/KiCad/*/scripting/plugins 2>/dev/null | head -1); \
+	@KICAD_PLUGINS=$$(ls -d $(KICAD_USER_DIR)/*/scripting/plugins 2>/dev/null | sort -V | tail -1); \
 	if [ -z "$$KICAD_PLUGINS" ]; then \
-		echo "Warning: KiCad plugins directory not found. Run KiCad once to create it, then re-run make deps."; \
+		KICAD_VERSION_DIR=$$(ls -d $(KICAD_USER_DIR)/*/ 2>/dev/null | sort -V | tail -1); \
+		if [ -n "$$KICAD_VERSION_DIR" ]; then \
+			KICAD_PLUGINS="$${KICAD_VERSION_DIR}scripting/plugins"; \
+			mkdir -p "$$KICAD_PLUGINS"; \
+		fi; \
+	fi; \
+	if [ -z "$$KICAD_PLUGINS" ]; then \
+		echo "Warning: KiCad user directory not found under $(KICAD_USER_DIR). Run KiCad once to create it, then re-run make deps."; \
 	elif [ -d "$$KICAD_PLUGINS/ViaStitching" ]; then \
 		echo "ViaStitching plugin already installed"; \
 	else \
@@ -51,9 +63,9 @@ deps:
 		cd "$$TEMP_DIR" && git sparse-checkout set ViaStitching 2>/dev/null; \
 		cp -r "$$TEMP_DIR/ViaStitching" "$$KICAD_PLUGINS/"; \
 		rm -rf "$$TEMP_DIR"; \
-		echo "Applying KiCad 9 compatibility fix..."; \
-		sed -i '' 's/dist = self.clearance + self.size \/ 2 + via.GetWidth() \/ 2/via_width = via.GetFrontWidth() if hasattr(via, "GetFrontWidth") else via.GetWidth()\n        dist = self.clearance + self.size \/ 2 + via_width \/ 2/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
-		sed -i '' 's/clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track.GetWidth() \/ 2)/track_width = track.GetFrontWidth() if (isinstance(track, PCB_VIA) and hasattr(track, "GetFrontWidth")) else track.GetWidth()\n            clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track_width \/ 2)/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
+		echo "Applying KiCad compatibility fix..."; \
+		$(SED_I) 's/dist = self.clearance + self.size \/ 2 + via.GetWidth() \/ 2/via_width = via.GetFrontWidth() if hasattr(via, "GetFrontWidth") else via.GetWidth()\n        dist = self.clearance + self.size \/ 2 + via_width \/ 2/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
+		$(SED_I) 's/clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track.GetWidth() \/ 2)/track_width = track.GetFrontWidth() if (isinstance(track, PCB_VIA) and hasattr(track, "GetFrontWidth")) else track.GetWidth()\n            clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track_width \/ 2)/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
 		echo "ViaStitching plugin installed to $$KICAD_PLUGINS"; \
 	fi
 

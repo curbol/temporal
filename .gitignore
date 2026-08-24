@@ -17,3 +17,9 @@ pcbs/**/fp-info-cache
 pcbs/**/*.kicad_prl
 pcbs/**/~*.lck
 pcbs/**/_autosave-*
+
+# Python
+scripts/__pycache__/
+
+# Editor local history
+**/.history/

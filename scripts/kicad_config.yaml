@@ -54,6 +54,14 @@ design_rules:
   min_microvia_drill: 0.1 # Minimum microvia drill diameter in mm
   min_through_hole_diameter: 0.3 # Minimum through-hole diameter in mm
 
+# Custom DRC rules (written next to each board as <board>.kicad_dru)
+custom_rules:
+  # KiCad gives vias thermal reliefs by default. In the hatched ground pour the
+  # spokes leave copper slivers and necks too narrow to fill.
+  - name: "Solid zone connection for vias"
+    condition: "A.Type == 'Via'"
+    constraint: "zone_connection solid"
+
 # Board Defaults
 board_defaults:
   board_outline_line_width: 0.05 # Board outline line width in mm
