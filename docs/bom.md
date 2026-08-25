@@ -78,18 +78,19 @@ Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with ser
 > **Tip:** Order top plates at 1.2mm thickness instead of 1.6mm for the best fit with Choc switches.
 
 3D-printable case files are included in the [`cases/`](/cases/) directory, named
-`temporal_<socket|solder>_<38|42>[_kickstand]_<left|right>.stl`:
+`temporal_<socket|solder>_<v1|v2>_<38|42>[_kickstand]_<left|right>.stl`:
 
 - **`socket`** - required if you install hotswap sockets. The floor is relieved all
   the way through under each socket, which stands 1.95mm off the back of the PCB.
 - **`solder`** - only for switches soldered directly to the PCB. It has just 1.15mm
   of relief, so a board with hotswap sockets will not seat in it.
+- **`v1` / `v2`** - which Choc switch you are using. A v2 switch has a wider, deeper
+  centre boss (Ø4.8 x 3.3mm) and one extra corner stabilizer pin. That boss is long
+  enough that its clearance passes through the floor, so a `v2` case has a hole under
+  each key; a `v1` case does not, and its centre pockets are blind. A `v2` case will
+  also take v1 switches if you want one case for both.
 - **`38` / `42`** - key configuration, matching the breakoff pinky column.
 - **`kickstand`** - optional, adds a wedge for tenting.
-
-Every case clears both Choc v1 and v2. A v2 switch has a wider, deeper centre boss
-(Ø4.8 x 3.3mm) and one extra corner stabilizer pin; the boss is long enough that its
-clearance passes right through the case floor, so you will see a hole under each key.
 
 Top plates are also available as `top_plate_<38|42>_stealth` gerbers: the same plate
 without the white silkscreen branding, leaving the lettering as an outline in the

@@ -5,7 +5,9 @@
  * The default JSCAD arc resolution can produce visible facets on large arcs.
  * This script adds segment counts to arc commands before conversion.
  *
- * All STLs are processed through OpenSCAD to clean up the mesh.
+ * All STLs are processed through OpenSCAD to clean up the mesh and written as
+ * binary STL, which is about a third the size of OpenSCAD's ASCII default and
+ * reads identically in every slicer.
  * Files ending in _m_right are also mirrored to produce _right STL.
  */
 
@@ -33,7 +35,7 @@ async function processSTL(inputPath, outputPath, mirror = false) {
   const scadPath = inputPath.replace('.stl', '_process.scad');
   fs.writeFileSync(scadPath, scadContent);
   try {
-    await execAsync(`openscad -o "${outputPath}" "${scadPath}"`);
+    await execAsync(`openscad --export-format binstl -o "${outputPath}" "${scadPath}"`);
   } finally {
     fs.unlinkSync(scadPath);
   }

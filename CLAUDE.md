@@ -64,8 +64,8 @@ Naming inside `ergogen/config.yaml`:
 
 - A leading `_` marks an intermediate outline/case/pcb. Ergogen skips those when writing output; they exist only to be composed into exported ones.
 - `_left` is generated directly; `_m_right` is generated as the mirror source and `convert_jscad.js` mirrors it into `<name>_right.stl`. A name with neither suffix is a shared part. The `_m_right` suffix never survives into `cases/`.
-- Variants encode key count in the name (`38` = breakoff pinky column, `42` = full pinky column) and options as further suffixes (`socket`/`solder`, `kickstand`, `stealth`).
-- `_choc_v2_*` outlines are the clearances a Choc v2 switch needs on top of a v1's: the wider Ø4.8 centre boss and the corner stabilizer pin. They are subtracted alongside the v1 cutouts rather than replacing them, so one case takes either switch. Because the v2 boss reaches 1.8mm into a 1.95mm floor, its pocket goes through.
+- Variants encode key count in the name (`38` = breakoff pinky column, `42` = full pinky column) and options as further suffixes (`socket`/`solder`, `v1`/`v2`, `kickstand`, `stealth`).
+- `_choc_v2_*` outlines are the clearances a Choc v2 switch needs that a v1 does not: the wider Ø4.8 centre boss and the corner stabilizer pin. Cases come in `v1` and `v2` because that boss reaches 1.8mm into a 1.95mm floor, so its pocket has to go through; a v1 build would otherwise get a hole under every key for a feature its switches lack. Each exported case composes `_temporal_<mount>_<count>_<hand>`, which carries everything both share, so the two differ only by the `_choc_v2_*` subtractions.
 
 Tuning values belong in YAML, not in script bodies. `scripts/kicad_config.yaml` owns net classes, design rules, custom DRC rules, zone/via-stitching parameters, keepout text patterns, and the JLCPCB part numbers plus embedded-resistor positions. Adding a JLCPCB assembly part is a config edit, not a code edit.
 
