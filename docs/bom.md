@@ -87,6 +87,10 @@ Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with ser
 - **`38` / `42`** - key configuration, matching the breakoff pinky column.
 - **`kickstand`** - optional, adds a wedge for tenting.
 
+Every case clears both Choc v1 and v2. A v2 switch has a wider, deeper centre boss
+(Ø4.8 x 3.3mm) and one extra corner stabilizer pin; the boss is long enough that its
+clearance passes right through the case floor, so you will see a hole under each key.
+
 Top plates are also available as `top_plate_<38|42>_stealth` gerbers: the same plate
 without the white silkscreen branding, leaving the lettering as an outline in the
 ground plane.
