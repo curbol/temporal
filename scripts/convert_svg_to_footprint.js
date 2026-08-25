@@ -19,7 +19,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const os = require('os');
 
 // Default precision for SVG to footprint conversion
@@ -31,8 +31,9 @@ function convertSvgToKicad(svgPath, tempKicadPath, name, precision = DEFAULT_PRE
   console.log(`Using precision: ${precision} (lower = smoother)`);
 
   try {
-    execSync(
-      `svg2mod -i "${svgPath}" --force F.SilkS -o "${tempKicadPath}" --format pretty --name "${name}" -p ${precision} -c`,
+    execFileSync(
+      'svg2mod',
+      ['-i', svgPath, '--force', 'F.SilkS', '-o', tempKicadPath, '--format', 'pretty', '--name', name, '-p', String(precision), '-c'],
       { stdio: 'inherit' }
     );
 
