@@ -38,6 +38,7 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
         gap_iu = mm_to_iu(gap_mm)
         created_count = 0
         created_groups = 0
+        matched_texts = 0
 
         # Get layer IDs for the layers we want to process
         layer_ids = []
@@ -80,6 +81,8 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
             if text_patterns and not any(pattern in text_content for pattern in text_patterns):
                 continue
 
+            matched_texts += 1
+
             # Use GetEffectiveShape instead which is more stable
             # This gets the actual rendered shape including line width
             max_error = 5000  # 0.005mm in internal units
@@ -94,11 +97,13 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
                 # Fallback to transform method if GetEffectiveShape fails
                 try:
                     drawing.TransformShapeToPolygon(poly_set, text_layer, 0, max_error, pcbnew.ERROR_INSIDE, False)
-                except Exception:
+                except Exception as shape_err:
+                    print(f"Error: could not outline {text_content!r} in {board_path}: {shape_err}",
+                          file=sys.stderr)
                     continue
 
-            # Check if we got any polygons
             if poly_set.OutlineCount() == 0:
+                print(f"Error: {text_content!r} in {board_path} produced no outline", file=sys.stderr)
                 continue
 
             # Inflate by gap amount if needed
@@ -160,23 +165,19 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
         # Save the board
         pcbnew.SaveBoard(board_path, board)
 
-        return created_groups
+        return {"matched": matched_texts, "groups": created_groups}
 
     except Exception as err:
         import traceback
         print(f"Error: {err}", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
-        return -1
+        return {"matched": -1, "groups": -1}
 
 def process_all_boards(board_paths, gap_mm, layers, patterns):
     """Process all boards in a single Python session to avoid wx.App issues."""
     results = {}
     for board_path in board_paths:
-        count = create_text_keepouts(board_path, gap_mm, layers, patterns)
-        if count >= 0:
-            results[board_path] = count
-        else:
-            results[board_path] = -1
+        results[board_path] = create_text_keepouts(board_path, gap_mm, layers, patterns)
 
     # Output results as JSON
     import json

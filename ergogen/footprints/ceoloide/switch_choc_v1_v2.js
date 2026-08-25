@@ -530,6 +530,21 @@ module.exports = {
     const to_via_hole_limit = -(center_hole_diameter / 2 + 0.25 + p.via_size / 2);
     const to_via_spacing_limit = from_via_y + p.via_size + 0.2;
     const to_via_symmetric_y = via_center_y + p.via_separation / 2;
+    if (to_via_spacing_limit > to_via_hole_limit) {
+      throw new Error(
+        `switch_choc_v1_v2: no room for the "to" via with via_separation=${p.via_separation}` +
+        ` and via_size=${p.via_size}. Clearing the ${center_hole_diameter}mm center hole needs` +
+        ` y <= ${to_via_hole_limit.toFixed(3)}, clearing the "from" via needs` +
+        ` y >= ${to_via_spacing_limit.toFixed(3)}.`);
+    }
+    /* The "from" via has the same squeeze against the 3mm hotswap hole at (0, -5.95). */
+    const from_via_hole_limit = -(5.95 - 1.5 - 0.25 - p.via_size / 2);
+    if (from_via_y < from_via_hole_limit) {
+      throw new Error(
+        `switch_choc_v1_v2: via_separation=${p.via_separation} puts the "from" via at` +
+        ` y=${from_via_y.toFixed(3)}, inside the hotswap hole clearance at` +
+        ` y=${from_via_hole_limit.toFixed(3)}.`);
+    }
     const to_via_y = to_via_symmetric_y <= to_via_hole_limit
       ? to_via_symmetric_y
       : (to_via_hole_limit + to_via_spacing_limit) / 2;

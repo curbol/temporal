@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
 const { writeDrcRules } = require('./drc_rules');
-const { loadKicadConfig } = require('./kicad_config');
+const { loadKicadConfig, CONFIG_PATH: KICAD_CONFIG_PATH } = require('./kicad_config');
 
 /**
  * Get base .kicad_pro structure with all required sections.
@@ -321,6 +321,49 @@ function createNetClass(name, config, isDefault = false) {
 }
 
 /**
+ * Keys copied straight through from scripts/kicad_config.yaml, which owns them.
+ * A missing one is a config error rather than something to paper over with a
+ * default that would silently disagree with the YAML.
+ */
+const DESIGN_RULE_KEYS = [
+  'min_clearance',
+  'min_track_width',
+  'min_via_diameter',
+  'min_via_annular_width',
+  'min_copper_edge_clearance',
+  'min_hole_clearance',
+  'min_hole_to_hole',
+  'min_microvia_diameter',
+  'min_microvia_drill',
+  'min_through_hole_diameter',
+  'min_text_height',
+  'min_text_thickness'
+];
+
+const BOARD_DEFAULT_KEYS = [
+  'board_outline_line_width',
+  'copper_line_width',
+  'copper_text_size_h',
+  'copper_text_size_v',
+  'copper_text_thickness',
+  'silk_line_width',
+  'silk_text_size_h',
+  'silk_text_size_v',
+  'silk_text_thickness'
+];
+
+function required(section, key, sectionName) {
+  const value = section[key];
+
+  if (typeof value !== 'number') {
+    console.error(`Error: ${sectionName}.${key} is missing from ${KICAD_CONFIG_PATH}`);
+    process.exit(1);
+  }
+
+  return value;
+}
+
+/**
  * Apply defaults from config to project data.
  */
 function applyDefaultsToProject(projectData, config) {
@@ -357,32 +400,17 @@ function applyDefaultsToProject(projectData, config) {
   // Apply design rules
   const rules = config.design_rules ?? {};
   const projectRules = projectData.board.design_settings.rules;
-  projectRules.min_clearance = rules.min_clearance ?? 0.0;
-  projectRules.min_track_width = rules.min_track_width ?? 0.0;
-  projectRules.min_via_diameter = rules.min_via_diameter ?? 0.5;
-  projectRules.min_via_annular_width = rules.min_via_annular_width ?? 0.1;
-  projectRules.min_copper_edge_clearance = rules.min_copper_edge_clearance ?? 0.5;
-  projectRules.min_hole_clearance = rules.min_hole_clearance ?? 0.25;
-  projectRules.min_hole_to_hole = rules.min_hole_to_hole ?? 0.25;
-  projectRules.min_microvia_diameter = rules.min_microvia_diameter ?? 0.2;
-  projectRules.min_microvia_drill = rules.min_microvia_drill ?? 0.1;
-  projectRules.min_through_hole_diameter = rules.min_through_hole_diameter ?? 0.3;
-  projectRules.min_text_height = rules.min_text_height ?? 0.8;
-  projectRules.min_text_thickness = rules.min_text_thickness ?? 0.08;
+  for (const key of DESIGN_RULE_KEYS) {
+    projectRules[key] = required(rules, key, 'design_rules');
+  }
 
   // Apply board defaults
   const boardDefaults = config.board_defaults ?? {};
   const projectDefaults = projectData.board.design_settings.defaults;
-  projectDefaults.board_outline_line_width = boardDefaults.board_outline_line_width ?? 0.05;
-  projectDefaults.copper_line_width = boardDefaults.copper_line_width ?? 0.2;
-  projectDefaults.copper_text_size_h = boardDefaults.copper_text_size_h ?? 1.5;
-  projectDefaults.copper_text_size_v = boardDefaults.copper_text_size_v ?? 1.5;
-  projectDefaults.copper_text_thickness = boardDefaults.copper_text_thickness ?? 0.3;
-  projectDefaults.silk_line_width = boardDefaults.silk_line_width ?? 0.1;
-  projectDefaults.silk_text_size_h = boardDefaults.silk_text_size_h ?? 1.0;
-  projectDefaults.silk_text_size_v = boardDefaults.silk_text_size_v ?? 1.0;
-  projectDefaults.silk_text_thickness = boardDefaults.silk_text_thickness ?? 0.1;
-  projectDefaults.zones.min_clearance = boardDefaults.zones_min_clearance ?? 0.5;
+  for (const key of BOARD_DEFAULT_KEYS) {
+    projectDefaults[key] = required(boardDefaults, key, 'board_defaults');
+  }
+  projectDefaults.zones.min_clearance = required(boardDefaults, 'zones_min_clearance', 'board_defaults');
 
   return projectData;
 }
@@ -446,7 +474,7 @@ async function main() {
     }
 
     // Find all .kicad_pcb files
-    const pcbFiles = await glob(`${pcbsDir}/**/*.kicad_pcb`);
+    const pcbFiles = await glob(`${pcbsDir}/*/*.kicad_pcb`, { ignore: '**/_autosave-*' });
 
     if (pcbFiles.length === 0) {
       process.exit(0);

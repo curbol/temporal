@@ -7,6 +7,9 @@
  * 2. Parses the KiCad footprint to extract polygons
  * 3. Generates an Ergogen-compatible JavaScript footprint
  *
+ * Requires svg2mod on PATH (pip install svg2mod). No make target runs this, so
+ * `make deps` does not install it.
+ *
  * Usage:
  *   node scripts/convert_svg_to_footprint.js <input.svg> <output.js> [name]
  *

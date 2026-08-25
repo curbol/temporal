@@ -56,15 +56,15 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 | Saddle part 3 | 1 | 9 tilted |
 | Thumbs | 1 | 9 thumbs |
 
-**Totals:** Tilted: 23, Saddle: 11, Homing: 2, Thumb: 12-15 (depending on encoders)
+**Totals:** Tilted: 23, Saddle: 11, Homing: 2, Thumb: 9 (6-8 used, depending on encoders)
 
 ### PCBs & Cases
 
 | Component | Quantity | Notes |
 |-----------|----------|-------|
 | Temporal PCB | 2 | Order using gerbers/temporal.zip |
-| 3D Printed Case (Left) | 1 | Choose your key configuration (38/42) |
-| 3D Printed Case (Right) | 1 | Choose your key configuration (38/42) |
+| 3D Printed Case (Left) | 1 | Choose your key configuration and switch mounting (see below) |
+| 3D Printed Case (Right) | 1 | Choose your key configuration and switch mounting (see below) |
 | MCU Cover | 2 | Optional, protects the microcontroller |
 
 Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
@@ -77,7 +77,19 @@ Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with ser
 
 > **Tip:** Order top plates at 1.2mm thickness instead of 1.6mm for the best fit with Choc switches.
 
-3D-printable case files are included in the [`cases/`](/cases/) directory. Cases are available for 38 and 42 key configurations, with optional kickstand variants for tenting.
+3D-printable case files are included in the [`cases/`](/cases/) directory, named
+`temporal_<socket|solder>_<38|42>[_kickstand]_<left|right>.stl`:
+
+- **`socket`** - required if you install hotswap sockets. The floor is relieved all
+  the way through under each socket, which stands 1.95mm off the back of the PCB.
+- **`solder`** - only for switches soldered directly to the PCB. It has just 1.15mm
+  of relief, so a board with hotswap sockets will not seat in it.
+- **`38` / `42`** - key configuration, matching the breakoff pinky column.
+- **`kickstand`** - optional, adds a wedge for tenting.
+
+Top plates are also available as `top_plate_<38|42>_stealth` gerbers: the same plate
+without the white silkscreen branding, leaving the lettering as an outline in the
+ground plane.
 
 **For home 3D printing:**
 
@@ -131,6 +143,13 @@ To use this service:
 1. Select "PCB Assembly" when ordering
 2. Upload files from [`jlcpcb/`](/jlcpcb/):
    - `temporal_BOM.csv` - Bill of Materials with LCSC part numbers
-   - `temporal_CPL_top.csv` or `temporal_CPL_bottom.csv` - Component placement
+   - `temporal_CPL_top.csv` - places parts on the top face, giving the **right** half
+     (its top silkscreen reads "Back Right" above the MCU area)
+   - `temporal_CPL_bottom.csv` - places parts on the bottom face, giving the **left**
+     half ("Back Left")
+
+You need one board of each hand, and assembly is ordered per side, so place two
+orders - one per CPL file. A single order using one CPL gives you two identical
+halves.
 
 Note: Hotswap sockets are not included in assembly files because JLCPCB cannot assemble them.

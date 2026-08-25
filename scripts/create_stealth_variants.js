@@ -2,7 +2,11 @@
 
 /**
  * Create stealth variants of top plate PCBs with silkscreen text removed.
- * Keepout zones are preserved (they're on F.Cu/B.Cu, not silkscreen).
+ *
+ * The text keepouts stay. Stealth means no white silkscreen, not no branding: the
+ * glyph-shaped rule areas on F.Cu/B.Cu keep the pour off the lettering, so the text
+ * still reads as an outline in the ground plane. Removing them fills the plate flat
+ * and loses the effect.
  */
 
 const fs = require('fs');

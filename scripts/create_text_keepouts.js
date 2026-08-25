@@ -49,13 +49,27 @@ function main() {
   let failed = 0;
   const keepoutCounts = [];
 
-  for (const [pcbPath, count] of Object.entries(results)) {
-    if (count > 0) {
-      totalKeepouts += count;
-      keepoutCounts.push(`${path.basename(pcbPath, '.kicad_pcb')}: ${count}`);
-    } else if (count < 0) {
-      console.error(`Error: Failed to process ${path.basename(pcbPath)}`);
+  for (const [pcbPath, result] of Object.entries(results)) {
+    const board = path.basename(pcbPath, '.kicad_pcb');
+
+    if (result.matched < 0 || result.groups < 0) {
+      console.error(`Error: Failed to process ${board}`);
       failed++;
+      continue;
+    }
+
+    // A board with no matching text legitimately gets no keepouts, but a text the
+    // config named and did not get one would be buried by the pour with nothing
+    // downstream to notice.
+    if (result.groups < result.matched) {
+      console.error(`Error: ${board} matched ${result.matched} text(s) but created ${result.groups} keepout(s)`);
+      failed++;
+      continue;
+    }
+
+    if (result.groups > 0) {
+      totalKeepouts += result.groups;
+      keepoutCounts.push(`${board}: ${result.groups}`);
     }
   }
 

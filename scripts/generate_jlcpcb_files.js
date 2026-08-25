@@ -14,8 +14,12 @@ const { loadKicadConfig } = require('./kicad_config');
  */
 
 /**
- * Every footprint block in a KiCad PCB, as { name, reference, x, y, rotation, side }.
- * Footprints whose position cannot be read are skipped.
+ * Every footprint block in a KiCad PCB, as
+ * { name, reference, x, y, rotation, onFront, onBack }.
+ *
+ * The block and position patterns depend on the exact indentation pcbnew writes,
+ * so the parsed count is checked against the declared count: a silently dropped
+ * footprint would vanish from both the BOM and the CPL with nothing to notice.
  */
 function parseFootprints(pcbPath) {
   const content = fs.readFileSync(pcbPath, 'utf8');
@@ -28,11 +32,13 @@ function parseFootprints(pcbPath) {
     const name = match[1];
 
     const posMatch = block.match(/\n\t\t\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
-    if (!posMatch) continue;
+    if (!posMatch) {
+      console.error(`Error: no position found for footprint "${name}" in ${pcbPath}`);
+      process.exit(1);
+    }
 
     const refMatch = block.match(/\(property\s+"Reference"\s+"([^"]+)"/);
-    const layerMatch = block.match(/\(layer\s+"([^"]+)"/);
-    const layer = layerMatch ? layerMatch[1] : 'F.Cu';
+    const padLayers = block.match(/\(layers\s+[^)]*\)/g) ?? [];
 
     footprints.push({
       name,
@@ -40,8 +46,16 @@ function parseFootprints(pcbPath) {
       x: parseFloat(posMatch[1]),
       y: parseFloat(posMatch[2]),
       rotation: posMatch[3] ? parseFloat(posMatch[3]) : 0,
-      side: layer.startsWith('B.') ? 'Bottom' : 'Top'
+      onFront: padLayers.some(layers => /"(?:F|\*)\.Cu"/.test(layers)),
+      onBack: padLayers.some(layers => /"(?:B|\*)\.Cu"/.test(layers))
     });
+  }
+
+  const declared = (content.match(/\(footprint\s+"/g) ?? []).length;
+  if (footprints.length !== declared) {
+    console.error(`Error: parsed ${footprints.length} of ${declared} footprints in ${pcbPath}`);
+    console.error('The KiCad s-expression layout no longer matches the parser.');
+    process.exit(1);
   }
 
   return footprints;
@@ -69,15 +83,27 @@ function parseKiCadPCB(pcbPath, assemblyParts) {
       x: fp.x,
       y: fp.y,
       rotation: fp.rotation,
-      side: fp.side
+      onFront: fp.onFront,
+      onBack: fp.onBack
     }));
 }
 
 /**
- * Find parent footprints in PCB file for embedded resistor calculation
+ * Find parent footprints in PCB file for embedded resistor calculation. Only
+ * double-sided parents qualify: the resistors bridge jumper pads that have to
+ * exist on whichever face the board is assembled from.
  */
 function findParentFootprints(pcbPath, parentFootprintName) {
-  return parseFootprints(pcbPath).filter(fp => fp.name === parentFootprintName);
+  const parents = parseFootprints(pcbPath).filter(fp => fp.name === parentFootprintName);
+  const singleSided = parents.filter(fp => !(fp.onFront && fp.onBack));
+
+  if (singleSided.length > 0) {
+    console.error(`Error: ${parentFootprintName} has pads on only one copper layer in ${pcbPath}`);
+    console.error('Its jumper resistors cannot serve both assembly sides.');
+    process.exit(1);
+  }
+
+  return parents;
 }
 
 /**
@@ -101,20 +127,14 @@ function transformCoordinates(localX, localY, footprintX, footprintY, footprintR
 }
 
 /**
- * Generate embedded resistor components from parent footprints
- * For reversible PCBs, the same resistor positions serve both sides.
- * When assemblySide is 'Bottom', we use Top-layer footprints since
- * flipping the board makes F.Cu accessible from the bottom.
+ * Generate embedded resistor components from parent footprints. The board is
+ * reversible, so one set of positions serves both assembly sides.
  */
-function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
+function generateEmbeddedResistors(pcbPath, embeddedConfig) {
   const components = [];
   const lcsc = embeddedConfig.lcsc_part;
   const description = embeddedConfig.description;
   let resistorIndex = 1;
-
-  // For reversible PCBs: Top-layer footprints serve both assembly sides
-  // When the board is flipped for right-hand use, F.Cu becomes the bottom
-  const footprintSide = 'Top';
 
   // Process MCU resistors
   if (embeddedConfig.mcu_nice_nano) {
@@ -122,9 +142,6 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
     const mcuFootprints = findParentFootprints(pcbPath, mcuConfig.parent_footprint);
 
     mcuFootprints.forEach(fp => {
-      // For reversible PCBs, use Top-layer footprints for both assembly sides
-      if (fp.side !== footprintSide) return;
-
       mcuConfig.resistor_x_offsets.forEach(xOffset => {
         mcuConfig.resistor_y_offsets.forEach(yOffset => {
           const global = transformCoordinates(xOffset, yOffset, fp.x, fp.y, fp.rotation);
@@ -137,8 +154,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
             description: description,
             x: global.x,
             y: global.y,
-            rotation: rotation,
-            side: assemblySide
+            rotation: rotation
           });
         });
       });
@@ -151,8 +167,6 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
     const displayFootprints = findParentFootprints(pcbPath, displayConfig.parent_footprint);
 
     displayFootprints.forEach(fp => {
-      if (fp.side !== footprintSide) return;
-
       displayConfig.positions.forEach(pos => {
         const global = transformCoordinates(pos[0], pos[1], fp.x, fp.y, fp.rotation);
         const rotation = (fp.rotation + displayConfig.rotation_offset) % 360;
@@ -165,7 +179,6 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
           x: global.x,
           y: global.y,
           rotation: rotation,
-          side: assemblySide
         });
       });
     });
@@ -177,8 +190,6 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
     const batteryFootprints = findParentFootprints(pcbPath, batteryConfig.parent_footprint);
 
     batteryFootprints.forEach(fp => {
-      if (fp.side !== footprintSide) return;
-
       batteryConfig.positions.forEach(pos => {
         const global = transformCoordinates(pos[0], pos[1], fp.x, fp.y, fp.rotation);
         const rotation = (fp.rotation + batteryConfig.rotation_offset) % 360;
@@ -191,7 +202,6 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
           x: global.x,
           y: global.y,
           rotation: rotation,
-          side: assemblySide
         });
       });
     });
@@ -289,23 +299,23 @@ function main() {
   // Parse PCB file for standard assembly parts
   const components = parseKiCadPCB(pcbFile, config.assembly_parts);
 
-  // Generate embedded resistors if configured (only once, for Top layer footprints)
+  // Generate embedded resistors if configured
   let embeddedResistors = [];
   if (config.embedded_resistors) {
-    embeddedResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Top');
+    embeddedResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors);
   }
 
   // The board is reversible, so one set of parts serves both assemblies: the
-  // left hand is built on the top side and the right hand on the bottom side of
-  // the same board, at the same coordinates. That only holds for footprints whose
-  // pads are mirrored onto both copper layers, which is why the two CPL files
-  // differ by rotation alone. A genuinely single-sided part would need its own
-  // transform, so reject one rather than place it from the wrong face.
-  const offTopLayer = components.filter(comp => comp.side !== 'Top');
-  if (offTopLayer.length > 0) {
-    const names = [...new Set(offTopLayer.map(comp => comp.footprint))].join(', ');
-    console.error(`Error: assembly parts are not on the top copper layer: ${names}`);
-    console.error('The reversible-board CPL transform assumes pads mirrored onto both layers,');
+  // right hand is built on the top side and the left hand on the bottom side of
+  // the same board, at the same coordinates. That only holds for footprints with
+  // pads on both copper layers, which is why the two CPL files differ by rotation
+  // alone. A genuinely single-sided part would need its own transform, so reject
+  // one rather than place it from a face that has no pads.
+  const singleSided = components.filter(comp => !(comp.onFront && comp.onBack));
+  if (singleSided.length > 0) {
+    const names = [...new Set(singleSided.map(comp => comp.footprint))].join(', ');
+    console.error(`Error: assembly parts have pads on only one copper layer: ${names}`);
+    console.error('The reversible-board CPL transform assumes pads on both layers,');
     console.error('so a single-sided part would be placed from the wrong face.');
     process.exit(1);
   }
@@ -313,8 +323,9 @@ function main() {
   const allComponents = [...components, ...embeddedResistors];
 
   if (allComponents.length === 0) {
-    console.log('⚠ No assembly components found');
-    return;
+    console.error('Error: no assembly components found in ${pcbFile}'.replace('${pcbFile}', pcbFile));
+    console.error('Writing nothing would leave the committed BOM and CPL in place and stale.');
+    process.exit(1);
   }
 
   // Generate output files

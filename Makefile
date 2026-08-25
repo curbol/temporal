@@ -28,7 +28,7 @@ endif
 # Install all dependencies
 deps:
 	npm install
-	@for entry in "openscad:openscad" "kicad-cli:kicad" "inkscape:inkscape" "zip:zip"; do \
+	@for entry in "openscad:openscad" "kicad-cli:kicad" "zip:zip" "unzip:unzip"; do \
 		bin=$${entry%%:*}; pkg=$${entry##*:}; \
 		if command -v $$bin >/dev/null 2>&1; then \
 			echo "$$pkg already installed"; \
@@ -112,6 +112,7 @@ gen:
 	fi; \
 	IMG_COUNT=0; \
 	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		case "$$(basename $$pcb)" in _autosave-*) continue;; esac; \
 		if [ -f "$$pcb" ]; then \
 			pcb_dir=$$(dirname "$$pcb"); \
 			kicad-cli pcb render --output "$$pcb_dir/pcb.png" --width 1600 --height 900 --side top --background transparent "$$pcb" >/dev/null 2>&1; \
@@ -148,6 +149,7 @@ gerbers:
 	@set -e; \
 	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
 		[ -f "$$pcb" ] || continue; \
+		case "$$(basename $$pcb)" in _autosave-*) continue;; esac; \
 		pcb_name=$$(basename "$$pcb" .kicad_pcb); \
 		rm -rf $(GERBERS_DIR)/$$pcb_name; \
 		mkdir -p $(GERBERS_DIR)/$$pcb_name; \
@@ -170,7 +172,8 @@ gerbers:
 
 # Verify the sources parse, the config builds, the boards pass DRC with every
 # silkscreen face resolving, the pours in pcbs/ still match the current DRC rules,
-# and the committed derived artifacts still match what their sources produce
+# and every committed derived artifact still matches what its source produces:
+# temporal.json, the JLCPCB files, the KiCad project and rule files, and the gerbers
 check:
 	@set -e; \
 	for f in scripts/*.js ergogen/footprints/ceoloide/*.js; do node --check "$$f"; done; \
@@ -183,6 +186,7 @@ check:
 	@set -e; \
 	DRC_LOG=$$(mktemp); \
 	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		case "$$(basename $$pcb)" in _autosave-*) continue;; esac; \
 		kicad-cli pcb drc --severity-error --exit-code-violations -o /dev/null "$$pcb" >>"$$DRC_LOG" 2>&1 \
 			|| { echo "DRC errors: $$pcb"; cat "$$DRC_LOG"; rm -f "$$DRC_LOG"; exit 1; }; \
 	done; \
@@ -195,6 +199,7 @@ check:
 	fi; \
 	rm -f "$$DRC_LOG"; \
 	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		case "$$(basename $$pcb)" in _autosave-*) continue;; esac; \
 		grep -q '(face ' "$$pcb" || continue; \
 		grep -q '(embedded_fonts yes)' "$$pcb" && grep -qi '(name "[^"]*\.ttf"' "$$pcb" \
 			|| { echo "Error: $$pcb names a font face but embeds no font, so its silkscreen depends on the host" >&2; exit 1; }; \
@@ -203,22 +208,60 @@ check:
 	@node scripts/check_zone_fills.js
 	@set -e; \
 	SNAPSHOT=$$(mktemp -d); \
+	trap 'cp "$$SNAPSHOT/temporal.json" temporal.json; \
+	      rm -rf $(JLCPCB_DIR); cp -r "$$SNAPSHOT/$(JLCPCB_DIR)" $(JLCPCB_DIR); \
+	      cp -r "$$SNAPSHOT/proj/." $(PCBS_DIR)/; \
+	      rm -rf "$$SNAPSHOT"' EXIT; \
 	cp temporal.json "$$SNAPSHOT/"; \
 	cp -r $(JLCPCB_DIR) "$$SNAPSHOT/"; \
+	for f in $(PCBS_DIR)/*/*.kicad_dru $(PCBS_DIR)/*/*.kicad_pro; do \
+		mkdir -p "$$SNAPSHOT/proj/$$(basename $$(dirname $$f))"; \
+		cp "$$f" "$$SNAPSHOT/proj/$$(basename $$(dirname $$f))/"; \
+	done; \
 	node scripts/generate_layout.js >/dev/null; \
 	$(MAKE) --no-print-directory assembly >/dev/null; \
+	node scripts/setup_kicad_project.js >/dev/null; \
 	STALE=""; \
 	diff -q "$$SNAPSHOT/temporal.json" temporal.json >/dev/null || STALE="temporal.json"; \
 	diff -rq "$$SNAPSHOT/$(JLCPCB_DIR)" $(JLCPCB_DIR) >/dev/null || STALE="$$STALE $(JLCPCB_DIR)/"; \
-	cp "$$SNAPSHOT/temporal.json" temporal.json; \
-	cp "$$SNAPSHOT/$(JLCPCB_DIR)"/* $(JLCPCB_DIR)/; \
-	rm -rf "$$SNAPSHOT"; \
+	for dru in $(PCBS_DIR)/*/*.kicad_dru; do \
+		diff -q "$$SNAPSHOT/proj/$$(basename $$(dirname $$dru))/$$(basename $$dru)" "$$dru" >/dev/null \
+			|| STALE="$$STALE $$dru"; \
+	done; \
+	node scripts/check_kicad_pro.js "$$SNAPSHOT/proj" || STALE="$$STALE .kicad_pro"; \
 	if [ -n "$$STALE" ]; then \
 		echo "Error: derived artifacts are stale:$$STALE" >&2; \
-		echo "Run 'node scripts/generate_layout.js && make assembly' and commit the result." >&2; \
+		echo "Run 'make gen' and commit the result." >&2; \
 		exit 1; \
 	fi; \
 	echo "✓ Derived artifacts reproduce"
+	@set -e; \
+	TMP=$$(mktemp -d); \
+	trap 'rm -rf "$$TMP"' EXIT; \
+	STALE=""; \
+	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		case "$$(basename $$pcb)" in _autosave-*) continue;; esac; \
+		name=$$(basename "$$pcb" .kicad_pcb); \
+		[ -f $(GERBERS_DIR)/$$name.zip ] || { STALE="$$STALE $$name.zip(missing)"; continue; }; \
+		mkdir -p "$$TMP/new/$$name" "$$TMP/old"; \
+		kicad-cli pcb export gerbers --output "$$TMP/new/$$name/" "$$pcb" >/dev/null; \
+		kicad-cli pcb export drill --output "$$TMP/new/$$name/" "$$pcb" >/dev/null; \
+		unzip -q -o $(GERBERS_DIR)/$$name.zip -d "$$TMP/old"; \
+		for f in "$$TMP/new/$$name"/*; do \
+			b=$$(basename "$$f"); \
+			o="$$TMP/old/$$name/$$b"; \
+			[ -f "$$o" ] || { STALE="$$STALE $$name.zip"; break; }; \
+			sed -E '/CreationDate|Created by KiCad|GenerationSoftware|DRILL file KiCad/d' "$$f" >"$$TMP/a"; \
+			sed -E '/CreationDate|Created by KiCad|GenerationSoftware|DRILL file KiCad/d' "$$o" >"$$TMP/b"; \
+			diff -q "$$TMP/a" "$$TMP/b" >/dev/null || { STALE="$$STALE $$name.zip"; break; }; \
+		done; \
+	done; \
+	if [ -n "$$STALE" ]; then \
+		echo "Error: gerber zips do not match the boards in $(PCBS_DIR)/:$$STALE" >&2; \
+		echo "Run 'make gerbers' and commit the result." >&2; \
+		exit 1; \
+	fi; \
+	echo "✓ Gerbers match the committed boards"
 
 # Clean generated output
 clean:

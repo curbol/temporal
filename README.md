@@ -58,7 +58,7 @@ Temporal uses Kailh Choc v1 or v2 low-profile switches. For keycaps, you can use
 
 ### Setup
 
-1. Install dependencies (OpenSCAD, KiCad, Inkscape, [Maple Mono NF](https://github.com/subframe7536/maple-font) font, and KiCad plugins):
+1. Install dependencies (OpenSCAD, KiCad, zip/unzip, [Maple Mono NF](https://github.com/subframe7536/maple-font) font, and KiCad plugins):
 
 ```bash
 make deps
@@ -73,10 +73,15 @@ make gen
 This will:
 
 - Run Ergogen to generate PCB and case files
-- Post-process PCBs (fix edge cuts, add ground planes)
+- Derive `temporal.json`, the ZMK Studio physical layout, from the same points
+- Post-process PCBs (edge cuts, silkscreen widths, ground planes, text keepouts,
+  via stitching, zone fills, embedded fonts)
 - Configure KiCad project files with defaults from `scripts/kicad_config.yaml`
-- Generate STL case files
+- Derive the `top_plate_*_stealth` variants from the generated top plates
+- Render `assets/preview.svg` and a `pcb.png` per board
 - Export Gerbers for manufacturing
+- Generate the JLCPCB BOM and CPL files in `jlcpcb/`
+- Generate STL case files
 
 **Note:** The main `pcbs/temporal/` PCB requires manual steps in KiCad after generation. See [pcbs/temporal/README.md](pcbs/temporal/README.md) for details.
 
@@ -86,7 +91,7 @@ This will:
 make check
 ```
 
-Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, the pours in `pcbs/` still match the custom DRC rules, and `temporal.json` and `jlcpcb/` still reproduce from their sources. This is what CI runs on every push.
+Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, the pours in `pcbs/` still match the custom DRC rules, and every committed derived artifact still reproduces from its source: `temporal.json`, `jlcpcb/`, the `.kicad_pro` and `.kicad_dru` files, and the gerber zips. This is what CI runs on every push.
 
 ## Influences
 

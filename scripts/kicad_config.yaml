@@ -2,9 +2,10 @@
 # Used by scripts/setup_kicad_project.js to generate .kicad_pro files
 
 # Default net class (applied to most signals)
-# track_width, via_diameter and via_drill are not set here: scripts/kicad_config.js
-# fills them in from copper_trace_width, copper_via_diameter and copper_via_drill in
-# ergogen/config.yaml's units, which size the traces and vias the footprints emit.
+# track_width, via_diameter and via_drill are not set here, and neither are the
+# per-class track widths below: scripts/kicad_config.js fills them in from the
+# copper_* units in ergogen/config.yaml, which size the traces and vias the
+# footprints emit.
 net_class_default:
   clearance: 0.2 # Clearance between traces in mm
   diff_pair_width: 0.2 # Differential pair trace width in mm
@@ -15,7 +16,6 @@ net_class_default:
 # Additional net classes for different trace widths
 net_classes:
   - name: "Power"
-    track_width: 0.375
     clearance: 0.2
     diff_pair_width: 0.2
     diff_pair_gap: 0.25
@@ -23,7 +23,6 @@ net_classes:
     microvia_drill: 0.1
 
   - name: "Battery"
-    track_width: 0.5 # Battery traces in mm
     clearance: 0.2
     diff_pair_width: 0.2
     diff_pair_gap: 0.25
@@ -67,10 +66,10 @@ board_defaults:
   copper_text_size_h: 1.5 # Copper text height in mm
   copper_text_size_v: 1.5 # Copper text width in mm
   copper_text_thickness: 0.3 # Copper text thickness in mm
-  silk_line_width: 0.16 # Silkscreen line width in mm
+  # silk_line_width and silk_text_thickness come from ergogen/config.yaml's
+  # silk_line_width unit, which also drives the text the footprints emit.
   silk_text_size_h: 1.0 # Silkscreen text height in mm
   silk_text_size_v: 1.0 # Silkscreen text width in mm
-  silk_text_thickness: 0.16 # Silkscreen text thickness in mm
   zones_min_clearance: 0.5 # Minimum clearance for zones in mm
 
 # Zone Fill Settings (used by add_ground_planes.js)
@@ -93,8 +92,7 @@ zones:
 via_stitching:
   net_name: "GND" # Net name to add via stitching to
   step_mm: 6 # Spacing between vias in mm (grid size, smaller = more vias)
-  size_mm: 0.6 # Via copper diameter in mm
-  drill_mm: 0.3 # Via drill hole diameter in mm
+  # size_mm and drill_mm come from copper_via_diameter and copper_via_drill
   clearance_mm: 0.2 # Clearance around vias in mm
 
 # Text Keepout Settings (used by create_text_keepouts.js)

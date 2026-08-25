@@ -132,9 +132,11 @@ try:
             ),
         ]
     else:  # Linux
+        # KICAD_USER_DIR in the Makefile, which is where `make deps` applies the
+        # KiCad 10 patches, comes first.
         search_patterns = [
-            os.path.expanduser("~/.config/kicad/*/scripting/plugins/ViaStitching"),
             os.path.expanduser("~/.local/share/kicad/*/scripting/plugins/ViaStitching"),
+            os.path.expanduser("~/.config/kicad/*/scripting/plugins/ViaStitching"),
         ]
 
     # Find the plugin directory
@@ -154,6 +156,19 @@ try:
 
     # Import FillArea module directly, not through the plugin __init__.py
     from FillArea import FillArea
+
+    # `make deps` rewrites two clearance calculations for KiCad 10 padstack vias.
+    # An unpatched copy still imports and still runs, but spaces the stitching
+    # vias off the wrong width, so check rather than trust the install.
+    import inspect
+
+    _fill_area_source = inspect.getsource(FillArea)
+    for _marker in ("via.GetFrontWidth()", "track.GetFrontWidth()"):
+        if _marker not in _fill_area_source:
+            raise ImportError(
+                f"{via_stitching_dir}/FillArea.py is missing the KiCad 10 patch "
+                f"({_marker}). Re-run 'make deps'."
+            )
 except ImportError as e:
     print(f"Error: Could not import ViaStitching FillArea: {e}", file=sys.stderr)
     print(

@@ -51,8 +51,11 @@ units:
   pcb_thickness: 1.6
   pcb_hole_diameter: 5
 
-  # Copper geometry (scripts/kicad_config.yaml's net classes must match these)
+  # Copper geometry. scripts/kicad_config.js fills these into the net classes and
+  # the via-stitching parameters, so they are typed here and nowhere else.
   copper_trace_width: 0.25
+  copper_power_trace_width: 0.375
+  copper_battery_trace_width: 0.5
   copper_via_diameter: 0.6
   copper_via_drill: 0.3
 
@@ -85,6 +88,7 @@ units:
   # Display positioning
   display_x: mcu_x
   display_y: 6.75 + mcu_y
+  display_origin_y: display_y + 0.75 # nice!view draws its screen 0.75mm off its origin
   display_w: 11.3
   display_h: 25.8
 
@@ -259,12 +263,12 @@ outlines:
 
   _mcu_cover_holes:
     - what: circle
-      radius: m2_size / 2
+      radius: plate_hole_diameter / 2
       where: &mcu_hole1_where
         ref: finger_inner_bottom
         shift: [mcu_hole1_x, mcu_hole1_y]
     - what: circle
-      radius: m2_size / 2
+      radius: plate_hole_diameter / 2
       where: &mcu_hole2_where
         ref: finger_inner_bottom
         shift: [mcu_hole2_x, mcu_hole2_y]
@@ -531,7 +535,7 @@ outlines:
     - name: _display_pins
       where: &display_pos
         ref: finger_inner_home
-        shift: [display_x, 7.5 + mcu_y]
+        shift: [display_x, display_origin_y]
     - name: _display_jumpers
       where: *display_pos
     - name: _battery_pins
@@ -598,7 +602,7 @@ outlines:
       where: extra
 
   # Case side cutouts
-  _case_cutout_left:
+  _case_cutout_start:
     - what: circle
       radius: side_cut_radius
       adjust.shift: [side_cut_radius, -side_cut_radius]
@@ -609,7 +613,7 @@ outlines:
       radius: side_cut_radius
       adjust.shift: [-side_cut_radius, -side_cut_radius]
 
-  _case_cutout_right:
+  _case_cutout_end:
     - what: circle
       radius: side_cut_radius
       adjust.shift: [-side_cut_radius, -side_cut_radius]
@@ -621,19 +625,19 @@ outlines:
       adjust.shift: [side_cut_radius, -side_cut_radius]
 
   _case_cutout:
-    - name: _case_cutout_left
+    - name: _case_cutout_start
       adjust.shift: [-(side_cut_width / 2), 0]
     - what: rectangle
       size: [side_cut_width - side_cut_radius * 2, side_cut_radius * 4]
-    - name: _case_cutout_right
+    - name: _case_cutout_end
       adjust.shift: [(side_cut_width / 2), 0]
 
   _case_cutout_half:
-    - name: _case_cutout_left
+    - name: _case_cutout_start
       adjust.shift: [-(side_cut_width / 4), 0]
     - what: rectangle
       size: [(side_cut_width / 2) - side_cut_radius * 2, side_cut_radius * 4]
-    - name: _case_cutout_right
+    - name: _case_cutout_end
       adjust.shift: [(side_cut_width / 4), 0]
 
   _usbc_case_cutout:
@@ -1313,6 +1317,9 @@ cases:
       extrude: m2_insert_hole_depth * 2
       shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
 
+  # Re-adding _posts_pinky after _posts_38 has already subtracted _post_holes_core
+  # is what leaves hole 5 solid: the 42 plate drills hole 5_e instead, so only
+  # hole 5_e is subtracted back. Five inserts per side in both variants.
   _posts_42:
     - +_posts_38
     - what: outline
@@ -1481,6 +1488,7 @@ pcbs:
         params:
           reversible: true
           include_plated_mounting_holes: false
+          mounting_holes_position: 8
           include_momentary_switch_pads: true
           smd_momentary_switch: true
           A: encoder_a
@@ -1496,6 +1504,8 @@ pcbs:
           reversible: true
           reverse_mount: true
           use_rectangular_jumpers: true
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
           include_resistor_pads: true
           include_gnd_vias: true
           show_silk_labels: false
@@ -1524,7 +1534,8 @@ pcbs:
         params:
           reversible: true
           include_labels: false
-          include_resistor_pads: true
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
 
       power:
         what: ceoloide/power_switch_smd_side
@@ -1537,6 +1548,7 @@ pcbs:
           include_traces_vias: true
           label_font_face: "Maple Mono NF"
           label_font_thickness: silk_line_width
+          trace_width: copper_battery_trace_width
           via_size: copper_via_diameter
           via_drill: copper_via_drill
 
@@ -1625,8 +1637,8 @@ pcbs:
         what: ceoloide/mounting_hole_npth
         where: *mcu_hole1_where
         params: &m2_hole_params
-          hole_size: m2_size
-          hole_drill: m2_size
+          hole_size: plate_hole_diameter
+          hole_drill: plate_hole_diameter
 
       mcu_hole_R: &mcu_hole_R
         what: ceoloide/mounting_hole_npth

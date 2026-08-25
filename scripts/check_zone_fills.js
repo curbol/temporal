@@ -14,7 +14,7 @@ const { glob } = require('glob');
 const { getKiCadPythonOrThrow } = require('./kicad_python');
 
 async function main() {
-  const pcbFiles = (await glob('pcbs/**/*.kicad_pcb')).sort();
+  const pcbFiles = (await glob('pcbs/*/*.kicad_pcb', { ignore: '**/_autosave-*' })).sort();
 
   if (pcbFiles.length === 0) {
     console.error('Error: no .kicad_pcb files found in pcbs/');

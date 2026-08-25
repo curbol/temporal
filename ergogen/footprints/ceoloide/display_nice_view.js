@@ -39,6 +39,10 @@
 //      allows to override the GND trace width. Not recommended to go below 0.25mm (JLCPC
 //      min is 0.127mm).
 //    signal_trace_width: default is 0.250mm
+//    via_size: default is 0.6mm
+//      the diameter of the vias that carry the signals between layers
+//    via_drill: default is 0.3mm
+//      the drill diameter of those vias
 //      allows to override the trace width that connects the jumper pads to the MOSI, SCK,
 //      and CS pins. Not recommended to go below 0.15mm (JLCPC min is 0.127mm).
 //    invert_jumpers_position default is false
@@ -82,12 +86,13 @@ module.exports = {
     include_traces: true,
     gnd_trace_width: 0.25,
     signal_trace_width: 0.25,
+    via_size: 0.6,
+    via_drill: 0.3,
     invert_jumpers_position: false,
     invert_labels_position: false,
     include_silkscreen: true,
     include_labels: true,
     include_courtyard: true,
-    include_resistor_pads: false,
     niceview_3dmodel_filename: "",
     niceview_3dmodel_xyz_offset: [0, 0, 0],
     niceview_3dmodel_xyz_rotation: [0, 0, 0],
@@ -245,63 +250,6 @@ module.exports = {
       })
     (pad "23" smd rect (at -5.08 ${14.95 + jumpers_offset} ${270 + p.r
       }) (size 0.6 1.2) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[4].str
-      })
-    `;
-
-    // 0402 resistor pads (1.0 x 0.5mm body) - overlays jumper pads for optional JLCPCB assembly
-    const front_resistor_pads = `
-    (pad "14" smd rect (at -5.08 ${14.05 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[0].str
-      })
-    (pad "15" smd rect (at -2.54 ${14.05 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[1].str
-      })
-    (pad "16" smd rect (at 2.54 ${14.05 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[3].str
-      })
-    (pad "17" smd rect (at 5.08 ${14.05 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_top[4].str
-      })
-
-    (pad "10" smd rect (at -5.08 ${14.95 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[0].str
-      })
-    (pad "11" smd rect (at -2.54 ${14.95 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[1].str
-      })
-    (pad "12" smd rect (at 2.54 ${14.95 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[3].str
-      })
-    (pad "13" smd rect (at 5.08 ${14.95 + jumpers_offset} ${90 + p.r
-      }) (size 0.5 0.7) (layers "F.Cu" "F.Paste" "F.Mask") ${jumpers_front_bottom[4].str
-      })
-    `;
-
-    const back_resistor_pads = `
-    (pad "24" smd rect (at 5.08 ${14.05 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[0].str
-      })
-    (pad "25" smd rect (at 2.54 ${14.05 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[1].str
-      })
-    (pad "26" smd rect (at -2.54 ${14.05 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[3].str
-      })
-    (pad "27" smd rect (at -5.08 ${14.05 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_top[4].str
-      })
-
-    (pad "20" smd rect (at 5.08 ${14.95 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[0].str
-      })
-    (pad "21" smd rect (at 2.54 ${14.95 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[1].str
-      })
-    (pad "22" smd rect (at -2.54 ${14.95 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[3].str
-      })
-    (pad "23" smd rect (at -5.08 ${14.95 + jumpers_offset} ${270 + p.r
-      }) (size 0.5 0.7) (layers "B.Cu" "B.Paste" "B.Mask") ${jumpers_back_bottom[4].str
       })
     `;
 
@@ -481,23 +429,23 @@ module.exports = {
       }) (layer "B.Cu") (net ${socket_nets[4].index}))
 
   (segment (start ${p.eaxy(-5.08, 14.05)}) (end ${p.eaxy(-5.08, 13.25)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[0].index}))
-  (via (at ${p.eaxy(-5.08, 13.25)}) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net ${dst_nets[0].index}))
+  (via (at ${p.eaxy(-5.08, 13.25)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${dst_nets[0].index}))
 
   (segment (start ${p.eaxy(-2.54, 14.05)}) (end ${p.eaxy(-1.69, 14.05)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[1].index}))
   (segment (start ${p.eaxy(-1.69, 14.05)}) (end ${p.eaxy(-1.432875, 14.307125)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[1].index}))
   (segment (start ${p.eaxy(-1.432875, 14.307125)}) (end ${p.eaxy(-1.432875, 14.948563)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[1].index}))
-  (via (at ${p.eaxy(-1.432875, 14.948563)}) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net ${dst_nets[1].index}))
+  (via (at ${p.eaxy(-1.432875, 14.948563)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${dst_nets[1].index}))
 
   (segment (start ${p.eaxy(2.54, 14.05)}) (end ${p.eaxy(1.206094, 14.05)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[3].index}))
   (segment (start ${p.eaxy(1.206094, 14.05)}) (end ${p.eaxy(1.190128, 14.034034)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[3].index}))
-  (via (at ${p.eaxy(1.190128, 14.05)}) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net ${dst_nets[3].index}))
+  (via (at ${p.eaxy(1.190128, 14.05)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${dst_nets[3].index}))
 
   (segment (start ${p.eaxy(5.08, 14.05)}) (end ${p.eaxy(4.428, 14.05)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[4].index}))
   (segment (start ${p.eaxy(4.428, 14.05)}) (end ${p.eaxy(3.900128, 14.577872)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[4].index}))
   (segment (start ${p.eaxy(3.900128, 14.577872)}) (end ${p.eaxy(3.900128, 17.284034)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[4].index}))
   (segment (start ${p.eaxy(3.900128, 17.284034)}) (end ${p.eaxy(2.790128, 18.394034)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[4].index}))
   (segment (start ${p.eaxy(2.790128, 18.394034)}) (end ${p.eaxy(2.530128, 18.394034)}) (width 0.25) (layer "F.Cu") (net ${dst_nets[4].index}))
-  (via (at ${p.eaxy(2.530128, 18.394034)}) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net ${dst_nets[4].index}))
+  (via (at ${p.eaxy(2.530128, 18.394034)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${dst_nets[4].index}))
 
   (segment (start ${p.eaxy(5.08, 14.05)}) (end ${p.eaxy(4.454034, 13.424034)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
   (segment (start ${p.eaxy(4.454034, 13.424034)}) (end ${p.eaxy(-4.905964, 13.424034)}) (width 0.25) (layer "B.Cu") (net ${dst_nets[0].index}))
@@ -535,10 +483,6 @@ module.exports = {
     if (p.reversible) {
       final += front_jumpers;
       final += back_jumpers;
-      if (p.include_resistor_pads) {
-        final += front_resistor_pads;
-        final += back_resistor_pads;
-      }
     }
     if (p.niceview_3dmodel_filename) {
       final += niceview_3dmodel;

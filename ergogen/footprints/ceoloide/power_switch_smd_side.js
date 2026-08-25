@@ -51,7 +51,7 @@
 //    via_drill: default is 0.3
 //      allows to define the size of the drill. Not recommended below 0.3 (JLCPCB minimum),
 //      or above 0.4 (KiCad default)
-//    trace_width: default is 0.25mm
+//    trace_width: default is 0.5mm
 //      allows to override the trace width that connects the pads to vias
 //    switch_3dmodel_filename: default is ''
 //      Allows you to specify the path to a 3D model STEP or WRL file to be
@@ -88,7 +88,7 @@ module.exports = {
     include_traces_vias: false,
     via_size: 0.6,
     via_drill: 0.3,
-    trace_width: 0.375,
+    trace_width: 0.5,
     switch_3dmodel_filename: "",
     switch_3dmodel_xyz_offset: [0, 0, 0],
     switch_3dmodel_xyz_rotation: [0, 0, 0],
@@ -245,33 +245,33 @@ module.exports = {
     ${''/* Connect "to" pad (RAW) - center position with 45° routing */}
     (via (at ${p.eaxy(0, 0)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.to.index}))
     ${''/* Front RAW pad to via */}
-    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-1.335, -0.35)}) (width 0.5) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-1.335, -0.35)}) (end ${p.eaxy(-0.35, -0.35)}) (width 0.5) (layer "F.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-0.35, -0.35)}) (end ${p.eaxy(0, 0)}) (width 0.5) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, -0.75)}) (end ${p.eaxy(-1.335, -0.35)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.335, -0.35)}) (end ${p.eaxy(-0.35, -0.35)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-0.35, -0.35)}) (end ${p.eaxy(0, 0)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.to.index}))
     ${''/* Back RAW pad to via */}
-    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(-1.335, 0.35)}) (width 0.5) (layer "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-1.335, 0.35)}) (end ${p.eaxy(-0.35, 0.35)}) (width 0.5) (layer "B.Cu") (net ${p.to.index}))
-    (segment (start ${p.eaxy(-0.35, 0.35)}) (end ${p.eaxy(0, 0)}) (width 0.5) (layer "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.735, 0.75)}) (end ${p.eaxy(-1.335, 0.35)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-1.335, 0.35)}) (end ${p.eaxy(-0.35, 0.35)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
+    (segment (start ${p.eaxy(-0.35, 0.35)}) (end ${p.eaxy(0, 0)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.to.index}))
 
     ${''/* Connect "from" pads (BAT_P) - only create vias/traces for the position that has active pads based on invert_behavior */}
     ${p.invert_behavior ? `
     ${''/* Bottom position active when invert_behavior is true - 45° routing */}
     (via (at ${p.eaxy(0, -2.65)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
     ${''/* Front BAT_P pad to via */}
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-1.335, -2.65)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.335, -2.65)}) (end ${p.eaxy(0, -2.65)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-1.335, -2.65)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.335, -2.65)}) (end ${p.eaxy(0, -2.65)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
     ${''/* Back BAT_P pad to via */}
-    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-1.335, -2.65)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.335, -2.65)}) (end ${p.eaxy(0, -2.65)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, -2.25)}) (end ${p.eaxy(-1.335, -2.65)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.335, -2.65)}) (end ${p.eaxy(0, -2.65)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
     ` : `
     ${''/* Top position active when invert_behavior is false - 45° routing */}
     (via (at ${p.eaxy(0, 2.65)}) (size ${p.via_size}) (drill ${p.via_drill}) (layers "F.Cu" "B.Cu") (net ${p.from.index}))
     ${''/* Front BAT_P pad to via */}
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-1.335, 2.65)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.335, 2.65)}) (end ${p.eaxy(0, 2.65)}) (width 0.5) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-1.335, 2.65)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.335, 2.65)}) (end ${p.eaxy(0, 2.65)}) (width ${p.trace_width}) (layer "F.Cu") (net ${p.from.index}))
     ${''/* Back BAT_P pad to via */}
-    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-1.335, 2.65)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
-    (segment (start ${p.eaxy(-1.335, 2.65)}) (end ${p.eaxy(0, 2.65)}) (width 0.5) (layer "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.735, 2.25)}) (end ${p.eaxy(-1.335, 2.65)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
+    (segment (start ${p.eaxy(-1.335, 2.65)}) (end ${p.eaxy(0, 2.65)}) (width ${p.trace_width}) (layer "B.Cu") (net ${p.from.index}))
     `}
     `;
 

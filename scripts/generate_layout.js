@@ -56,9 +56,8 @@ function generateLayout() {
       x: Math.round(data.x * 1000) / 1000,
       y: Math.round(data.y * 1000) / 1000,
       r: Math.round(data.r * 1000) / 1000,
-      column: data.meta?.col?.name || null,
+      columnNet: data.meta?.col?.key?.column_net || null,
       row: data.meta?.row || null,
-      zone: data.meta?.zone?.name || null,
     };
 
     // Mark encoder specially
@@ -74,21 +73,19 @@ function generateLayout() {
 }
 
 /**
- * Fail loudly when a zone, column, or row name in ergogen/config.yaml has no
- * entry in the matrix maps below. Without this the key is simply absent from
+ * Fail loudly when a column net or row name in ergogen/config.yaml has no entry
+ * in the matrix maps below. Without this the key is simply absent from
  * temporal.json and nothing in the build reports it.
  */
-function assertNamesResolve(keys, rowMap, colMapLeft, thumbColMapLeft) {
+function assertNamesResolve(keys, rowMap, colMapLeft) {
   const unmapped = [];
 
   for (const key of keys) {
-    const colMap = key.zone === 'thumb' ? thumbColMapLeft : colMapLeft;
-
     if (rowMap[key.row] === undefined) {
       unmapped.push(`row "${key.row}" (key ${key.name})`);
     }
-    if (colMap[key.column] === undefined) {
-      unmapped.push(`${key.zone} column "${key.column}" (key ${key.name})`);
+    if (colMapLeft[key.columnNet] === undefined) {
+      unmapped.push(`column_net "${key.columnNet}" (key ${key.name})`);
     }
   }
 
@@ -110,17 +107,21 @@ function generateZmkLayout(keys) {
 
   const rowMap = { top: 0, home: 1, bottom: 2, thumb: 3 };
 
-  // Column mapping: finger columns to matrix columns
-  // Left side: extra=0, pinky=1, ring=2, middle=3, index=4, inner=5
-  // Right side: inner=6, index=7, middle=8, ring=9, pinky=10, extra=11
-  const colMapLeft = { extra: 0, pinky: 1, ring: 2, middle: 3, index: 4, inner: 5 };
-  // Thumb keys share column nets with finger columns
-  // enc=col_ring(2), near=col_middle(3), mid=col_index(4), far=col_inner(5)
-  const thumbColMapLeft = { enc: 2, near: 3, mid: 4, far: 5 };
-  // Right-hand columns mirror the left across the full matrix width
+  // Matrix column follows the column net a key is wired to, which is what the
+  // firmware scans. Thumb keys share their nets with finger columns, so reading
+  // the net rather than the column name keeps the two in step by construction.
+  // Left side: cols 0-5, right side mirrors to 6-11.
+  const colMapLeft = {
+    col_extra: 0,
+    col_pinky: 1,
+    col_ring: 2,
+    col_middle: 3,
+    col_index: 4,
+    col_inner: 5
+  };
   const mirrorCol = col => Object.keys(colMapLeft).length * 2 - 1 - col;
 
-  assertNamesResolve(keys, rowMap, colMapLeft, thumbColMapLeft);
+  assertNamesResolve(keys, rowMap, colMapLeft);
 
   // Find bounds to normalize positions
   let minX = Infinity, maxY = -Infinity;
@@ -134,13 +135,7 @@ function generateZmkLayout(keys) {
 
   for (const key of keys) {
     const row = rowMap[key.row];
-    let col;
-
-    if (key.zone === 'thumb') {
-      col = thumbColMapLeft[key.column];
-    } else {
-      col = colMapLeft[key.column];
-    }
+    const col = colMapLeft[key.columnNet];
 
     // Convert mm to key units (using KX as base unit for both axes)
     // Ergogen: Y is negative going up, we want Y positive going down
@@ -167,7 +162,7 @@ function generateZmkLayout(keys) {
 
   // Find the width of the left half for mirroring
   const maxX = Math.max(...layoutKeys.map(k => k.x));
-  const mirrorX = maxX + 2.02; // Gap between halves (~2 key units)
+  const mirrorX = maxX + 2.02; // Left edge of the right half, one key unit past the gap
 
   // Create right half (mirrored)
   const rightKeys = layoutKeys.map(key => {
@@ -196,7 +191,7 @@ function generateZmkLayout(keys) {
 
   const encoder = keys.find(key => key.name === ENCODER_KEY);
   const encoderRow = rowMap[encoder.row];
-  const encoderCol = thumbColMapLeft[encoder.column];
+  const encoderCol = colMapLeft[encoder.columnNet];
 
   const zmkLayout = {
     id: 'temporal',

@@ -318,7 +318,7 @@ If using FR-4 plates instead of a 3D printed case:
 
 ## Step 7: Switches and Keycaps
 
-1. Insert Choc v1 switches into the top plate
+1. Insert Choc v1 or v2 switches into the top plate
 2. Press firmly until the switches click into the hotswap sockets
 3. Install keycaps onto the switches
 4. If using encoders, press the knobs onto the encoder shafts
