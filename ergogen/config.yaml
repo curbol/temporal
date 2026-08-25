@@ -51,6 +51,16 @@ units:
   pcb_thickness: 1.6
   pcb_hole_diameter: 5
 
+  # Copper geometry (scripts/kicad_config.yaml's net classes must match these)
+  copper_trace_width: 0.25
+  copper_via_diameter: 0.6
+  copper_via_drill: 0.3
+
+  # Silkscreen stroke width. JLCPCB's minimum is 0.153mm (6 mil), and this is the
+  # pen KiCad strokes the glyph outlines with, so anything thinner is flagged at
+  # upload and prints faint.
+  silk_line_width: 0.16
+
   # Mounting hole positions (relative to key centers)
   hole1_x: -0.5cx - 0.8 # Top left (finger_middle_top)
   hole1_y: -0.5cy
@@ -135,6 +145,7 @@ units:
   m2_insert_post_height: pcb_thickness + choc_under_to_pcb - choc_top_plate
   m2_insert_hole_depth: 4
   m2_nut_width: 4.2
+  plate_hole_diameter: m2_size + 0.2
 
   # Preview layout offsets
   preview_x: 4px
@@ -655,7 +666,7 @@ outlines:
   # Mounting holes
   _plate_hole:
     - what: circle
-      radius: m2_size / 2 + 0.1
+      radius: plate_hole_diameter / 2
 
   _plate_holes_38:
     - name: _plate_hole
@@ -1446,9 +1457,9 @@ pcbs:
           solder: true
           choc_v2_support: true
           diode_offset_y: -diode_y
-          trace_width: 0.25
-          via_size: 0.6
-          via_drill: 0.3
+          trace_width: copper_trace_width
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
           via_separation: 1.6
 
       diode:
@@ -1461,8 +1472,8 @@ pcbs:
           include_tht: false
           reversible: true
           include_traces_vias: true
-          via_size: 0.6
-          via_drill: 0.3
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
 
       encoder:
         what: ceoloide/rotary_encoder_ec11_ec12
@@ -1488,8 +1499,9 @@ pcbs:
           include_resistor_pads: true
           include_gnd_vias: true
           show_silk_labels: false
-          label_font_face: "Maple Mono NF ExtraBold"
+          label_font_face: "Maple Mono NF"
           label_font_size: 1.1
+          label_font_thickness: silk_line_width
           P4: row_top
           P5: row_home
           P6: row_bottom
@@ -1523,8 +1535,10 @@ pcbs:
         params:
           reversible: true
           include_traces_vias: true
-          via_size: 0.6
-          via_drill: 0.3
+          label_font_face: "Maple Mono NF"
+          label_font_thickness: silk_line_width
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
 
       reset:
         what: ceoloide/reset_switch_smd_side
@@ -1535,8 +1549,8 @@ pcbs:
         params:
           reversible: true
           include_traces_vias: true
-          via_size: 0.6
-          via_drill: 0.3
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
 
       battery:
         what: ceoloide/battery_connector_jst_ph_2
@@ -1545,8 +1559,8 @@ pcbs:
           reversible: true
           include_traces_vias: true
           include_resistor_pads: true
-          via_size: 0.6
-          via_drill: 0.3
+          via_size: copper_via_diameter
+          via_drill: copper_via_drill
 
       temporal: &temporal_text
         what: ceoloide/utility_text
@@ -1557,7 +1571,8 @@ pcbs:
           text: "Temporal"
           height: 2.2
           width: 2.2
-          face: "Maple Mono NF Medium"
+          face: "Maple Mono NF"
+          thickness: silk_line_width
           reversible: true
 
       curbol:
@@ -1569,7 +1584,8 @@ pcbs:
           text: "curbol"
           height: 1.2
           width: 1.2
-          face: "Maple Mono NF ExtraBold"
+          face: "Maple Mono NF"
+          thickness: silk_line_width
           reversible: true
 
       hole_1:
@@ -1626,18 +1642,25 @@ pcbs:
       hole_1: &plate_hole_1
         what: ceoloide/mounting_hole_npth
         where: *hole1_pos
+        params: &plate_hole_params
+          hole_size: plate_hole_diameter
+          hole_drill: plate_hole_diameter
       hole_2: &plate_hole_2
         what: ceoloide/mounting_hole_npth
         where: *hole2_pos
+        params: *plate_hole_params
       hole_3: &plate_hole_3
         what: ceoloide/mounting_hole_npth
         where: *hole3_pos
+        params: *plate_hole_params
       hole_4: &plate_hole_4
         what: ceoloide/mounting_hole_npth
         where: *hole4_pos
+        params: *plate_hole_params
       hole_5_e: &plate_hole_5_e
         what: ceoloide/mounting_hole_npth
         where: *hole5_e_pos
+        params: *plate_hole_params
       temporal: *temporal_text
 
   back_plate_42:
@@ -1665,6 +1688,7 @@ pcbs:
       hole_5: &plate_hole_5
         what: ceoloide/mounting_hole_npth
         where: *hole5_pos
+        params: *plate_hole_params
       temporal: *temporal_text
 
   back_plate_38:

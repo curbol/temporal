@@ -8,9 +8,11 @@
 const fs = require('fs');
 const path = require('path');
 const { writeDrcRules } = require('./drc_rules');
+const { pcbNames } = require('./ergogen_config');
 
 const PCBS_DIR = path.join(__dirname, '..', 'pcbs');
-const SOURCE_PCBS = ['top_plate_38', 'top_plate_42'];
+// Every top plate gets a stealth variant, derived from the boards the config declares
+const SOURCE_PCBS = pcbNames().filter(name => name.startsWith('top_plate_'));
 const SILKSCREEN_LAYERS = ['F.SilkS', 'B.SilkS'];
 
 /**
@@ -93,11 +95,38 @@ function removeSilkscreenText(content) {
 }
 
 /**
- * Update internal references in PCB content to use new name.
+ * True when some text still names a font face, so the embedded fonts are in use.
  */
-function updatePcbName(content, oldName, newName) {
-  // Update title_block if present
-  return content;
+function usesEmbeddedFace(content) {
+  for (const match of content.matchAll(/\((?:gr_text|fp_text)\s/g)) {
+    const extracted = extractSexpBlock(content, match.index);
+    if (extracted && extracted.block.includes('(face ')) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Drop the fonts embedded for text this variant no longer has. Left in place they
+ * are megabytes of a typeface the board never renders.
+ */
+function removeEmbeddedFonts(content) {
+  if (usesEmbeddedFace(content)) {
+    return content;
+  }
+
+  const markerIndex = content.indexOf('\n\t(embedded_files');
+
+  if (markerIndex !== -1) {
+    const extracted = extractSexpBlock(content, content.indexOf('(', markerIndex));
+    if (extracted) {
+      content = content.slice(0, markerIndex) + content.slice(extracted.endIndex);
+    }
+  }
+
+  return content.replace('(embedded_fonts yes)', '(embedded_fonts no)');
 }
 
 /**
@@ -122,7 +151,8 @@ function createStealthVariant(sourceName) {
 
   // Read and process PCB
   const pcbContent = fs.readFileSync(sourcePcbPath, 'utf-8');
-  const { content: stealthContent, removedCount } = removeSilkscreenText(pcbContent);
+  const { content: strippedContent, removedCount } = removeSilkscreenText(pcbContent);
+  const stealthContent = removeEmbeddedFonts(strippedContent);
 
   // Write stealth PCB
   const stealthPcbPath = path.join(stealthDir, `${stealthName}.kicad_pcb`);
@@ -149,18 +179,31 @@ function createStealthVariant(sourceName) {
 }
 
 function main() {
+  if (SOURCE_PCBS.length === 0) {
+    console.error('Error: no top plate boards found under pcbs: in ergogen/config.yaml');
+    process.exit(1);
+  }
+
   const results = [];
+  let failed = 0;
 
   for (const sourceName of SOURCE_PCBS) {
     const result = createStealthVariant(sourceName);
     if (result) {
       results.push(result);
+    } else {
+      failed++;
     }
   }
 
   if (results.length > 0) {
     const summary = results.map(r => `${r.name}: ${r.removedCount} text(s)`).join(', ');
     console.log(`✓ Created ${results.length} stealth variant(s) [${summary}]`);
+  }
+
+  if (failed > 0) {
+    console.error(`Error: ${failed} stealth variant(s) could not be created`);
+    process.exit(1);
   }
 }
 

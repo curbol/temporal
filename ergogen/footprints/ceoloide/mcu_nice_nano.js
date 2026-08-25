@@ -114,7 +114,6 @@ module.exports = {
     reverse_mount: false,
     include_traces: true,
     include_extra_pins: false,
-    invert_jumpers_position: false,
     only_required_jumpers: false,
     use_rectangular_jumpers: false,
     include_resistor_pads: false,
@@ -437,8 +436,6 @@ module.exports = {
       show_silk_labels
     ) => {
       const row_offset_y = 2.54 * row_num;
-      // For row 0 (top pins), shift vias down 0.5mm to make room for power switch
-      const via_y_offset = row_num === 0 ? 0.5 : 0;
 
       const socket_hole_num_left = 24 - row_num;
       const socket_hole_num_right = 1 + row_num;

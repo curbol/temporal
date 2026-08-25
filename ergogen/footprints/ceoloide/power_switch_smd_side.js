@@ -36,6 +36,10 @@
 //    include_silkscreen: default is true
 //      if true it will include silkscreen markings, which is recommended to know which side
 //      connects Bat+ to RAW.
+//    label_font_face: default is '' (KiCad's stroke font)
+//      the name of the font family used for the silkscreen labels
+//    label_font_thickness: default is 0.15
+//      the stroke width of the silkscreen labels, in mm
 //    include_courtyard: default is false
 //      if true it will include the courtyard around the component
 //    include_traces_vias: default is false
@@ -78,6 +82,8 @@ module.exports = {
     reversible: false,
     invert_behavior: true,
     include_silkscreen: true,
+    label_font_face: "",
+    label_font_thickness: 0.15,
     include_courtyard: false,
     include_traces_vias: false,
     via_size: 0.6,
@@ -91,6 +97,9 @@ module.exports = {
     to: { type: "net", value: "RAW" },
   },
   body: (p) => {
+    const face = p.label_font_face != "" ? ` (face "${p.label_font_face}")` : "";
+    const font = `(font${face} (size 1 1) (thickness ${p.label_font_thickness}))`;
+
     const common_start = `
   (footprint "ceoloide:power_switch_smd_side"
     (layer "${p.side}.Cu")
@@ -99,18 +108,18 @@ module.exports = {
       (at -3.6 0 ${-90 + p.r})
       (layer "${p.side}.SilkS")
       ${p.ref_hide}
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${font})
     )
     (attr smd)
     `;
     const silkscreen_front = `
     (fp_text user "+" (at 0 ${p.invert_behavior ? "-" : ""}4.2 ${p.r
       }) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${font})
     )
     (fp_text user "-" (at 0 ${p.invert_behavior ? "" : "-"}4.2 ${p.r
       }) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${font})
     )
     (fp_line (start 0.415 -3.45) (end -0.375 -3.45) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
     (fp_line (start -0.375 3.45) (end 0.415 3.45) (layer "F.SilkS") (stroke (width 0.12) (type solid)))
@@ -121,15 +130,15 @@ module.exports = {
     const silkscreen_back = `
     (fp_text user "${p.ref}" (at -3.5 0 ${90 + p.r}) (layer "B.SilkS") ${p.ref_hide
       }
-      (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
+      (effects ${font} (justify mirror))
     )
     (fp_text user "+" (at 0 ${p.invert_behavior ? "-" : ""}4.2 ${p.r
       }) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
+      (effects ${font} (justify mirror))
     )
     (fp_text user "-" (at 0 ${p.invert_behavior ? "" : "-"}4.2 ${p.r
       }) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify mirror))
+      (effects ${font} (justify mirror))
     )
     (fp_line (start -1.425 1.4) (end -1.425 1.6) (layer "B.SilkS") (stroke (width 0.12) (type solid)))
     (fp_line (start 0.415 3.45) (end -0.375 3.45) (layer "B.SilkS") (stroke (width 0.12) (type solid)))

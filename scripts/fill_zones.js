@@ -5,10 +5,9 @@
  * Uses the pcbnew Python module to fill all zones in each PCB file.
  */
 
-const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { glob } = require('glob');
+const { ergogenOutputPcbs } = require('./ergogen_config');
 const { getKiCadPythonOrThrow } = require('./kicad_python');
 const { loadCustomRules, writeDrcRules } = require('./drc_rules');
 
@@ -31,14 +30,8 @@ function fillZonesInPcb(filepath, pythonPath) {
 /**
  * Main entry point.
  */
-async function main() {
-  const outputDir = 'ergogen/output/pcbs';
-
-  if (!fs.existsSync(outputDir)) {
-    console.error(`Error: ${outputDir} does not exist`);
-    console.error("Run 'npm run gen' first to generate PCB files");
-    process.exit(1);
-  }
+function main() {
+  const pcbFiles = ergogenOutputPcbs();
 
   // Find KiCad's Python interpreter
   let pythonPath;
@@ -49,30 +42,28 @@ async function main() {
     process.exit(1);
   }
 
-  const pcbFiles = await glob(`${outputDir}/*.kicad_pcb`);
-
-  if (pcbFiles.length === 0) {
-    console.error(`No .kicad_pcb files found in ${outputDir}`);
-    process.exit(1);
-  }
-
   const customRules = loadCustomRules();
 
   let processed = 0;
+  let failed = 0;
   for (const pcbFile of pcbFiles) {
     writeDrcRules(pcbFile, customRules);
 
     if (fillZonesInPcb(pcbFile, pythonPath)) {
       processed++;
+    } else {
+      failed++;
     }
   }
 
   if (processed > 0) {
     console.log(`✓ Filled zones in ${processed} PCB files`);
   }
+
+  if (failed > 0) {
+    console.error(`Error: ${failed} of ${pcbFiles.length} PCB files failed zone filling`);
+    process.exit(1);
+  }
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+main();

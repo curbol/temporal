@@ -8,29 +8,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const { glob } = require('glob');
-const yaml = require('js-yaml');
+const { ergogenOutputPcbs } = require('./ergogen_config');
 const { randomUUID } = require('crypto');
-
-/**
- * Load defaults from YAML config file.
- */
-function loadDefaultsConfig() {
-  const configPath = path.join(__dirname, 'kicad_config.yaml');
-
-  if (!fs.existsSync(configPath)) {
-    console.error(`Error: Config file not found at ${configPath}`);
-    process.exit(1);
-  }
-
-  try {
-    const content = fs.readFileSync(configPath, 'utf-8');
-    return yaml.load(content);
-  } catch (err) {
-    console.error(`Error: Failed to load config: ${err.message}`);
-    process.exit(1);
-  }
-}
+const { loadKicadConfig } = require('./kicad_config');
 
 /**
  * Generate a KiCad-compatible UUID.
@@ -40,24 +20,72 @@ function generateUUID() {
 }
 
 /**
+ * Extreme points of the arc through three points. Beyond the three points
+ * themselves, an arc only reaches further where it crosses a cardinal direction
+ * of its circle, so those crossings are the remaining candidates.
+ */
+function arcExtremes(start, mid, end) {
+  const [x1, y1] = start, [x2, y2] = mid, [x3, y3] = end;
+  const d = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+
+  if (Math.abs(d) < 1e-12) {
+    return [start, mid, end];
+  }
+
+  const s1 = x1 * x1 + y1 * y1, s2 = x2 * x2 + y2 * y2, s3 = x3 * x3 + y3 * y3;
+  const cx = (s1 * (y2 - y3) + s2 * (y3 - y1) + s3 * (y1 - y2)) / d;
+  const cy = (s1 * (x3 - x2) + s2 * (x1 - x3) + s3 * (x2 - x1)) / d;
+  const radius = Math.hypot(x1 - cx, y1 - cy);
+
+  const TAU = 2 * Math.PI;
+  const norm = a => ((a % TAU) + TAU) % TAU;
+  const angle = (x, y) => norm(Math.atan2(y - cy, x - cx));
+
+  const a1 = angle(x1, y1);
+  const ccwSpan = norm(angle(x3, y3) - a1);
+  const counterClockwise = norm(angle(x2, y2) - a1) <= ccwSpan;
+  const span = counterClockwise ? ccwSpan : norm(a1 - angle(x3, y3));
+
+  const points = [start, mid, end];
+  for (let quarter = 0; quarter < 4; quarter++) {
+    const a = quarter * Math.PI / 2;
+    const swept = counterClockwise ? norm(a - a1) : norm(a1 - a);
+    if (swept <= span) {
+      points.push([cx + radius * Math.cos(a), cy + radius * Math.sin(a)]);
+    }
+  }
+
+  return points;
+}
+
+/**
  * Calculate a rectangular bounding box that covers the entire board.
  * Returns an array of 4 [x, y] coordinate pairs forming a rectangle.
  */
 function calculateBoundingBox(content, margin = 2.0) {
-  // Find all Edge.Cuts gr_line segments
   const linePattern = /\(gr_line\s+\(start\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\)/gs;
+  const arcPattern = /\(gr_arc\s+\(start\s+([-\d.]+)\s+([-\d.]+)\)\s+\(mid\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\)/gs;
+  const circlePattern = /\(gr_circle\s+\(center\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\)/gs;
 
   const xCoords = [];
   const yCoords = [];
+  const addPoint = ([x, y]) => { xCoords.push(x); yCoords.push(y); };
 
   for (const match of content.matchAll(linePattern)) {
-    const startX = parseFloat(match[1]);
-    const startY = parseFloat(match[2]);
-    const endX = parseFloat(match[3]);
-    const endY = parseFloat(match[4]);
+    addPoint([parseFloat(match[1]), parseFloat(match[2])]);
+    addPoint([parseFloat(match[3]), parseFloat(match[4])]);
+  }
 
-    xCoords.push(startX, endX);
-    yCoords.push(startY, endY);
+  for (const match of content.matchAll(arcPattern)) {
+    const coords = match.slice(1, 7).map(parseFloat);
+    arcExtremes(coords.slice(0, 2), coords.slice(2, 4), coords.slice(4, 6)).forEach(addPoint);
+  }
+
+  for (const match of content.matchAll(circlePattern)) {
+    const cx = parseFloat(match[1]), cy = parseFloat(match[2]);
+    const radius = Math.hypot(parseFloat(match[3]) - cx, parseFloat(match[4]) - cy);
+    addPoint([cx - radius, cy - radius]);
+    addPoint([cx + radius, cy + radius]);
   }
 
   if (xCoords.length === 0 || yCoords.length === 0) {
@@ -93,6 +121,9 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
   const hatchGap = zoneConfig.hatch_gap;
   const hatchOrientation = zoneConfig.hatch_orientation;
   const hatchSmoothingLevel = zoneConfig.hatch_smoothing_level;
+  const hatchSmoothingValue = zoneConfig.hatch_smoothing_value;
+  const hatchMinHoleArea = zoneConfig.hatch_min_hole_area;
+  const displayHatchPitch = zoneConfig.display_hatch_pitch;
 
   // Format polygon points
   const ptsStr = points.map(([x, y]) => `        (xy ${x} ${y})`).join('\n');
@@ -102,7 +133,7 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
     (net_name "${netName}")
     (layer "${layer}")
     (uuid "${tstamp}")
-    (hatch edge 0.5)
+    (hatch edge ${displayHatchPitch})
     (priority 0)
     (connect_pads
       (clearance ${clearance})
@@ -119,9 +150,9 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
       (hatch_gap ${hatchGap})
       (hatch_orientation ${hatchOrientation})
       (hatch_smoothing_level ${hatchSmoothingLevel})
-      (hatch_smoothing_value 0.1)
+      (hatch_smoothing_value ${hatchSmoothingValue})
       (hatch_border_algorithm hatch_thickness)
-      (hatch_min_hole_area 0.3)
+      (hatch_min_hole_area ${hatchMinHoleArea})
     )
     (polygon
       (pts
@@ -169,9 +200,13 @@ function createGndNet(content) {
   // Find the highest existing net number
   const nextNetNumber = findHighestNetNumber(content) + 1;
 
-  // Find the nets section and add GND net after the last net definition
+  // Search only the net table. The same shape appears inside footprint pads, and
+  // inserting there would splice the net definition into a pad instead.
+  const netTableEnd = content.indexOf('(footprint');
+  const netTable = netTableEnd === -1 ? content : content.slice(0, netTableEnd);
+
   const netsPattern = /(\(net\s+\d+\s+"[^"]*"\)\s*\n)/gm;
-  const matches = [...content.matchAll(netsPattern)];
+  const matches = [...netTable.matchAll(netsPattern)];
 
   if (matches.length === 0) {
     console.error('Error: Could not find nets section in PCB file');
@@ -253,39 +288,31 @@ function processPcbFile(filepath, zoneConfig) {
 /**
  * Main entry point.
  */
-async function main() {
+function main() {
   // Load zone configuration from YAML
-  const config = loadDefaultsConfig();
+  const config = loadKicadConfig();
   const zoneConfig = config.zones;
 
-  const outputDir = 'ergogen/output/pcbs';
-
-  if (!fs.existsSync(outputDir)) {
-    console.error(`Error: ${outputDir} does not exist`);
-    console.error("Run 'npm run gen' first to generate PCB files");
-    process.exit(1);
-  }
-
-  const pcbFiles = await glob(`${outputDir}/*.kicad_pcb`);
-
-  if (pcbFiles.length === 0) {
-    console.error(`No .kicad_pcb files found in ${outputDir}`);
-    process.exit(1);
-  }
+  const pcbFiles = ergogenOutputPcbs();
 
   let processed = 0;
+  let failed = 0;
   for (const pcbFile of pcbFiles) {
     if (processPcbFile(pcbFile, zoneConfig)) {
       processed++;
+    } else {
+      failed++;
     }
   }
 
   if (processed > 0) {
     console.log(`✓ Added GND zones to ${processed} PCB files`);
   }
+
+  if (failed > 0) {
+    console.error(`Error: ${failed} of ${pcbFiles.length} PCB files did not get GND zones`);
+    process.exit(1);
+  }
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+main();

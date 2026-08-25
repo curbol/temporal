@@ -4,7 +4,8 @@
   "description": "Temporal keyboard ergogen configuration",
   "scripts": {
     "gen": "cd ergogen && ergogen . -o output --svg",
-    "convert": "node scripts/convert_jscad.js"
+    "convert": "node scripts/convert_jscad.js",
+    "lint": "eslint scripts ergogen/footprints eslint.config.js"
   },
   "dependencies": {
     "glob": "^10.3.10",
@@ -12,7 +13,9 @@
   },
   "devDependencies": {
     "@jscad/cli": "^1.10.0",
-    "ergogen": "^4.1.0"
+    "ergogen": "^4.1.0",
+    "eslint": "^10.9.1",
+    "globals": "^17.11.0"
   },
   "overrides": {
     "xmldom": "npm:@xmldom/xmldom@^0.9.12"

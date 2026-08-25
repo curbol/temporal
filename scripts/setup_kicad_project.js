@@ -14,25 +14,8 @@
 const fs = require('fs');
 const path = require('path');
 const { glob } = require('glob');
-const yaml = require('js-yaml');
 const { writeDrcRules } = require('./drc_rules');
-
-/**
- * Load defaults from YAML config file.
- */
-function loadDefaultsConfig() {
-  const configPath = path.join(__dirname, 'kicad_config.yaml');
-
-  if (!fs.existsSync(configPath)) {
-    console.error(`Error: Config file not found at ${configPath}`);
-    process.exit(1);
-  }
-
-  const content = fs.readFileSync(configPath, 'utf-8');
-  const config = yaml.load(content);
-
-  return config;
-}
+const { loadKicadConfig } = require('./kicad_config');
 
 /**
  * Get base .kicad_pro structure with all required sections.
@@ -274,26 +257,7 @@ function getBaseProjectStructure(projectName) {
       version: 3
     },
     net_settings: {
-      classes: [
-        {
-          bus_width: 12,
-          clearance: 0.2,
-          diff_pair_gap: 0.25,
-          diff_pair_via_gap: 0.25,
-          diff_pair_width: 0.2,
-          line_style: 0,
-          microvia_diameter: 0.3,
-          microvia_drill: 0.1,
-          name: "Default",
-          pcb_color: "rgba(0, 0, 0, 0.000)",
-          priority: 2147483647,
-          schematic_color: "rgba(0, 0, 0, 0.000)",
-          track_width: 0.2,
-          via_diameter: 0.6,
-          via_drill: 0.3,
-          wire_width: 6
-        }
-      ],
+      classes: [createNetClass("Default", {}, true)],
       meta: {
         version: 4
       },
@@ -325,6 +289,14 @@ function getBaseProjectStructure(projectName) {
 }
 
 /**
+ * Return a copy of an object with its keys in alphabetical order, matching how
+ * KiCad writes .kicad_pro so the file does not churn between tools.
+ */
+function sortKeys(object) {
+  return Object.fromEntries(Object.entries(object).sort(([a], [b]) => a.localeCompare(b)));
+}
+
+/**
  * Create a net class structure from config.
  */
 function createNetClass(name, config, isDefault = false) {
@@ -352,38 +324,26 @@ function createNetClass(name, config, isDefault = false) {
  * Apply defaults from config to project data.
  */
 function applyDefaultsToProject(projectData, config) {
-  // Apply default net class
-  const netClassDefault = config.net_class_default ?? {};
-  const defaultClass = projectData.net_settings.classes[0];
-  defaultClass.track_width = netClassDefault.track_width ?? 0.25;
-  defaultClass.via_diameter = netClassDefault.via_diameter ?? 0.6;
-  defaultClass.via_drill = netClassDefault.via_drill ?? 0.3;
-  defaultClass.clearance = netClassDefault.clearance ?? 0.2;
-  defaultClass.diff_pair_width = netClassDefault.diff_pair_width ?? 0.2;
-  defaultClass.diff_pair_gap = netClassDefault.diff_pair_gap ?? 0.25;
-  defaultClass.microvia_diameter = netClassDefault.microvia_diameter ?? 0.3;
-  defaultClass.microvia_drill = netClassDefault.microvia_drill ?? 0.1;
+  // Rebuild the net classes from config so a class removed from the YAML also
+  // disappears from an existing .kicad_pro, while keeping any field KiCad itself
+  // added to a class we already wrote
+  const existingByName = new Map(
+    (projectData.net_settings.classes ?? []).map(netClass => [netClass.name, netClass]));
 
-  // Add additional net classes (Power, Battery, etc.)
-  const additionalClasses = config.net_classes ?? [];
-  if (additionalClasses.length > 0) {
-    // Remove existing custom classes (keep only Default)
-    projectData.net_settings.classes = [defaultClass];
+  const merge = netClass => sortKeys({ ...(existingByName.get(netClass.name) ?? {}), ...netClass });
 
-    // Sort additional classes alphabetically by name to match KiCad's ordering
-    const sortedClasses = [...additionalClasses].sort((a, b) => {
-      const nameA = a.name ?? 'Unknown';
-      const nameB = b.name ?? 'Unknown';
-      return nameA.localeCompare(nameB);
-    });
+  // Sort additional classes alphabetically by name to match KiCad's ordering
+  const additionalClasses = [...(config.net_classes ?? [])].sort((a, b) => {
+    const nameA = a.name ?? 'Unknown';
+    const nameB = b.name ?? 'Unknown';
+    return nameA.localeCompare(nameB);
+  });
 
-    // Add new custom classes in sorted order
-    for (const netClassConfig of sortedClasses) {
-      const name = netClassConfig.name ?? 'Unknown';
-      const newClass = createNetClass(name, netClassConfig, false);
-      projectData.net_settings.classes.push(newClass);
-    }
-  }
+  projectData.net_settings.classes = [
+    merge(createNetClass("Default", config.net_class_default ?? {}, true)),
+    ...additionalClasses.map(netClassConfig =>
+      merge(createNetClass(netClassConfig.name ?? 'Unknown', netClassConfig, false)))
+  ];
 
   // Apply netclass assignment patterns
   const netclassPatterns = config.netclass_patterns ?? [];
@@ -431,6 +391,11 @@ function applyDefaultsToProject(projectData, config) {
  * Create or update a .kicad_pro file with defaults.
  */
 function setupProjectFile(pcbPath, config) {
+  if (!pcbPath.endsWith('.kicad_pcb')) {
+    console.error(`Error: not a .kicad_pcb file: ${pcbPath}`);
+    return false;
+  }
+
   if (!fs.existsSync(pcbPath)) {
     console.warn(`Warning: PCB file not found: ${pcbPath}`);
     return false;
@@ -464,12 +429,13 @@ function setupProjectFile(pcbPath, config) {
  * Main entry point.
  */
 async function main() {
-  const config = loadDefaultsConfig();
+  const config = loadKicadConfig();
 
   // If a specific PCB path is provided, process only that one
   if (process.argv.length > 2) {
-    const pcbPath = process.argv[2];
-    setupProjectFile(pcbPath, config);
+    if (!setupProjectFile(process.argv[2], config)) {
+      process.exit(1);
+    }
   } else {
     // Process all .kicad_pcb files in pcbs/ directory
     const pcbsDir = 'pcbs';
@@ -487,14 +453,22 @@ async function main() {
     }
 
     let successCount = 0;
+    let failed = 0;
     for (const pcbFile of pcbFiles) {
       if (setupProjectFile(pcbFile, config)) {
         successCount++;
+      } else {
+        failed++;
       }
     }
 
     if (successCount > 0) {
       console.log(`✓ Configured ${successCount} KiCad project files`);
+    }
+
+    if (failed > 0) {
+      console.error(`Error: ${failed} of ${pcbFiles.length} PCB files could not be configured`);
+      process.exit(1);
     }
   }
 }

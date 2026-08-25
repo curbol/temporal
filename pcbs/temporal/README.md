@@ -24,8 +24,16 @@ The folder and PCB files will be recreated from the Ergogen configuration.
 
 ## Manual Steps in KiCad
 
-After regenerating the PCB, the following manual steps are needed:
+After regenerating the PCB, route the connections Ergogen does not place
+automatically. Ground planes, silkscreen text keepouts, via stitching and zone
+fills are all applied by `make gen` before the board is copied here, so they need
+no manual work.
 
-2. **Add manual traces** - Route connections that Ergogen doesn't handle automatically
+## Keeping This Board Current
 
-3. **(Optional) Create rule areas** - Add rule areas to exclude the "Temporal" and "curbol" silkscreen text from the ground plane fill
+Because this directory is never overwritten, the post-processing steps run against
+`ergogen/output/pcbs` and reach this board only when it is regenerated. Editing the
+`zones`, `via_stitching` or `text_keepouts` sections of `scripts/kicad_config.yaml`
+updates every other board but leaves this one as it was. `make check` fails when the
+pour no longer matches the custom DRC rules; a via stitching or keepout change needs
+a full regeneration and a re-route.

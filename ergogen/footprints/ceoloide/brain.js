@@ -61,8 +61,6 @@ module.exports = {
       });
     };
 
-    const at = parseAt(p.at);
-
     // Define all polygon points
     const polygons_data = [
       {

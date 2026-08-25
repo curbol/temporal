@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
+const { loadKicadConfig } = require('./kicad_config');
 
 /**
  * Generate JLCPCB BOM and CPL files for PCB assembly
@@ -14,34 +14,43 @@ const yaml = require('js-yaml');
  */
 
 /**
- * Load JLCPCB configuration from kicad_config.yaml
+ * Every footprint block in a KiCad PCB, as { name, reference, x, y, rotation, side }.
+ * Footprints whose position cannot be read are skipped.
  */
-function loadJlcpcbConfig() {
-  const configPath = path.join(__dirname, 'kicad_config.yaml');
+function parseFootprints(pcbPath) {
+  const content = fs.readFileSync(pcbPath, 'utf8');
+  const footprintRegex = /\(footprint\s+"([^"]+)"[\s\S]*?\n\t\)/g;
+  const footprints = [];
 
-  if (!fs.existsSync(configPath)) {
-    console.error(`Error: Config file not found at ${configPath}`);
-    process.exit(1);
+  let match;
+  while ((match = footprintRegex.exec(content)) !== null) {
+    const block = match[0];
+    const name = match[1];
+
+    const posMatch = block.match(/\n\t\t\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
+    if (!posMatch) continue;
+
+    const refMatch = block.match(/\(property\s+"Reference"\s+"([^"]+)"/);
+    const layerMatch = block.match(/\(layer\s+"([^"]+)"/);
+    const layer = layerMatch ? layerMatch[1] : 'F.Cu';
+
+    footprints.push({
+      name,
+      reference: refMatch ? refMatch[1] : null,
+      x: parseFloat(posMatch[1]),
+      y: parseFloat(posMatch[2]),
+      rotation: posMatch[3] ? parseFloat(posMatch[3]) : 0,
+      side: layer.startsWith('B.') ? 'Bottom' : 'Top'
+    });
   }
 
-  try {
-    const content = fs.readFileSync(configPath, 'utf-8');
-    const config = yaml.load(content);
-    return config.jlcpcb;
-  } catch (err) {
-    console.error(`Error: Failed to load config: ${err.message}`);
-    process.exit(1);
-  }
+  return footprints;
 }
 
 /**
  * Parse KiCad PCB file to extract component information
  */
 function parseKiCadPCB(pcbPath, assemblyParts) {
-  const content = fs.readFileSync(pcbPath, 'utf8');
-  const components = [];
-
-  // Create footprint to LCSC part mapping
   const footprintMap = {};
   assemblyParts.forEach(part => {
     footprintMap[part.footprint] = {
@@ -50,92 +59,25 @@ function parseKiCadPCB(pcbPath, assemblyParts) {
     };
   });
 
-  // Regular expression to match footprint sections
-  const footprintRegex = /\(footprint\s+"([^"]+)"[\s\S]*?\n\t\)/g;
-
-  let match;
-  while ((match = footprintRegex.exec(content)) !== null) {
-    const footprintBlock = match[0];
-    const footprintName = match[1];
-
-    // Only process footprints that are in our assembly parts list
-    if (!footprintMap[footprintName]) {
-      continue;
-    }
-
-    // Extract reference designator
-    const refMatch = footprintBlock.match(/\(property\s+"Reference"\s+"([^"]+)"/);
-    const reference = refMatch ? refMatch[1] : null;
-
-    // Extract position (at line format: (at x y rotation))
-    const posMatch = footprintBlock.match(/\n\t\t\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
-    if (!posMatch) continue;
-
-    const x = parseFloat(posMatch[1]);
-    const y = parseFloat(posMatch[2]);
-    const rotation = posMatch[3] ? parseFloat(posMatch[3]) : 0;
-
-    // Extract layer to determine component side
-    const layerMatch = footprintBlock.match(/\(layer\s+"([^"]+)"/);
-    const layer = layerMatch ? layerMatch[1] : 'F.Cu';
-    const side = layer.startsWith('B.') ? 'Bottom' : 'Top';
-
-    const partInfo = footprintMap[footprintName];
-
-    components.push({
-      designator: reference,
-      footprint: footprintName,
-      lcsc: partInfo.lcsc,
-      description: partInfo.description,
-      x: x,
-      y: y,
-      rotation: rotation,
-      side: side
-    });
-  }
-
-  return components;
+  return parseFootprints(pcbPath)
+    .filter(fp => footprintMap[fp.name])
+    .map(fp => ({
+      designator: fp.reference,
+      footprint: fp.name,
+      lcsc: footprintMap[fp.name].lcsc,
+      description: footprintMap[fp.name].description,
+      x: fp.x,
+      y: fp.y,
+      rotation: fp.rotation,
+      side: fp.side
+    }));
 }
 
 /**
  * Find parent footprints in PCB file for embedded resistor calculation
  */
 function findParentFootprints(pcbPath, parentFootprintName) {
-  const content = fs.readFileSync(pcbPath, 'utf8');
-  const footprints = [];
-
-  const footprintRegex = /\(footprint\s+"([^"]+)"[\s\S]*?\n\t\)/g;
-
-  let match;
-  while ((match = footprintRegex.exec(content)) !== null) {
-    const footprintBlock = match[0];
-    const footprintName = match[1];
-
-    if (footprintName !== parentFootprintName) {
-      continue;
-    }
-
-    // Extract reference designator
-    const refMatch = footprintBlock.match(/\(property\s+"Reference"\s+"([^"]+)"/);
-    const reference = refMatch ? refMatch[1] : null;
-
-    // Extract position
-    const posMatch = footprintBlock.match(/\n\t\t\(at\s+([-\d.]+)\s+([-\d.]+)(?:\s+([-\d.]+))?\)/);
-    if (!posMatch) continue;
-
-    const x = parseFloat(posMatch[1]);
-    const y = parseFloat(posMatch[2]);
-    const rotation = posMatch[3] ? parseFloat(posMatch[3]) : 0;
-
-    // Extract layer
-    const layerMatch = footprintBlock.match(/\(layer\s+"([^"]+)"/);
-    const layer = layerMatch ? layerMatch[1] : 'F.Cu';
-    const side = layer.startsWith('B.') ? 'Bottom' : 'Top';
-
-    footprints.push({ reference, x, y, rotation, side });
-  }
-
-  return footprints;
+  return parseFootprints(pcbPath).filter(fp => fp.name === parentFootprintName);
 }
 
 /**
@@ -189,7 +131,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
           const rotation = (fp.rotation + mcuConfig.rotation_offset) % 360;
 
           components.push({
-            designator: `R${resistorIndex++}`,
+            designator: `JR${resistorIndex++}`,
             footprint: '0402',
             lcsc: lcsc,
             description: description,
@@ -216,7 +158,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
         const rotation = (fp.rotation + displayConfig.rotation_offset) % 360;
 
         components.push({
-          designator: `R${resistorIndex++}`,
+          designator: `JR${resistorIndex++}`,
           footprint: '0402',
           lcsc: lcsc,
           description: description,
@@ -242,7 +184,7 @@ function generateEmbeddedResistors(pcbPath, embeddedConfig, assemblySide) {
         const rotation = (fp.rotation + batteryConfig.rotation_offset) % 360;
 
         components.push({
-          designator: `R${resistorIndex++}`,
+          designator: `JR${resistorIndex++}`,
           footprint: '0402',
           lcsc: lcsc,
           description: description,
@@ -282,12 +224,19 @@ function generateBOM(components, outputPath) {
   let csv = 'Comment,Designator,Footprint,LCSC Part #\n';
 
   const sortedEntries = [...bomMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
-  for (const [lcsc, item] of sortedEntries) {
+  for (const [, item] of sortedEntries) {
     const designators = item.designator.sort().join(',');
     csv += `"${item.comment}","${designators}","${item.footprint}","${item.lcsc}"\n`;
   }
 
   fs.writeFileSync(outputPath, csv);
+}
+
+/**
+ * Wrap an angle into the 0-360 range JLCPCB's CPL format expects.
+ */
+function normalizeRotation(degrees) {
+  return Math.round((((degrees % 360) + 360) % 360) * 1000) / 1000;
 }
 
 /**
@@ -308,7 +257,8 @@ function generateCPL(components, outputPath, isBottomSide = false) {
   sortedComponents.forEach(comp => {
     // For bottom side assembly, apply rotation transformation
     // Formula: rotation_bottom = 180 - rotation_top
-    const rotation = isBottomSide ? (180 - comp.rotation) : comp.rotation;
+    // JLCPCB expects 0-360, and the board carries negative angles on splayed columns
+    const rotation = normalizeRotation(isBottomSide ? (180 - comp.rotation) : comp.rotation);
 
     // JLCPCB uses Cartesian coordinates (Y increases upward)
     // KiCad uses Y increasing downward, so we need to negate Y
@@ -334,7 +284,7 @@ function main() {
   }
 
   // Load config
-  const config = loadJlcpcbConfig();
+  const config = loadKicadConfig().jlcpcb;
 
   // Parse PCB file for standard assembly parts
   const components = parseKiCadPCB(pcbFile, config.assembly_parts);
@@ -345,21 +295,22 @@ function main() {
     embeddedResistors = generateEmbeddedResistors(pcbFile, config.embedded_resistors, 'Top');
   }
 
-  // For a reversible PCB, all F.Cu components are used for both top and bottom assembly.
-  // The same physical components serve both the left hand (top assembly) and
-  // right hand (bottom assembly when the board is flipped).
-  const topLayerComponents = components.filter(c => c.side === 'Top');
-  const bottomLayerComponents = components.filter(c => c.side === 'Bottom');
+  // The board is reversible, so one set of parts serves both assemblies: the
+  // left hand is built on the top side and the right hand on the bottom side of
+  // the same board, at the same coordinates. That only holds for footprints whose
+  // pads are mirrored onto both copper layers, which is why the two CPL files
+  // differ by rotation alone. A genuinely single-sided part would need its own
+  // transform, so reject one rather than place it from the wrong face.
+  const offTopLayer = components.filter(comp => comp.side !== 'Top');
+  if (offTopLayer.length > 0) {
+    const names = [...new Set(offTopLayer.map(comp => comp.footprint))].join(', ');
+    console.error(`Error: assembly parts are not on the top copper layer: ${names}`);
+    console.error('The reversible-board CPL transform assumes pads mirrored onto both layers,');
+    console.error('so a single-sided part would be placed from the wrong face.');
+    process.exit(1);
+  }
 
-  // Combine standard components with embedded resistors
-  // For BOM: all unique components (F.Cu components + embedded resistors)
-  const allComponents = [...topLayerComponents, ...bottomLayerComponents, ...embeddedResistors];
-
-  // For reversible PCB: both CPL files use F.Cu components
-  // CPL_top = F.Cu components for left-hand assembly
-  // CPL_bottom = same F.Cu components for right-hand assembly (board is flipped)
-  const allTopComponents = [...topLayerComponents, ...embeddedResistors];
-  const allBottomComponents = [...topLayerComponents, ...embeddedResistors];
+  const allComponents = [...components, ...embeddedResistors];
 
   if (allComponents.length === 0) {
     console.log('⚠ No assembly components found');
@@ -372,8 +323,8 @@ function main() {
   const cplBottomPath = path.join(jlcpcbDir, 'temporal_CPL_bottom.csv');
 
   generateBOM(allComponents, bomPath);
-  generateCPL(allTopComponents, cplTopPath, false);
-  generateCPL(allBottomComponents, cplBottomPath, true);
+  generateCPL(allComponents, cplTopPath, false);
+  generateCPL(allComponents, cplBottomPath, true);
 
   // Count components by description
   const counts = {};

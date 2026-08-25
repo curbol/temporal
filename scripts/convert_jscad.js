@@ -52,9 +52,12 @@ async function main() {
   const jscadFiles = await glob('*.jscad', { cwd: jscadDir });
 
   if (jscadFiles.length === 0) {
-    console.log('No JSCAD files found in', jscadDir);
-    return;
+    console.error(`No JSCAD files found in ${jscadDir}`);
+    console.error("Run 'npm run gen' first to generate case files");
+    process.exit(1);
   }
+
+  let failed = 0;
 
   // Convert files in parallel
   const conversions = jscadFiles.map(async (file) => {
@@ -117,6 +120,7 @@ async function main() {
       console.log(`✓ Converted ${file} -> ${outputName}`);
     } catch (error) {
       console.error(`✗ Failed to convert ${file}:`, error.message);
+      failed++;
     } finally {
       // Clean up patched file
       fs.unlinkSync(patchedPath);
@@ -124,6 +128,14 @@ async function main() {
   });
 
   await Promise.all(conversions);
+
+  if (failed > 0) {
+    console.error(`Error: ${failed} of ${jscadFiles.length} cases failed to convert`);
+    process.exit(1);
+  }
 }
 
-main().catch(console.error);
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});

@@ -5,7 +5,6 @@ TOTAL_STEPS := 6
 ERGOGEN_DIR := ergogen
 OUTPUT_DIR := $(ERGOGEN_DIR)/output
 PCBS_DIR := pcbs
-TEMPORAL_DIR := temporal
 CASES_DIR := cases
 GERBERS_DIR := gerbers
 JLCPCB_DIR := jlcpcb
@@ -24,12 +23,12 @@ KICAD_USER_DIR := $(HOME)/.local/share/kicad
 PKG_INSTALL := sudo pacman -S --needed
 FONT_INSTALL := yay -S --needed maplemono-nf
 endif
-.PHONY: deps gen convert gerbers assembly clean
+.PHONY: deps gen convert gerbers assembly check clean
 
 # Install all dependencies
 deps:
 	npm install
-	@for entry in "openscad:openscad" "kicad-cli:kicad" "inkscape:inkscape"; do \
+	@for entry in "openscad:openscad" "kicad-cli:kicad" "inkscape:inkscape" "zip:zip"; do \
 		bin=$${entry%%:*}; pkg=$${entry##*:}; \
 		if command -v $$bin >/dev/null 2>&1; then \
 			echo "$$pkg already installed"; \
@@ -54,19 +53,30 @@ deps:
 	fi; \
 	if [ -z "$$KICAD_PLUGINS" ]; then \
 		echo "Warning: KiCad user directory not found under $(KICAD_USER_DIR). Run KiCad once to create it, then re-run make deps."; \
-	elif [ -d "$$KICAD_PLUGINS/ViaStitching" ]; then \
-		echo "ViaStitching plugin already installed"; \
 	else \
-		echo "Installing ViaStitching plugin..."; \
-		TEMP_DIR=$$(mktemp -d); \
-		git clone --depth 1 --filter=blob:none --sparse https://github.com/jsreynaud/kicad-action-scripts.git "$$TEMP_DIR" 2>/dev/null; \
-		cd "$$TEMP_DIR" && git sparse-checkout set ViaStitching 2>/dev/null; \
-		cp -r "$$TEMP_DIR/ViaStitching" "$$KICAD_PLUGINS/"; \
-		rm -rf "$$TEMP_DIR"; \
-		echo "Applying KiCad compatibility fix..."; \
-		$(SED_I) 's/dist = self.clearance + self.size \/ 2 + via.GetWidth() \/ 2/via_width = via.GetFrontWidth() if hasattr(via, "GetFrontWidth") else via.GetWidth()\n        dist = self.clearance + self.size \/ 2 + via_width \/ 2/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
-		$(SED_I) 's/clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track.GetWidth() \/ 2)/track_width = track.GetFrontWidth() if (isinstance(track, PCB_VIA) and hasattr(track, "GetFrontWidth")) else track.GetWidth()\n            clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track_width \/ 2)/' "$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
-		echo "ViaStitching plugin installed to $$KICAD_PLUGINS"; \
+		if [ -d "$$KICAD_PLUGINS/ViaStitching" ]; then \
+			echo "ViaStitching plugin already installed"; \
+		else \
+			echo "Installing ViaStitching plugin..."; \
+			TEMP_DIR=$$(mktemp -d); \
+			git clone --depth 1 --filter=blob:none --sparse https://github.com/jsreynaud/kicad-action-scripts.git "$$TEMP_DIR" 2>/dev/null; \
+			cd "$$TEMP_DIR" && git sparse-checkout set ViaStitching 2>/dev/null; \
+			cp -r "$$TEMP_DIR/ViaStitching" "$$KICAD_PLUGINS/"; \
+			rm -rf "$$TEMP_DIR"; \
+			echo "ViaStitching plugin installed to $$KICAD_PLUGINS"; \
+		fi; \
+		FILL_AREA="$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
+		$(SED_I) 's/dist = self.clearance + self.size \/ 2 + via.GetWidth() \/ 2/via_width = via.GetFrontWidth() if hasattr(via, "GetFrontWidth") else via.GetWidth()\n        dist = self.clearance + self.size \/ 2 + via_width \/ 2/' "$$FILL_AREA"; \
+		$(SED_I) 's/clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track.GetWidth() \/ 2)/track_width = track.GetFrontWidth() if (isinstance(track, PCB_VIA) and hasattr(track, "GetFrontWidth")) else track.GetWidth()\n            clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track_width \/ 2)/' "$$FILL_AREA"; \
+		MISSING=""; \
+		grep -q 'via_width = via.GetFrontWidth()' "$$FILL_AREA" || MISSING="$$MISSING via-width"; \
+		grep -q 'track_width = track.GetFrontWidth()' "$$FILL_AREA" || MISSING="$$MISSING track-width"; \
+		if [ -n "$$MISSING" ]; then \
+			echo "Error: ViaStitching KiCad 10 patch did not apply ($$MISSING) in $$FILL_AREA." >&2; \
+			echo "Upstream FillArea.py has changed; update the sed patterns in the deps target." >&2; \
+			exit 1; \
+		fi; \
+		echo "ViaStitching KiCad 10 compatibility patches verified"; \
 	fi
 
 # Generate keyboard PCBs and cases
@@ -85,10 +95,12 @@ gen:
 	echo "✓ Ergogen generation complete"; \
 	next "Post-processing PCB files..."; \
 	node scripts/fix_edge_cuts.js; \
+	node scripts/fix_silkscreen_width.js; \
 	node scripts/add_ground_planes.js; \
 	node scripts/create_text_keepouts.js; \
 	node scripts/via_stitching.js; \
 	node scripts/fill_zones.js; \
+	node scripts/embed_fonts.js; \
 	bash scripts/copy_pcb_if_missing.sh; \
 	node scripts/setup_kicad_project.js; \
 	node scripts/create_stealth_variants.js; \
@@ -133,26 +145,80 @@ assembly:
 # Generate gerbers for all PCBs and zip them
 gerbers:
 	@mkdir -p $(GERBERS_DIR)
-	@for pcb in $(PCBS_DIR)/**/*.kicad_pcb; do \
-		if [ -f "$$pcb" ]; then \
-			pcb_name=$$(basename "$$pcb" .kicad_pcb); \
-			mkdir -p $(GERBERS_DIR)/$$pcb_name; \
-			kicad-cli pcb export gerbers --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null 2>&1; \
-			kicad-cli pcb export drill --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null 2>&1; \
-		fi \
+	@set -e; \
+	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		[ -f "$$pcb" ] || continue; \
+		pcb_name=$$(basename "$$pcb" .kicad_pcb); \
+		rm -rf $(GERBERS_DIR)/$$pcb_name; \
+		mkdir -p $(GERBERS_DIR)/$$pcb_name; \
+		kicad-cli pcb export gerbers --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null; \
+		kicad-cli pcb export drill --output $(GERBERS_DIR)/$$pcb_name/ "$$pcb" >/dev/null; \
 	done
-	@ZIP_COUNT=0; \
+	@set -e; \
+	ZIP_COUNT=0; \
 	for dir in $(GERBERS_DIR)/*/; do \
-		if [ -d "$$dir" ]; then \
-			pcb_name=$$(basename "$$dir"); \
-			cd $(GERBERS_DIR) && zip -r $$pcb_name.zip $$pcb_name/ >/dev/null 2>&1 && cd ..; \
-			rm -rf $(GERBERS_DIR)/$$pcb_name; \
-			ZIP_COUNT=$$((ZIP_COUNT + 1)); \
-		fi \
+		[ -d "$$dir" ] || continue; \
+		pcb_name=$$(basename "$$dir"); \
+		rm -f $(GERBERS_DIR)/$$pcb_name.zip; \
+		(cd $(GERBERS_DIR) && zip -r $$pcb_name.zip $$pcb_name/ >/dev/null); \
+		rm -rf $(GERBERS_DIR)/$$pcb_name; \
+		ZIP_COUNT=$$((ZIP_COUNT + 1)); \
 	done; \
 	if [ $$ZIP_COUNT -gt 0 ]; then \
 		echo "✓ Generated and zipped $$ZIP_COUNT gerber packages"; \
 	fi
+
+# Verify the sources parse, the config builds, the boards pass DRC with every
+# silkscreen face resolving, the pours in pcbs/ still match the current DRC rules,
+# and the committed derived artifacts still match what their sources produce
+check:
+	@set -e; \
+	for f in scripts/*.js ergogen/footprints/ceoloide/*.js; do node --check "$$f"; done; \
+	python3 -m py_compile scripts/*.py; \
+	bash -n scripts/copy_pcb_if_missing.sh; \
+	node -e "const y=require('js-yaml'),f=require('fs');y.load(f.readFileSync('ergogen/config.yaml','utf8'));y.load(f.readFileSync('scripts/kicad_config.yaml','utf8'))"; \
+	echo "✓ Sources parse"
+	@npm run --silent lint && echo "✓ Lint clean"
+	@npm run gen >/dev/null && echo "✓ Ergogen config builds"
+	@set -e; \
+	DRC_LOG=$$(mktemp); \
+	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		kicad-cli pcb drc --severity-error --exit-code-violations -o /dev/null "$$pcb" >>"$$DRC_LOG" 2>&1 \
+			|| { echo "DRC errors: $$pcb"; cat "$$DRC_LOG"; rm -f "$$DRC_LOG"; exit 1; }; \
+	done; \
+	echo "✓ All boards pass DRC"; \
+	if grep -q "substituting" "$$DRC_LOG"; then \
+		echo "Error: a silkscreen font face did not resolve, so this board does not carry its own font:" >&2; \
+		grep "substituting" "$$DRC_LOG" | sed 's/^[^ ]* [^ ]* //' | sort -u >&2; \
+		rm -f "$$DRC_LOG"; \
+		exit 1; \
+	fi; \
+	rm -f "$$DRC_LOG"; \
+	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
+		grep -q '(face ' "$$pcb" || continue; \
+		grep -q '(embedded_fonts yes)' "$$pcb" && grep -qi '(name "[^"]*\.ttf"' "$$pcb" \
+			|| { echo "Error: $$pcb names a font face but embeds no font, so its silkscreen depends on the host" >&2; exit 1; }; \
+	done; \
+	echo "✓ Boards carry their own silkscreen fonts"
+	@node scripts/check_zone_fills.js
+	@set -e; \
+	SNAPSHOT=$$(mktemp -d); \
+	cp temporal.json "$$SNAPSHOT/"; \
+	cp -r $(JLCPCB_DIR) "$$SNAPSHOT/"; \
+	node scripts/generate_layout.js >/dev/null; \
+	$(MAKE) --no-print-directory assembly >/dev/null; \
+	STALE=""; \
+	diff -q "$$SNAPSHOT/temporal.json" temporal.json >/dev/null || STALE="temporal.json"; \
+	diff -rq "$$SNAPSHOT/$(JLCPCB_DIR)" $(JLCPCB_DIR) >/dev/null || STALE="$$STALE $(JLCPCB_DIR)/"; \
+	cp "$$SNAPSHOT/temporal.json" temporal.json; \
+	cp "$$SNAPSHOT/$(JLCPCB_DIR)"/* $(JLCPCB_DIR)/; \
+	rm -rf "$$SNAPSHOT"; \
+	if [ -n "$$STALE" ]; then \
+		echo "Error: derived artifacts are stale:$$STALE" >&2; \
+		echo "Run 'node scripts/generate_layout.js && make assembly' and commit the result." >&2; \
+		exit 1; \
+	fi; \
+	echo "✓ Derived artifacts reproduce"
 
 # Clean generated output
 clean:
@@ -160,4 +226,4 @@ clean:
 	@rm -rf $(CASES_DIR)
 	@rm -rf $(GERBERS_DIR)
 	@rm -rf $(JLCPCB_DIR)
-	@find $(PCBS_DIR) -mindepth 1 -maxdepth 1 ! -name '$(TEMPORAL_DIR)' -exec rm -rf {} + 2>/dev/null || true
+	@find $(PCBS_DIR) -mindepth 1 -maxdepth 1 ! -name temporal -exec rm -rf {} + 2>/dev/null || true

@@ -31,6 +31,8 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | M2 Heat Set Inserts | 10 | 3mm OD × 3mm height (2mm height also works) | [KEEBD](https://keebd.com/) | <img src="/assets/bom/heatset_m2_3mm_insert.jpg" width="100" alt="Heat set insert"> |
 | M2 Screws (4mm length) | 18 | Button-head recommended | Amazon | <img src="/assets/bom/m2_button_head.jpg" width="100" alt="M2 screw"> |
 | M2 Standoffs (8mm length) | 4 | For MCU cover mounting | [KEEBD](https://keebd.com/) Amazon | <img src="/assets/bom/m2_standoff_8mm.jpg" width="100" alt="M2 standoff"> |
+| M2 Standoffs (3mm length) | 10 | FR-4 plate build only, in place of the heat set inserts | Amazon | |
+| M2 Screws (3mm length) | 20 | FR-4 plate build only, button-head | Amazon | |
 
 - Try to get M2 inserts with 3mm outer diameter and 3mm height. 2mm height also works. Avoid inserts with 3.2mm+ outer diameter as they may not fit properly.
 
@@ -38,8 +40,8 @@ This is the complete list of components needed to build one Temporal keyboard (b
 
 | Component | Quantity | Notes | Source | Image |
 |-----------|----------|-------|--------|-------|
-| Choc v1 Switches | 36-42 | Low-profile switches, depends on configuration | [Low Pro KB](https://lowprokb.ca/) [KEEBD](https://keebd.com/en-us/collections/choc-switches) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
-| Choc v1 Keycaps | 36-42 | Compatible with Choc switches | | |
+| Choc v1 or v2 Switches | 36-42 | Low-profile switches, depends on configuration | [Low Pro KB](https://lowprokb.ca/) [KEEBD](https://keebd.com/en-us/collections/choc-switches) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
+| Choc Keycaps | 36-42 | Compatible with Choc switches | | |
 
 I recommend [Ambients Silent Choc switches](https://lowprokb.ca/collections/switches/products/ambients-silent-choc-switches) for a quiet, smooth typing experience.
 
@@ -65,11 +67,11 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 | 3D Printed Case (Right) | 1 | Choose your key configuration (38/42) |
 | MCU Cover | 2 | Optional, protects the microcontroller |
 
-Use [`gerbers/temporal/temporal.zip`](/gerbers/temporal/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
+Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
 
 - Material: FR-4, 1.6mm thickness
 - Surface finish: LeadFree HASL
-- See [`pcbs/README.md`](/pcbs/README.md) for detailed manufacturing specifications
+- See [`pcbs/temporal/README.md`](/pcbs/temporal/README.md) for notes on the hand-routed main PCB
 
 > **Tip:** For top plates, back plates, and MCU covers, you can choose HASL (with lead) instead of LeadFree HASL - it's usually cheaper and these parts have no exposed copper pads, so the surface finish doesn't matter.
 

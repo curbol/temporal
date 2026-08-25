@@ -8,13 +8,14 @@ const path = require('path');
 const yaml = require('js-yaml');
 const { execSync } = require('child_process');
 const os = require('os');
+const { unit } = require('./ergogen_config');
 
 const ERGOGEN_DIR = path.join(__dirname, '..', 'ergogen');
 const ZMK_OUTPUT_FILE = path.join(__dirname, '..', 'temporal.json');
 
-// Units from ergogen config (choc spacing)
-const KX = 18; // mm per key unit in x
-const KY = 17; // mm per key unit in y
+// mm per key unit. One scale for both axes keeps the layout physically
+// proportional; ZMK renders key units as squares.
+const KX = unit('$default_width');
 
 // Keys to exclude (encoder is a special case)
 const ENCODER_KEY = 'thumb_enc';
@@ -55,13 +56,9 @@ function generateLayout() {
       x: Math.round(data.x * 1000) / 1000,
       y: Math.round(data.y * 1000) / 1000,
       r: Math.round(data.r * 1000) / 1000,
-      w: data.meta?.width || 18,
-      h: data.meta?.height || 17,
       column: data.meta?.col?.name || null,
       row: data.meta?.row || null,
       zone: data.meta?.zone?.name || null,
-      column_net: data.meta?.column_net || null,
-      row_net: data.meta?.row_net || null,
     };
 
     // Mark encoder specially
@@ -72,28 +69,34 @@ function generateLayout() {
     keys.push(key);
   }
 
-  // Sort keys by zone, then column, then row for consistent ordering
-  const rowOrder = { top: 0, home: 1, bottom: 2, thumb: 3 };
-  const zoneOrder = { finger: 0, thumb: 1, encoder: 2 };
-  const colOrder = { extra: 0, pinky: 1, ring: 2, middle: 3, index: 4, inner: 5, encoder: 0, near: 1, mid: 2, far: 3 };
-
-  keys.sort((a, b) => {
-    // Fingers before thumbs before encoders
-    if (a.zone !== b.zone) {
-      return (zoneOrder[a.zone] ?? 99) - (zoneOrder[b.zone] ?? 99);
-    }
-    // Then by column
-    const colA = colOrder[a.column] ?? 99;
-    const colB = colOrder[b.column] ?? 99;
-    if (colA !== colB) return colA - colB;
-    // Then by row
-    const rowA = rowOrder[a.row] ?? 99;
-    const rowB = rowOrder[b.row] ?? 99;
-    return rowA - rowB;
-  });
-
   // Generate ZMK temporal.json
   generateZmkLayout(keys);
+}
+
+/**
+ * Fail loudly when a zone, column, or row name in ergogen/config.yaml has no
+ * entry in the matrix maps below. Without this the key is simply absent from
+ * temporal.json and nothing in the build reports it.
+ */
+function assertNamesResolve(keys, rowMap, colMapLeft, thumbColMapLeft) {
+  const unmapped = [];
+
+  for (const key of keys) {
+    const colMap = key.zone === 'thumb' ? thumbColMapLeft : colMapLeft;
+
+    if (rowMap[key.row] === undefined) {
+      unmapped.push(`row "${key.row}" (key ${key.name})`);
+    }
+    if (colMap[key.column] === undefined) {
+      unmapped.push(`${key.zone} column "${key.column}" (key ${key.name})`);
+    }
+  }
+
+  if (unmapped.length > 0) {
+    console.error('Error: ergogen/config.yaml names that scripts/generate_layout.js does not map:');
+    [...new Set(unmapped)].forEach(name => console.error(`  ${name}`));
+    process.exit(1);
+  }
 }
 
 /**
@@ -114,14 +117,16 @@ function generateZmkLayout(keys) {
   // Thumb keys share column nets with finger columns
   // enc=col_ring(2), near=col_middle(3), mid=col_index(4), far=col_inner(5)
   const thumbColMapLeft = { enc: 2, near: 3, mid: 4, far: 5 };
-  // Encoder zone has its own column
-  const encoderColMapLeft = { encoder: 1 };
+  // Right-hand columns mirror the left across the full matrix width
+  const mirrorCol = col => Object.keys(colMapLeft).length * 2 - 1 - col;
+
+  assertNamesResolve(keys, rowMap, colMapLeft, thumbColMapLeft);
 
   // Find bounds to normalize positions
   let minX = Infinity, maxY = -Infinity;
   for (const key of keys) {
     minX = Math.min(minX, key.x);
-    maxY = Math.max(maxY, key.y); // Use max Y since ergogen Y is negative (up is more negative)
+    maxY = Math.max(maxY, key.y); // Ergogen Y grows upward; the topmost key has the largest Y
   }
 
   // Convert to key units and normalize
@@ -133,13 +138,9 @@ function generateZmkLayout(keys) {
 
     if (key.zone === 'thumb') {
       col = thumbColMapLeft[key.column];
-    } else if (key.zone === 'encoder') {
-      col = encoderColMapLeft[key.column];
     } else {
       col = colMapLeft[key.column];
     }
-
-    if (row === undefined || col === undefined) continue;
 
     // Convert mm to key units (using KX as base unit for both axes)
     // Ergogen: Y is negative going up, we want Y positive going down
@@ -172,7 +173,7 @@ function generateZmkLayout(keys) {
   const rightKeys = layoutKeys.map(key => {
     const mirrored = {
       row: key.row,
-      col: 11 - key.col, // Mirror column: 0->11, 1->10, etc.
+      col: mirrorCol(key.col),
       x: Math.round((mirrorX + (maxX - key.x)) * 1000) / 1000,
       y: key.y,
     };
@@ -193,14 +194,9 @@ function generateZmkLayout(keys) {
     return a.col - b.col;
   });
 
-  // Find encoder positions for sensors array
-  const encoderLeft = layoutKeys.find(k =>
-    keys.find(key => key.name === ENCODER_KEY &&
-      k.row === rowMap[key.row] &&
-      k.col === (key.zone === 'thumb' ? thumbColMapLeft[key.column] : colMapLeft[key.column])
-    )
-  );
-  const encoderRight = rightKeys.find(k => k.row === 3 && k.col === 10);
+  const encoder = keys.find(key => key.name === ENCODER_KEY);
+  const encoderRow = rowMap[encoder.row];
+  const encoderCol = thumbColMapLeft[encoder.column];
 
   const zmkLayout = {
     id: 'temporal',
@@ -211,8 +207,8 @@ function generateZmkLayout(keys) {
       }
     },
     sensors: [
-      { row: 3, col: 2, name: 'encoder_left' },
-      { row: 3, col: 9, name: 'encoder_right' }
+      { row: encoderRow, col: encoderCol, name: 'encoder_left' },
+      { row: encoderRow, col: mirrorCol(encoderCol), name: 'encoder_right' }
     ]
   };
 

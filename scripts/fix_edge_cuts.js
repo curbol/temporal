@@ -8,8 +8,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
-const { glob } = require('glob');
+const { ergogenOutputPcbs } = require('./ergogen_config');
 
 // Minimum segment length in mm - segments shorter than this will be removed
 const MIN_SEGMENT_LENGTH = 0.01; // 10 microns
@@ -86,21 +85,8 @@ function processPcbFile(filepath) {
 /**
  * Main entry point.
  */
-async function main() {
-  const outputDir = 'ergogen/output/pcbs';
-
-  if (!fs.existsSync(outputDir)) {
-    console.error(`Error: ${outputDir} does not exist`);
-    console.error("Run 'npm run gen' first to generate PCB files");
-    process.exit(1);
-  }
-
-  const pcbFiles = await glob(`${outputDir}/*.kicad_pcb`);
-
-  if (pcbFiles.length === 0) {
-    console.error(`No .kicad_pcb files found in ${outputDir}`);
-    process.exit(1);
-  }
+function main() {
+  const pcbFiles = ergogenOutputPcbs();
 
   let totalRemoved = 0;
   for (const pcbFile of pcbFiles) {
@@ -113,7 +99,4 @@ async function main() {
   }
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+main();

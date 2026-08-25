@@ -10,30 +10,9 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { glob } = require('glob');
-const yaml = require('js-yaml');
+const { OUTPUT_PCBS_DIR } = require('./ergogen_config');
 const { getKiCadPythonOrThrow } = require('./kicad_python');
-
-/**
- * Load via stitching configuration from YAML.
- */
-function loadViaStitchingConfig() {
-  const configPath = path.join(__dirname, 'kicad_config.yaml');
-
-  if (!fs.existsSync(configPath)) {
-    console.error(`Error: Config file not found at ${configPath}`);
-    process.exit(1);
-  }
-
-  try {
-    const content = fs.readFileSync(configPath, 'utf-8');
-    const config = yaml.load(content);
-    return config.via_stitching;
-  } catch (err) {
-    console.error(`Error: Failed to load config: ${err.message}`);
-    process.exit(1);
-  }
-}
+const { loadKicadConfig } = require('./kicad_config');
 
 /**
  * Add via stitching to a KiCad PCB file using the Python API.
@@ -71,15 +50,7 @@ function addViaStitching(filepath, pythonPath, config) {
 /**
  * Main entry point.
  */
-async function main() {
-  const outputDir = 'ergogen/output/pcbs';
-
-  if (!fs.existsSync(outputDir)) {
-    console.error(`Error: ${outputDir} does not exist`);
-    console.error("Run 'npm run gen' first to generate PCB files");
-    process.exit(1);
-  }
-
+function main() {
   // Find KiCad's Python interpreter
   let pythonPath;
   try {
@@ -90,7 +61,7 @@ async function main() {
   }
 
   // Load via stitching configuration
-  const config = loadViaStitchingConfig();
+  const config = loadKicadConfig().via_stitching;
 
   // Allow CLI override for step_mm (first argument)
   const stepArg = process.argv[2];
@@ -104,20 +75,19 @@ async function main() {
   }
 
   // Only process temporal.kicad_pcb
-  const temporalPcb = path.join(outputDir, 'temporal.kicad_pcb');
+  const temporalPcb = path.join(OUTPUT_PCBS_DIR, 'temporal.kicad_pcb');
 
   if (!fs.existsSync(temporalPcb)) {
-    console.error(`Error: temporal.kicad_pcb not found in ${outputDir}`);
+    console.error(`Error: temporal.kicad_pcb not found in ${OUTPUT_PCBS_DIR}`);
     process.exit(1);
   }
 
   const viasAdded = addViaStitching(temporalPcb, pythonPath, config);
-  if (viasAdded >= 0) {
-    console.log(`✓ Added ${viasAdded} stitching vias to temporal.kicad_pcb (${config.step_mm}mm grid)`);
+  if (viasAdded < 0) {
+    process.exit(1);
   }
+
+  console.log(`✓ Added ${viasAdded} stitching vias to temporal.kicad_pcb (${config.step_mm}mm grid)`);
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+main();

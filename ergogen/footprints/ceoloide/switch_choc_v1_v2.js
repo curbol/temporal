@@ -874,8 +874,10 @@ module.exports = {
       }
     }
 
-    // Add solder hole routing traces when both hotswap and solder are enabled
-    if (p.hotswap && p.solder) {
+    // Add solder hole routing traces when both hotswap and solder are enabled.
+    // These land on the via from hotswap_routes_unplated and on both the front and
+    // back solder pads, so they need the same conditions that emit those.
+    if (p.reversible && p.hotswap && p.solder && p.include_traces_vias && !p.include_plated_holes) {
       final += solder_routing_trace
     }
 

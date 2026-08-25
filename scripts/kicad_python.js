@@ -3,7 +3,6 @@
  * Can be reused by any script that needs to run Python code with KiCad's pcbnew API.
  */
 
-const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execSync } = require('child_process');
@@ -70,12 +69,12 @@ function findKiCadPython() {
           });
           // If we got here, pcbnew is available
           return pythonPath;
-        } catch (err) {
+        } catch {
           // Try next path
           continue;
         }
       }
-    } catch (err) {
+    } catch {
       // Try next pattern
       continue;
     }

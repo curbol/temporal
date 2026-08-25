@@ -159,8 +159,6 @@ module.exports = {
       });
     };
 
-    const at = parseAt(p.at);
-
     // Define all polygon points
     const polygons_data = [
 `;
@@ -225,18 +223,21 @@ ${poly.points.map(([x, y]) => `          (xy ${x} ${y})`).join('\n')}
       footprint += front_polys;
     }
 
-    // Add keepout zone if requested
+    // Add keepout zone if requested. One zone per polygon, so artwork made of
+    // several disconnected shapes is covered in full.
     if (p.add_keepout) {
       const pos = parseAt(p.at);
       const rotation = p.r || pos.r;
-      const zone_points = transformPolygon(polygons_data[0].points, pos.x, pos.y, -rotation);
 
-      footprint += \`
+      polygons_data.forEach((polygon, index) => {
+        const zone_points = transformPolygon(polygon.points, pos.x, pos.y, -rotation);
+
+        footprint += \`
     (zone
       (net 0)
       (net_name "")
       (layers "F.Cu" "B.Cu")
-      (uuid "\${generate_uuid(p.ref + '-${name}-keepout')}")
+      (uuid "\${generate_uuid(p.ref + '-${name}-keepout-' + index)}")
       (hatch edge 0.508)
       (keepout
         (tracks not_allowed)
@@ -251,6 +252,7 @@ ${poly.points.map(([x, y]) => `          (xy ${x} ${y})`).join('\n')}
         )
       )
     )\`;
+      });
     }
 
     footprint += \`

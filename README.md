@@ -20,7 +20,7 @@ A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff 
 
 ### Hardware
 
-- Kailh Choc v1 low-profile switches with hotswap sockets
+- Kailh Choc v1 or v2 low-profile switches with hotswap sockets
 - nice!nano or Pro Micro compatible microcontrollers
 - Optional nice!view display
 - Optional EC11/EC12 rotary encoders in thumb cluster (up to 2)
@@ -31,7 +31,7 @@ A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff 
 ### Tools
 
 - [Ergogen](https://ergogen.ceoloide.com/) generates the layout, PCB, plates and cases ([config.yaml](./ergogen/config.yaml))
-- [KiCad](https://www.kicad.org/) v9 for via stitching and traces
+- [KiCad](https://www.kicad.org/) v10 for via stitching and traces
 
 ## Firmware
 
@@ -45,7 +45,7 @@ For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
 
 ## Keycaps
 
-Temporal uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
+Temporal uses Kailh Choc v1 or v2 low-profile switches. For keycaps, you can use:
 
 - [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
 
@@ -54,7 +54,7 @@ Temporal uses Kailh Choc v1 low-profile switches. For keycaps, you can use:
 ### Prerequisites
 
 - Node.js and npm
-- [Homebrew](https://brew.sh/) (for installing dependencies)
+- A package manager `make deps` can drive: [Homebrew](https://brew.sh/) on macOS, `pacman` and `yay` on Arch Linux
 
 ### Setup
 
@@ -74,11 +74,19 @@ This will:
 
 - Run Ergogen to generate PCB and case files
 - Post-process PCBs (fix edge cuts, add ground planes)
-- Configure KiCad project files with defaults from `scripts/kicad_defaults.yaml`
+- Configure KiCad project files with defaults from `scripts/kicad_config.yaml`
 - Generate STL case files
 - Export Gerbers for manufacturing
 
 **Note:** The main `pcbs/temporal/` PCB requires manual steps in KiCad after generation. See [pcbs/temporal/README.md](pcbs/temporal/README.md) for details.
+
+### Verifying
+
+```bash
+make check
+```
+
+Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, the pours in `pcbs/` still match the custom DRC rules, and `temporal.json` and `jlcpcb/` still reproduce from their sources. This is what CI runs on every push.
 
 ## Influences
 

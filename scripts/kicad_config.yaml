@@ -2,10 +2,10 @@
 # Used by scripts/setup_kicad_project.js to generate .kicad_pro files
 
 # Default net class (applied to most signals)
+# track_width, via_diameter and via_drill are not set here: scripts/kicad_config.js
+# fills them in from copper_trace_width, copper_via_diameter and copper_via_drill in
+# ergogen/config.yaml's units, which size the traces and vias the footprints emit.
 net_class_default:
-  track_width: 0.25 # Default trace width for signals in mm
-  via_diameter: 0.6 # Via outer diameter in mm
-  via_drill: 0.3 # Via drill/hole diameter in mm
   clearance: 0.2 # Clearance between traces in mm
   diff_pair_width: 0.2 # Differential pair trace width in mm
   diff_pair_gap: 0.25 # Gap between differential pair traces in mm
@@ -16,8 +16,6 @@ net_class_default:
 net_classes:
   - name: "Power"
     track_width: 0.375
-    via_diameter: 0.6
-    via_drill: 0.3
     clearance: 0.2
     diff_pair_width: 0.2
     diff_pair_gap: 0.25
@@ -26,8 +24,6 @@ net_classes:
 
   - name: "Battery"
     track_width: 0.5 # Battery traces in mm
-    via_diameter: 0.6
-    via_drill: 0.3
     clearance: 0.2
     diff_pair_width: 0.2
     diff_pair_gap: 0.25
@@ -53,6 +49,8 @@ design_rules:
   min_microvia_diameter: 0.2 # Minimum microvia outer diameter in mm
   min_microvia_drill: 0.1 # Minimum microvia drill diameter in mm
   min_through_hole_diameter: 0.3 # Minimum through-hole diameter in mm
+  min_text_height: 0.8 # Minimum silkscreen text height in mm
+  min_text_thickness: 0.153 # JLCPCB's minimum silkscreen stroke, 6 mil
 
 # Custom DRC rules (written next to each board as <board>.kicad_dru)
 custom_rules:
@@ -69,10 +67,10 @@ board_defaults:
   copper_text_size_h: 1.5 # Copper text height in mm
   copper_text_size_v: 1.5 # Copper text width in mm
   copper_text_thickness: 0.3 # Copper text thickness in mm
-  silk_line_width: 0.1 # Silkscreen line width in mm
+  silk_line_width: 0.16 # Silkscreen line width in mm
   silk_text_size_h: 1.0 # Silkscreen text height in mm
   silk_text_size_v: 1.0 # Silkscreen text width in mm
-  silk_text_thickness: 0.1 # Silkscreen text thickness in mm
+  silk_text_thickness: 0.16 # Silkscreen text thickness in mm
   zones_min_clearance: 0.5 # Minimum clearance for zones in mm
 
 # Zone Fill Settings (used by add_ground_planes.js)
@@ -86,6 +84,9 @@ zones:
   hatch_gap: 0.5 # Hatch pattern spacing in mm
   hatch_orientation: 45 # Hatch pattern orientation in degrees
   hatch_smoothing_level: 1 # Hatch smoothing (0=none, 1=light, 2=heavy)
+  hatch_smoothing_value: 0.1 # Hatch smoothing strength (0-1)
+  hatch_min_hole_area: 0.3 # Holes smaller than this are filled over, in mm^2
+  display_hatch_pitch: 0.5 # Editor-only outline hatch pitch in mm
 
 # Via Stitching Settings (used by via_stitching.js)
 # CLI: node scripts/via_stitching.js [step_mm]
@@ -96,12 +97,9 @@ via_stitching:
   drill_mm: 0.3 # Via drill hole diameter in mm
   clearance_mm: 0.2 # Clearance around vias in mm
 
-# PCB File Settings
-pcb_settings:
-  pad_to_mask_clearance: 0.05 # Solder mask clearance from pads in mm
-
 # Text Keepout Settings (used by create_text_keepouts.js)
 text_keepouts:
+  gap_mm: 0 # Inflation around the text outline in mm (0 follows the glyphs exactly)
   patterns: ["Temporal", "curbol", "Right", "Left", "Back", "(M↓)"] # Text to create keepouts for (empty array = all text)
 
 # JLCPCB Assembly Configuration (used by generate_jlcpcb_files.js)

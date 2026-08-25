@@ -281,7 +281,7 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 
 ### MCU Cover
 
-1. Attach the MCU cover using 10mm standoffs
+1. Attach the MCU cover using 8mm standoffs
 2. Use 2 M2 screws (4mm length) from the back of the PCB into the standoffs
 3. Use 2 more M2 screws (4mm length) from the front through the cover into the standoffs
 
@@ -310,9 +310,9 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 
 If using FR-4 plates instead of a 3D printed case:
 
-1. Attach the back plate using 4mm standoffs
-2. Secure with M2 screws (3mm length)
-3. Add the top plate and secure
+1. Attach the back plate using 3mm standoffs, which clear the 1.95mm hotswap sockets on the back of the PCB
+2. Secure with M2 screws (3mm length) from both faces - longer screws meet inside a 3mm standoff and bottom out
+3. Add the top plate and seat the switches through it into the hotswap sockets
 
 ---
 

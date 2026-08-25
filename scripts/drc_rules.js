@@ -7,23 +7,13 @@
  */
 
 const fs = require('fs');
-const path = require('path');
-const yaml = require('js-yaml');
+const { loadKicadConfig } = require('./kicad_config');
 
 /**
  * Load rule definitions from the YAML config file.
  */
 function loadCustomRules() {
-  const configPath = path.join(__dirname, 'kicad_config.yaml');
-
-  if (!fs.existsSync(configPath)) {
-    console.error(`Error: Config file not found at ${configPath}`);
-    process.exit(1);
-  }
-
-  const config = yaml.load(fs.readFileSync(configPath, 'utf-8'));
-
-  return config.custom_rules ?? [];
+  return loadKicadConfig().custom_rules ?? [];
 }
 
 /**
@@ -47,6 +37,10 @@ function renderRule(rule) {
  * Write the .kicad_dru file beside a board, or remove it when no rules are defined.
  */
 function writeDrcRules(pcbPath, rules = loadCustomRules()) {
+  if (!pcbPath.endsWith('.kicad_pcb')) {
+    throw new Error(`Refusing to derive a .kicad_dru path from ${pcbPath}: not a .kicad_pcb file`);
+  }
+
   const rulesPath = pcbPath.replace(/\.kicad_pcb$/, '.kicad_dru');
 
   if (rules.length === 0) {
