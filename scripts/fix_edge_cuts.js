@@ -1,46 +1,38 @@
 #!/usr/bin/env node
 /**
- * Remove tiny Edge.Cuts segments from KiCad PCB files.
+ * Remove tiny Edge.Cuts segments from the generated boards.
  *
- * Ergogen sometimes generates very small segments on Edge.Cuts layer (usually at curves)
- * that are essentially zero-length and cause DRC "malformed outline" errors.
- * This script removes segments shorter than a specified threshold.
+ * Ergogen emits near-zero-length segments on Edge.Cuts, usually at curves, and
+ * KiCad reports them as a malformed outline. Anything shorter than
+ * MIN_SEGMENT_LENGTH is dropped.
  */
 
 const fs = require('fs');
 const { ergogenOutputPcbs } = require('./ergogen_config');
 
-// Minimum segment length in mm - segments shorter than this will be removed
-const MIN_SEGMENT_LENGTH = 0.01; // 10 microns
+const MIN_SEGMENT_LENGTH = 0.01; // mm
 
-/**
- * Calculate Euclidean distance between two points.
- */
 function calculateLineLength(startX, startY, endX, endY) {
   return Math.sqrt((endX - startX) ** 2 + (endY - startY) ** 2);
 }
 
 /**
- * Calculate approximate arc length using chord length.
+ * The chord between the endpoints, not the true arc length. An arc that sweeps
+ * most of a circle therefore measures near zero and would be dropped.
  */
 function calculateArcLength(startX, startY, midX, midY, endX, endY) {
   return calculateLineLength(startX, startY, endX, endY);
 }
 
-/**
- * Process a KiCad PCB file and remove tiny Edge.Cuts segments.
- */
 function processPcbFile(filepath) {
   let content = fs.readFileSync(filepath, 'utf-8');
 
-  // Regular expressions for Edge.Cuts gr_line and gr_arc
   const linePattern = /\(gr_line\s+\(start\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\).*?\)\s*\n/gs;
   const arcPattern = /\(gr_arc\s+\(start\s+([-\d.]+)\s+([-\d.]+)\)\s+\(mid\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\).*?\)\s*\n/gs;
 
   let removedLines = 0;
   let removedArcs = 0;
 
-  // Find and remove tiny gr_line segments
   const lineMatches = [...content.matchAll(linePattern)];
   for (const match of lineMatches) {
     const startX = parseFloat(match[1]);
@@ -56,7 +48,6 @@ function processPcbFile(filepath) {
     }
   }
 
-  // Find and remove tiny gr_arc segments
   const arcMatches = [...content.matchAll(arcPattern)];
   for (const match of arcMatches) {
     const startX = parseFloat(match[1]);
@@ -74,7 +65,6 @@ function processPcbFile(filepath) {
     }
   }
 
-  // Write back
   if (removedLines > 0 || removedArcs > 0) {
     fs.writeFileSync(filepath, content, 'utf-8');
   }
@@ -82,9 +72,6 @@ function processPcbFile(filepath) {
   return removedLines + removedArcs;
 }
 
-/**
- * Main entry point.
- */
 function main() {
   const pcbFiles = ergogenOutputPcbs();
 

@@ -38,6 +38,8 @@
 //      connects Bat+ to RAW.
 //    label_font_face: default is '' (KiCad's stroke font)
 //      the name of the font family used for the silkscreen labels
+//    label_font_bold: default is false
+//      makes the silkscreen labels bold, which selects the font family's bold face
 //    label_font_thickness: default is 0.15
 //      the stroke width of the silkscreen labels, in mm
 //    include_courtyard: default is false
@@ -83,6 +85,7 @@ module.exports = {
     invert_behavior: true,
     include_silkscreen: true,
     label_font_face: "",
+    label_font_bold: false,
     label_font_thickness: 0.15,
     include_courtyard: false,
     include_traces_vias: false,
@@ -98,7 +101,8 @@ module.exports = {
   },
   body: (p) => {
     const face = p.label_font_face != "" ? ` (face "${p.label_font_face}")` : "";
-    const font = `(font${face} (size 1 1) (thickness ${p.label_font_thickness}))`;
+    const bold = p.label_font_bold ? " (bold yes)" : "";
+    const font = `(font${face} (size 1 1) (thickness ${p.label_font_thickness})${bold})`;
 
     const common_start = `
   (footprint "ceoloide:power_switch_smd_side"

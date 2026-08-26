@@ -8,7 +8,7 @@
  * All STLs are processed through OpenSCAD to clean up the mesh and written as
  * binary STL, which is about a third the size of OpenSCAD's ASCII default and
  * reads identically in every slicer.
- * Files ending in _m_right are also mirrored to produce _right STL.
+ * Files ending in _m_right are also mirrored to produce the right-hand STL.
  */
 
 const fs = require('fs');
@@ -20,15 +20,12 @@ const { glob } = require('glob');
 const execAsync = promisify(exec);
 
 function getArcSegments(radius) {
-  const arcSegmentsBase = 10; // Base segments for small arcs
-  const arcSegmentsMult = 10; // Multiplier for larger arcs
+  const arcSegmentsBase = 10;
+  const arcSegmentsMult = 10;
 
   return arcSegmentsBase + Math.ceil(radius * arcSegmentsMult);
 }
 
-/**
- * Process STL through OpenSCAD (cleans up mesh, optionally mirrors)
- */
 async function processSTL(inputPath, outputPath, mirror = false) {
   const transform = mirror ? 'mirror([1, 0, 0])' : '';
   const scadContent = `${transform} import("${inputPath}", convexity=10);`;
@@ -41,17 +38,41 @@ async function processSTL(inputPath, outputPath, mirror = false) {
   }
 }
 
+/**
+ * Where a case STL belongs under cases/. Half-cases are foldered by key count and
+ * then by switch generation and mounting, so choosing a build lands you in a
+ * directory holding only that variant's four files. Shared parts stay at the top.
+ */
+function outputRelPath(baseName) {
+  const variant = baseName.match(
+    /^temporal_(38|42)_(v1|v2)_(socket|solder)_(?:(kickstand)_)?(left|m_right)$/);
+
+  if (variant) {
+    const [, count, generation, mounting, kickstand, hand] = variant;
+    const side = hand === 'm_right' ? 'right' : 'left';
+    return path.join(count, `${generation}_${mounting}`, `${kickstand ? 'kickstand_' : ''}${side}.stl`);
+  }
+
+  const plate = baseName.match(/^top_plate_(38|42)$/);
+
+  if (plate) {
+    return path.join(plate[1], 'top_plate.stl');
+  }
+
+  return `${baseName}.stl`;
+}
+
 async function main() {
   const casesDir = path.join(__dirname, '..', 'cases');
   const jscadDir = path.join(__dirname, '..', 'ergogen', 'output', 'cases');
 
-  // Ensure output directory exists
   if (!fs.existsSync(casesDir)) {
     fs.mkdirSync(casesDir, { recursive: true });
   }
 
-  // Find all JSCAD files
-  const jscadFiles = await glob('*.jscad', { cwd: jscadDir });
+  // Skip this script's own patched copies. Ergogen never writes them, but an
+  // interrupted run leaves them behind and they would be converted as cases.
+  const jscadFiles = await glob('*.jscad', { cwd: jscadDir, ignore: '*_hires.jscad' });
 
   if (jscadFiles.length === 0) {
     console.error(`No JSCAD files found in ${jscadDir}`);
@@ -61,23 +82,15 @@ async function main() {
 
   let failed = 0;
 
-  // Convert files in parallel
   const conversions = jscadFiles.map(async (file) => {
     const inputPath = path.join(jscadDir, file);
     const baseName = file.replace('.jscad', '');
     const needsMirroring = baseName.endsWith('_m_right');
 
-    // Naming rules:
-    // - foo_m_right → foo_right (needs mirroring after conversion)
-    // - foo_left → foo_left (left-hand side, no change needed)
-    // - foo → foo (universal part, no change needed)
-    const outputBaseName = needsMirroring
-      ? baseName.replace(/_m_right$/, '_right')
-      : baseName;
-    const outputName = outputBaseName + '.stl';
+    const outputName = outputRelPath(baseName);
     const outputPath = path.join(casesDir, outputName);
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 
-    // Read original JSCAD content
     let content = fs.readFileSync(inputPath, 'utf8');
 
     // Add resolution to .appendArc() calls
@@ -107,12 +120,10 @@ async function main() {
       }
     );
 
-    // Create patched file
     const patchedPath = inputPath.replace('.jscad', '_hires.jscad');
     fs.writeFileSync(patchedPath, content);
 
     try {
-      // Convert JSCAD to STL
       const tempPath = path.join(casesDir, baseName + '_temp.stl');
       await execAsync(`npx @jscad/cli "${patchedPath}" -of stla -o "${tempPath}"`);
 
@@ -124,7 +135,6 @@ async function main() {
       console.error(`✗ Failed to convert ${file}:`, error.message);
       failed++;
     } finally {
-      // Clean up patched file
       fs.unlinkSync(patchedPath);
     }
   });

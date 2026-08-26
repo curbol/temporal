@@ -9,16 +9,10 @@
 const fs = require('fs');
 const { loadKicadConfig } = require('./kicad_config');
 
-/**
- * Load rule definitions from the YAML config file.
- */
 function loadCustomRules() {
   return loadKicadConfig().custom_rules ?? [];
 }
 
-/**
- * Render one rule as a .kicad_dru s-expression.
- */
 function renderRule(rule) {
   const lines = [`(rule ${JSON.stringify(rule.name)}`];
 

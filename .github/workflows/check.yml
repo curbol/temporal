@@ -21,6 +21,7 @@ jobs:
 
       - run: npm ci
 
-      # Sources parse, ergogen/config.yaml builds, every committed board is
-      # DRC-clean, and temporal.json and jlcpcb/ still reproduce from source.
+      # Sources parse and lint, ergogen/config.yaml builds, every committed
+      # board is DRC-clean and carries its own silkscreen font, the pours are
+      # current, and every derived artifact still reproduces from its source.
       - run: make check

@@ -18,7 +18,7 @@ Exit codes:
 import sys
 import os
 
-# Suppress wxWidgets debug messages
+# Suppress wxWidgets sizer flag assertions
 os.environ["WXSUPPRESS_SIZER_FLAGS_CHECK"] = "1"
 
 try:
@@ -32,46 +32,30 @@ except ImportError:
     )
     sys.exit(1)
 
-# Suppress wx debug messages
 if hasattr(wx, "Log"):
     wx.Log.SetLogLevel(0)
 
-# Initialize wxPython application (required for pcbnew API)
+# pcbnew needs a wx.App even when nothing is displayed
 app = wx.App()
 
 
 def fill_zones(pcb_path):
     """
-    Fill all zones in a KiCad PCB file.
-
-    Args:
-        pcb_path: Path to the .kicad_pcb file
-
-    Returns:
-        True on success, False on error
+    True on success, False on error.
     """
     if not os.path.exists(pcb_path):
         print(f"Error: PCB file not found: {pcb_path}", file=sys.stderr)
         return False
 
     try:
-        # Load the board
         board = pcbnew.LoadBoard(pcb_path)
-
-        # Create a zone filler
         filler = pcbnew.ZONE_FILLER(board)
-
-        # Get all zones
         zones = board.Zones()
 
         if len(zones) == 0:
-            # No zones to fill
             return True
 
-        # Fill all zones
         filler.Fill(zones)
-
-        # Save the board
         pcbnew.SaveBoard(pcb_path, board)
 
         return True

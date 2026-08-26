@@ -1,6 +1,6 @@
 # Bill of Materials (BOM)
 
-This is the complete list of components needed to build one Temporal keyboard (both halves).
+Everything needed to build one Temporal keyboard, both halves.
 
 ## Required Components
 
@@ -9,7 +9,7 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | Component | Quantity | Notes | Source | Image |
 |-----------|----------|-------|--------|-------|
 | SMD Diodes (1N4148W) | 36-42 | One per switch, depends on configuration (not needed if using JLCPCB assembly) | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/diode.jpg" width="100" alt="SMD diode"> |
-| Kailh Choc Hotswap Sockets | 36-42 | Optional - allows switch swapping without desoldering | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/choc_socket.jpg" width="100" alt="Choc socket"> |
+| Kailh Choc Hotswap Sockets | 36-42 | Optional; allows switch swapping without desoldering | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/choc_socket.jpg" width="100" alt="Choc socket"> |
 | Power Switch (MSK12C02) | 2 | Power on/off switch | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/pwr_switch.jpg" width="100" alt="Power switch"> |
 | Reset Button (3x6x4.3mm) | 2 | SMD tactile switch | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/rst_switch.jpg" width="100" alt="Reset switch"> |
 | EZ-Solder Machine Sockets and Headers | 2 sets | For nice!nano installation | [KEEBD](https://keebd.com/) [Typeractive](https://typeractive.xyz/) | <img src="/assets/bom/mcu_ezsolder_socket.jpg" width="100" alt="EZ-Solder sockets"> |
@@ -21,20 +21,19 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | ALPS EC11/EC12 Rotary Encoder | 0-2 | Optional, for thumb key encoder positions | [KEEBD](https://keebd.com/en-us/collections/components) | <img src="/assets/bom/enc_ec12.jpg" width="100" alt="Encoder"> |
 | Low Profile Knurled Encoder Knob | 0-2 | If using encoders | [KEEBD](https://keebd.com/en-us/collections/components) | <img src="/assets/bom/enc_knob.jpg" width="100" alt="Encoder knob"> |
 
-- Encoders are optional. You can use regular switches in the encoder positions if you prefer.
-- Hotswap sockets are optional. You can solder switches directly to the PCB for a permanent installation.
+Encoders and hotswap sockets are both optional: regular switches work in the encoder positions, and switches can be soldered straight to the PCB.
 
 ### Hardware
 
 | Component | Quantity | Notes | Source | Image |
-|-----------|-------------------|-------|--------|-------|
-| M2 Heat Set Inserts | 10 | 3mm OD × 3mm height (2mm height also works) | [KEEBD](https://keebd.com/) | <img src="/assets/bom/heatset_m2_3mm_insert.jpg" width="100" alt="Heat set insert"> |
+|-----------|----------|-------|--------|-------|
+| M2 Heat-Set Inserts | 10 | 3mm OD × 3mm height (2mm height also works) | [KEEBD](https://keebd.com/) | <img src="/assets/bom/heatset_m2_3mm_insert.jpg" width="100" alt="Heat-set insert"> |
 | M2 Screws (4mm length) | 18 | Button-head recommended | Amazon | <img src="/assets/bom/m2_button_head.jpg" width="100" alt="M2 screw"> |
 | M2 Standoffs (8mm length) | 4 | For MCU cover mounting | [KEEBD](https://keebd.com/) Amazon | <img src="/assets/bom/m2_standoff_8mm.jpg" width="100" alt="M2 standoff"> |
-| M2 Standoffs (3mm length) | 10 | FR-4 plate build only, in place of the heat set inserts | Amazon | |
+| M2 Standoffs (3mm length) | 10 | FR-4 plate build only, in place of the heat-set inserts | Amazon | |
 | M2 Screws (3mm length) | 20 | FR-4 plate build only, button-head | Amazon | |
 
-- Try to get M2 inserts with 3mm outer diameter and 3mm height. 2mm height also works. Avoid inserts with 3.2mm+ outer diameter as they may not fit properly.
+Avoid inserts wider than 3mm OD. A 3.2mm insert may not seat in the case posts.
 
 ### Switches & Keycaps
 
@@ -43,11 +42,9 @@ This is the complete list of components needed to build one Temporal keyboard (b
 | Choc v1 or v2 Switches | 36-42 | Low-profile switches, depends on configuration | [Low Pro KB](https://lowprokb.ca/) [KEEBD](https://keebd.com/en-us/collections/choc-switches) | <img src="/assets/bom/choc_switch.jpg" width="100" alt="Choc switch"> |
 | Choc Keycaps | 36-42 | Compatible with Choc switches | | |
 
-I recommend [Ambients Silent Choc switches](https://lowprokb.ca/collections/switches/products/ambients-silent-choc-switches) for a quiet, smooth typing experience.
+[Ambients Silent Choc switches](https://lowprokb.ca/collections/switches/products/ambients-silent-choc-switches) are my pick for a quiet, smooth feel. Sculpted keycaps improve the feel more than anything else on this page, though that is personal preference.
 
-I recommend using sculpted keycaps as it significantly improves the feel, but ultimately it's personal preference.
-
-**[KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps)** - 3D printable sculpted keycaps designed for Choc switches. If ordering from a printing service, here are the quantities needed for a full Temporal build:
+[KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps) are 3D-printable sculpted keycaps for Choc switches. Ordered from a printing service, a full Temporal build needs:
 
 | Part | Quantity | Contents |
 |------|----------|----------|
@@ -56,15 +53,15 @@ I recommend using sculpted keycaps as it significantly improves the feel, but ul
 | Saddle part 3 | 1 | 9 tilted |
 | Thumbs | 1 | 9 thumbs |
 
-**Totals:** Tilted: 23, Saddle: 11, Homing: 2, Thumb: 9 (6-8 used, depending on encoders)
+Totals: 23 tilted, 11 saddle, 2 homing, and 9 thumb, of which 6-8 are used depending on encoders.
 
 ### PCBs & Cases
 
 | Component | Quantity | Notes |
 |-----------|----------|-------|
-| Temporal PCB | 2 | Order using gerbers/temporal.zip |
-| 3D Printed Case (Left) | 1 | Choose your key configuration and switch mounting (see below) |
-| 3D Printed Case (Right) | 1 | Choose your key configuration and switch mounting (see below) |
+| Temporal PCB | 2 | Order using `gerbers/temporal.zip` |
+| 3D-Printed Case (Left) | 1 | Choose your key configuration and switch mounting (see below) |
+| 3D-Printed Case (Right) | 1 | Choose your key configuration and switch mounting (see below) |
 | MCU Cover | 2 | Optional, protects the microcontroller |
 
 Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with services like JLCPCB or PCBWay.
@@ -73,24 +70,41 @@ Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with ser
 - Surface finish: LeadFree HASL
 - See [`pcbs/temporal/README.md`](/pcbs/temporal/README.md) for notes on the hand-routed main PCB
 
-> **Tip:** For top plates, back plates, and MCU covers, you can choose HASL (with lead) instead of LeadFree HASL - it's usually cheaper and these parts have no exposed copper pads, so the surface finish doesn't matter.
+> [!TIP]
+> Top plates, back plates, and MCU covers can be ordered in HASL (with lead) instead of LeadFree HASL. It is usually cheaper, and these parts have no exposed copper pads, so the finish does not matter.
 
-> **Tip:** Order top plates at 1.2mm thickness instead of 1.6mm for the best fit with Choc switches.
+> [!TIP]
+> Order top plates at 1.2mm thickness instead of 1.6mm for the best fit with Choc switches.
 
-3D-printable case files are included in the [`cases/`](/cases/) directory, named
-`temporal_<socket|solder>_<v1|v2>_<38|42>[_kickstand]_<left|right>.stl`:
+3D-printable case files are in the [`cases/`](/cases/) directory, foldered by key
+count and then by switch generation and mounting:
 
-- **`socket`** - required if you install hotswap sockets. The floor is relieved all
-  the way through under each socket, which stands 1.95mm off the back of the PCB.
-- **`solder`** - only for switches soldered directly to the PCB. It has just 1.15mm
-  of relief, so a board with hotswap sockets will not seat in it.
-- **`v1` / `v2`** - which Choc switch you are using. A v2 switch has a wider, deeper
+```
+cases/
+├── mcu_cover.stl
+├── 38/
+│   ├── top_plate.stl
+│   ├── v1_socket/   left.stl  right.stl  kickstand_left.stl  kickstand_right.stl
+│   ├── v1_solder/   ...
+│   ├── v2_socket/   ...
+│   └── v2_solder/   ...
+└── 42/              (same layout)
+```
+
+Pick your key count, then the folder matching your switches and mounting, and print
+the `left` and `right` pair from it.
+
+- **`38` / `42`**: key configuration, matching the breakoff pinky column.
+- **`v1` / `v2`**: which Choc switch you are using. A v2 switch has a wider, deeper
   centre boss (Ø4.8 x 3.3mm) and one extra corner stabilizer pin. That boss is long
   enough that its clearance passes through the floor, so a `v2` case has a hole under
   each key; a `v1` case does not, and its centre pockets are blind. A `v2` case will
   also take v1 switches if you want one case for both.
-- **`38` / `42`** - key configuration, matching the breakoff pinky column.
-- **`kickstand`** - optional, adds a wedge for tenting.
+- **`socket`**: required if you install hotswap sockets. The floor is relieved all
+  the way through under each socket, which stands 1.95mm off the back of the PCB.
+- **`solder`**: only for switches soldered directly to the PCB. It has just 1.15mm
+  of relief, so a board with hotswap sockets will not seat in it.
+- **`kickstand`**: optional, adds a wedge for tenting.
 
 Top plates are also available as `top_plate_<38|42>_stealth` gerbers: the same plate
 without the white silkscreen branding, leaving the lettering as an outline in the
@@ -98,63 +112,66 @@ ground plane.
 
 **For home 3D printing:**
 
-- Material: Matte PLA
+- Material: matte PLA
 - Layer height: 0.12mm
-- Infill: Not critical (walls are thin)
+- Infill: not critical, since the walls are thin
 
-**For JLC 3D printing service:**
+**For JLC's 3D printing service:**
 
-- 3D Technology: MJF (Nylon)
-- Material: PA11-HP Nylon (verified to work well for cases and keycaps)
+- Technology: MJF (nylon)
+- Material: PA11-HP nylon, verified to work well for cases and keycaps
 
-> Note: Other materials would likely work well also
+> [!NOTE]
+> Other materials likely print fine too; these are just the ones tested.
 
-> Alternatively, use the Gerber files in [`gerbers/`](/gerbers/) to order FR-4 switch plates along with your PCB. Files are provided for top plates, back plates, and MCU covers for all configurations.
+Alternatively, the gerbers in [`gerbers/`](/gerbers/) cover FR-4 switch plates you can order alongside your PCB: top plates, back plates, and MCU covers for every configuration.
 
 ## Optional Tools
 
 | Tool | Purpose | Source | Image |
 |------|---------|--------|-------|
-| NovelLife Heat Set Insert Tool | Makes installing heat set inserts easier with soldering iron | Amazon | <img src="/assets/bom/heatset_insert_tool.jpg" width="100" alt="Heat set insert tool"> |
+| NovelLife Heat-Set Insert Tool | Drives heat-set inserts with a soldering iron | Amazon | <img src="/assets/bom/heatset_insert_tool.jpg" width="100" alt="Heat-set insert tool"> |
 | Flux Pen | Helps solder flow nicely, especially for jumpers | [KEEBD](https://keebd.com/en-us/products/kester-951-no-clean-solder-flux-pen) | <img src="/assets/bom/flux_pen.jpg" width="100" alt="Flux pen"> |
 
 ## Where to Buy
 
-- [KEEBD](https://keebd.com/) - nice!nano, nice!view, switches, sockets, encoders, and other components
-- [Typeractive](https://typeractive.xyz/) - Alternative source for keyboard components
-- **Amazon** - Good for heat set inserts, screws, and general hardware
-- **AliExpress** - Budget alternative for many components (longer shipping times)
+- [KEEBD](https://keebd.com/): nice!nano, nice!view, switches, sockets, encoders, and most other components
+- [Typeractive](https://typeractive.xyz/): most of the same parts
+- Amazon: heat-set inserts, screws, and general hardware
+- AliExpress: cheaper on most components, with longer shipping
 
 ### PCB Manufacturing
 
-- **[JLCPCB](https://jlcpcb.com/)** - Affordable PCB manufacturing with optional assembly service
-- **[PCBWay](https://www.pcbway.com/)** - Alternative PCB manufacturer
+- [JLCPCB](https://jlcpcb.com/): inexpensive, with an optional assembly service
+- [PCBWay](https://www.pcbway.com/): the usual alternative
 
 Use the gerber files in [`gerbers/`](/gerbers/) when ordering.
 
-> **Tip:** Here's how different PCB colors look from JLCPCB:
+> [!TIP]
+> Here is how JLCPCB's PCB colors look:
 >
 > <img src="/assets/bom/pcb_colors.webp" width="400" alt="PCB color options">
 
 #### JLCPCB Assembly (Optional)
 
-JLCPCB can pre-assemble SMD components onto your PCBs. This includes:
+JLCPCB can pre-assemble the SMD parts onto your PCBs:
 
-- **SMD Diodes** - Saves hand-soldering 21 tiny components per board
-- **Jumpers** - 30 0-ohm resistors per board can bridge the solder jumper pads for MCU, display, and battery connections (eliminating manual jumper soldering)
+- 21 diodes per board, so none of them need hand-soldering
+- 30 0-ohm resistors per board, bridging the solder jumper pads for the MCU, display, and battery connections
 
 To use this service:
 
 1. Select "PCB Assembly" when ordering
 2. Upload files from [`jlcpcb/`](/jlcpcb/):
-   - `temporal_BOM.csv` - Bill of Materials with LCSC part numbers
-   - `temporal_CPL_top.csv` - places parts on the top face, giving the **right** half
-     (its top silkscreen reads "Back Right" above the MCU area)
-   - `temporal_CPL_bottom.csv` - places parts on the bottom face, giving the **left**
-     half ("Back Left")
+   - `temporal_BOM.csv`: the bill of materials, with LCSC part numbers
+   - `temporal_CPL_top.csv`: places parts on the top face, giving the **right**
+     half (its top silkscreen reads "Back Right" above the MCU area)
+   - `temporal_CPL_bottom.csv`: places parts on the bottom face, giving the
+     **left** half ("Back Left")
 
 You need one board of each hand, and assembly is ordered per side, so place two
-orders - one per CPL file. A single order using one CPL gives you two identical
+orders, one per CPL file. A single order using one CPL gives you two identical
 halves.
 
-Note: Hotswap sockets are not included in assembly files because JLCPCB cannot assemble them.
+> [!NOTE]
+> Hotswap sockets are absent from the assembly files because JLCPCB cannot place them.

@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 /**
- * Setup KiCad project files (.kicad_pro) with defaults from scripts/kicad_config.yaml
- *
- * This script creates or updates .kicad_pro files with design defaults, ensuring
- * consistent settings across all PCB projects.
+ * Write the .kicad_pro and .kicad_dru beside each board from the defaults in
+ * scripts/kicad_config.yaml, so every project carries the same settings.
  *
  * Usage:
  *   node scripts/setup_kicad_project.js [pcb_path]
  *
- * If no path is provided, processes all .kicad_pcb files in pcbs/ directory.
+ * With no path, processes every .kicad_pcb under pcbs/.
  */
 
 const fs = require('fs');
@@ -18,7 +16,7 @@ const { writeDrcRules } = require('./drc_rules');
 const { loadKicadConfig, CONFIG_PATH: KICAD_CONFIG_PATH } = require('./kicad_config');
 
 /**
- * Get base .kicad_pro structure with all required sections.
+ * The base .kicad_pro structure, with every required section present.
  */
 function getBaseProjectStructure(projectName) {
   return {
@@ -296,9 +294,6 @@ function sortKeys(object) {
   return Object.fromEntries(Object.entries(object).sort(([a], [b]) => a.localeCompare(b)));
 }
 
-/**
- * Create a net class structure from config.
- */
 function createNetClass(name, config, isDefault = false) {
   return {
     bus_width: 12,
@@ -363,9 +358,6 @@ function required(section, key, sectionName) {
   return value;
 }
 
-/**
- * Apply defaults from config to project data.
- */
 function applyDefaultsToProject(projectData, config) {
   // Rebuild the net classes from config so a class removed from the YAML also
   // disappears from an existing .kicad_pro, while keeping any field KiCad itself
@@ -388,7 +380,6 @@ function applyDefaultsToProject(projectData, config) {
       merge(createNetClass(netClassConfig.name ?? 'Unknown', netClassConfig, false)))
   ];
 
-  // Apply netclass assignment patterns
   const netclassPatterns = config.netclass_patterns ?? [];
   if (netclassPatterns.length > 0) {
     projectData.net_settings.netclass_patterns = netclassPatterns.map(p => ({
@@ -397,14 +388,12 @@ function applyDefaultsToProject(projectData, config) {
     }));
   }
 
-  // Apply design rules
   const rules = config.design_rules ?? {};
   const projectRules = projectData.board.design_settings.rules;
   for (const key of DESIGN_RULE_KEYS) {
     projectRules[key] = required(rules, key, 'design_rules');
   }
 
-  // Apply board defaults
   const boardDefaults = config.board_defaults ?? {};
   const projectDefaults = projectData.board.design_settings.defaults;
   for (const key of BOARD_DEFAULT_KEYS) {
@@ -415,9 +404,6 @@ function applyDefaultsToProject(projectData, config) {
   return projectData;
 }
 
-/**
- * Create or update a .kicad_pro file with defaults.
- */
 function setupProjectFile(pcbPath, config) {
   if (!pcbPath.endsWith('.kicad_pcb')) {
     console.error(`Error: not a .kicad_pcb file: ${pcbPath}`);
@@ -429,11 +415,9 @@ function setupProjectFile(pcbPath, config) {
     return false;
   }
 
-  // Determine project file path
   const projectPath = pcbPath.replace(/\.kicad_pcb$/, '.kicad_pro');
   const projectName = path.basename(pcbPath, '.kicad_pcb');
 
-  // Load existing project or create new one
   let projectData;
   if (fs.existsSync(projectPath)) {
     const content = fs.readFileSync(projectPath, 'utf-8');
@@ -442,10 +426,8 @@ function setupProjectFile(pcbPath, config) {
     projectData = getBaseProjectStructure(projectName);
   }
 
-  // Apply defaults
   projectData = applyDefaultsToProject(projectData, config);
 
-  // Write project file
   fs.writeFileSync(projectPath, JSON.stringify(projectData, null, 2), 'utf-8');
 
   writeDrcRules(pcbPath, config.custom_rules ?? []);
@@ -453,19 +435,14 @@ function setupProjectFile(pcbPath, config) {
   return true;
 }
 
-/**
- * Main entry point.
- */
 async function main() {
   const config = loadKicadConfig();
 
-  // If a specific PCB path is provided, process only that one
   if (process.argv.length > 2) {
     if (!setupProjectFile(process.argv[2], config)) {
       process.exit(1);
     }
   } else {
-    // Process all .kicad_pcb files in pcbs/ directory
     const pcbsDir = 'pcbs';
 
     if (!fs.existsSync(pcbsDir)) {
@@ -473,7 +450,6 @@ async function main() {
       process.exit(1);
     }
 
-    // Find all .kicad_pcb files
     const pcbFiles = await glob(`${pcbsDir}/*/*.kicad_pcb`, { ignore: '**/_autosave-*' });
 
     if (pcbFiles.length === 0) {

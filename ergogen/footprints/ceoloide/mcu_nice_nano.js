@@ -130,6 +130,7 @@ module.exports = {
     show_via_labels: true,
 
     label_font_face: "",
+    label_font_bold: false,
     label_font_size: 1,
     label_font_thickness: 0.15,
     via_label_font_size: 0.5,
@@ -227,7 +228,8 @@ module.exports = {
       const size = is_via_label ? p.via_label_font_size : p.label_font_size;
       const thickness = is_via_label ? p.via_label_font_thickness : p.label_font_thickness;
       const face = p.label_font_face != "" ? ` (face "${p.label_font_face}")` : "";
-      return `(font${face} (size ${size} ${size}) (thickness ${thickness}))`;
+      const bold = p.label_font_bold ? " (bold yes)" : "";
+      return `(font${face} (size ${size} ${size}) (thickness ${thickness})${bold})`;
     };
 
     const gen_traces_row = (row_num) => {

@@ -1448,7 +1448,7 @@ cases:
     - -_full_depth_cutouts
     - -_diode_depth_cutouts
 
-  _temporal_socket_42_left:
+  _temporal_42_socket_left:
     - +_temporal_42_1
     - -_pin_depth_cutouts
     - -_socket_choc_depth_cutouts_left
@@ -1456,11 +1456,11 @@ cases:
     - -_socket_full_depth_cutouts_left
     - -_socket_full_depth_pinky_cutouts_left
 
-  temporal_socket_v1_42_left:
-    - +_temporal_socket_42_left
+  temporal_42_v1_socket_left:
+    - +_temporal_42_socket_left
 
-  temporal_socket_v2_42_left:
-    - +_temporal_socket_42_left
+  temporal_42_v2_socket_left:
+    - +_temporal_42_socket_left
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_full_depth_pinky_cutouts
@@ -1468,7 +1468,7 @@ cases:
     - -_choc_v2_pin_depth_cutouts_left
     - -_choc_v2_pin_depth_pinky_cutouts_left
 
-  _temporal_socket_42_m_right:
+  _temporal_42_socket_m_right:
     - +_temporal_42_1
     - -_pin_depth_cutouts
     - -_socket_choc_depth_cutouts_m_right
@@ -1476,11 +1476,11 @@ cases:
     - -_socket_full_depth_cutouts_m_right
     - -_socket_full_depth_pinky_cutouts_m_right
 
-  temporal_socket_v1_42_m_right:
-    - +_temporal_socket_42_m_right
+  temporal_42_v1_socket_m_right:
+    - +_temporal_42_socket_m_right
 
-  temporal_socket_v2_42_m_right:
-    - +_temporal_socket_42_m_right
+  temporal_42_v2_socket_m_right:
+    - +_temporal_42_socket_m_right
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_full_depth_pinky_cutouts
@@ -1488,18 +1488,18 @@ cases:
     - -_choc_v2_pin_depth_cutouts_m_right
     - -_choc_v2_pin_depth_pinky_cutouts_m_right
 
-  _temporal_solder_42_left:
+  _temporal_42_solder_left:
     - +_temporal_42_1
     - -_solder_pin_depth_cutouts_left
     - -_solder_pin_depth_pinky_cutouts_left
     - -_choc_depth_cutouts
     - -_choc_depth_pinky_cutouts
 
-  temporal_solder_v1_42_left:
-    - +_temporal_solder_42_left
+  temporal_42_v1_solder_left:
+    - +_temporal_42_solder_left
 
-  temporal_solder_v2_42_left:
-    - +_temporal_solder_42_left
+  temporal_42_v2_solder_left:
+    - +_temporal_42_solder_left
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_full_depth_pinky_cutouts
@@ -1507,18 +1507,18 @@ cases:
     - -_choc_v2_pin_depth_cutouts_left
     - -_choc_v2_pin_depth_pinky_cutouts_left
 
-  _temporal_solder_42_m_right:
+  _temporal_42_solder_m_right:
     - +_temporal_42_1
     - -_solder_pin_depth_cutouts_m_right
     - -_solder_pin_depth_pinky_cutouts_m_right
     - -_choc_depth_cutouts
     - -_choc_depth_pinky_cutouts
 
-  temporal_solder_v1_42_m_right:
-    - +_temporal_solder_42_m_right
+  temporal_42_v1_solder_m_right:
+    - +_temporal_42_solder_m_right
 
-  temporal_solder_v2_42_m_right:
-    - +_temporal_solder_42_m_right
+  temporal_42_v2_solder_m_right:
+    - +_temporal_42_solder_m_right
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_full_depth_pinky_cutouts
@@ -1532,37 +1532,37 @@ cases:
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
 
-  temporal_socket_v1_42_kickstand_left:
+  temporal_42_v1_socket_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_socket_v1_42_left
+    - +temporal_42_v1_socket_left
 
-  temporal_socket_v1_42_kickstand_m_right:
+  temporal_42_v1_socket_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_socket_v1_42_m_right
+    - +temporal_42_v1_socket_m_right
 
-  temporal_socket_v2_42_kickstand_left:
+  temporal_42_v1_solder_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_socket_v2_42_left
+    - +temporal_42_v1_solder_left
 
-  temporal_socket_v2_42_kickstand_m_right:
+  temporal_42_v1_solder_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_socket_v2_42_m_right
+    - +temporal_42_v1_solder_m_right
 
-  temporal_solder_v1_42_kickstand_left:
+  temporal_42_v2_socket_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_solder_v1_42_left
+    - +temporal_42_v2_socket_left
 
-  temporal_solder_v1_42_kickstand_m_right:
+  temporal_42_v2_socket_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_solder_v1_42_m_right
+    - +temporal_42_v2_socket_m_right
 
-  temporal_solder_v2_42_kickstand_left:
+  temporal_42_v2_solder_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_solder_v2_42_left
+    - +temporal_42_v2_solder_left
 
-  temporal_solder_v2_42_kickstand_m_right:
+  temporal_42_v2_solder_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_solder_v2_42_m_right
+    - +temporal_42_v2_solder_m_right
 
   top_plate_42:
     - what: outline
@@ -1578,60 +1578,60 @@ cases:
     - -_full_depth_cutouts
     - -_diode_depth_cutouts
 
-  _temporal_socket_38_left:
+  _temporal_38_socket_left:
     - +_temporal_38_1
     - -_pin_depth_cutouts
     - -_socket_choc_depth_cutouts_left
     - -_socket_full_depth_cutouts_left
 
-  temporal_socket_v1_38_left:
-    - +_temporal_socket_38_left
+  temporal_38_v1_socket_left:
+    - +_temporal_38_socket_left
 
-  temporal_socket_v2_38_left:
-    - +_temporal_socket_38_left
+  temporal_38_v2_socket_left:
+    - +_temporal_38_socket_left
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_pin_depth_cutouts_left
 
-  _temporal_socket_38_m_right:
+  _temporal_38_socket_m_right:
     - +_temporal_38_1
     - -_pin_depth_cutouts
     - -_socket_choc_depth_cutouts_m_right
     - -_socket_full_depth_cutouts_m_right
 
-  temporal_socket_v1_38_m_right:
-    - +_temporal_socket_38_m_right
+  temporal_38_v1_socket_m_right:
+    - +_temporal_38_socket_m_right
 
-  temporal_socket_v2_38_m_right:
-    - +_temporal_socket_38_m_right
+  temporal_38_v2_socket_m_right:
+    - +_temporal_38_socket_m_right
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_pin_depth_cutouts_m_right
 
-  _temporal_solder_38_left:
+  _temporal_38_solder_left:
     - +_temporal_38_1
     - -_solder_pin_depth_cutouts_left
     - -_choc_depth_cutouts
 
-  temporal_solder_v1_38_left:
-    - +_temporal_solder_38_left
+  temporal_38_v1_solder_left:
+    - +_temporal_38_solder_left
 
-  temporal_solder_v2_38_left:
-    - +_temporal_solder_38_left
+  temporal_38_v2_solder_left:
+    - +_temporal_38_solder_left
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_pin_depth_cutouts_left
 
-  _temporal_solder_38_m_right:
+  _temporal_38_solder_m_right:
     - +_temporal_38_1
     - -_solder_pin_depth_cutouts_m_right
     - -_choc_depth_cutouts
 
-  temporal_solder_v1_38_m_right:
-    - +_temporal_solder_38_m_right
+  temporal_38_v1_solder_m_right:
+    - +_temporal_38_solder_m_right
 
-  temporal_solder_v2_38_m_right:
-    - +_temporal_solder_38_m_right
+  temporal_38_v2_solder_m_right:
+    - +_temporal_38_solder_m_right
     - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
     - -_choc_v2_pin_depth_cutouts_m_right
@@ -1642,37 +1642,37 @@ cases:
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
 
-  temporal_socket_v1_38_kickstand_left:
+  temporal_38_v1_socket_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_socket_v1_38_left
+    - +temporal_38_v1_socket_left
 
-  temporal_socket_v1_38_kickstand_m_right:
+  temporal_38_v1_socket_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_socket_v1_38_m_right
+    - +temporal_38_v1_socket_m_right
 
-  temporal_socket_v2_38_kickstand_left:
+  temporal_38_v1_solder_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_socket_v2_38_left
+    - +temporal_38_v1_solder_left
 
-  temporal_socket_v2_38_kickstand_m_right:
+  temporal_38_v1_solder_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_socket_v2_38_m_right
+    - +temporal_38_v1_solder_m_right
 
-  temporal_solder_v1_38_kickstand_left:
+  temporal_38_v2_socket_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_solder_v1_38_left
+    - +temporal_38_v2_socket_left
 
-  temporal_solder_v1_38_kickstand_m_right:
+  temporal_38_v2_socket_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_solder_v1_38_m_right
+    - +temporal_38_v2_socket_m_right
 
-  temporal_solder_v2_38_kickstand_left:
+  temporal_38_v2_solder_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_solder_v2_38_left
+    - +temporal_38_v2_solder_left
 
-  temporal_solder_v2_38_kickstand_m_right:
+  temporal_38_v2_solder_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_solder_v2_38_m_right
+    - +temporal_38_v2_solder_m_right
 
   top_plate_38:
     - what: outline
@@ -1749,6 +1749,7 @@ pcbs:
           label_font_face: "Maple Mono NF"
           label_font_size: 1.1
           label_font_thickness: silk_line_width
+          label_font_bold: true
           P4: row_top
           P5: row_home
           P6: row_bottom
@@ -1785,6 +1786,7 @@ pcbs:
           include_traces_vias: true
           label_font_face: "Maple Mono NF"
           label_font_thickness: silk_line_width
+          label_font_bold: true
           trace_width: copper_battery_trace_width
           via_size: copper_via_diameter
           via_drill: copper_via_drill
@@ -1818,10 +1820,11 @@ pcbs:
           shift: [0, -0.5cy - 2.9]
         params:
           text: "Temporal"
-          height: 2.2
-          width: 2.2
+          height: 2
+          width: 2
           face: "Maple Mono NF"
           thickness: silk_line_width
+          bold: true
           reversible: true
 
       curbol:
@@ -1835,6 +1838,7 @@ pcbs:
           width: 1.2
           face: "Maple Mono NF"
           thickness: silk_line_width
+          bold: true
           reversible: true
 
       hole_1:

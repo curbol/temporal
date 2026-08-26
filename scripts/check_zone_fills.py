@@ -23,7 +23,7 @@ import sys
 import os
 import json
 
-# Suppress wxWidgets debug messages
+# Suppress wxWidgets sizer flag assertions
 os.environ["WXSUPPRESS_SIZER_FLAGS_CHECK"] = "1"
 
 try:
@@ -40,6 +40,7 @@ except ImportError:
 if hasattr(wx, "Log"):
     wx.Log.SetLogLevel(0)
 
+# pcbnew needs a wx.App even when nothing is displayed
 app = wx.App()
 
 # Relative area change treated as the same pour

@@ -2,12 +2,12 @@
 
 ![License](https://img.shields.io/badge/License-CERN--OHL--P--2.0-blue)
 
-A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff pinky column and optional encoders in the thumb cluster.
+A 36-42 key split ergonomic keyboard with wireless support, a breakoff pinky column, and optional encoders in the thumb cluster.
 
 ![Temporal Preview](assets/preview.svg)
 
-<img src="assets/temporal_tilt_shot.jpg" alt="Temporal tilt shot">
-<img src="assets/temporal_angle_shot.jpg" alt="Temporal angle shot">
+![Temporal tilt shot](assets/temporal_tilt_shot.jpg)
+![Temporal angle shot](assets/temporal_angle_shot.jpg)
 
 ## Design
 
@@ -20,41 +20,37 @@ A 36-42 key split ergonomic keyboard with wireless support. Features a breakoff 
 
 ### Hardware
 
-- Kailh Choc v1 or v2 low-profile switches with hotswap sockets
-- nice!nano or Pro Micro compatible microcontrollers
+- Kailh Choc v1 or v2 low-profile switches, with optional hotswap sockets
+- nice!nano or other Pro Micro compatible microcontrollers
 - Optional nice!view display
 - Optional EC11/EC12 rotary encoders in thumb cluster (up to 2)
 - Wireless with battery support
 - Reversible PCB
-- 3D printable cases with optional kickstand for tenting
+- 3D-printable cases, with an optional kickstand for tenting
 
 ### Tools
 
-- [Ergogen](https://ergogen.ceoloide.com/) generates the layout, PCB, plates and cases ([config.yaml](./ergogen/config.yaml))
-- [KiCad](https://www.kicad.org/) v10 for via stitching and traces
+- [Ergogen](https://ergogen.ceoloide.com/) generates the layout, PCB, plates, and cases from [ergogen/config.yaml](ergogen/config.yaml)
+- [KiCad](https://www.kicad.org/) v10 holds the hand-routed traces; its `pcbnew` API and `kicad-cli` drive the scripted post-processing and the exports
 
 ## Firmware
 
-Temporal is designed to be used with ZMK. [You can find the ZMK-config repository and keymap here.](https://github.com/curbol/temporal-zmk)
+Temporal runs [ZMK](https://zmk.dev/). The shield definition and default keymap live in [temporal-zmk](https://github.com/curbol/temporal-zmk); [curbol/zmk-config](https://github.com/curbol/zmk-config) is a working config that uses it.
 
 ## Build Guide
 
-See [docs/build-guide.md](/docs/build-guide.md) for assembly instructions and ordering information.
-
-For a complete list of components needed, see [docs/bom.md](/docs/bom.md).
+[docs/build-guide.md](docs/build-guide.md) covers assembly and ordering. [docs/bom.md](docs/bom.md) lists every component a full build needs.
 
 ## Keycaps
 
-Temporal uses Kailh Choc v1 or v2 low-profile switches. For keycaps, you can use:
-
-- [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps/tree/master) - 3D printable keycap files designed for Choc switches
+Any Choc-compatible keycap fits. [KLP Lame Keycaps](https://github.com/braindefender/KLP-Lame-Keycaps) are 3D-printable and sculpted; [docs/bom.md](docs/bom.md#switches--keycaps) lists the print quantities for a full build.
 
 ## Development
 
 ### Prerequisites
 
 - Node.js and npm
-- A package manager `make deps` can drive: [Homebrew](https://brew.sh/) on macOS, `pacman` and `yay` on Arch Linux
+- A package manager `make deps` can drive: [Homebrew](https://brew.sh/) on macOS, or `pacman` and `yay` on Arch Linux
 
 ### Setup
 
@@ -79,7 +75,7 @@ This will:
 - Configure KiCad project files with defaults from `scripts/kicad_config.yaml`
 - Derive the `top_plate_*_stealth` variants from the generated top plates
 - Render `assets/preview.svg` and a `pcb.png` per board
-- Export Gerbers for manufacturing
+- Export gerbers for manufacturing
 - Generate the JLCPCB BOM and CPL files in `jlcpcb/`
 - Generate STL case files
 
@@ -91,11 +87,11 @@ This will:
 make check
 ```
 
-Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, the pours in `pcbs/` still match the custom DRC rules, and every committed derived artifact still reproduces from its source: `temporal.json`, `jlcpcb/`, the `.kicad_pro` and `.kicad_dru` files, and the gerber zips. This is what CI runs on every push.
+Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, and the pours in `pcbs/` still match the custom DRC rules. It then regenerates each committed derived artifact and diffs it against what is checked in: `temporal.json`, `jlcpcb/`, the `.kicad_pro` and `.kicad_dru` files, and the gerber zips. This is what CI runs on every push.
 
 ## Influences
 
-Temporal is inspired by and takes influence from:
+Temporal takes influence from:
 
 - [Hillside](https://github.com/mmccoyd/hillside) by mmccoyd
 - [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) and [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST

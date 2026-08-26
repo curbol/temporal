@@ -103,7 +103,7 @@ matter.
 Use `feature-dev:code-reviewer` sub-agents to review the scoped files. Split
 by area so agents run in parallel:
 
-- **Geometry source of truth** — `ergogen/config.yaml`. The single place all
+- **Geometry source of truth**: `ergogen/config.yaml`. The single place all
   board, plate, and case geometry is authored, ordered `units` (lines 24-152)
   → `points` (157-239) → `outlines` (244-1148) → `cases` (1149-1437) → `pcbs`
   (1438-1713). What goes wrong here: a literal dimension written inline where
@@ -112,7 +112,7 @@ by area so agents run in parallel:
   variants of the same part drifting apart; an intermediate that lost its
   leading `_` and now leaks into output.
 
-- **PCB post-processing pipeline** — `Makefile`, `scripts/kicad_config.js`,
+- **PCB post-processing pipeline**: `Makefile`, `scripts/kicad_config.js`,
   `scripts/ergogen_config.js`, `scripts/fix_edge_cuts.js`,
   `scripts/fix_silkscreen_width.js`, `scripts/add_ground_planes.js`,
   `scripts/create_text_keepouts.js`, `scripts/create_text_keepouts.py`,
@@ -131,7 +131,7 @@ by area so agents run in parallel:
   half-processed board that later steps treat as good; a write that reaches
   the hand-routed board.
 
-- **Derived artifacts and manufacturing outputs** —
+- **Derived artifacts and manufacturing outputs**:
   `scripts/generate_jlcpcb_files.js`, `scripts/generate_layout.js`,
   `scripts/convert_jscad.js`, `scripts/convert_svg_to_footprint.js`, the
   `gerbers` / `assembly` / `convert` Makefile targets,
@@ -143,7 +143,7 @@ by area so agents run in parallel:
   `points.zones`; documented quantities that no longer match the generated
   BOM.
 
-- **Locally patched vendored footprints** —
+- **Locally patched vendored footprints**:
   `ergogen/footprints/ceoloide/switch_choc_v1_v2.js`, `mcu_nice_nano.js`,
   `display_nice_view.js`, `battery_connector_jst_ph_2.js`,
   `power_switch_smd_side.js`, `reset_switch_smd_side.js`,
@@ -254,7 +254,7 @@ the module docstrings of `scripts/drc_rules.js` (lines 2-7),
    clean target that removes the directory; a `pcbnew.SaveBoard` reachable
    with a path under `pcbs/`.
    *Check:* `scripts/copy_pcb_if_missing.sh:29` (the `[ ! -f ]` guard) and
-   `Makefile:229` (the `! -name temporal` exclusion in `clean`). Then grep
+   `Makefile:272` (the `! -name temporal` exclusion in `clean`). Then grep
    every script for writes whose path can resolve under `pcbs/temporal/`.
    Note that `check_zone_fills.py` deliberately refills in memory and writes
    nothing back (`:9-13`, `:62-64`); confirm that is still true.
@@ -351,7 +351,7 @@ the module docstrings of `scripts/drc_rules.js` (lines 2-7),
    `scripts/embed_fonts.py:49-65` (the `embedded_fonts` flag) and `:68-90`;
    `scripts/create_stealth_variants.js:100-130` (dropping the fonts once no
    text names a face). `make check` already decides whether a board that names
-   a face embeds a font (`Makefile:190-202`), so do not restate that as a
+   a face embeds a font (`Makefile:194-207`), so do not restate that as a
    prose finding.
 
 **Correctness**
@@ -580,7 +580,7 @@ would reduce the surface or just move it.
 
 This repo has no test suite and no test framework, and for most of it that is
 the right call: the verification that matters is DRC on the generated boards
-and a visual check in a slicer. `make check` (`Makefile:174-221`) is the
+and a visual check in a slicer. `make check` (`Makefile:173-264`) is the
 harness, and a new mechanical check belongs there rather than in a unit test
 runner. Do not propose a test framework for the KiCad-mutating scripts.
 
@@ -671,7 +671,7 @@ boundaries, which no single agent could do:
    sync; check whether any *other* shared dimension needs the same treatment.
 
 2. **Pipeline ordering (invariant 2).** Read the `gen` target at
-   `Makefile:83-133` in order, then open each script it names and write down
+   `Makefile:83-134` in order, then open each script it names and write down
    what state that script assumes on entry and what it leaves on exit.
    Confirm the chain has no gap: that `fix_edge_cuts` runs before
    `add_ground_planes` needs a clean outline; that `fix_silkscreen_width` runs
@@ -691,7 +691,7 @@ boundaries, which no single agent could do:
    and `copy_pcb_if_missing.sh` for writes whose path can resolve under
    `pcbs/temporal/`, including `pcbnew.SaveBoard` calls in the Python scripts.
    Enumerate them and confirm each targets only `.kicad_pro` or `.kicad_dru`,
-   never `.kicad_pcb`. Then read `Makefile:224-229` and confirm `clean` cannot
+   never `.kicad_pcb`. Then read `Makefile:266-272` and confirm `clean` cannot
    remove the directory, including when `PCBS_DIR` is overridden on the
    command line, since the `! -name temporal` exclusion is now a literal
    rather than a variable.
@@ -741,7 +741,7 @@ boundaries, which no single agent could do:
    `thickness` / `label_font_thickness` reference, into
    `fix_silkscreen_width.js`'s widening pass, and into
    `scripts/kicad_config.yaml`'s `board_defaults.silk_line_width`,
-   `silk_text_thickness` and `design_rules.min_text_thickness` — three places
+   `silk_text_thickness`, and `design_rules.min_text_thickness`: three places
    that hold the same floor and are typed separately from the unit. Then
    follow one text item from its `face:` in the config, through
    `embed_fonts.py`, into a committed board's `(embedded_files ...)` block,

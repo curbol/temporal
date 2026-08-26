@@ -19,10 +19,6 @@ const PCBS_DIR = path.join(__dirname, '..', 'pcbs');
 const SOURCE_PCBS = pcbNames().filter(name => name.startsWith('top_plate_'));
 const SILKSCREEN_LAYERS = ['F.SilkS', 'B.SilkS'];
 
-/**
- * Parse S-expression and extract balanced block starting at given index.
- * Returns the end index (after closing paren) and the extracted content.
- */
 function extractSexpBlock(content, startIndex) {
   if (content[startIndex] !== '(') {
     return null;
@@ -49,12 +45,8 @@ function extractSexpBlock(content, startIndex) {
   return null;
 }
 
-/**
- * Check if a gr_text block is on a silkscreen layer.
- */
 function isOnSilkscreenLayer(block) {
   for (const layer of SILKSCREEN_LAYERS) {
-    // Look for (layer "F.SilkS") or (layer "B.SilkS")
     if (block.includes(`(layer "${layer}")`) || block.includes(`(layer ${layer})`)) {
       return true;
     }
@@ -62,16 +54,12 @@ function isOnSilkscreenLayer(block) {
   return false;
 }
 
-/**
- * Remove silkscreen gr_text elements from PCB content.
- */
 function removeSilkscreenText(content) {
   let result = '';
   let i = 0;
   let removedCount = 0;
 
   while (i < content.length) {
-    // Look for gr_text start
     const grTextMatch = content.slice(i).match(/^(\s*)\(gr_text\s/);
 
     if (grTextMatch) {
@@ -80,10 +68,9 @@ function removeSilkscreenText(content) {
       const extracted = extractSexpBlock(content, blockStart);
 
       if (extracted && isOnSilkscreenLayer(extracted.block)) {
-        // Skip this gr_text block (and its leading whitespace)
+        // The leading whitespace is dropped too, having never been copied out.
         i = extracted.endIndex;
         removedCount++;
-        // Also consume trailing newline if present
         if (content[i] === '\n') {
           i++;
         }
@@ -133,42 +120,33 @@ function removeEmbeddedFonts(content) {
   return content.replace('(embedded_fonts yes)', '(embedded_fonts no)');
 }
 
-/**
- * Create stealth variant of a PCB.
- */
 function createStealthVariant(sourceName) {
   const sourceDir = path.join(PCBS_DIR, sourceName);
   const stealthName = `${sourceName}_stealth`;
   const stealthDir = path.join(PCBS_DIR, stealthName);
 
-  // Check source exists
   const sourcePcbPath = path.join(sourceDir, `${sourceName}.kicad_pcb`);
   if (!fs.existsSync(sourcePcbPath)) {
     console.error(`Source PCB not found: ${sourcePcbPath}`);
     return false;
   }
 
-  // Create stealth directory
   if (!fs.existsSync(stealthDir)) {
     fs.mkdirSync(stealthDir, { recursive: true });
   }
 
-  // Read and process PCB
   const pcbContent = fs.readFileSync(sourcePcbPath, 'utf-8');
   const { content: strippedContent, removedCount } = removeSilkscreenText(pcbContent);
   const stealthContent = removeEmbeddedFonts(strippedContent);
 
-  // Write stealth PCB
   const stealthPcbPath = path.join(stealthDir, `${stealthName}.kicad_pcb`);
   fs.writeFileSync(stealthPcbPath, stealthContent);
 
-  // Copy and rename project file if it exists
   const sourceProPath = path.join(sourceDir, `${sourceName}.kicad_pro`);
   if (fs.existsSync(sourceProPath)) {
     const proContent = fs.readFileSync(sourceProPath, 'utf-8');
     const proJson = JSON.parse(proContent);
 
-    // Update filename in meta
     if (proJson.meta && proJson.meta.filename) {
       proJson.meta.filename = `${stealthName}.kicad_pro`;
     }

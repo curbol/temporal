@@ -1,17 +1,20 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Something in the config, build, or hardware does not work
 title: ''
 labels: ''
 assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**What went wrong**
+What you expected and what happened instead.
+
+**Your configuration**
+Key count, switch generation (Choc v1 or v2), socket or solder mounting, and whether you are running `make gen` yourself or using the committed gerbers and STLs.
 
 **Images**
-If applicable, add images to help explain your problem.
+Photos of the board or screenshots of the failure, if they help.
 
 **Additional context**
-Add any other context about the problem here.
+Anything else worth knowing.

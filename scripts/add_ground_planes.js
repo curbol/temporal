@@ -2,8 +2,8 @@
 /**
  * Add GND copper pour zones to KiCad PCB files.
  *
- * Creates filled copper zones on F.Cu and B.Cu layers connected to the GND net,
- * following the board outline from Edge.Cuts layer.
+ * Creates a filled zone on F.Cu and on B.Cu, both tied to the GND net and
+ * bounded by the Edge.Cuts outline.
  */
 
 const fs = require('fs');
@@ -12,9 +12,6 @@ const { ergogenOutputPcbs } = require('./ergogen_config');
 const { randomUUID } = require('crypto');
 const { loadKicadConfig } = require('./kicad_config');
 
-/**
- * Generate a KiCad-compatible UUID.
- */
 function generateUUID() {
   return randomUUID();
 }
@@ -58,10 +55,6 @@ function arcExtremes(start, mid, end) {
   return points;
 }
 
-/**
- * Calculate a rectangular bounding box that covers the entire board.
- * Returns an array of 4 [x, y] coordinate pairs forming a rectangle.
- */
 function calculateBoundingBox(content, margin = 2.0) {
   const linePattern = /\(gr_line\s+\(start\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\)/gs;
   const arcPattern = /\(gr_arc\s+\(start\s+([-\d.]+)\s+([-\d.]+)\)\s+\(mid\s+([-\d.]+)\s+([-\d.]+)\)\s+\(end\s+([-\d.]+)\s+([-\d.]+)\)\s+\(layer\s+Edge\.Cuts\)/gs;
@@ -92,26 +85,20 @@ function calculateBoundingBox(content, margin = 2.0) {
     return [];
   }
 
-  // Calculate bounding box with margin
   const minX = Math.min(...xCoords) - margin;
   const minY = Math.min(...yCoords) - margin;
   const maxX = Math.max(...xCoords) + margin;
   const maxY = Math.max(...yCoords) + margin;
 
-  // Return rectangle as 4 points: bottom-left, bottom-right, top-right, top-left
   return [
-    [minX, minY],  // bottom-left
-    [maxX, minY],  // bottom-right
-    [maxX, maxY],  // top-right
-    [minX, maxY]   // top-left
+    [minX, minY],
+    [maxX, minY],
+    [maxX, maxY],
+    [minX, maxY]
   ];
 }
 
-/**
- * Create a KiCad zone definition with hatch fill pattern.
- */
 function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneConfig) {
-  // Extract values from config
   const clearance = zoneConfig.clearance;
   const minThickness = zoneConfig.min_thickness;
   const thermalGap = zoneConfig.thermal_gap;
@@ -125,7 +112,6 @@ function createZoneDefinition(netNumber, netName, layer, points, tstamp, zoneCon
   const hatchMinHoleArea = zoneConfig.hatch_min_hole_area;
   const displayHatchPitch = zoneConfig.display_hatch_pitch;
 
-  // Format polygon points
   const ptsStr = points.map(([x, y]) => `        (xy ${x} ${y})`).join('\n');
 
   return `  (zone
@@ -163,9 +149,6 @@ ${ptsStr}
 `;
 }
 
-/**
- * Find the highest net number in the PCB file.
- */
 function findHighestNetNumber(content) {
   const netPattern = /\(net\s+(\d+)\s+"[^"]*"\)/g;
   const netNumbers = [];
@@ -177,10 +160,6 @@ function findHighestNetNumber(content) {
   return netNumbers.length > 0 ? Math.max(...netNumbers) : 0;
 }
 
-/**
- * Find the GND net number from the PCB file.
- * Returns [netNumber, netName] or null if not found.
- */
 function findGndNet(content) {
   const netPattern = /\(net\s+(\d+)\s+"GND"\)/i;
   const match = content.match(netPattern);
@@ -193,11 +172,9 @@ function findGndNet(content) {
 }
 
 /**
- * Create a GND net in the PCB file if it doesn't exist.
- * Returns [modifiedContent, netNumber].
+ * Returns [content, netNumber], or [content, null] when the board has no net table.
  */
 function createGndNet(content) {
-  // Find the highest existing net number
   const nextNetNumber = findHighestNetNumber(content) + 1;
 
   // Search only the net table. The same shape appears inside footprint pads, and
@@ -209,11 +186,10 @@ function createGndNet(content) {
   const matches = [...netTable.matchAll(netsPattern)];
 
   if (matches.length === 0) {
-    console.error('Error: Could not find nets section in PCB file');
+    console.error('Error: no nets section in PCB file');
     return [content, null];
   }
 
-  // Insert after the last net definition
   const lastMatch = matches[matches.length - 1];
   const insertPos = lastMatch.index + lastMatch[0].length;
 
@@ -224,33 +200,25 @@ function createGndNet(content) {
   return [modifiedContent, nextNetNumber];
 }
 
-/**
- * Check if GND zones already exist in the file.
- */
 function zonesAlreadyExist(content) {
   const zonePattern = /\(zone.*?\(net_name\s+"GND"\)/s;
   return zonePattern.test(content);
 }
 
-/**
- * Add GND zones to a KiCad PCB file.
- */
 function processPcbFile(filepath, zoneConfig) {
   let content = fs.readFileSync(filepath, 'utf-8');
 
-  // Check if zones already exist (skip silently)
   if (zonesAlreadyExist(content)) {
     return false;
   }
 
-  // Find or create GND net
   let gndNet = findGndNet(content);
   let netNumber, netName;
 
   if (!gndNet) {
     [content, netNumber] = createGndNet(content);
     if (netNumber === null) {
-      console.error(`Error: Could not create GND net in ${path.basename(filepath)}`);
+      console.error(`Error: could not create a GND net in ${path.basename(filepath)}`);
       return false;
     }
     netName = 'GND';
@@ -258,38 +226,29 @@ function processPcbFile(filepath, zoneConfig) {
     [netNumber, netName] = gndNet;
   }
 
-  // Calculate bounding box around board
   const points = calculateBoundingBox(content, 2.0);
   if (points.length === 0) {
-    console.error(`Error: Could not find Edge.Cuts outline in ${path.basename(filepath)}`);
+    console.error(`Error: no Edge.Cuts outline in ${path.basename(filepath)}`);
     return false;
   }
 
-  // Generate zones for F.Cu and B.Cu
   const frontZone = createZoneDefinition(netNumber, netName, 'F.Cu', points, generateUUID(), zoneConfig);
   const backZone = createZoneDefinition(netNumber, netName, 'B.Cu', points, generateUUID(), zoneConfig);
 
-  // Find the insertion point (before the closing parenthesis)
   const lastParen = content.lastIndexOf(')');
   if (lastParen === -1) {
-    console.error(`Error: Malformed PCB file ${path.basename(filepath)}`);
+    console.error(`Error: malformed PCB file ${path.basename(filepath)}`);
     return false;
   }
 
-  // Insert zones
   const modifiedContent = content.slice(0, lastParen) + `\n${frontZone}\n${backZone}\n` + content.slice(lastParen);
 
-  // Write back
   fs.writeFileSync(filepath, modifiedContent, 'utf-8');
 
   return true;
 }
 
-/**
- * Main entry point.
- */
 function main() {
-  // Load zone configuration from YAML
   const config = loadKicadConfig();
   const zoneConfig = config.zones;
 

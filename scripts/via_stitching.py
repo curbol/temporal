@@ -21,7 +21,7 @@ Exit codes:
 import sys
 import os
 
-# Suppress wxWidgets debug messages
+# Suppress wxWidgets sizer flag assertions
 os.environ["WXSUPPRESS_SIZER_FLAGS_CHECK"] = "1"
 
 try:
@@ -86,18 +86,17 @@ def _version_compat():
 
 pcbnew.Version = _version_compat
 
-# Initialize wxPython application (required for pcbnew API)
+# pcbnew needs a wx.App even when nothing is displayed
 app = wx.App()
 
 
-# Custom log target to capture via count from FillArea
+# FillArea reports its via count only through the wx log.
 class ViaCountLogTarget(wx.Log):
     def __init__(self):
         super().__init__()
         self.via_count = None
 
     def DoLogText(self, msg):
-        # Look for "Done. X vias placed" message
         if "vias placed" in msg:
             import re
 
@@ -114,7 +113,6 @@ try:
     import glob
     import platform
 
-    # Search for ViaStitching plugin across different KiCad versions and platforms
     search_patterns = []
 
     if platform.system() == "Darwin":  # macOS
@@ -139,12 +137,11 @@ try:
             os.path.expanduser("~/.config/kicad/*/scripting/plugins/ViaStitching"),
         ]
 
-    # Find the plugin directory
     via_stitching_dir = None
     for pattern in search_patterns:
         matches = glob.glob(pattern)
         if matches:
-            # Use the first match (or latest version if multiple)
+            # Latest version when several are installed.
             via_stitching_dir = sorted(matches)[-1]
             break
 
@@ -170,7 +167,7 @@ try:
                 f"({_marker}). Re-run 'make deps'."
             )
 except ImportError as e:
-    print(f"Error: Could not import ViaStitching FillArea: {e}", file=sys.stderr)
+    print(f"Error: could not import ViaStitching FillArea: {e}", file=sys.stderr)
     print(
         "Make sure the ViaStitching plugin is installed in KiCad's scripting/plugins directory",
         file=sys.stderr,
@@ -180,28 +177,16 @@ except ImportError as e:
 
 def add_via_stitching(pcb_path, net_name, step_mm, size_mm, drill_mm, clearance_mm):
     """
-    Add via stitching to a KiCad PCB file.
-
-    Args:
-        pcb_path: Path to the .kicad_pcb file
-        net_name: Net name to add vias to
-        step_mm: Spacing between vias in mm
-        size_mm: Via copper diameter in mm
-        drill_mm: Via drill hole diameter in mm
-        clearance_mm: Clearance around vias in mm
-
-    Returns:
-        Number of vias placed on success, -1 on error
+    Number of vias placed, or -1 on error. size_mm is the copper diameter and
+    drill_mm the hole; both are in millimetres, as is step_mm and clearance_mm.
     """
     if not os.path.exists(pcb_path):
         print(f"Error: PCB file not found: {pcb_path}", file=sys.stderr)
         return -1
 
     try:
-        # Reset the via count
         log_target.via_count = None
 
-        # Create FillArea instance and configure it
         filler = FillArea(pcb_path)
         filler.SetNetname(net_name)
         filler.SetStepMM(step_mm)
@@ -209,10 +194,8 @@ def add_via_stitching(pcb_path, net_name, step_mm, size_mm, drill_mm, clearance_
         filler.SetDrillMM(drill_mm)
         filler.SetClearanceMM(clearance_mm)
 
-        # Run via stitching
         filler.Run()
 
-        # Return the captured via count
         return log_target.via_count if log_target.via_count is not None else 0
 
     except Exception as e:

@@ -1,11 +1,7 @@
 #!/usr/bin/env node
 /**
- * Convert SVG to Ergogen JavaScript footprint via KiCad format
- *
- * This script:
- * 1. Uses svg2mod to convert SVG to .kicad_mod format
- * 2. Parses the KiCad footprint to extract polygons
- * 3. Generates an Ergogen-compatible JavaScript footprint
+ * Convert an SVG into an Ergogen JavaScript footprint, by way of svg2mod and
+ * KiCad's .kicad_mod format.
  *
  * Requires svg2mod on PATH (pip install svg2mod). No make target runs this, so
  * `make deps` does not install it.
@@ -22,8 +18,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 const os = require('os');
 
-// Default precision for SVG to footprint conversion
-// Lower values = smoother curves but larger files
+// Lower values give smoother curves and larger files.
 const DEFAULT_PRECISION = 0.25;
 
 function convertSvgToKicad(svgPath, tempKicadPath, name, precision = DEFAULT_PRECISION) {
@@ -47,8 +42,7 @@ function convertSvgToKicad(svgPath, tempKicadPath, name, precision = DEFAULT_PRE
 function extractPolygons(content) {
   const polygons = [];
 
-  // Find all fp_poly blocks - match opening (fp_poly to its closing )
-  // Need to handle nested parentheses properly
+  // Tracks nesting so each fp_poly is taken to its own closing paren.
   let depth = 0;
   let currentPoly = '';
   let inPoly = false;
@@ -69,15 +63,12 @@ function extractPolygons(content) {
       if (char === ')') depth--;
 
       if (depth === 0 && currentPoly.length > 0) {
-        // Extract layer information
         const layerMatch = currentPoly.match(/\(layer\s+([^)]+)\)/);
         const layer = layerMatch ? layerMatch[1] : 'F.SilkS';
 
-        // Extract width if present
         const widthMatch = currentPoly.match(/\(width\s+([\d.]+)\)/);
         const width = widthMatch ? widthMatch[1] : '0';
 
-        // Extract all xy points
         const pointRegex = /\(xy\s+([-\d.]+)\s+([-\d.]+)\)/g;
         const points = [];
         let pointMatch;
@@ -104,7 +95,6 @@ function generateJsFootprint(kicadContent, svgPath, name) {
   const displayName = name.charAt(0).toUpperCase() + name.slice(1);
   const svgRelPath = path.relative(process.cwd(), svgPath);
 
-  // Generate the JavaScript output
   let jsOutput = `// ${displayName} silkscreen artwork
 // Converted from ${svgRelPath} using svg2mod
 //
@@ -166,7 +156,6 @@ module.exports = {
     const polygons_data = [
 `;
 
-  // Add each polygon's points
   polygons.forEach((poly, i) => {
     jsOutput += `      {
         width: ${poly.width},
@@ -292,13 +281,11 @@ function main() {
   const name = args[2] || path.basename(outputPath, '.js');
   const precision = args[3] ? parseFloat(args[3]) : DEFAULT_PRECISION;
 
-  // Verify input file exists
   if (!fs.existsSync(svgPath)) {
-    console.error(`Error: Input file not found: ${svgPath}`);
+    console.error(`Error: input file not found: ${svgPath}`);
     process.exit(1);
   }
 
-  // Create temp file for KiCad conversion
   const tempDir = os.tmpdir();
   const tempKicadPath = path.join(tempDir, `${name}_temp`);
 
@@ -307,23 +294,18 @@ function main() {
   console.log('');
 
   try {
-    // Step 1: Convert SVG to KiCad format
     const kicadPath = convertSvgToKicad(svgPath, tempKicadPath, name, precision);
 
-    // Step 2: Read KiCad file
     const kicadContent = fs.readFileSync(kicadPath, 'utf8');
 
-    // Step 3: Generate JavaScript footprint
     const jsContent = generateJsFootprint(kicadContent, svgPath, name);
 
-    // Step 4: Write output
     const outputDir = path.dirname(outputPath);
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
     fs.writeFileSync(outputPath, jsContent);
 
-    // Step 5: Cleanup temp file
     if (fs.existsSync(kicadPath)) {
       fs.unlinkSync(kicadPath);
     }

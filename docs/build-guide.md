@@ -1,6 +1,6 @@
 # Build Guide
 
-This guide walks through building the Temporal keyboard from start to finish.
+Building a Temporal from bare PCBs to a flashed, working keyboard.
 
 > [!TIP]
 > [Typeractive's Corne wireless build guide](https://docs.typeractive.xyz/build-guides/corne-wireless) covers a similar board and has videos that may be helpful.
@@ -9,7 +9,7 @@ This guide walks through building the Temporal keyboard from start to finish.
 
 ### Key Configuration
 
-Before starting your build, decide on your key configuration (36-42 keys). The outer pinky columns can be snapped off the PCB if not needed, and each encoder replaces one key position in the thumb cluster.
+Decide on your key configuration (36-42 keys) first. The outer pinky columns snap off the PCB if you do not want them, and each encoder replaces one key position in the thumb cluster.
 
 **Available configurations:**
 
@@ -41,7 +41,7 @@ The Temporal PCBs are reversible. Before soldering, decide which PCB will be lef
 - Tweezers
 - Flush cutters / wire snips
 - Kapton tape or masking tape
-- Heat set insert tool (optional, for 3D printed case)
+- Heat-set insert tool (optional, for the 3D-printed case)
 
 ---
 
@@ -49,13 +49,13 @@ The Temporal PCBs are reversible. Before soldering, decide which PCB will be lef
 
 Follow this general order:
 
-1. **Back side first:** Diodes, hotswap sockets, jumpers
-2. **Front side:** Power switch, reset button
-3. **Front side:** MCU sockets, display header, battery connector
-4. **Front side:** Encoder (if using)
-5. **Install microcontroller and display**, then clean the PCB
-6. **Case assembly**
-7. **Switches and keycaps**
+1. Back side: diodes, hotswap sockets, jumpers
+2. Front side: power switch, reset button
+3. Front side: MCU sockets, display header, battery connector
+4. Front side: encoder, if you are fitting one
+5. Microcontroller and display, then clean the PCB
+6. Case assembly
+7. Switches and keycaps
 
 ---
 
@@ -69,7 +69,7 @@ For SMD components (diodes, sockets, jumpers), use this technique:
 
 1. Apply a small amount of solder to **one pad only**
 2. Using tweezers, position the component while heating the pre-soldered pad
-3. The component will sink into the molten solder - hold it in place until the solder solidifies
+3. The component sinks into the molten solder; hold it in place until the solder solidifies
 4. Solder the remaining pad(s), touching both the pad and component lead simultaneously
 
 ### Diodes
@@ -77,7 +77,7 @@ For SMD components (diodes, sockets, jumpers), use this technique:
 > [!NOTE]
 > If the diodes are already installed using JLCPCB assembly, skip this step.
 
-Install one diode per key position (18-21 per half depending on your configuration). Diodes are directional - the line on the diode must match the line on the PCB silkscreen.
+Install one diode per key position, 18-21 per half depending on your configuration. Diodes are directional: the line on the diode must match the line on the PCB silkscreen.
 
 1. Pre-tin one pad of each diode location
 2. Place the diode with the line matching the PCB marking
@@ -86,25 +86,25 @@ Install one diode per key position (18-21 per half depending on your configurati
 
 ### Hotswap Sockets
 
-Install one socket per key position (matching your diode count). Hotswap sockets should only be installed one way. Make sure to match up the side with chamfered corners with the matching silkscreen.
+Install one socket per key position, matching your diode count. Sockets fit one way only: line the chamfered corners up with the silkscreen outline.
 
 <img src="/assets/build_guide/sockets_prepared.jpg" width="400" alt="Hotswap sockets prepared">
 
 1. Pre-tin one pad
 2. Place the socket in the silkscreen outline
 3. Heat and position the socket
-4. Solder the second pad - use enough solder to create a solid connection
+4. Solder the second pad, using enough solder for a solid connection
 
 > [!TIP]
 > Apply gentle pressure while soldering to ensure the socket sits flat against the PCB.
 
 > [!TIP]
-> Install sockets in encoder positions even if using encoders - they don't interfere with the encoder and fill in the socket cutout in the case for a cleaner look.
+> Install sockets in the encoder positions even if you are fitting encoders. They do not interfere, and they fill the socket cutout in the case for a cleaner look.
 
 <img src="/assets/build_guide/sockets_soldered.jpg" width="400" alt="Hotswap sockets soldered">
 
 > [!NOTE]
-> Hotswap sockets are optional. You can solder switches directly to the PCB if you prefer a permanent installation. This saves the cost of sockets but means you cannot swap switches later without desoldering.
+> Hotswap sockets are optional. Soldering switches straight to the PCB saves their cost, at the price of desoldering to change a switch later.
 
 ### Jumpers
 
@@ -131,7 +131,7 @@ These components are soldered to the **front side** of the PCB.
 ### Power Switch (MSK12C02)
 
 > [!TIP]
-> These components have multiple legs - once one leg is tacked down, the rest are easy to solder.
+> These components have multiple legs; once one is tacked down, the rest are easy.
 
 1. Pre-tin one of the pads
 2. Position the switch and heat the pre-tinned pad while holding the switch in place with tweezers
@@ -216,7 +216,7 @@ The encoder has side clips that snap into the PCB, so taping is not necessary.
 
 <img src="/assets/build_guide/enc_prepared.jpg" width="400" alt="Encoder prepared">
 
-1. Insert the encoder from the front - the clips should snap into the mounting holes
+1. Insert the encoder from the front; the clips snap into the mounting holes
 2. Flip the board and solder the 3 encoder pins on the back
 3. Trim the pins
 
@@ -236,9 +236,6 @@ If your encoder has a push-button switch (5 pins total instead of 3):
 ## Step 5: Install the Microcontroller
 
 ### nice!nano Installation
-
-> [!IMPORTANT]
-> The microcontroller will be placed **facing DOWN** (components facing the PCB). Ensure your sockets are positioned correctly.
 
 1. Insert the mill-max pins into the sockets (not into the nice!nano yet)
 2. Place the nice!nano **face down** (components facing the PCB) onto the pins
@@ -273,7 +270,7 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 <img src="/assets/build_guide/pcb_cleaning_complete.jpg" width="400" alt="PCB cleaning complete">
 
 <img src="/assets/build_guide/mcu_cleaned.jpg" width="400" alt="MCU area cleaned">
-(left: after cleaning, right: before cleaning)
+*Left: after cleaning. Right: before cleaning.*
 
 ---
 
@@ -285,15 +282,15 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 2. Use 2 M2 screws (4mm length) from the back of the PCB into the standoffs
 3. Use 2 more M2 screws (4mm length) from the front through the cover into the standoffs
 
-### 3D Printed Case
+### 3D-Printed Case
 
-<img src="/assets/build_guide/heatset_prepared.jpg" width="400" alt="Heat set inserts prepared">
+<img src="/assets/build_guide/heatset_prepared.jpg" width="400" alt="Heat-set inserts prepared">
 
-1. Install 5 heat-set inserts into the case posts using a soldering iron or heat-set tool
+1. Install 5 heat-set inserts into the case posts with a soldering iron or heat-set tool
 
-<img src="/assets/build_guide/heatset_complete.jpg" width="400" alt="Heat set inserts installed">
+<img src="/assets/build_guide/heatset_complete.jpg" width="400" alt="Heat-set inserts installed">
 
-2. Place the PCB into the case - the case posts go through the mounting holes in the PCB
+2. Place the PCB into the case; the case posts go through its mounting holes
 
 <img src="/assets/build_guide/top_plate_prepared.jpg" width="400" alt="Top plate prepared">
 
@@ -308,10 +305,10 @@ After all soldering is complete, clean the board to remove flux residue. Flux le
 
 ### FR-4 Plate Alternative
 
-If using FR-4 plates instead of a 3D printed case:
+If using FR-4 plates instead of a 3D-printed case:
 
 1. Attach the back plate using 3mm standoffs, which clear the 1.95mm hotswap sockets on the back of the PCB
-2. Secure with M2 screws (3mm length) from both faces - longer screws meet inside a 3mm standoff and bottom out
+2. Secure with M2 screws (3mm length) from both faces; longer screws meet inside a 3mm standoff and bottom out
 3. Add the top plate and seat the switches through it into the hotswap sockets
 
 ---
@@ -329,34 +326,25 @@ If using FR-4 plates instead of a 3D printed case:
 
 ## Flashing Firmware
 
-The Temporal uses ZMK firmware for wireless functionality.
+Temporal runs ZMK.
 
 ### Initial Setup
 
 1. Create a ZMK config repository by following the [ZMK User Setup Guide](https://zmk.dev/docs/user-setup)
-
-2. Add the Temporal shield to your config. Use the [temporal-zmk](https://github.com/curbol/temporal-zmk) repository as a shield module.
-
-3. Update your `config/west.yml` to include the Temporal shield:
-
-   See [example west.yml](https://github.com/curbol/zmk-config/blob/main/config/west.yml) for reference.
-
-4. Update your `build.yaml` to build for both halves:
-
-   See [example build.yaml](https://github.com/curbol/zmk-config/blob/main/build.yaml) for reference.
-
-5. Example config structure: [curbol/zmk-config](https://github.com/curbol/zmk-config/tree/main/config)
+2. Add [temporal-zmk](https://github.com/curbol/temporal-zmk) to `config/west.yml` as a shield module ([example](https://github.com/curbol/zmk-config/blob/main/config/west.yml))
+3. List both halves in `build.yaml` ([example](https://github.com/curbol/zmk-config/blob/main/build.yaml))
+4. [curbol/zmk-config](https://github.com/curbol/zmk-config/tree/main/config) shows the whole config together
 
 ### Keymap Editor (Optional)
 
-You can use [Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) to visually edit your keymap. Add the layout from [temporal-zmk](https://github.com/curbol/temporal-zmk) to enable visual editing.
+[Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) edits the keymap visually. Point it at the layout from [temporal-zmk](https://github.com/curbol/temporal-zmk).
 
 ### Flashing the Firmware
 
 1. Push your config changes to GitHub
-2. The GitHub Action will build the firmware automatically
+2. The GitHub Action builds the firmware automatically
 3. Download the firmware artifact from the Actions tab
-4. Extract the zip file - you'll find two `.uf2` files (one for left, one for right)
+4. Extract the zip; it holds two `.uf2` files, one per half
 
 ### Entering Bootloader Mode
 
@@ -375,6 +363,6 @@ You can use [Keymap Editor](https://nickcoutsos.github.io/keymap-editor/) to vis
 
 ## Additional Resources
 
-- [Typeractive Corne Build Guide](https://docs.typeractive.xyz/build-guides/corne-wireless) - Excellent reference for wireless split keyboard builds
-- [ZMK Documentation](https://zmk.dev/docs) - Official ZMK firmware documentation
-- [temporal-zmk Shield](https://github.com/curbol/temporal-zmk) - Temporal ZMK shield repository
+- [Typeractive's Corne build guide](https://docs.typeractive.xyz/build-guides/corne-wireless): a close reference for wireless split builds
+- [ZMK documentation](https://zmk.dev/docs)
+- [temporal-zmk](https://github.com/curbol/temporal-zmk): the ZMK shield module for this board

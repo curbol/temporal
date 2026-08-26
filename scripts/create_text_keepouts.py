@@ -13,12 +13,11 @@ failed.
 import sys
 import os
 
-# Suppress wxWidgets assertions
+# Suppress wxWidgets sizer flag assertions
 os.environ['WXSUPPRESS_SIZER_FLAGS_CHECK'] = '1'
 
 import pcbnew
 
-# Initialize wxPython if needed
 try:
     import wx
     if not wx.App.Get():
@@ -27,11 +26,9 @@ except Exception:
     pass
 
 def mm_to_iu(mm):
-    """Convert millimeters to internal units."""
     return int(mm * 1000000)
 
 def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
-    """Create rule areas from text outline geometry."""
     try:
         board = pcbnew.LoadBoard(board_path)
 
@@ -40,32 +37,27 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
         created_groups = 0
         matched_texts = 0
 
-        # Get layer IDs for the layers we want to process
         layer_ids = []
         for layer_name in layers:
             layer_id = board.GetLayerID(layer_name)
             if layer_id != pcbnew.UNDEFINED_LAYER:
                 layer_ids.append((layer_name, layer_id))
 
-        # Collect all text objects (from board drawings and footprints)
+        # Board drawings and footprint graphics both carry silkscreen text.
         text_objects = []
 
-        # Get text from board drawings
         for drawing in board.GetDrawings():
             if drawing.GetClass() == 'PCB_TEXT':
                 text_objects.append(drawing)
 
-        # Get text from footprints
         for footprint in board.GetFootprints():
             for item in footprint.GraphicalItems():
                 if item.GetClass() == 'PCB_TEXT':
                     text_objects.append(item)
 
-        # Process all text objects
         for drawing in text_objects:
             text_layer = drawing.GetLayer()
 
-            # Check if this text is on one of our target layers
             matching_layer = None
             for layer_name, layer_id in layer_ids:
                 if text_layer == layer_id:
@@ -77,24 +69,21 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
 
             text_content = drawing.GetText()
 
-            # If we have specific patterns, check if this text matches
             if text_patterns and not any(pattern in text_content for pattern in text_patterns):
                 continue
 
             matched_texts += 1
 
-            # Use GetEffectiveShape instead which is more stable
-            # This gets the actual rendered shape including line width
+            # GetEffectiveShape returns the stroked outline, so the keepout
+            # follows the glyphs at their rendered pen width.
             max_error = 5000  # 0.005mm in internal units
 
             poly_set = pcbnew.SHAPE_POLY_SET()
 
-            # GetEffectiveShape gives us the stroked outline
             try:
                 shape = drawing.GetEffectiveShape()
                 shape.TransformToPolygon(poly_set, max_error, pcbnew.ERROR_INSIDE)
             except Exception:
-                # Fallback to transform method if GetEffectiveShape fails
                 try:
                     drawing.TransformShapeToPolygon(poly_set, text_layer, 0, max_error, pcbnew.ERROR_INSIDE, False)
                 except Exception as shape_err:
@@ -106,11 +95,10 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
                 print(f"Error: {text_content!r} in {board_path} produced no outline", file=sys.stderr)
                 continue
 
-            # Inflate by gap amount if needed
             if gap_iu != 0:
                 poly_set.Inflate(gap_iu, 32, 5000)
 
-            # Fracture the polygon set to remove self-intersections
+            # Fracturing removes self-intersections.
             poly_set.Fracture()
 
             # Create a group for all zones of this text
@@ -124,14 +112,10 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
             for outline_idx in range(poly_set.OutlineCount()):
                 outline = poly_set.Outline(outline_idx)
 
-                # Skip if too few points
                 if outline.PointCount() < 3:
                     continue
 
-                # Create a rule area
                 zone = pcbnew.ZONE(board)
-
-                # Set as rule area
                 zone.SetIsRuleArea(True)
                 # KiCad 10 renamed this setter
                 if hasattr(zone, 'SetDoNotAllowZoneFills'):
@@ -143,26 +127,22 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
                 zone.SetDoNotAllowPads(False)
                 zone.SetDoNotAllowFootprints(False)
 
-                # Set layer - use copper layer corresponding to silkscreen
+                # The keepout sits on the copper layer facing its silkscreen.
                 if 'F.' in matching_layer[0]:
                     zone.SetLayer(board.GetLayerID('F.Cu'))
                 else:
                     zone.SetLayer(board.GetLayerID('B.Cu'))
 
-                # Set name
                 zone.SetZoneName(f"TEXT_{safe_text[:20]}_{outline_idx}")
 
-                # Add points to zone outline
                 for pt_idx in range(outline.PointCount()):
                     pt = outline.CPoint(pt_idx)
                     zone.AppendCorner(pt, -1)
 
-                # Add to board and to group
                 board.Add(zone)
                 group.AddItem(zone)
                 created_count += 1
 
-        # Save the board
         pcbnew.SaveBoard(board_path, board)
 
         return {"matched": matched_texts, "groups": created_groups}
@@ -179,13 +159,12 @@ def process_all_boards(board_paths, gap_mm, layers, patterns):
     for board_path in board_paths:
         results[board_path] = create_text_keepouts(board_path, gap_mm, layers, patterns)
 
-    # Output results as JSON
     import json
     print(json.dumps(results))
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("Usage: python script.py <gap_mm> <layers> <patterns> <board1> [board2 ...]")
+        print("Usage: create_text_keepouts.py <gap_mm> <layers> <patterns> <board> [board ...]")
         sys.exit(1)
 
     gap_mm = float(sys.argv[1])

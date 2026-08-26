@@ -2,9 +2,8 @@
 /**
  * Add via stitching to KiCad PCB files using the ViaStitching plugin.
  *
- * Uses KiCad's pcbnew Python API and the ViaStitching plugin to automatically
- * add stitching vias on a grid pattern to improve EMI performance and ground
- * plane connectivity.
+ * Places GND vias on a grid through KiCad's pcbnew Python API and the
+ * ViaStitching plugin, tying the two ground pours together and cutting EMI.
  */
 
 const fs = require('fs');
@@ -15,7 +14,6 @@ const { getKiCadPythonOrThrow } = require('./kicad_python');
 const { loadKicadConfig } = require('./kicad_config');
 
 /**
- * Add via stitching to a KiCad PCB file using the Python API.
  * Returns the number of vias placed, or -1 on error.
  */
 function addViaStitching(filepath, pythonPath, config) {
@@ -42,16 +40,12 @@ function addViaStitching(filepath, pythonPath, config) {
     const match = output.match(/(\d+) vias placed/);
     return match ? parseInt(match[1], 10) : 0;
   } catch (err) {
-    console.error(`Error: Failed to add via stitching: ${err.message}`);
+    console.error(`Error: could not add via stitching: ${err.message}`);
     return -1;
   }
 }
 
-/**
- * Main entry point.
- */
 function main() {
-  // Find KiCad's Python interpreter
   let pythonPath;
   try {
     pythonPath = getKiCadPythonOrThrow();
@@ -60,21 +54,18 @@ function main() {
     process.exit(1);
   }
 
-  // Load via stitching configuration
   const config = loadKicadConfig().via_stitching;
 
-  // Allow CLI override for step_mm (first argument)
   const stepArg = process.argv[2];
   if (stepArg) {
     const stepValue = parseFloat(stepArg);
     if (isNaN(stepValue) || stepValue <= 0) {
-      console.error(`Error: Invalid step value '${stepArg}'. Must be a positive number.`);
+      console.error(`Error: invalid step value '${stepArg}'; must be a positive number`);
       process.exit(1);
     }
     config.step_mm = stepValue;
   }
 
-  // Only process temporal.kicad_pcb
   const temporalPcb = path.join(OUTPUT_PCBS_DIR, 'temporal.kicad_pcb');
 
   if (!fs.existsSync(temporalPcb)) {

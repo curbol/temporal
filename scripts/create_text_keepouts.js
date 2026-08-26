@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Create rule areas (keepouts) around text objects to prevent zone fills from overlapping.
- * This is useful for silkscreen text that should remain visible.
+ * Create rule areas around silkscreen text so the copper pour stops at the
+ * glyph outlines and the lettering stays legible.
  */
 
 const path = require('path');
@@ -36,7 +36,7 @@ function main() {
 
     output = execSync(args, { encoding: 'utf8', stdio: 'pipe' });
   } catch (err) {
-    console.error('Error: Text keepouts script failed:', err.message);
+    console.error('Error: text keepout pass failed:', err.message);
     if (err.stderr) {
       console.error(err.stderr);
     }
@@ -53,7 +53,7 @@ function main() {
     const board = path.basename(pcbPath, '.kicad_pcb');
 
     if (result.matched < 0 || result.groups < 0) {
-      console.error(`Error: Failed to process ${board}`);
+      console.error(`Error: could not process ${board}`);
       failed++;
       continue;
     }

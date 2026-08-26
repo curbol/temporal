@@ -64,7 +64,7 @@ Naming inside `ergogen/config.yaml`:
 
 - A leading `_` marks an intermediate outline/case/pcb. Ergogen skips those when writing output; they exist only to be composed into exported ones.
 - `_left` is generated directly; `_m_right` is generated as the mirror source and `convert_jscad.js` mirrors it into `<name>_right.stl`. A name with neither suffix is a shared part. The `_m_right` suffix never survives into `cases/`.
-- Variants encode key count in the name (`38` = breakoff pinky column, `42` = full pinky column) and options as further suffixes (`socket`/`solder`, `v1`/`v2`, `kickstand`, `stealth`).
+- Case keys read in the order a builder decides: `temporal_<38|42>_<v1|v2>_<socket|solder>[_kickstand]_<left|m_right>`. Key count is fixed by the breakoff pinky column, switch generation by the switches on hand, mounting by build style. `scripts/convert_jscad.js` turns that into `cases/<count>/<generation>_<mounting>/[kickstand_]<hand>.stl`, so one variant's files sit together; shared parts (`mcu_cover`) and the per-count `top_plate` stay outside the variant folders. PCB variants keep the flat suffix form (`top_plate_42_stealth`).
 - `_choc_v2_*` outlines are the clearances a Choc v2 switch needs that a v1 does not: the wider Ø4.8 centre boss and the corner stabilizer pin. Cases come in `v1` and `v2` because that boss reaches 1.8mm into a 1.95mm floor, so its pocket has to go through; a v1 build would otherwise get a hole under every key for a feature its switches lack. Each exported case composes `_temporal_<mount>_<count>_<hand>`, which carries everything both share, so the two differ only by the `_choc_v2_*` subtractions.
 
 Tuning values belong in YAML, not in script bodies. `scripts/kicad_config.yaml` owns net classes, design rules, custom DRC rules, zone/via-stitching parameters, keepout text patterns, and the JLCPCB part numbers plus embedded-resistor positions. Adding a JLCPCB assembly part is a config edit, not a code edit.
@@ -75,9 +75,9 @@ Dimensions `ergogen/config.yaml` already owns are not repeated in that file: `sc
 
 Not every footprint there is referenced by `ergogen/config.yaml`. `mounting_hole_plated.js` and `utility_circle.js` are the rest of the vendored subset, and `brain.js`, `neuron.js` and `solar_system.js` are artwork produced by `scripts/convert_svg_to_footprint.js`. They are kept on purpose; being unreferenced is not a reason to delete them.
 
-Silkscreen is uniform: one face (`"Maple Mono NF"`), no bold, and every stroke at `units.silk_line_width`. Two constraints drive that.
+Silkscreen is uniform: one face (`"Maple Mono NF"`), bold, and every stroke at `units.silk_line_width`. Two constraints drive that.
 
-KiCad addresses fonts by family plus bold/italic, and every Maple Mono file reports `Maple Mono NF` as its first fontconfig family, so a weight-suffixed `face:` like `"Maple Mono NF ExtraBold"` resolves to nothing and is silently substituted at export. Name the plain family.
+KiCad addresses fonts by family plus bold/italic, and every Maple Mono file reports `Maple Mono NF` as its first fontconfig family, so a weight-suffixed `face:` like `"Maple Mono NF ExtraBold"` resolves to nothing and is silently substituted at export. Name the plain family and set bold, which is the only way to reach a heavier Maple Mono file: bold resolves to `MapleMono-NF-Bold.ttf`, and `embed_fonts.js` carries whichever file the text actually uses. `utility_text` takes `bold`; `mcu_nice_nano` and `power_switch_smd_side` take `label_font_bold`.
 
 `units.silk_line_width` is 0.16mm because JLCPCB's minimum is 0.153mm (6 mil). It governs the text `thickness`, the graphic strokes `fix_silkscreen_width.js` widens, and the `board_defaults` the `.kicad_pro` files carry. `design_rules.min_text_thickness` in `scripts/kicad_config.yaml` holds KiCad to the fab's floor, which is a different number on purpose.
 

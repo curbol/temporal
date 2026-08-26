@@ -1,6 +1,6 @@
 /**
- * Utility module to find KiCad's bundled Python interpreter.
- * Can be reused by any script that needs to run Python code with KiCad's pcbnew API.
+ * Locate an interpreter that can import pcbnew. KiCad ships its own Python on
+ * macOS and Windows; on Linux the system python3 carries the bindings.
  */
 
 const path = require('path');
@@ -8,27 +8,20 @@ const os = require('os');
 const { execSync } = require('child_process');
 const { glob } = require('glob');
 
-/**
- * Get platform-specific KiCad Python search patterns.
- * @returns {string[]} Array of glob patterns to search for Python
- */
 function getKiCadPythonPatterns() {
   const platform = os.platform();
 
   if (platform === 'darwin') {
-    // macOS
     return [
       '/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/*/bin/python*'
     ];
   } else if (platform === 'win32') {
-    // Windows
     return [
       'C:/Program Files/KiCad/*/bin/python*.exe',
       'C:/Program Files (x86)/KiCad/*/bin/python*.exe',
       path.join(process.env.PROGRAMFILES || 'C:/Program Files', 'KiCad/*/bin/python*.exe')
     ];
   } else {
-    // Linux and others
     return [
       '/usr/bin/python3',
       '/usr/local/bin/python3',
@@ -37,10 +30,6 @@ function getKiCadPythonPatterns() {
   }
 }
 
-/**
- * Find KiCad's bundled Python interpreter.
- * @returns {string|null} Path to Python executable, or null if not found
- */
 function findKiCadPython() {
   const patterns = getKiCadPythonPatterns();
 
@@ -48,7 +37,7 @@ function findKiCadPython() {
     try {
       const pythonPaths = glob.sync(pattern);
 
-      // Filter to only include python3.x executables (not pythonw, python-config, etc.)
+      // Excludes pythonw, python-config and the like.
       const validPaths = pythonPaths.filter(p => {
         const basename = path.basename(p, path.extname(p));
         return basename.match(/^python3(\.\d+)?$/);
@@ -58,24 +47,20 @@ function findKiCadPython() {
         continue;
       }
 
-      // Sort by version number (descending) and try each
+      // Highest-sorting name first.
       validPaths.sort().reverse();
 
       for (const pythonPath of validPaths) {
-        // Verify that pcbnew is available
         try {
           execSync(`"${pythonPath}" -c "import pcbnew"`, {
             stdio: 'pipe'
           });
-          // If we got here, pcbnew is available
           return pythonPath;
         } catch {
-          // Try next path
           continue;
         }
       }
     } catch {
-      // Try next pattern
       continue;
     }
   }
@@ -83,11 +68,6 @@ function findKiCadPython() {
   return null;
 }
 
-/**
- * Get KiCad's Python path or throw an error with instructions.
- * @returns {string} Path to Python executable
- * @throws {Error} If KiCad Python is not found
- */
 function getKiCadPythonOrThrow() {
   const pythonPath = findKiCadPython();
 

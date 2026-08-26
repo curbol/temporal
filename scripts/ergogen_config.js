@@ -19,14 +19,14 @@ function loadErgogenConfig() {
   }
 
   if (!fs.existsSync(CONFIG_PATH)) {
-    console.error(`Error: Config file not found at ${CONFIG_PATH}`);
+    console.error(`Error: config file not found at ${CONFIG_PATH}`);
     process.exit(1);
   }
 
   try {
     cached = yaml.load(fs.readFileSync(CONFIG_PATH, 'utf-8'));
   } catch (err) {
-    console.error(`Error: Failed to load config: ${err.message}`);
+    console.error(`Error: could not load config: ${err.message}`);
     process.exit(1);
   }
 

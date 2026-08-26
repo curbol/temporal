@@ -1,7 +1,7 @@
 {
   "name": "temporal-keyboard",
   "version": "1.0.0",
-  "description": "Temporal keyboard ergogen configuration",
+  "description": "Temporal split ergonomic keyboard: Ergogen config, PCBs, plates, and cases",
   "scripts": {
     "gen": "cd ergogen && ergogen . -o output --svg",
     "convert": "node scripts/convert_jscad.js",

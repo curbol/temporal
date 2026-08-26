@@ -14,17 +14,17 @@ const CONFIG_PATH = path.join(__dirname, 'kicad_config.yaml');
 
 let cached = null;
 
+const NET_CLASS_TRACK_UNITS = {
+  Power: 'copper_power_trace_width',
+  Battery: 'copper_battery_trace_width'
+};
+
 /**
  * Fill in every dimension ergogen/config.yaml's units already own: net class track
  * and via geometry, the stitching via geometry, and the silkscreen pen. Those same
  * units size the copper and silkscreen the footprints emit, so a value repeated
  * here could disagree with what is already on the board.
  */
-const NET_CLASS_TRACK_UNITS = {
-  Power: 'copper_power_trace_width',
-  Battery: 'copper_battery_trace_width'
-};
-
 function applyErgogenUnits(config) {
   const trackWidth = unit('copper_trace_width');
   const viaDiameter = unit('copper_via_diameter');
@@ -75,14 +75,14 @@ function loadKicadConfig() {
   }
 
   if (!fs.existsSync(CONFIG_PATH)) {
-    console.error(`Error: Config file not found at ${CONFIG_PATH}`);
+    console.error(`Error: config file not found at ${CONFIG_PATH}`);
     process.exit(1);
   }
 
   try {
     cached = applyErgogenUnits(yaml.load(fs.readFileSync(CONFIG_PATH, 'utf-8')));
   } catch (err) {
-    console.error(`Error: Failed to load config: ${err.message}`);
+    console.error(`Error: could not load config: ${err.message}`);
     process.exit(1);
   }
 

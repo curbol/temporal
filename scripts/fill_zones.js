@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 /**
- * Fill zones in KiCad PCB files using KiCad's Python API.
- *
- * Uses the pcbnew Python module to fill all zones in each PCB file.
+ * Fill every zone in each generated board through KiCad's pcbnew Python module.
  */
 
 const path = require('path');
@@ -11,9 +9,6 @@ const { ergogenOutputPcbs } = require('./ergogen_config');
 const { getKiCadPythonOrThrow } = require('./kicad_python');
 const { loadCustomRules, writeDrcRules } = require('./drc_rules');
 
-/**
- * Fill zones in a KiCad PCB file using the Python API.
- */
 function fillZonesInPcb(filepath, pythonPath) {
   try {
     const scriptPath = path.join(__dirname, 'fill_zones.py');
@@ -22,18 +17,14 @@ function fillZonesInPcb(filepath, pythonPath) {
     });
     return true;
   } catch (err) {
-    console.error(`Error: Failed to fill zones in ${path.basename(filepath)}: ${err.message}`);
+    console.error(`Error: could not fill zones in ${path.basename(filepath)}: ${err.message}`);
     return false;
   }
 }
 
-/**
- * Main entry point.
- */
 function main() {
   const pcbFiles = ergogenOutputPcbs();
 
-  // Find KiCad's Python interpreter
   let pythonPath;
   try {
     pythonPath = getKiCadPythonOrThrow();
