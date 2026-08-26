@@ -12,9 +12,15 @@ jobs:
       image: kicad/kicad:10.0
       options: --user root
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      # The image ships KiCad and python3 but no build tooling: make drives the
+      # check, unzip reads the committed gerber archives back, and xvfb backs
+      # the wx.App that KiCad's pcbnew bindings construct before they will load
+      # a board.
+      - run: apt-get update && apt-get install -y --no-install-recommends make unzip xvfb
+
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -24,4 +30,4 @@ jobs:
       # Sources parse and lint, ergogen/config.yaml builds, every committed
       # board is DRC-clean and carries its own silkscreen font, the pours are
       # current, and every derived artifact still reproduces from its source.
-      - run: make check
+      - run: xvfb-run -a make check
