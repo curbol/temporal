@@ -96,3 +96,7 @@ Temporal takes influence from:
 - [Hillside](https://github.com/mmccoyd/hillside) by mmccoyd
 - [TOTEM](https://github.com/GEIGEIGEIST/TOTEM) and [KLOR](https://github.com/GEIGEIGEIST/KLOR) by GEIST
 - [TEMPEST](https://github.com/thrly/tempest) by thrly
+
+## Support
+
+<a href="https://ko-fi.com/curbol"><img height="42" alt="Buy Me a Coffee at ko-fi.com" src="https://storage.ko-fi.com/cdn/kofi1.png?v=6"></a>
