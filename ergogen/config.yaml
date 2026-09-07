@@ -128,6 +128,22 @@ units:
   choc_v2_stab_x: 5 # Corner stabilizer, mirrored per hand
   choc_v2_stab_y: -5.15
 
+  # Direct-solder switch pins. Each relief is a stadium, two circles and the bar
+  # between them, and its width is what the bridges to the diode and the stabilizer
+  # pocket span.
+  solder_pin_r: 1
+  solder_pin_dx: 0.25
+  solder_pin_w: 2 * (solder_pin_dx + solder_pin_r)
+  solder_mid_y: -5.9
+  solder_side_x: 5
+  solder_side_y: -3.8
+
+  # Hotswap socket relief. The rest of the outline is traced in place, but the two block
+  # edges nearest the switch are named because the v2 centre pocket bridges to them.
+  socket_block_x: 2.15 # Bottom block, edge nearest the switch centre
+  socket_block_y: 1.15 # Bottom block, lower edge
+  socket_top_block_y: 3.35 # Top block, lower edge
+
   # Diode
   diode_y: -3.864
   diode_d: 1.15
@@ -144,15 +160,18 @@ units:
   side_cut_width: 10.4
   side_cut_radius: (wall_above_pcb + pcb_thickness / 2) / 2
   mcu_catch_radius: (choc_under_to_pcb - choc_top_plate) / 2
-  # Matches the hotswap socket height. The socket relief is cut through the floor,
-  # so at this thickness the socket bottom finishes flush with the case bottom.
-  # Raising it sinks every socket by the difference.
-  bottom_thickness: 1.95
   cutout_fillet: 0.3
   cutout_padding: 0.6
+  # Depth of each pocket in the case floor, measured down from the top of the floor.
+  # Nothing on the back of the PCB reaches deeper than the hotswap socket, so a floor
+  # of socket_depth + floor_skin leaves every one of them blind and the bottom solid.
+  socket_depth: 1.95
   diode_depth: diode_d + buffer
   choc_depth: choc_post_d - pcb_thickness + buffer
   pin_depth: 0.5 + buffer
+  floor_skin: 0.4
+  bottom_thickness: socket_depth + floor_skin
+  choc_v2_pocket_r: (choc_v2_center_post_w + cutout_padding) / 2
 
   # M2 hardware
   m2_size: 2
@@ -161,6 +180,8 @@ units:
   m2_insert_post_height: pcb_thickness + choc_under_to_pcb - choc_top_plate
   m2_insert_hole_depth: 4
   m2_nut_width: 4.2
+  m2_nut_thickness: 1.6
+  m2_nut_depth: m2_nut_thickness + buffer
   plate_hole_diameter: m2_size + 0.2
 
   # Preview layout offsets
@@ -306,20 +327,20 @@ outlines:
   _socket_left_top_block:
     - what: rectangle # Top block
       size: [4.7, 5.2]
-      adjust.shift: [0, 5.95]
+      adjust.shift: [0, socket_top_block_y + 2.6]
     - what: rectangle # Chamfer
       operation: intersect
       size: [6.1, 6.1]
-      adjust: { shift: [0, 5.95], rotate: 45 }
+      adjust: { shift: [0, socket_top_block_y + 2.6], rotate: 45 }
       fillet: cutout_fillet
     - what: rectangle # Top pad
       size: [3.2, 3.2]
-      adjust.shift: [-3.3, 5.95]
+      adjust.shift: [-3.3, socket_top_block_y + 2.6]
       fillet: cutout_fillet - 0.07
   _socket_left_bottom_block:
     - what: rectangle # Bottom block
       size: [5.2, 5.4]
-      adjust.shift: [4.75, 3.85]
+      adjust.shift: [socket_block_x + 2.6, socket_block_y + 2.7]
     - what: rectangle # Bottom pad
       size: [3.2, 3.2]
       adjust.shift: [8.3, 3.75]
@@ -348,20 +369,20 @@ outlines:
   _socket_m_right_top_block:
     - what: rectangle # Top block
       size: [4.7, 5.2]
-      adjust.shift: [0, 5.95]
+      adjust.shift: [0, socket_top_block_y + 2.6]
     - what: rectangle # Chamfer
       operation: intersect
       size: [6.1, 6.1]
-      adjust: { shift: [0, 5.95], rotate: -45 }
+      adjust: { shift: [0, socket_top_block_y + 2.6], rotate: -45 }
       fillet: cutout_fillet
     - what: rectangle # Top pad
       size: [3.2, 3.2]
-      adjust.shift: [3.3, 5.95]
+      adjust.shift: [3.3, socket_top_block_y + 2.6]
       fillet: cutout_fillet - 0.07
   _socket_m_right_bottom_block:
     - what: rectangle # Bottom block
       size: [5.2, 5.4]
-      adjust.shift: [-4.75, 3.85]
+      adjust.shift: [-(socket_block_x + 2.6), socket_block_y + 2.7]
     - what: rectangle # Bottom pad
       size: [3.2, 3.2]
       adjust.shift: [-8.3, 3.75]
@@ -389,23 +410,40 @@ outlines:
 
   _solder_pin:
     - what: circle
-      radius: 1
-      adjust.shift: [-0.25, 0]
+      radius: solder_pin_r
+      adjust.shift: [-solder_pin_dx, 0]
     - what: rectangle
-      size: [0.5 + nudge*100, 2]
+      size: [2 * solder_pin_dx + nudge * 100, 2 * solder_pin_r]
     - what: circle
-      radius: 1
-      adjust.shift: [0.25, 0]
+      radius: solder_pin_r
+      adjust.shift: [solder_pin_dx, 0]
   _solder_pins_left:
     - name: _solder_pin
-      adjust.shift: [-5, -3.8]
+      adjust.shift: [-solder_side_x, solder_side_y]
     - name: _solder_pin
-      adjust.shift: [0, -5.9]
+      adjust.shift: [0, solder_mid_y]
   _solder_pins_m_right:
     - name: _solder_pin
-      adjust.shift: [5, -3.8]
+      adjust.shift: [solder_side_x, solder_side_y]
     - name: _solder_pin
-      adjust.shift: [0, -5.9]
+      adjust.shift: [0, solder_mid_y]
+
+  # Both solder reliefs cross a neighbouring pocket at a shallow angle, leaving a sliver
+  # rather than a wall. Each bridge spans the full width of the shape it joins, so the
+  # crossing goes away instead of moving: the middle pin reaches up into the diode, and
+  # the side pin reaches down into the v2 stabilizer pocket.
+  _solder_mid_bridge:
+    - what: rectangle
+      size: [solder_pin_w, diode_y - solder_mid_y]
+      adjust.shift: [0, (diode_y + solder_mid_y) / 2]
+  _solder_side_bridge_left:
+    - what: rectangle
+      size: [choc_v2_stab_w + cutout_padding, solder_side_y - choc_v2_stab_y]
+      adjust.shift: [-choc_v2_stab_x, (solder_side_y + choc_v2_stab_y) / 2]
+  _solder_side_bridge_m_right:
+    - what: rectangle
+      size: [choc_v2_stab_w + cutout_padding, solder_side_y - choc_v2_stab_y]
+      adjust.shift: [choc_v2_stab_x, (solder_side_y + choc_v2_stab_y) / 2]
 
   _diode_pads:
     - what: rectangle
@@ -448,22 +486,34 @@ outlines:
     - +_choc_center_post
     - +_choc_side_posts
 
-  # The v2 centre boss reaches choc_v2_post_d - pcb_thickness + buffer = 1.8mm
-  # below the board, into a bottom_thickness of 1.95mm. The 0.15mm that would be
-  # left is too thin to print, so this pocket goes through the floor.
-  _choc_v2_center_post:
+  # The v2 centre boss pocket crosses the hotswap socket relief, and the material caught
+  # between the two tapers to a knife edge. Squaring off the quadrant that faces the
+  # socket removes it: the rectangle reaches from the switch centre to inside the socket's
+  # bottom block and up to its top block, so the two pockets are one.
+  _choc_v2_center_post_left:
     - what: circle
-      radius: (choc_v2_center_post_w + cutout_padding) / 2
+      radius: choc_v2_pocket_r
+    - what: rectangle # Bridge to the hotswap socket relief
+      size: [socket_block_x + cutout_padding, socket_top_block_y]
+      adjust.shift: [(socket_block_x + cutout_padding) / 2, socket_top_block_y / 2]
+  _choc_v2_center_post_m_right:
+    - what: circle
+      radius: choc_v2_pocket_r
+    - what: rectangle # Bridge to the hotswap socket relief
+      size: [socket_block_x + cutout_padding, socket_top_block_y]
+      adjust.shift: [-(socket_block_x + cutout_padding) / 2, socket_top_block_y / 2]
 
-  # That pocket stops 0.04mm short of the diode pocket, which is a knife edge
+  # The centre pocket also stops 0.04mm short of the diode pocket, which is a knife edge
   # rather than a wall. This joins the two at diode depth so the floor steps.
   _choc_v2_post_bridge:
     - what: rectangle
       size: [choc_v2_center_post_w / 2, choc_v2_center_post_w / 2]
       adjust.shift: [0, -choc_v2_center_post_w / 2]
 
-  # The corner stabilizer pin is as long as the switch pins, so it clears at pin
-  # depth. Its hole is at (±5, 5.15) on the board, mirrored per hand.
+  # The corner stabilizer pin only needs pin depth, but it is cut to socket depth with
+  # the boss pocket: the two are within a layer of each other, and one depth here means
+  # the solder relief bridges down into a pocket rather than a step. Its hole is at
+  # (±5, 5.15) on the board, mirrored per hand.
   _choc_v2_stab_left:
     - what: circle
       radius: (choc_v2_stab_w + cutout_padding) / 2
@@ -543,7 +593,10 @@ outlines:
       adjust.shift: [0, -6.85]
 
   # Case bottom cutouts
-  _full_depth_38:
+  # The EC11 mounting holes sit at the same +-5.5mm as the choc side posts, so the same
+  # circles clear its plate-mount legs. They are longer than a switch post, hence the
+  # deeper cut.
+  _encoder_legs:
     - name: _choc_side_posts
       where: thumb_enc
 
@@ -558,31 +611,11 @@ outlines:
     - name: _choc_posts
       where: extra
 
-  _choc_v2_full_depth_38:
-    - name: _choc_v2_center_post
-      where: [[key, -extra]]
-  _choc_v2_full_depth_pinky:
-    - name: _choc_v2_center_post
-      where: extra
-
   _choc_v2_bridge_38:
     - name: _choc_v2_post_bridge
       where: [[key, -extra]]
   _choc_v2_bridge_pinky:
     - name: _choc_v2_post_bridge
-      where: extra
-
-  _choc_v2_pin_depth_38_left:
-    - name: _choc_v2_stab_left
-      where: [[key, -extra]]
-  _choc_v2_pin_depth_38_m_right:
-    - name: _choc_v2_stab_m_right
-      where: [[key, -extra]]
-  _choc_v2_pin_depth_pinky_left:
-    - name: _choc_v2_stab_left
-      where: extra
-  _choc_v2_pin_depth_pinky_m_right:
-    - name: _choc_v2_stab_m_right
       where: extra
 
   _pin_depth_38:
@@ -610,59 +643,91 @@ outlines:
     - name: _battery_jumpers
       where: *battery_pos
 
-  _socket_full_depth_38_left:
-    - +_full_depth_38
+  _socket_depth_38_left:
+    - +_encoder_legs
     - name: _choc_post_bridge_left
       where: thumb_enc
     - name: _socket_left
       where: [[key, -extra]]
-  _socket_full_depth_38_m_right:
-    - +_full_depth_38
+    - name: _choc_v2_center_post_left
+      where: [[key, -extra]]
+    - name: _choc_v2_stab_left
+      where: [[key, -extra]]
+  _socket_depth_38_m_right:
+    - +_encoder_legs
     - name: _choc_post_bridge_m_right
       where: thumb_enc
     - name: _socket_m_right
       where: [[key, -extra]]
-  _socket_full_depth_pinky_left:
+    - name: _choc_v2_center_post_m_right
+      where: [[key, -extra]]
+    - name: _choc_v2_stab_m_right
+      where: [[key, -extra]]
+  _socket_depth_pinky_left:
     - name: _socket_left
       where: extra
-  _socket_full_depth_pinky_m_right:
+    - name: _choc_v2_center_post_left
+      where: extra
+    - name: _choc_v2_stab_left
+      where: extra
+  _socket_depth_pinky_m_right:
     - name: _socket_m_right
       where: extra
+    - name: _choc_v2_center_post_m_right
+      where: extra
+    - name: _choc_v2_stab_m_right
+      where: extra
 
-  _socket_choc_depth_left:
+  _choc_depth_38_left:
     - +_choc_depth_38
     - name: _choc_post_bridge_left
       where: [[key, -extra]]
-  _socket_choc_depth_m_right:
+  _choc_depth_38_m_right:
     - +_choc_depth_38
     - name: _choc_post_bridge_m_right
       where: [[key, -extra]]
-  _socket_choc_depth_pinky_left:
+  _choc_depth_pinky_left:
     - +_choc_depth_pinky
     - name: _choc_post_bridge_left
       where: extra
-  _socket_choc_depth_pinky_m_right:
+  _choc_depth_pinky_m_right:
     - +_choc_depth_pinky
     - name: _choc_post_bridge_m_right
       where: extra
 
-  _solder_pin_depth_38_left:
+  _pin_depth_38_left:
     - +_pin_depth_38
     - name: _solder_pins_left
       where: [[key, -extra]]
-    - name: _encoder_pins_bridge
-      where: thumb_enc
-  _solder_pin_depth_38_m_right:
-    - +_pin_depth_38
-    - name: _solder_pins_m_right
+    - name: _solder_mid_bridge
+      where: [[key, -extra]]
+    - name: _solder_side_bridge_left
       where: [[key, -extra]]
     - name: _encoder_pins_bridge
       where: thumb_enc
-  _solder_pin_depth_pinky_left:
+  _pin_depth_38_m_right:
+    - +_pin_depth_38
+    - name: _solder_pins_m_right
+      where: [[key, -extra]]
+    - name: _solder_mid_bridge
+      where: [[key, -extra]]
+    - name: _solder_side_bridge_m_right
+      where: [[key, -extra]]
+    - name: _encoder_pins_bridge
+      where: thumb_enc
+  _pin_depth_pinky_left:
     - name: _solder_pins_left
       where: extra
-  _solder_pin_depth_pinky_m_right:
+    - name: _solder_mid_bridge
+      where: extra
+    - name: _solder_side_bridge_left
+      where: extra
+  _pin_depth_pinky_m_right:
     - name: _solder_pins_m_right
+      where: extra
+    - name: _solder_mid_bridge
+      where: extra
+    - name: _solder_side_bridge_m_right
       where: extra
 
   # Case side cutouts
@@ -1142,19 +1207,19 @@ outlines:
     # - -_diode_depth
     # - -_pin_depth_38
     # Left side
-    # - -_socket_full_depth_38_left
-    # - -_socket_full_depth_pinky_left
-    # - -_socket_choc_depth_left
-    # - -_socket_choc_depth_pinky_left
-    # - -_solder_pin_depth_38_left
-    # - -_solder_pin_depth_pinky_left
+    # - -_socket_depth_38_left
+    # - -_socket_depth_pinky_left
+    # - -_choc_depth_38_left
+    # - -_choc_depth_pinky_left
+    # - -_pin_depth_38_left
+    # - -_pin_depth_pinky_left
     # Right side (mirrored)
-    # - -_socket_full_depth_38_m_right
-    # - -_socket_full_depth_pinky_m_right
-    # - -_socket_choc_depth_m_right
-    # - -_socket_choc_depth_pinky_m_right
-    # - -_solder_pin_depth_38_m_right
-    # - -_solder_pin_depth_pinky_m_right
+    # - -_socket_depth_38_m_right
+    # - -_socket_depth_pinky_m_right
+    # - -_choc_depth_38_m_right
+    # - -_choc_depth_pinky_m_right
+    # - -_pin_depth_38_m_right
+    # - -_pin_depth_pinky_m_right
     # Case walls:
     # - -_usbc_case_cutout
     # - -_side_case_cutout
@@ -1221,82 +1286,45 @@ cases:
       extrude: choc_top_plate
 
   # Case bottom cutouts - Full depth
-  _full_depth_cutouts:
+  # Case bottom cutouts. Every pocket is blind: the floor is socket_depth + floor_skin
+  # and nothing on the back of the PCB reaches deeper than the socket, so the bottom
+  # face is solid.
+  # Socket depth
+  _socket_depth_cutouts_left:
+    - what: outline
+      name: _socket_depth_38_left
+      extrude: socket_depth
+      shift: [0, 0, -socket_depth]
+  _socket_depth_cutouts_m_right:
+    - what: outline
+      name: _socket_depth_38_m_right
+      extrude: socket_depth
+      shift: [0, 0, -socket_depth]
+  _socket_depth_pinky_cutouts_left:
+    - what: outline
+      name: _socket_depth_pinky_left
+      extrude: socket_depth
+      shift: [0, 0, -socket_depth]
+  _socket_depth_pinky_cutouts_m_right:
+    - what: outline
+      name: _socket_depth_pinky_m_right
+      extrude: socket_depth
+      shift: [0, 0, -socket_depth]
+
+
+  # M2 nut depth
+  _m2_nut_depth_cutouts:
     - what: outline
       name: _mcu_cover_nut_cutout
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-    - what: outline
-      name: _full_depth_38
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
+      extrude: m2_nut_depth
+      shift: [0, 0, -m2_nut_depth]
 
-  _socket_full_depth_cutouts_left:
+  # Diode depth
+  _diode_depth_cutouts:
     - what: outline
-      name: _socket_full_depth_38_left
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-  _socket_full_depth_cutouts_m_right:
-    - what: outline
-      name: _socket_full_depth_38_m_right
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-  _socket_full_depth_pinky_cutouts_left:
-    - what: outline
-      name: _socket_full_depth_pinky_left
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-  _socket_full_depth_pinky_cutouts_m_right:
-    - what: outline
-      name: _socket_full_depth_pinky_m_right
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-
-  # Case bottom cutouts - Choc depth
-  _choc_depth_cutouts:
-    - what: outline
-      name: _choc_depth_38
-      extrude: choc_depth
-      shift: [0, 0, -choc_depth]
-  _choc_depth_pinky_cutouts:
-    - what: outline
-      name: _choc_depth_pinky
-      extrude: choc_depth
-      shift: [0, 0, -choc_depth]
-
-  _socket_choc_depth_cutouts_left:
-    - what: outline
-      name: _socket_choc_depth_left
-      extrude: choc_depth
-      shift: [0, 0, -choc_depth]
-  _socket_choc_depth_cutouts_m_right:
-    - what: outline
-      name: _socket_choc_depth_m_right
-      extrude: choc_depth
-      shift: [0, 0, -choc_depth]
-  _socket_choc_depth_pinky_cutouts_left:
-    - what: outline
-      name: _socket_choc_depth_pinky_left
-      extrude: choc_depth
-      shift: [0, 0, -choc_depth]
-  _socket_choc_depth_pinky_cutouts_m_right:
-    - what: outline
-      name: _socket_choc_depth_pinky_m_right
-      extrude: choc_depth
-      shift: [0, 0, -choc_depth]
-
-  # Case bottom cutouts - Choc v2
-  _choc_v2_full_depth_cutouts:
-    - what: outline
-      name: _choc_v2_full_depth_38
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-  _choc_v2_full_depth_pinky_cutouts:
-    - what: outline
-      name: _choc_v2_full_depth_pinky
-      extrude: bottom_thickness
-      shift: [0, 0, -bottom_thickness]
-
+      name: _diode_depth
+      extrude: diode_depth
+      shift: [0, 0, -diode_depth]
   _choc_v2_bridge_cutouts:
     - what: outline
       name: _choc_v2_bridge_38
@@ -1308,59 +1336,47 @@ cases:
       extrude: diode_depth
       shift: [0, 0, -diode_depth]
 
-  _choc_v2_pin_depth_cutouts_left:
+  # Choc depth
+  _choc_depth_cutouts_left:
     - what: outline
-      name: _choc_v2_pin_depth_38_left
-      extrude: pin_depth
-      shift: [0, 0, -pin_depth]
-  _choc_v2_pin_depth_cutouts_m_right:
+      name: _choc_depth_38_left
+      extrude: choc_depth
+      shift: [0, 0, -choc_depth]
+  _choc_depth_cutouts_m_right:
     - what: outline
-      name: _choc_v2_pin_depth_38_m_right
-      extrude: pin_depth
-      shift: [0, 0, -pin_depth]
-  _choc_v2_pin_depth_pinky_cutouts_left:
+      name: _choc_depth_38_m_right
+      extrude: choc_depth
+      shift: [0, 0, -choc_depth]
+  _choc_depth_pinky_cutouts_left:
     - what: outline
-      name: _choc_v2_pin_depth_pinky_left
-      extrude: pin_depth
-      shift: [0, 0, -pin_depth]
-  _choc_v2_pin_depth_pinky_cutouts_m_right:
+      name: _choc_depth_pinky_left
+      extrude: choc_depth
+      shift: [0, 0, -choc_depth]
+  _choc_depth_pinky_cutouts_m_right:
     - what: outline
-      name: _choc_v2_pin_depth_pinky_m_right
-      extrude: pin_depth
-      shift: [0, 0, -pin_depth]
+      name: _choc_depth_pinky_m_right
+      extrude: choc_depth
+      shift: [0, 0, -choc_depth]
 
-  # Case bottom cutouts - Diode depth
-  _diode_depth_cutouts:
+  # Pin depth
+  _pin_depth_cutouts_left:
     - what: outline
-      name: _diode_depth
-      extrude: diode_depth
-      shift: [0, 0, -diode_depth]
-
-  # Case bottom cutouts - Pin depth
-  _pin_depth_cutouts:
-    - what: outline
-      name: _pin_depth_38
+      name: _pin_depth_38_left
       extrude: pin_depth
       shift: [0, 0, -pin_depth]
-
-  _solder_pin_depth_cutouts_left:
+  _pin_depth_cutouts_m_right:
     - what: outline
-      name: _solder_pin_depth_38_left
+      name: _pin_depth_38_m_right
       extrude: pin_depth
       shift: [0, 0, -pin_depth]
-  _solder_pin_depth_cutouts_m_right:
+  _pin_depth_pinky_cutouts_left:
     - what: outline
-      name: _solder_pin_depth_38_m_right
+      name: _pin_depth_pinky_left
       extrude: pin_depth
       shift: [0, 0, -pin_depth]
-  _solder_pin_depth_pinky_cutouts_left:
+  _pin_depth_pinky_cutouts_m_right:
     - what: outline
-      name: _solder_pin_depth_pinky_left
-      extrude: pin_depth
-      shift: [0, 0, -pin_depth]
-  _solder_pin_depth_pinky_cutouts_m_right:
-    - what: outline
-      name: _solder_pin_depth_pinky_m_right
+      name: _pin_depth_pinky_m_right
       extrude: pin_depth
       shift: [0, 0, -pin_depth]
 
@@ -1445,86 +1461,34 @@ cases:
     - +_posts_42
     - +_mcu_catch
     - -_wall_cutouts
-    - -_full_depth_cutouts
+    - -_m2_nut_depth_cutouts
     - -_diode_depth_cutouts
-
-  _temporal_42_socket_left:
-    - +_temporal_42_1
-    - -_pin_depth_cutouts
-    - -_socket_choc_depth_cutouts_left
-    - -_socket_choc_depth_pinky_cutouts_left
-    - -_socket_full_depth_cutouts_left
-    - -_socket_full_depth_pinky_cutouts_left
-
-  temporal_42_v1_socket_left:
-    - +_temporal_42_socket_left
-
-  temporal_42_v2_socket_left:
-    - +_temporal_42_socket_left
-    - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
-    - -_choc_v2_full_depth_pinky_cutouts
     - -_choc_v2_bridge_pinky_cutouts
-    - -_choc_v2_pin_depth_cutouts_left
-    - -_choc_v2_pin_depth_pinky_cutouts_left
 
-  _temporal_42_socket_m_right:
+  _temporal_42_left:
     - +_temporal_42_1
-    - -_pin_depth_cutouts
-    - -_socket_choc_depth_cutouts_m_right
-    - -_socket_choc_depth_pinky_cutouts_m_right
-    - -_socket_full_depth_cutouts_m_right
-    - -_socket_full_depth_pinky_cutouts_m_right
+    - -_pin_depth_cutouts_left
+    - -_pin_depth_pinky_cutouts_left
+    - -_choc_depth_cutouts_left
+    - -_choc_depth_pinky_cutouts_left
+    - -_socket_depth_cutouts_left
+    - -_socket_depth_pinky_cutouts_left
 
-  temporal_42_v1_socket_m_right:
-    - +_temporal_42_socket_m_right
-
-  temporal_42_v2_socket_m_right:
-    - +_temporal_42_socket_m_right
-    - -_choc_v2_full_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_full_depth_pinky_cutouts
-    - -_choc_v2_bridge_pinky_cutouts
-    - -_choc_v2_pin_depth_cutouts_m_right
-    - -_choc_v2_pin_depth_pinky_cutouts_m_right
-
-  _temporal_42_solder_left:
+  _temporal_42_m_right:
     - +_temporal_42_1
-    - -_solder_pin_depth_cutouts_left
-    - -_solder_pin_depth_pinky_cutouts_left
-    - -_choc_depth_cutouts
-    - -_choc_depth_pinky_cutouts
+    - -_pin_depth_cutouts_m_right
+    - -_pin_depth_pinky_cutouts_m_right
+    - -_choc_depth_cutouts_m_right
+    - -_choc_depth_pinky_cutouts_m_right
+    - -_socket_depth_cutouts_m_right
+    - -_socket_depth_pinky_cutouts_m_right
 
-  temporal_42_v1_solder_left:
-    - +_temporal_42_solder_left
+  temporal_42_left:
+    - +_temporal_42_left
 
-  temporal_42_v2_solder_left:
-    - +_temporal_42_solder_left
-    - -_choc_v2_full_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_full_depth_pinky_cutouts
-    - -_choc_v2_bridge_pinky_cutouts
-    - -_choc_v2_pin_depth_cutouts_left
-    - -_choc_v2_pin_depth_pinky_cutouts_left
-
-  _temporal_42_solder_m_right:
-    - +_temporal_42_1
-    - -_solder_pin_depth_cutouts_m_right
-    - -_solder_pin_depth_pinky_cutouts_m_right
-    - -_choc_depth_cutouts
-    - -_choc_depth_pinky_cutouts
-
-  temporal_42_v1_solder_m_right:
-    - +_temporal_42_solder_m_right
-
-  temporal_42_v2_solder_m_right:
-    - +_temporal_42_solder_m_right
-    - -_choc_v2_full_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_full_depth_pinky_cutouts
-    - -_choc_v2_bridge_pinky_cutouts
-    - -_choc_v2_pin_depth_cutouts_m_right
-    - -_choc_v2_pin_depth_pinky_cutouts_m_right
+  temporal_42_m_right:
+    - +_temporal_42_m_right
 
   _temporal_42_kickstand_1:
     - what: outline
@@ -1532,37 +1496,13 @@ cases:
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
 
-  temporal_42_v1_socket_kickstand_left:
+  temporal_42_kickstand_left:
     - +_temporal_42_kickstand_1
-    - +temporal_42_v1_socket_left
+    - +temporal_42_left
 
-  temporal_42_v1_socket_kickstand_m_right:
+  temporal_42_kickstand_m_right:
     - +_temporal_42_kickstand_1
-    - +temporal_42_v1_socket_m_right
-
-  temporal_42_v1_solder_kickstand_left:
-    - +_temporal_42_kickstand_1
-    - +temporal_42_v1_solder_left
-
-  temporal_42_v1_solder_kickstand_m_right:
-    - +_temporal_42_kickstand_1
-    - +temporal_42_v1_solder_m_right
-
-  temporal_42_v2_socket_kickstand_left:
-    - +_temporal_42_kickstand_1
-    - +temporal_42_v2_socket_left
-
-  temporal_42_v2_socket_kickstand_m_right:
-    - +_temporal_42_kickstand_1
-    - +temporal_42_v2_socket_m_right
-
-  temporal_42_v2_solder_kickstand_left:
-    - +_temporal_42_kickstand_1
-    - +temporal_42_v2_solder_left
-
-  temporal_42_v2_solder_kickstand_m_right:
-    - +_temporal_42_kickstand_1
-    - +temporal_42_v2_solder_m_right
+    - +temporal_42_m_right
 
   top_plate_42:
     - what: outline
@@ -1575,66 +1515,27 @@ cases:
     - +_posts_38
     - +_mcu_catch
     - -_wall_cutouts
-    - -_full_depth_cutouts
+    - -_m2_nut_depth_cutouts
     - -_diode_depth_cutouts
-
-  _temporal_38_socket_left:
-    - +_temporal_38_1
-    - -_pin_depth_cutouts
-    - -_socket_choc_depth_cutouts_left
-    - -_socket_full_depth_cutouts_left
-
-  temporal_38_v1_socket_left:
-    - +_temporal_38_socket_left
-
-  temporal_38_v2_socket_left:
-    - +_temporal_38_socket_left
-    - -_choc_v2_full_depth_cutouts
     - -_choc_v2_bridge_cutouts
-    - -_choc_v2_pin_depth_cutouts_left
 
-  _temporal_38_socket_m_right:
+  _temporal_38_left:
     - +_temporal_38_1
-    - -_pin_depth_cutouts
-    - -_socket_choc_depth_cutouts_m_right
-    - -_socket_full_depth_cutouts_m_right
+    - -_pin_depth_cutouts_left
+    - -_choc_depth_cutouts_left
+    - -_socket_depth_cutouts_left
 
-  temporal_38_v1_socket_m_right:
-    - +_temporal_38_socket_m_right
-
-  temporal_38_v2_socket_m_right:
-    - +_temporal_38_socket_m_right
-    - -_choc_v2_full_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_pin_depth_cutouts_m_right
-
-  _temporal_38_solder_left:
+  _temporal_38_m_right:
     - +_temporal_38_1
-    - -_solder_pin_depth_cutouts_left
-    - -_choc_depth_cutouts
+    - -_pin_depth_cutouts_m_right
+    - -_choc_depth_cutouts_m_right
+    - -_socket_depth_cutouts_m_right
 
-  temporal_38_v1_solder_left:
-    - +_temporal_38_solder_left
+  temporal_38_left:
+    - +_temporal_38_left
 
-  temporal_38_v2_solder_left:
-    - +_temporal_38_solder_left
-    - -_choc_v2_full_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_pin_depth_cutouts_left
-
-  _temporal_38_solder_m_right:
-    - +_temporal_38_1
-    - -_solder_pin_depth_cutouts_m_right
-    - -_choc_depth_cutouts
-
-  temporal_38_v1_solder_m_right:
-    - +_temporal_38_solder_m_right
-
-  temporal_38_v2_solder_m_right:
-    - +_temporal_38_solder_m_right
-    - -_choc_v2_full_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_pin_depth_cutouts_m_right
+  temporal_38_m_right:
+    - +_temporal_38_m_right
 
   _temporal_38_kickstand_1:
     - what: outline
@@ -1642,37 +1543,13 @@ cases:
       extrude: bottom_thickness + wall_height
       shift: [0, 0, -bottom_thickness]
 
-  temporal_38_v1_socket_kickstand_left:
+  temporal_38_kickstand_left:
     - +_temporal_38_kickstand_1
-    - +temporal_38_v1_socket_left
+    - +temporal_38_left
 
-  temporal_38_v1_socket_kickstand_m_right:
+  temporal_38_kickstand_m_right:
     - +_temporal_38_kickstand_1
-    - +temporal_38_v1_socket_m_right
-
-  temporal_38_v1_solder_kickstand_left:
-    - +_temporal_38_kickstand_1
-    - +temporal_38_v1_solder_left
-
-  temporal_38_v1_solder_kickstand_m_right:
-    - +_temporal_38_kickstand_1
-    - +temporal_38_v1_solder_m_right
-
-  temporal_38_v2_socket_kickstand_left:
-    - +_temporal_38_kickstand_1
-    - +temporal_38_v2_socket_left
-
-  temporal_38_v2_socket_kickstand_m_right:
-    - +_temporal_38_kickstand_1
-    - +temporal_38_v2_socket_m_right
-
-  temporal_38_v2_solder_kickstand_left:
-    - +_temporal_38_kickstand_1
-    - +temporal_38_v2_solder_left
-
-  temporal_38_v2_solder_kickstand_m_right:
-    - +_temporal_38_kickstand_1
-    - +temporal_38_v2_solder_m_right
+    - +temporal_38_m_right
 
   top_plate_38:
     - what: outline

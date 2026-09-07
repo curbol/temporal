@@ -7,6 +7,36 @@ Building a Temporal from bare PCBs to a flashed, working keyboard.
 
 ## Before You Start
 
+### Choose Your Build
+
+Four decisions settle everything you order and print. Only the first two change which
+files you need; the switch generation and whether you socket or solder are yours to make
+at assembly time, because one case covers all of them.
+
+```mermaid
+flowchart TD
+    A["Full pinky column?"] -->|"Keep it: 40-42 keys"| B42["42"]
+    A -->|"Snap it off: 36-38 keys"| B38["38"]
+    B42 --> C{"Top plate and back:<br/>printed or FR-4?"}
+    B38 --> C
+    C -->|"3D printed"| P["Order temporal.zip<br/><br/>Print from cases/NN/:<br/>left.stl + right.stl<br/>top_plate.stl x2<br/>mcu_cover.stl x2"]
+    C -->|"FR-4 plates"| F{"Silkscreen branding<br/>on the top plate?"}
+    F -->|"Keep it"| F1["Order temporal.zip<br/>top_plate_NN.zip<br/>back_plate_NN.zip<br/>mcu_cover.zip"]
+    F -->|"Stealth"| F2["Order temporal.zip<br/>top_plate_NN_stealth.zip<br/>back_plate_NN.zip<br/>mcu_cover.zip"]
+    P --> K{"Tenting kickstand?"}
+    K -->|"Yes"| K1["Print kickstand_left.stl<br/>+ kickstand_right.stl<br/>instead of left/right"]
+    K -->|"No"| K2["Done"]
+```
+
+Gerber zips are in [`gerbers/`](/gerbers/); `NN` is your key count. Every build needs
+`temporal.zip`, which is the main PCB, twice. [docs/bom.md](/docs/bom.md) lists the
+components.
+
+One 3D-printed case fits every switch and mounting combination: it carries the pockets
+for Choc v1 posts, the Choc v2 centre boss and stabilizer pin, hotswap sockets, and
+directly soldered switch pins all at once. At a 2.35mm floor they are all blind, so the
+bottom face is solid whichever build you do.
+
 ### Key Configuration
 
 Decide on your key configuration (36-42 keys) first. The outer pinky columns snap off the PCB if you do not want them, and each encoder replaces one key position in the thumb cluster.
@@ -99,7 +129,7 @@ Install one socket per key position, matching your diode count. Sockets fit one 
 > Apply gentle pressure while soldering to ensure the socket sits flat against the PCB.
 
 > [!TIP]
-> Install sockets in the encoder positions even if you are fitting encoders. They do not interfere, and they fill the socket cutout in the case for a cleaner look.
+> Install sockets in the encoder positions even if you are fitting encoders. They do not interfere, and leaving the position socketed keeps the option of a plain switch there later.
 
 <img src="/assets/build_guide/sockets_soldered.jpg" width="400" alt="Hotswap sockets soldered">
 

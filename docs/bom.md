@@ -76,35 +76,28 @@ Use [`gerbers/temporal.zip`](/gerbers/temporal.zip) for PCB fabrication with ser
 > [!TIP]
 > Order top plates at 1.2mm thickness instead of 1.6mm for the best fit with Choc switches.
 
-3D-printable case files are in the [`cases/`](/cases/) directory, foldered by key
-count and then by switch generation and mounting:
+3D-printable case files are in the [`cases/`](/cases/) directory, foldered by key count:
 
 ```
 cases/
 ├── mcu_cover.stl
 ├── 38/
 │   ├── top_plate.stl
-│   ├── v1_socket/   left.stl  right.stl  kickstand_left.stl  kickstand_right.stl
-│   ├── v1_solder/   ...
-│   ├── v2_socket/   ...
-│   └── v2_solder/   ...
-└── 42/              (same layout)
+│   ├── left.stl            right.stl
+│   └── kickstand_left.stl  kickstand_right.stl
+└── 42/                     (same layout)
 ```
 
-Pick your key count, then the folder matching your switches and mounting, and print
-the `left` and `right` pair from it.
+Pick your key count, then print the `left` and `right` pair, with or without the
+kickstand. One case fits every build: Choc v1 or v2, hotswap sockets or switches
+soldered straight to the board. It carries the clearances for all of them, and at a
+2.35mm floor every pocket is blind, so the bottom face is solid.
 
-- **`38` / `42`**: key configuration, matching the breakoff pinky column.
-- **`v1` / `v2`**: which Choc switch you are using. A v2 switch has a wider, deeper
-  centre boss (Ø4.8 x 3.3mm) and one extra corner stabilizer pin. That boss is long
-  enough that its clearance passes through the floor, so a `v2` case has a hole under
-  each key; a `v1` case does not, and its centre pockets are blind. A `v2` case will
-  also take v1 switches if you want one case for both.
-- **`socket`**: required if you install hotswap sockets. The floor is relieved all
-  the way through under each socket, which stands 1.95mm off the back of the PCB.
-- **`solder`**: only for switches soldered directly to the PCB. It has just 1.15mm
-  of relief, so a board with hotswap sockets will not seat in it.
+- **`38` / `42`**: key configuration, matching the breakoff pinky column. A 42 case
+  also takes the 41 and 40-key encoder configurations, and a 38 case the 37 and 36.
 - **`kickstand`**: optional, adds a wedge for tenting.
+- **`top_plate`**: one per hand, printed twice from the same file and flipped.
+- **`mcu_cover`**: shared by both hands and both key counts, printed twice.
 
 Top plates are also available as `top_plate_<38|42>_stealth` gerbers: the same plate
 without the white silkscreen branding, leaving the lettering as an outline in the

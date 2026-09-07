@@ -39,18 +39,16 @@ async function processSTL(inputPath, outputPath, mirror = false) {
 }
 
 /**
- * Where a case STL belongs under cases/. Half-cases are foldered by key count and
- * then by switch generation and mounting, so choosing a build lands you in a
- * directory holding only that variant's four files. Shared parts stay at the top.
+ * Where a case STL belongs under cases/. Half-cases are foldered by key count, which
+ * with the kickstand choice is all that separates them. Shared parts stay at the top.
  */
 function outputRelPath(baseName) {
-  const variant = baseName.match(
-    /^temporal_(38|42)_(v1|v2)_(socket|solder)_(?:(kickstand)_)?(left|m_right)$/);
+  const variant = baseName.match(/^temporal_(38|42)_(?:(kickstand)_)?(left|m_right)$/);
 
   if (variant) {
-    const [, count, generation, mounting, kickstand, hand] = variant;
+    const [, count, kickstand, hand] = variant;
     const side = hand === 'm_right' ? 'right' : 'left';
-    return path.join(count, `${generation}_${mounting}`, `${kickstand ? 'kickstand_' : ''}${side}.stl`);
+    return path.join(count, `${kickstand ? 'kickstand_' : ''}${side}.stl`);
   }
 
   const plate = baseName.match(/^top_plate_(38|42)$/);
