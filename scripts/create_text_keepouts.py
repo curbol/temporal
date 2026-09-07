@@ -7,8 +7,8 @@ Usage:
     python3 create_text_keepouts.py <gap_mm> <layers> <patterns> <board> [board ...]
 
 <layers> is comma-separated, <patterns> is pipe-separated. Prints a JSON map of
-board path to the number of keepout groups created, or -1 for a board that
-failed.
+board path to the number of texts matched and the number that received at least
+one keepout zone, or -1 for a board that failed.
 """
 import sys
 import os
@@ -17,6 +17,11 @@ import os
 os.environ['WXSUPPRESS_SIZER_FLAGS_CHECK'] = '1'
 
 import pcbnew
+
+# pcbnew.py iterates its containers by calling next() on the SWIG iterator, which newer
+# SWIG builds expose only as __next__. Without this, GetDrawings() raises AttributeError.
+if not hasattr(pcbnew.SwigPyIterator, 'next'):
+    pcbnew.SwigPyIterator.next = pcbnew.SwigPyIterator.__next__
 
 try:
     import wx
@@ -106,7 +111,7 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
             group = pcbnew.PCB_GROUP(board)
             group.SetName(f"TEXT_{safe_text[:20]}")
             board.Add(group)
-            created_groups += 1
+            zones_before = created_count
 
             # Create a separate keepout zone for each outline segment (per character part)
             for outline_idx in range(poly_set.OutlineCount()):
@@ -142,6 +147,17 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
                 board.Add(zone)
                 group.AddItem(zone)
                 created_count += 1
+
+            # Only a group that actually holds a zone protects its text. Counting
+            # the group itself would report success for a text whose outlines all
+            # collapsed below three points, leaving it to be buried by the pour.
+            if created_count == zones_before:
+                print(f"Error: {text_content!r} in {board_path} produced no keepout zone",
+                      file=sys.stderr)
+                board.Remove(group)
+                continue
+
+            created_groups += 1
 
         pcbnew.SaveBoard(board_path, board)
 

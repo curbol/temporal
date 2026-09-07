@@ -32,8 +32,10 @@ function processPcbFile(filepath) {
 
   let removedLines = 0;
   let removedArcs = 0;
+  let seen = 0;
 
   const lineMatches = [...content.matchAll(linePattern)];
+  seen += lineMatches.length;
   for (const match of lineMatches) {
     const startX = parseFloat(match[1]);
     const startY = parseFloat(match[2]);
@@ -49,6 +51,8 @@ function processPcbFile(filepath) {
   }
 
   const arcMatches = [...content.matchAll(arcPattern)];
+  seen += arcMatches.length;
+
   for (const match of arcMatches) {
     const startX = parseFloat(match[1]);
     const startY = parseFloat(match[2]);
@@ -69,21 +73,31 @@ function processPcbFile(filepath) {
     fs.writeFileSync(filepath, content, 'utf-8');
   }
 
-  return removedLines + removedArcs;
+  return { removed: removedLines + removedArcs, seen };
 }
 
 function main() {
   const pcbFiles = ergogenOutputPcbs();
 
   let totalRemoved = 0;
+  let totalSeen = 0;
   for (const pcbFile of pcbFiles) {
-    const removed = processPcbFile(pcbFile);
+    const { removed, seen } = processPcbFile(pcbFile);
     totalRemoved += removed;
+    totalSeen += seen;
   }
 
-  if (totalRemoved > 0) {
-    console.log(`✓ Removed ${totalRemoved} tiny edge cut segments from ${pcbFiles.length} PCB files`);
+  // Every board carries an Edge.Cuts outline, and KiCad has no DRC rule that would
+  // name this pass as the cause of a malformed one. Counting what the patterns
+  // matched rather than what they removed keeps a re-run on already-cleaned boards
+  // quiet while still catching patterns that no longer fit what Ergogen writes.
+  if (totalSeen === 0) {
+    console.error(`Error: no Edge.Cuts graphic matched across ${pcbFiles.length} PCB files`);
+    console.error('The KiCad s-expression layout no longer matches this pass.');
+    process.exit(1);
   }
+
+  console.log(`✓ Removed ${totalRemoved} of ${totalSeen} edge cut segments in ${pcbFiles.length} PCB files`);
 }
 
 main();

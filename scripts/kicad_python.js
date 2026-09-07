@@ -73,7 +73,7 @@ function getKiCadPythonOrThrow() {
 
   if (!pythonPath) {
     const platform = os.platform();
-    let installMsg = '';
+    let installMsg;
 
     if (platform === 'darwin') {
       installMsg = 'Make sure KiCad is installed at /Applications/KiCad/KiCad.app';

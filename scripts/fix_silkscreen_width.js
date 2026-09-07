@@ -23,6 +23,10 @@ const { ergogenOutputPcbs, unit } = require('./ergogen_config');
 const SILKSCREEN_LAYERS = ['F.SilkS', 'B.SilkS'];
 const GRAPHIC_START = /\((?:fp|gr)_(?:line|arc|circle|rect|poly)\s/g;
 
+// A stroke is one level inside its graphic; the rest is headroom for a nesting the
+// format grows later, and stops the climb before it reaches the whole board block.
+const MAX_ENCLOSING_DEPTH = 4;
+
 /**
  * The balanced s-expression beginning at startIndex, or null if it never closes.
  */
@@ -102,25 +106,70 @@ function widenStrokes(content, minWidth) {
 }
 
 /**
+ * The start of the innermost s-expression enclosing endIndex, or -1. Walking
+ * outward from a stroke reaches the same blocks as the forward scan above without
+ * sharing its opening-token regex, so a construct that regex stops recognising is
+ * still seen here.
+ */
+function enclosingBlockStart(content, endIndex) {
+  let depth = 0;
+
+  for (let i = endIndex; i >= 0; i--) {
+    if (content[i] === ')') {
+      depth++;
+    } else if (content[i] === '(') {
+      if (depth === 0) {
+        return i;
+      }
+
+      depth--;
+    }
+  }
+
+  return -1;
+}
+
+/**
  * Any silkscreen stroke still below the minimum, found without reusing the block
- * parser above. If that parser stops matching, checking its own output would
- * report success, so this backstop reads the single-line form directly. Ergogen
- * writes almost every graphic that way, so it sees nearly all of the volume.
+ * parser above. If that parser stops matching, checking its own output would report
+ * success, so this backstop starts from the strokes themselves and walks outward to
+ * the graphic that owns each one. Line breaks do not matter, so it covers the
+ * multi-line fp_poly blocks convert_svg_to_footprint.js emits as well as Ergogen's
+ * single-line graphics.
  */
 function residualStrokes(content, minWidth) {
   const residual = [];
 
-  for (const line of content.split('\n')) {
-    if (!SILKSCREEN_LAYERS.some(layer => line.includes(`(layer "${layer}")`))) {
+  for (const match of content.matchAll(/\(width ([\d.]+)\)/g)) {
+    const value = parseFloat(match[1]);
+
+    if (value === 0 || value >= minWidth) {
       continue;
     }
 
-    for (const [, width] of line.matchAll(/\(width ([\d.]+)\)/g)) {
-      const value = parseFloat(width);
+    // A stroke sits inside (stroke ...), so climb until a block names a layer.
+    let index = match.index;
 
-      if (value !== 0 && value < minWidth) {
-        residual.push(width);
+    for (let level = 0; level < MAX_ENCLOSING_DEPTH; level++) {
+      index = enclosingBlockStart(content, index - 1);
+
+      if (index < 0) {
+        break;
       }
+
+      const block = extractBlock(content, index);
+
+      // Ergogen quotes silkscreen layers but not Edge.Cuts, so match either form:
+      // climbing past a graphic that names a layer would reach the whole board block.
+      if (block === null || !/\(layer\s/.test(block)) {
+        continue;
+      }
+
+      if (isSilkscreen(block)) {
+        residual.push(match[1]);
+      }
+
+      break;
     }
   }
 

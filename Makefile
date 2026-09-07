@@ -90,7 +90,7 @@ gen:
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"; \
 	$(MAKE) --no-print-directory clean; \
 	next "Generating PCBs and cases with Ergogen..."; \
-	npm run gen 2>/dev/null || npm run gen; \
+	npm run gen; \
 	node scripts/generate_layout.js; \
 	echo "✓ Ergogen generation complete"; \
 	next "Post-processing PCB files..."; \
@@ -208,16 +208,17 @@ check:
 	@node scripts/check_zone_fills.js
 	@set -e; \
 	SNAPSHOT=$$(mktemp -d); \
-	trap 'cp "$$SNAPSHOT/temporal.json" temporal.json; \
-	      rm -rf $(JLCPCB_DIR); cp -r "$$SNAPSHOT/$(JLCPCB_DIR)" $(JLCPCB_DIR); \
-	      cp -r "$$SNAPSHOT/proj/." $(PCBS_DIR)/; \
-	      rm -rf "$$SNAPSHOT"' EXIT; \
+	trap 'rm -rf "$$SNAPSHOT"' EXIT; \
 	cp temporal.json "$$SNAPSHOT/"; \
 	cp -r $(JLCPCB_DIR) "$$SNAPSHOT/"; \
 	for f in $(PCBS_DIR)/*/*.kicad_dru $(PCBS_DIR)/*/*.kicad_pro; do \
 		mkdir -p "$$SNAPSHOT/proj/$$(basename $$(dirname $$f))"; \
 		cp "$$f" "$$SNAPSHOT/proj/$$(basename $$(dirname $$f))/"; \
 	done; \
+	trap 'cp "$$SNAPSHOT/temporal.json" temporal.json; \
+	      rm -rf $(JLCPCB_DIR); cp -r "$$SNAPSHOT/$(JLCPCB_DIR)" $(JLCPCB_DIR); \
+	      cp -r "$$SNAPSHOT/proj/." $(PCBS_DIR)/; \
+	      rm -rf "$$SNAPSHOT"' EXIT; \
 	node scripts/generate_layout.js >/dev/null; \
 	$(MAKE) --no-print-directory assembly >/dev/null; \
 	node scripts/setup_kicad_project.js >/dev/null; \
@@ -266,7 +267,7 @@ check:
 # Clean generated output
 clean:
 	@rm -rf $(OUTPUT_DIR)
-	@rm -rf $(CASES_DIR)
+	@find $(CASES_DIR) -mindepth 1 -maxdepth 1 ! -name README.md -exec rm -rf {} + 2>/dev/null || true
 	@rm -rf $(GERBERS_DIR)
 	@rm -rf $(JLCPCB_DIR)
 	@find $(PCBS_DIR) -mindepth 1 -maxdepth 1 ! -name temporal -exec rm -rf {} + 2>/dev/null || true

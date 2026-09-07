@@ -35,6 +35,12 @@ except ImportError:
     )
     sys.exit(1)
 
+# pcbnew.py iterates its containers by calling next() on the SWIG iterator, which newer
+# SWIG builds expose only as __next__. Without this, iterating a board's drawings or
+# tracks raises AttributeError.
+if not hasattr(pcbnew.SwigPyIterator, "next"):
+    pcbnew.SwigPyIterator.next = pcbnew.SwigPyIterator.__next__
+
 # KiCad 10 made aInferOutlineIfNecessary a required positional argument, while the
 # ViaStitching plugin calls this with the outline alone.
 _orig_get_outlines = pcbnew.BOARD.GetBoardPolygonOutlines
@@ -64,6 +70,16 @@ def _version_parts(value):
             digits += char
         parts.append(int(digits) if digits else 0)
     return parts
+
+
+def _version_parts_in_path(path):
+    """Sort key that orders KiCad's versioned plugin directories numerically."""
+    best = []
+    for part in path.split(os.sep):
+        parsed = _version_parts(part)
+        if part and part[0].isdigit() and parsed > best:
+            best = parsed
+    return best
 
 
 class _ComparableVersion(str):
@@ -141,8 +157,10 @@ try:
     for pattern in search_patterns:
         matches = glob.glob(pattern)
         if matches:
-            # Latest version when several are installed.
-            via_stitching_dir = sorted(matches)[-1]
+            # Latest version when several are installed. Sorted by version rather
+            # than lexicographically, which would rank 9.0 above 10.0 and load a
+            # plugin `make deps` never patched.
+            via_stitching_dir = sorted(matches, key=_version_parts_in_path)[-1]
             break
 
     if not via_stitching_dir or not os.path.exists(via_stitching_dir):

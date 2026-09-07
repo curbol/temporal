@@ -380,13 +380,13 @@ function applyDefaultsToProject(projectData, config) {
       merge(createNetClass(netClassConfig.name ?? 'Unknown', netClassConfig, false)))
   ];
 
-  const netclassPatterns = config.netclass_patterns ?? [];
-  if (netclassPatterns.length > 0) {
-    projectData.net_settings.netclass_patterns = netclassPatterns.map(p => ({
-      netclass: p.netclass,
-      pattern: p.pattern
-    }));
-  }
+  // Rebuilt unconditionally, like the classes above, so a pattern removed from the
+  // YAML also disappears from an existing .kicad_pro rather than routing a net at a
+  // width the config no longer asks for
+  projectData.net_settings.netclass_patterns = (config.netclass_patterns ?? []).map(p => ({
+    netclass: p.netclass,
+    pattern: p.pattern
+  }));
 
   const rules = config.design_rules ?? {};
   const projectRules = projectData.board.design_settings.rules;

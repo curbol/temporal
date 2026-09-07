@@ -5,7 +5,7 @@
  *
  * A byte diff would be wrong here: KiCad rewrites the whole file whenever someone
  * opens the board, adding and reordering fields the build does not manage. Only the
- * three subtrees the config drives are compared.
+ * subtrees the config drives are compared.
  */
 
 const fs = require('fs');
@@ -13,6 +13,7 @@ const path = require('path');
 
 const OWNED_PATHS = [
   ['net_settings', 'classes'],
+  ['net_settings', 'netclass_patterns'],
   ['board', 'design_settings', 'rules'],
   ['board', 'design_settings', 'defaults']
 ];
@@ -31,12 +32,24 @@ function main() {
 
   const drifted = [];
 
-  for (const board of fs.readdirSync(snapshotDir)) {
+  // The union of both sides, so a board whose .kicad_pro was never written and one
+  // added since the snapshot are reported rather than skipped
+  const boards = new Set([
+    ...fs.readdirSync(snapshotDir),
+    ...fs.readdirSync('pcbs', { withFileTypes: true })
+      .filter(entry => entry.isDirectory())
+      .map(entry => entry.name)
+  ]);
+
+  for (const board of [...boards].sort()) {
     const name = `${board}.kicad_pro`;
     const snapshotPath = path.join(snapshotDir, board, name);
     const currentPath = path.join('pcbs', board, name);
+    const hasSnapshot = fs.existsSync(snapshotPath);
+    const hasCurrent = fs.existsSync(currentPath);
 
-    if (!fs.existsSync(snapshotPath) || !fs.existsSync(currentPath)) {
+    if (!hasSnapshot || !hasCurrent) {
+      drifted.push(`${currentPath}: ${hasCurrent ? 'not in the snapshot' : 'missing'}`);
       continue;
     }
 
@@ -51,7 +64,7 @@ function main() {
   }
 
   if (drifted.length > 0) {
-    console.error('Error: .kicad_pro settings no longer match scripts/kicad_config.yaml:');
+    console.error('Error: .kicad_pro files no longer match scripts/kicad_config.yaml:');
     drifted.forEach(entry => console.error(`  ${entry}`));
     process.exit(1);
   }

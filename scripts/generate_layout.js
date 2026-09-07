@@ -171,6 +171,13 @@ function generateZmkLayout(keys) {
   });
 
   const encoder = keys.find(key => key.name === ENCODER_KEY);
+
+  if (!encoder) {
+    console.error(`Error: ergogen/config.yaml has no point named "${ENCODER_KEY}"`);
+    console.error('  scripts/generate_layout.js reads the encoder position from it.');
+    process.exit(1);
+  }
+
   const encoderRow = rowMap[encoder.row];
   const encoderCol = colMapLeft[encoder.columnNet];
 

@@ -297,6 +297,31 @@ function main() {
     process.exit(1);
   }
 
+  // The jumper resistors are numbered from a counter here rather than read off the
+  // board, so a footprint that ever takes a JR reference would collide with them and
+  // the fab would place two parts at one designator.
+  const boardReferences = new Set(
+    parseFootprints(pcbFile).map(fp => fp.reference).filter(Boolean));
+  const taken = embeddedResistors
+    .map(comp => comp.designator)
+    .filter(designator => boardReferences.has(designator));
+
+  if (taken.length > 0) {
+    console.error(`Error: generated jumper designators already exist on the board: ${[...new Set(taken)].sort().join(', ')}`);
+    console.error('Renumber the embedded resistors or rename the board footprint.');
+    process.exit(1);
+  }
+
+  const seen = new Set();
+  const duplicates = allComponents
+    .map(comp => comp.designator)
+    .filter(designator => seen.size === seen.add(designator).size);
+
+  if (duplicates.length > 0) {
+    console.error(`Error: duplicate reference designators: ${[...new Set(duplicates)].sort().join(', ')}`);
+    process.exit(1);
+  }
+
   const bomPath = path.join(jlcpcbDir, 'temporal_BOM.csv');
   const cplTopPath = path.join(jlcpcbDir, 'temporal_CPL_top.csv');
   const cplBottomPath = path.join(jlcpcbDir, 'temporal_CPL_bottom.csv');
