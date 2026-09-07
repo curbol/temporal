@@ -145,7 +145,17 @@ only to the visible sliver moves the taper to wherever its own edge cuts the nei
 |---|---|---|
 | v2 boss pocket / socket relief | 0.26mm | the pocket's socket-facing quadrant, `choc_v2_pocket_r` wide and up to `socket_top_block_y` |
 | middle solder relief / diode | 0.09mm | `solder_pin_w` wide, from `solder_mid_y` up to `diode_y` |
-| side solder relief / v2 stabilizer | 0.75mm | `choc_v2_stab_w + cutout_padding` wide, from `solder_side_y` down to `choc_v2_stab_y` |
+| side solder relief / v2 stabilizer | 0.75mm | `choc_v2_stab_w` wide, from `solder_side_y` down to `choc_v2_stab_y` |
+
+A bridge's width is bounded by whether the boundary it crosses is already continuous.
+Where two shapes barely meet, as the middle solder relief and the diode do at 24
+degrees, the bridge is the outermost boundary over its span and spanning the relief's
+full width is right. Where they already overlap well, as the side relief and the
+stabilizer pocket do at 81 degrees, a straight edge wider than the union's waist bulges
+out of a boundary that was already smooth: at pocket width that bulge is 0.18mm. The
+side bridge therefore takes the pin hole's width, `choc_v2_stab_w`, which stays inside
+the union everywhere with 0.118mm to spare. The same rule set the boss bridge to one
+pocket radius rather than a fixed reach into the socket block.
 
 Each bridge is cut at the shallower of the two depths it joins, which is all the height
 the sliver has: below that the shallower pocket's floor is solid and the region is

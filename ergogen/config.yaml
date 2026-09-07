@@ -428,21 +428,25 @@ outlines:
     - name: _solder_pin
       adjust.shift: [0, solder_mid_y]
 
-  # Both solder reliefs cross a neighbouring pocket at a shallow angle, leaving a sliver
-  # rather than a wall. Each bridge spans the full width of the shape it joins, so the
-  # crossing goes away instead of moving: the middle pin reaches up into the diode, and
-  # the side pin reaches down into the v2 stabilizer pocket.
+  # The middle solder relief crosses the diode pocket at 24 degrees, leaving a sliver
+  # rather than a wall, so this spans the relief's full width into the diode and the
+  # crossing goes away instead of moving.
   _solder_mid_bridge:
     - what: rectangle
       size: [solder_pin_w, diode_y - solder_mid_y]
       adjust.shift: [0, (diode_y + solder_mid_y) / 2]
+
+  # The side relief and the stabilizer pocket cross at 81 degrees, near enough to a right
+  # angle that they need no help, so this only squares off the concave step between them.
+  # It takes the pin hole's width rather than the pocket's: at pocket width the straight
+  # edge bulges 0.18mm out of a boundary that is already continuous.
   _solder_side_bridge_left:
     - what: rectangle
-      size: [choc_v2_stab_w + cutout_padding, solder_side_y - choc_v2_stab_y]
+      size: [choc_v2_stab_w, solder_side_y - choc_v2_stab_y]
       adjust.shift: [-choc_v2_stab_x, (solder_side_y + choc_v2_stab_y) / 2]
   _solder_side_bridge_m_right:
     - what: rectangle
-      size: [choc_v2_stab_w + cutout_padding, solder_side_y - choc_v2_stab_y]
+      size: [choc_v2_stab_w, solder_side_y - choc_v2_stab_y]
       adjust.shift: [choc_v2_stab_x, (solder_side_y + choc_v2_stab_y) / 2]
 
   _diode_pads:
