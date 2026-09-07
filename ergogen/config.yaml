@@ -488,20 +488,21 @@ outlines:
 
   # The v2 centre boss pocket crosses the hotswap socket relief, and the material caught
   # between the two tapers to a knife edge. Squaring off the quadrant that faces the
-  # socket removes it: the rectangle reaches from the switch centre to inside the socket's
-  # bottom block and up to its top block, so the two pockets are one.
+  # socket removes it. The rectangle is exactly the pocket's radius wide, so its edge
+  # leaves the circle tangentially rather than stepping past it, and still lands well
+  # inside the socket's bottom block; it reaches up to the top block, joining all three.
   _choc_v2_center_post_left:
     - what: circle
       radius: choc_v2_pocket_r
     - what: rectangle # Bridge to the hotswap socket relief
-      size: [socket_block_x + cutout_padding, socket_top_block_y]
-      adjust.shift: [(socket_block_x + cutout_padding) / 2, socket_top_block_y / 2]
+      size: [choc_v2_pocket_r, socket_top_block_y]
+      adjust.shift: [choc_v2_pocket_r / 2, socket_top_block_y / 2]
   _choc_v2_center_post_m_right:
     - what: circle
       radius: choc_v2_pocket_r
     - what: rectangle # Bridge to the hotswap socket relief
-      size: [socket_block_x + cutout_padding, socket_top_block_y]
-      adjust.shift: [-(socket_block_x + cutout_padding) / 2, socket_top_block_y / 2]
+      size: [choc_v2_pocket_r, socket_top_block_y]
+      adjust.shift: [-choc_v2_pocket_r / 2, socket_top_block_y / 2]
 
   # The centre pocket also stops 0.04mm short of the diode pocket, which is a knife edge
   # rather than a wall. This joins the two at diode depth so the floor steps.

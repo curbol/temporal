@@ -143,7 +143,7 @@ only to the visible sliver moves the taper to wherever its own edge cuts the nei
 
 | crossing | overlap | bridge |
 |---|---|---|
-| v2 boss pocket / socket relief | 0.26mm | the pocket's socket-facing quadrant, out to `socket_block_x + cutout_padding` and up to `socket_top_block_y` |
+| v2 boss pocket / socket relief | 0.26mm | the pocket's socket-facing quadrant, `choc_v2_pocket_r` wide and up to `socket_top_block_y` |
 | middle solder relief / diode | 0.09mm | `solder_pin_w` wide, from `solder_mid_y` up to `diode_y` |
 | side solder relief / v2 stabilizer | 0.75mm | `choc_v2_stab_w + cutout_padding` wide, from `solder_side_y` down to `choc_v2_stab_y` |
 
