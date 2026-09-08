@@ -92,6 +92,9 @@ module.exports = {
     invert_labels_position: false,
     include_silkscreen: true,
     include_labels: true,
+    label_font_face: "",
+    label_font_bold: false,
+    label_font_thickness: 0.15,
     include_courtyard: true,
     niceview_3dmodel_filename: "",
     niceview_3dmodel_xyz_offset: [0, 0, 0],
@@ -112,6 +115,10 @@ module.exports = {
     CS: { type: "net", value: "CS" },
   },
   body: (p) => {
+    const face = p.label_font_face != "" ? ` (face "${p.label_font_face}")` : "";
+    const bold = p.label_font_bold ? " (bold yes)" : "";
+    const font = `(font${face} (size 1 1) (thickness ${p.label_font_thickness})${bold})`;
+
     let dst_nets = [p.MOSI, p.SCK, p.VCC, p.GND, p.CS];
 
     let local_nets = [
@@ -166,7 +173,7 @@ module.exports = {
       (at 0 20 ${p.r})
       (layer "${p.side}.SilkS")
       ${p.ref_hide}
-      (effects (font (size 1 1) (thickness 0.15)))
+      (effects ${font})
     )
     (attr exclude_from_pos_files exclude_from_bom)
     `;
@@ -256,27 +263,27 @@ module.exports = {
     const silkscreen_labels_front = `
     (fp_text user "${dst_nets[0].name}" (at -5.08 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
+      (effects ${font} (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
     (fp_text user "${dst_nets[1].name}" (at -2.48 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
+      (effects ${font} (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
     (fp_text user "${dst_nets[2].name}" (at 0.15 ${14.75 + label_vcc_offset} ${90 + p.r
       }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
+      (effects ${font} (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
     (fp_text user "${dst_nets[3].name}" (at 2.62 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
+      (effects ${font} (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
     (fp_text user "${dst_nets[4].name}" (at 5.12 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "F.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "right" : "left"
+      (effects ${font} (justify ${!p.invert_labels_position ? "right" : "left"
       }))
     )
     `;
@@ -285,31 +292,31 @@ module.exports = {
     (fp_text user "${p.reversible ? dst_nets[0].name : dst_nets[4].name
       }" (at 5.22 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
+      (effects ${font} (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
     (fp_text user "${p.reversible ? dst_nets[1].name : dst_nets[3].name
       }" (at 2.72 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
+      (effects ${font} (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
     (fp_text user "${p.reversible ? dst_nets[2].name : dst_nets[2].name
       }" (at 0.15 ${14.75 + label_vcc_offset} ${90 + p.r
       }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
+      (effects ${font} (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
     (fp_text user "${p.reversible ? dst_nets[3].name : dst_nets[1].name
       }" (at -2.38 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
+      (effects ${font} (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
     (fp_text user "${p.reversible ? dst_nets[4].name : dst_nets[0].name
       }" (at -4.98 ${14.75 + labels_offset} ${90 + p.r
       }) (unlocked yes) (layer "B.SilkS")
-      (effects (font (size 1 1) (thickness 0.15)) (justify ${!p.invert_labels_position ? "left" : "right"
+      (effects ${font} (justify ${!p.invert_labels_position ? "left" : "right"
       } mirror))
     )
     `;

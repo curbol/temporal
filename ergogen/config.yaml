@@ -118,6 +118,7 @@ units:
   choc_post_d: 2.65
   choc_center_post_w: 3.4
   choc_side_post_w: 1.9
+  choc_side_post_x: 5.5 # Matches choc_v1_stabilizers in the vendored switch footprint
 
   # Choc v2 (Kailh PG1353, part CPG135301D01). A v2 switch keeps the v1 side
   # bosses and adds a wider, deeper centre boss plus one corner stabilizer pin, so
@@ -162,6 +163,7 @@ units:
   mcu_catch_radius: (choc_under_to_pcb - choc_top_plate) / 2
   cutout_fillet: 0.3
   cutout_padding: 0.6
+  choc_side_post_pocket_w: choc_side_post_w + cutout_padding
   # Depth of each pocket in the case floor, measured down from the top of the floor.
   # Nothing on the back of the PCB reaches deeper than the hotswap socket, so a floor
   # of socket_depth + floor_skin leaves every one of them blind and the bottom solid.
@@ -178,7 +180,11 @@ units:
   m2_insert_inner_diameter: 2.7
   m2_insert_outer_diameter: pcb_hole_diameter - buffer
   m2_insert_post_height: pcb_thickness + choc_under_to_pcb - choc_top_plate
-  m2_insert_hole_depth: 4
+  m2_insert_height: 3 # Heat-set insert, 3mm OD x 3mm; see docs/bom.md
+  # Half a millimetre past the insert so the plastic it displaces has somewhere to go
+  # and it seats flush. The bore reaches into the floor, which is why it is measured
+  # against bottom_thickness rather than the post alone.
+  m2_insert_hole_depth: m2_insert_height + 0.5
   m2_nut_width: 4.2
   m2_nut_thickness: 1.6
   m2_nut_depth: m2_nut_thickness + buffer
@@ -462,19 +468,20 @@ outlines:
 
   _choc_side_posts:
     - what: circle
-      radius: (choc_side_post_w + cutout_padding) / 2
-      adjust.shift: [-5.5, 0]
+      radius: choc_side_post_pocket_w / 2
+      adjust.shift: [-choc_side_post_x, 0]
     - what: circle
-      radius: (choc_side_post_w + cutout_padding) / 2
-      adjust.shift: [5.5, 0]
+      radius: choc_side_post_pocket_w / 2
+      adjust.shift: [choc_side_post_x, 0]
+  # Sized to the post pocket so its vertical edges leave the circle tangentially
   _choc_post_bridge_left: # Bridge choc post to hotswap socket
     - what: rectangle
-      size: [2.5, 2.5]
-      adjust.shift: [5.5, 1.25]
+      size: [choc_side_post_pocket_w, choc_side_post_pocket_w]
+      adjust.shift: [choc_side_post_x, choc_side_post_pocket_w / 2]
   _choc_post_bridge_m_right:
     - what: rectangle
-      size: [2.5, 2.5]
-      adjust.shift: [-5.5, 1.25]
+      size: [choc_side_post_pocket_w, choc_side_post_pocket_w]
+      adjust.shift: [-choc_side_post_x, choc_side_post_pocket_w / 2]
 
   _choc_center_post:
     - what: circle
@@ -509,10 +516,13 @@ outlines:
       adjust.shift: [-choc_v2_pocket_r / 2, socket_top_block_y / 2]
 
   # The centre pocket also stops 0.04mm short of the diode pocket, which is a knife edge
-  # rather than a wall. This joins the two at diode depth so the floor steps.
+  # rather than a wall. This joins the two at diode depth so the floor steps. Its width
+  # is the diode pad relief's, so the two share side edges: at the diode pocket's own
+  # width the bridge edge instead crosses the filleted corner at a shallow angle and
+  # leaves a wall thinner than one extrusion.
   _choc_v2_post_bridge:
     - what: rectangle
-      size: [choc_v2_center_post_w / 2, choc_v2_center_post_w / 2]
+      size: [diode_pads_w + cutout_padding, choc_v2_center_post_w / 2]
       adjust.shift: [0, -choc_v2_center_post_w / 2]
 
   # The corner stabilizer pin only needs pin depth, but it is cut to socket depth with
@@ -594,7 +604,7 @@ outlines:
       adjust.shift: [2.8, -7.5]
   _encoder_pins_bridge: # Bridge to choc solder hole
     - what: rectangle
-      size: [2.5, 2]
+      size: [solder_pin_w, 2]
       adjust.shift: [0, -6.85]
 
   # Case bottom cutouts
@@ -879,6 +889,20 @@ outlines:
       where: *hole5_pos
 
   _posts_holes_pinky:
+    - name: _post_hole
+      where: *hole5_e_pos
+
+  # The 42 plate drills hole 5_e where the 38 plate drills hole 5, so the post at
+  # hole 5 stays solid on a 42 case. Five inserts per side either way.
+  _post_holes_42:
+    - name: _post_hole
+      where: *hole1_pos
+    - name: _post_hole
+      where: *hole2_pos
+    - name: _post_hole
+      where: *hole3_pos
+    - name: _post_hole
+      where: *hole4_pos
     - name: _post_hole
       where: *hole5_e_pos
 
@@ -1385,6 +1409,20 @@ cases:
       extrude: pin_depth
       shift: [0, 0, -pin_depth]
 
+  # The bore runs from the post top down into the floor, so it cannot be subtracted
+  # inside _posts_*: the shell union would fill the part below the floor line back in.
+  _post_hole_cutouts_38:
+    - what: outline
+      name: _post_holes_core
+      extrude: m2_insert_hole_depth
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+
+  _post_hole_cutouts_42:
+    - what: outline
+      name: _post_holes_42
+      extrude: m2_insert_hole_depth
+      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
+
   # Every floor pocket comes out in one subtraction. JSCAD splits the floor polygon
   # along each cutter wall plane, extended clear across the board, once per boolean,
   # and leaves reversed coplanar slivers on the cut boundaries. Unioning the cutters
@@ -1396,6 +1434,7 @@ cases:
     - +_pin_depth_cutouts_left
     - +_choc_depth_cutouts_left
     - +_socket_depth_cutouts_left
+    - +_post_hole_cutouts_38
 
   _floor_cutouts_38_m_right:
     - +_m2_nut_depth_cutouts
@@ -1404,6 +1443,7 @@ cases:
     - +_pin_depth_cutouts_m_right
     - +_choc_depth_cutouts_m_right
     - +_socket_depth_cutouts_m_right
+    - +_post_hole_cutouts_38
 
   _floor_cutouts_42_left:
     - +_m2_nut_depth_cutouts
@@ -1416,6 +1456,7 @@ cases:
     - +_choc_depth_pinky_cutouts_left
     - +_socket_depth_cutouts_left
     - +_socket_depth_pinky_cutouts_left
+    - +_post_hole_cutouts_42
 
   _floor_cutouts_42_m_right:
     - +_m2_nut_depth_cutouts
@@ -1428,6 +1469,7 @@ cases:
     - +_choc_depth_pinky_cutouts_m_right
     - +_socket_depth_cutouts_m_right
     - +_socket_depth_pinky_cutouts_m_right
+    - +_post_hole_cutouts_42
 
   _shell_42:
     - what: outline
@@ -1484,25 +1526,14 @@ cases:
       name: _posts_pinky
       extrude: m2_insert_post_height
     - ~_shell_38_outer
-    - what: outline
-      name: _post_holes_core
-      operation: subtract
-      extrude: m2_insert_hole_depth * 2
-      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
 
-  # Re-adding _posts_pinky after _posts_38 has already subtracted _post_holes_core
-  # is what leaves hole 5 solid: the 42 plate drills hole 5_e instead, so only
-  # hole 5_e is subtracted back. Five inserts per side in both variants.
+  # _posts_38 has already been clipped to the 38 outline, which drops the hole 5_e
+  # post; a 42 case needs it, so the pair goes back on unclipped.
   _posts_42:
     - +_posts_38
     - what: outline
       name: _posts_pinky
       extrude: m2_insert_post_height
-    - what: outline
-      name: _posts_holes_pinky
-      operation: subtract
-      extrude: m2_insert_hole_depth * 2
-      shift: [0, 0, m2_insert_post_height - m2_insert_hole_depth]
 
   # 42-key cases
   _temporal_42_1:
@@ -1677,6 +1708,9 @@ pcbs:
         params:
           reversible: true
           include_labels: false
+          label_font_face: "Maple Mono NF"
+          label_font_thickness: silk_line_width
+          label_font_bold: true
           via_size: copper_via_diameter
           via_drill: copper_via_drill
 
