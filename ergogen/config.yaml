@@ -516,13 +516,13 @@ outlines:
       adjust.shift: [-choc_v2_pocket_r / 2, socket_top_block_y / 2]
 
   # The centre pocket also stops 0.04mm short of the diode pocket, which is a knife edge
-  # rather than a wall. This joins the two at diode depth so the floor steps. Its width
-  # is the diode pad relief's, so the two share side edges: at the diode pocket's own
-  # width the bridge edge instead crosses the filleted corner at a shallow angle and
-  # leaves a wall thinner than one extrusion.
+  # rather than a wall. This joins the two at diode depth so the floor steps. It is
+  # exactly the diode pocket's width, so their side edges are collinear and the union
+  # has one straight wall; the pad relief is wider but only pin deep, so reaching that
+  # far would cut diode depth where the shelf ends and leave it standing proud.
   _choc_v2_post_bridge:
     - what: rectangle
-      size: [diode_pads_w + cutout_padding, choc_v2_center_post_w / 2]
+      size: [diode_w + cutout_padding, choc_v2_center_post_w / 2]
       adjust.shift: [0, -choc_v2_center_post_w / 2]
 
   # The corner stabilizer pin only needs pin depth, but it is cut to socket depth with
