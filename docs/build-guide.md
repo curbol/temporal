@@ -19,7 +19,7 @@ flowchart TD
     A -->|"Snap it off: 36-38 keys"| B38["38"]
     B42 --> C{"Top plate and back:<br/>printed or FR-4?"}
     B38 --> C
-    C -->|"3D printed"| P["Order temporal.zip<br/><br/>Print from cases/NN/:<br/>left.stl + right.stl<br/>top_plate.stl x2<br/>mcu_cover.stl x2"]
+    C -->|"3D printed"| P["Order temporal.zip<br/><br/>Print from cases/NN/:<br/>left.stl + right.stl<br/>top_plate.stl x2<br/><br/>Print from cases/:<br/>mcu_cover.stl x2"]
     C -->|"FR-4 plates"| F{"Silkscreen branding<br/>on the top plate?"}
     F -->|"Keep it"| F1["Order temporal.zip<br/>top_plate_NN.zip<br/>back_plate_NN.zip<br/>mcu_cover.zip"]
     F -->|"Stealth"| F2["Order temporal.zip<br/>top_plate_NN_stealth.zip<br/>back_plate_NN.zip<br/>mcu_cover.zip"]
