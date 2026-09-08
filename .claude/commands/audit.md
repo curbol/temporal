@@ -60,20 +60,20 @@ ahead of new findings. Do not re-decide in prose what these commands decide:
 if the formatter is clean, formatting is not a finding.
 
 ```bash
-# The repo's own verification target, and what CI runs (~95s).
+# The repo's own verification target, and what CI runs (~90s).
 # It writes only to ergogen/output/ and temp dirs; a shell trap snapshots and
 # restores temporal.json, jlcpcb/, and every .kicad_pro / .kicad_dru around the
-# reproducibility check (Makefile:209-221), so it is safe with a dirty tree.
+# reproducibility check (Makefile:210-222), so it is safe with a dirty tree.
 # Covers, in order: node --check on every script and footprint; py_compile on
 # every scripts/*.py; bash -n on copy_pcb_if_missing.sh; a YAML parse of both
 # config files; eslint; that ergogen/config.yaml still builds; that every
 # committed board passes DRC at error severity; that no silkscreen face was
 # substituted at export and every board naming a face embeds its own font;
 # that the pours in pcbs/ still match the current custom DRC rules; that
-# temporal.json, jlcpcb/, the .kicad_dru files and the config-owned subtrees
-# of the .kicad_pro files all reproduce from their sources; and that every
-# gerber zip re-exports byte-identical to the board in pcbs/, modulo the
-# timestamp and tool-version lines.
+# temporal.json, jlcpcb/, the .kicad_dru files, the two stealth top plates and
+# the config-owned subtrees of the .kicad_pro files all reproduce from their
+# sources; and that every gerber zip re-exports byte-identical to the board in
+# pcbs/, modulo the timestamp and tool-version lines.
 make check
 
 # Individual stages, when a make check failure needs isolating:
@@ -117,9 +117,9 @@ Use `feature-dev:code-reviewer` sub-agents to review the scoped files. Split
 by area so agents run in parallel:
 
 - **Geometry source of truth**: `ergogen/config.yaml`. The single place all
-  board, plate, and case geometry is authored, ordered `units` (lines 24-193)
-  → `points` (194-280) → `outlines` (281-1286) → `cases` (1287-1563) → `pcbs`
-  (1564-1848). What goes wrong here: a literal dimension written inline where
+  board, plate, and case geometry is authored, ordered `units` (lines 24-199)
+  → `points` (200-286) → `outlines` (287-1310) → `cases` (1311-1617) → `pcbs`
+  (1618-1905). What goes wrong here: a literal dimension written inline where
   a `units` name already holds the value, so a later one-line change misses
   it; a `_left` / `_m_right` pair that has silently diverged; the 38 and 42
   variants of the same part drifting apart; an intermediate that lost its
@@ -166,15 +166,16 @@ by area so agents run in parallel:
   `mounting_hole_npth.js`, `utility_text.js`. Vendored from ceoloide's library
   and patched locally for traces, vias, jumper resistor pads, Choc v2 support,
   KiCad 10 compatibility, and the `label_font_face` / `label_font_thickness` /
-  `label_font_bold` parameters that `power_switch_smd_side.js` and
-  `mcu_nice_nano.js` accept (`mcu_nice_nano.js:132-136` declares them,
-  `:228-231` applies them). CLAUDE.md says to diff against upstream rather
-  than replacing these wholesale. What goes wrong: a patch applied to only one
-  of the `reversible` code paths, so the left and right hands differ; pad or
-  net names that no longer line up with the `column_net` / `row_net` values
-  the config passes in; geometry added without a matching clearance, which
-  only DRC on a board that actually uses that parameter combination would
-  catch.
+  `label_font_bold` parameters that three of them accept, each declaring the
+  defaults and each building the `(font ...)` the same way:
+  `mcu_nice_nano.js:132-137` and `:228-231`, `display_nice_view.js:95-97` and
+  `:118-120`, `power_switch_smd_side.js:87-89` and `:103-105`. CLAUDE.md says
+  to diff against upstream rather than replacing these wholesale. What goes
+  wrong: a patch applied to only one of the `reversible` code paths, so the
+  left and right hands differ; pad or net names that no longer line up with the
+  `column_net` / `row_net` values the config passes in; geometry added without
+  a matching clearance, which only DRC on a board that actually uses that
+  parameter combination would catch.
 
 For each sub-agent, provide:
 - The full list of files in its area, not a diff.
@@ -231,7 +232,7 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
 1. **`ergogen/config.yaml` is the only place geometry is authored.** Every
    dimension, offset, and outline in a shipped artifact traces back to it;
    generated `.kicad_pcb`, `.jscad`, and `.stl` files are never hand-edited to
-   change geometry. `units:` (lines 24-193) holds every tuning constant by
+   change geometry. `units:` (lines 24-199) holds every tuning constant by
    name, so a dimension change is a one-line edit at the top. Where a script
    needs one of those numbers it reads it through `unit()`
    (`scripts/ergogen_config.js:43-56`) rather than retyping it.
@@ -241,7 +242,7 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    holds, so the "one-line edit at the top" promise no longer holds.
    *Check:* grep the scripts for bare decimal literals and classify each as
    format constant or geometry. The known borderline cases are
-   `add_ground_planes.js:58` and `:229` (a 2.0mm zone margin, passed as a
+   `add_ground_planes.js:58` and `:234` (a 2.0mm zone margin, passed as a
    default and repeated at the call site), `fix_edge_cuts.js:13`
    (`MIN_SEGMENT_LENGTH`) and `generate_layout.js:148` (the 2.02 half-to-half
    gap); confirm whether any *new* ones have appeared. The literals in
@@ -263,7 +264,7 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    *Check:* `scripts/fill_zones.js:40-48` (rules written per board, then
    filled); `scripts/drc_rules.js:33-49`, noting that it *removes* the
    `.kicad_dru` when the rule list is empty (`:40-43`);
-   `scripts/create_stealth_variants.js:158`;
+   `scripts/create_stealth_variants.js:204`;
    `scripts/setup_kicad_project.js:433`; the step ordering in
    `Makefile:96-106`.
    `fix_silkscreen_width.js` is the one step whose ordering constraint has
@@ -281,11 +282,11 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    clean target that removes the directory; a `pcbnew.SaveBoard` reachable
    with a path under `pcbs/`.
    *Check:* `scripts/copy_pcb_if_missing.sh:25` (the `[ ! -f ]` guard) and
-   `Makefile:273` (the `! -name temporal` exclusion in `clean`). Then grep
+   `Makefile:279` (the `! -name temporal` exclusion in `clean`). Then grep
    every script for writes whose path can resolve under `pcbs/temporal/`.
    Note that `check_zone_fills.py` deliberately refills in memory and writes
    nothing back (`:9-13`, `:63-65`); confirm that is still true, and that the
-   gerber comparison at `Makefile:239-265` only ever exports to `$TMP`.
+   gerber comparison at `Makefile:245-271` only ever exports to `$TMP`.
 
 4. **Naming encodes key count, kickstand, and handedness, and nothing else.**
    A leading `_` marks an Ergogen-internal name that is never exported.
@@ -308,23 +309,36 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    `scripts/convert_jscad.js:45-61` (`outputRelPath`, whose two regexes are
    the whole mapping, with the unmatched fallthrough at `:60`), `:88` and
    `:128` (the mirror). Pair every `_left` against its `_m_right` in the
-   `cases:` section of `ergogen/config.yaml`. The current state is 42 `cases:`
+   `cases:` section of `ergogen/config.yaml`. The current state is 48 `cases:`
    keys, 11 of them exported, producing 11 STLs: two counts times
    plain-or-kickstand times two hands, plus two `top_plate` and one
    `mcu_cover`. The kickstand variants compose the already-derived case rather
    than repeating its subtractions.
 
-   Related: every cutout in the case floor is blind, because
-   `bottom_thickness` is `socket_depth + floor_skin` (`ergogen/config.yaml:173`,
-   2.35mm) and nothing on the back of the PCB reaches deeper than the socket.
+   Related: the bottom face of the case is solid. Nothing on the back of the
+   PCB reaches deeper than the hotswap socket, so `bottom_thickness` at
+   `socket_depth + floor_skin` (`ergogen/config.yaml:175`, 2.35mm) leaves every
+   pocket depth at `:170-174` blind by construction. The M2 bore is the one cut
+   that is not blind by construction and has to be budgeted: it moved out of
+   `_posts_*` into `_post_hole_cutouts_38` / `_post_hole_cutouts_42`
+   (`:1412-1424`), which run `m2_insert_hole_depth` (3.5mm) down from the post
+   top and therefore land `m2_insert_post_height - m2_insert_hole_depth` =
+   -1.0mm into the floor, leaving 1.35mm of it below them. The union of the
+   shell would fill a bore subtracted inside `_posts_*` back in, which is why it
+   is a floor cutout rather than a post subtraction.
    *Violation shape:* a `cases:` block whose `extrude` is `bottom_thickness`
    for anything but the shell or the kickstand, which would punch a hole
-   through the bottom face.
+   through the bottom face; an `m2_insert_height` raised or a `bottom_thickness`
+   lowered until `m2_insert_hole_depth` exceeds
+   `m2_insert_post_height + bottom_thickness`; a `_post_hole_cutouts_*` shift
+   that no longer subtracts its own depth from the post top.
    *Check:* the bottom face of a built half-case has exactly two boundary
    loops, the outer perimeter and the MCU-area opening. More than that means a
-   pocket broke through. `docs/bom.md:91-94` and `cases/README.md` both state
-   the solid-bottom claim to builders, so a regression here also makes the
-   docs wrong.
+   pocket broke through. `docs/bom.md:91-94` and `cases/README.md:43-44` both
+   state the solid-bottom claim to builders, so a regression here also makes the
+   docs wrong. Note that `_post_holes_42` (`:897`) is a separate outline rather
+   than `_post_holes_core` plus the pinky pair, because the 42 bore set is the
+   four core holes plus `5_e` and not the union `_posts_42` builds.
 
 5. **`scripts/kicad_config.yaml` owns the tuning values, and
    `scripts/kicad_config.js` plus `scripts/ergogen_config.js` are the only
@@ -350,18 +364,18 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    `kicad_config.js:83`, `ergogen_config.js:27`, and `generate_layout.js:40`
    (which parses Ergogen's `points.yaml` output, not a config file). The
    design-rule and board-default fallbacks that used to disagree with the YAML
-   are gone: `setup_kicad_project.js:350-358` (`required`) exits when a key
-   listed in `DESIGN_RULE_KEYS` (`:323-336`) or `BOARD_DEFAULT_KEYS`
-   (`:338-348`) is missing, and the matching literals in
+   are gone: `setup_kicad_project.js:350-359` (`required`) exits when a key
+   listed in `DESIGN_RULE_KEYS` (`:323-337`) or `BOARD_DEFAULT_KEYS`
+   (`:338-349`) is missing, and the matching literals in
    `getBaseProjectStructure` (e.g. `silk_line_width: 0.1` at `:65`,
    `silk_text_thickness: 0.1` at `:69`) are placeholders overwritten on every
    write. Confirm that still holds: a key dropped from either list would leave
    its placeholder in the file. The remaining live `??` literals are the net
-   class geometry in `createNetClass` (`:300-313`), which `applyErgogenUnits`
+   class geometry in `createNetClass` (`:297-315`), which `applyErgogenUnits`
    supplies for `track_width`, `via_diameter` and `via_drill` but not for
    `clearance`, `diff_pair_*` or `microvia_*`. `OWNED_PATHS`
    (`check_kicad_pro.js:14-19`) now covers all four subtrees
-   `applyDefaultsToProject` writes (`:361-404`); what it does not cover is the
+   `applyDefaultsToProject` writes (`:361-405`); what it does not cover is the
    rest of the skeleton, written once at creation and never compared again:
    `board.design_settings.rule_severities` (`:80`), `teardrop_options`,
    `teardrop_parameters`, `track_widths`, `tuning_pattern_settings`,
@@ -373,15 +387,16 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
 6. **Every side-bearing footprint on `pcbs.temporal` is `reversible: true`.**
    The board is reversible: one PCB serves as the left hand or, flipped, the
    right. A footprint that renders on only one side breaks one hand, and
-   `generate_jlcpcb_files.js:283-290` rejects the build outright if an
+   `generate_jlcpcb_files.js:300-308` rejects the build outright if an
    assembly part is not on both copper layers, because the two CPL files
-   differ by rotation alone. `findParentFootprints` (`:89-100`) enforces the
-   same thing for the jumper resistors' parent footprints.
+   differ by rotation alone. `findParentFootprints` (`:101-119`) enforces the
+   same thing for the jumper resistors' parent footprints, and now also exits
+   when a configured parent footprint is absent from the board (`:104-108`).
    *Violation shape:* a footprint entry under `pcbs.temporal.footprints` in
    `ergogen/config.yaml` that declares a side but omits `reversible: true`; a
    patched footprint whose `reversible` branch places pads, traces, or vias
    that its non-reversible branch does not, or vice versa.
-   *Check:* every `what: ceoloide/...` under `pcbs.temporal` (lines 1570-1770)
+   *Check:* every `what: ceoloide/...` under `pcbs.temporal` (lines 1619-1827)
    either sets `reversible: true` or is `mounting_hole_npth`, which has no
    side. Ten reversible footprints and eight mounting holes is the current
    state.
@@ -393,10 +408,10 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    against a pre-10 signature; a version comparison that compares the version
    string lexicographically, which sorts `"10.0.5"` below `"7"`.
    *Check:* `scripts/via_stitching.py:38-42` (the `SwigPyIterator.next` shim,
-   mirrored at `create_text_keepouts.py:21-24`), `:44-55` (the
+   mirrored at `create_text_keepouts.py:23-26`), `:45-56` (the
    `GetBoardPolygonOutlines` arity shim), `:57-103` (the `_ComparableVersion`
-   shim and the version-sorted plugin path at `:156-164`),
-   `scripts/create_text_keepouts.py:125-129` (the `SetDoNotAllowZoneFills` /
+   shim and the version-sorted plugin path at `:157-165`),
+   `scripts/create_text_keepouts.py:133-137` (the `SetDoNotAllowZoneFills` /
    `SetDoNotAllowCopperPour` rename), and the two `sed` patches to
    `FillArea.py` at `Makefile:69-70`. Those patches are verified twice, and
    both verifications must cover both patches: `Makefile:71-79` greps the file
@@ -421,27 +436,27 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
    `silk_line_width`; a step ordered after `embed_fonts.js` that saves the
    board and drops `(embedded_fonts yes)`; a stealth variant that strips text
    but leaves megabytes of unused embedded typeface behind.
-   *Check:* the four `face:` / `label_font_face:` sites at
-   `ergogen/config.yaml:1631`, `:1669`, `:1707` and `:1721`, their
-   `thickness` / `label_font_thickness` at `:1633`, `:1670`, `:1708` and
-   `:1722`, and their `bold` / `label_font_bold` at `:1634`, `:1671`, `:1709`
-   and `:1723`; `scripts/fix_silkscreen_width.js:51-53` and `:76-106`
-   (widening, silkscreen layers only); `scripts/embed_fonts.py:50-66` (the
-   `embedded_fonts` flag) and `:69-91`;
-   `scripts/create_stealth_variants.js:88-121` (dropping the fonts once no
-   text names a face). `make check` already decides whether a board that names
-   a face embeds a font (`Makefile:201-207`), so do not restate that as a
+   *Check:* the five `face:` / `label_font_face:` sites at
+   `ergogen/config.yaml:1685` (`mcu_nice_nano`), `:1711` (`display_nice_view`),
+   `:1726` (`power_switch_smd_side`) and `:1764` / `:1778` (the two
+   `utility_text` items), each followed by its `thickness` /
+   `label_font_thickness` and its `bold` / `label_font_bold`;
+   `scripts/fix_silkscreen_width.js:51-53` and `:76-106` (widening, silkscreen
+   layers only); `scripts/embed_fonts.py:50-66` (the `embedded_fonts` flag) and
+   `:69-91`; `scripts/create_stealth_variants.js:122-152` (dropping the fonts
+   once no text names a face). `make check` already decides whether a board that
+   names a face embeds a font (`Makefile:202-208`), so do not restate that as a
    prose finding.
 
 **Correctness**
 
 - `scripts/generate_layout.js:96-113`: verify `rowMap` (`:97`) and
   `colMapLeft` (`:103-110`) still name exactly the zones, columns, and rows
-  that `points.zones` in `ergogen/config.yaml:195-280` defines. There is no
+  that `points.zones` in `ergogen/config.yaml:201-286` defines. There is no
   separate thumb map: the comment at `:99-102` claims thumb keys stay in step
   because the map is keyed on `column_net` rather than column name, so confirm
   every thumb column really does share a net with a finger column
-  (`ergogen/config.yaml:256`, `:263`, `:268`, `:273`). `assertNamesResolve`
+  (`ergogen/config.yaml:262`, `:269`, `:274`, `:279`). `assertNamesResolve`
   (`:74-91`) fails the build when a name has no entry, so a rename is loud
   rather than silent; confirm that guard covers every key. Then check the
   mirror math at `:111` and `:150-165`: the `mirrorCol` reflection across
@@ -454,11 +469,11 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   `$default_width`), never by the key height. Confirm that is deliberate given
   the comment at `:16-17`, and that the `mirrorX = maxX + 2.02` gap at `:148`
   is a value that belongs in `units:` rather than here. Tier 2.
-- `scripts/generate_jlcpcb_files.js:105-117`: verify `transformCoordinates`
-  against KiCad's rotation convention, given the negation at `:106`. Verify
-  the bottom-side transform in `generateCPL` (`:235-257`): the
-  `180 - comp.rotation` at `:247`, `normalizeRotation` at `:231-233`, and the
-  y negation at `:251`, and whether the x coordinate should also be mirrored
+- `scripts/generate_jlcpcb_files.js:124-140`: verify `transformCoordinates`
+  against KiCad's rotation convention, given the negation at `:125`. Verify
+  the bottom-side transform in `generateCPL` (`:254-276`): the
+  `180 - comp.rotation` at `:266`, `normalizeRotation` at `:250-252`, and the
+  y negation at `:270`, and whether the x coordinate should also be mirrored
   for a flipped board. Tier 1 if wrong, since the fab places parts from this
   file.
 - `scripts/generate_jlcpcb_files.js:20-58`: the footprint regex at `:22`
@@ -468,14 +483,18 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   parsed count against a `(footprint "` count. Check both patterns against the
   current `pcbs/temporal/temporal.kicad_pcb`, and confirm the declared-count
   check cannot itself be fooled (the same literal appearing inside a property
-  string, for instance). Tier 1 if a real assembly part can still be dropped
-  silently.
-- `scripts/generate_jlcpcb_files.js:127`, `:140`, `:163`, `:185`: the `JR<n>`
+  string, for instance). `parseKiCadPCB` adds a third gate at `:73-80`: a
+  `jlcpcb.assembly_parts` footprint name that matches nothing on the board is
+  an error rather than an empty BOM line. Confirm it compares the same
+  spelling the YAML uses, since a rename there would fail the build loudly
+  instead of shipping a short BOM. Tier 1 if a real assembly part can still be
+  dropped silently.
+- `scripts/generate_jlcpcb_files.js:159`, `:182`, `:204`: the `JR<n>`
   designators come from one counter shared across the MCU, display, and
-  battery groups. Two guards now cover the collision: `:300-313` rejects a
+  battery groups. Two guards now cover the collision: `:319-332` rejects a
   generated designator that already exists as a board reference, and
-  `:315-323` rejects any duplicate across the combined set. Confirm the first
-  actually sees every reference (it re-parses the board at `:303-304`, a third
+  `:334-342` rejects any duplicate across the combined set. Confirm the first
+  actually sees every reference (it re-parses the board at `:322-323`, a third
   parse of the same file) and that a footprint with a null `Reference`
   property cannot slip past the `filter(Boolean)`. Today the board carries
   `D1`-`D21`, `S1`-`S21`, `MH*`, `MCU`, `DISP`, `JST`, `PWR`, `RST` and `RE`,
@@ -487,17 +506,19 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   degenerate branch at `:28-30`. An arc extreme missed here leaves part of the
   board outside the pour rectangle by more than the 2.0mm margin. Tier 1 if it
   can be missed.
-- `scripts/add_ground_planes.js:174-201`: `createGndNet` slices the content at
-  the first `(footprint` (`:182-183`) so the insertion lands in the net table
+- `scripts/add_ground_planes.js:177-201`: `createGndNet` slices the content at
+  the first `(footprint` (`:184-185`) so the insertion lands in the net table
   rather than inside a pad. Confirm a board with no footprints at all still
   takes the right path, and that `findHighestNetNumber` at `:152-161` scanning
   the *whole* file, including pad nets, cannot pick a number already in use.
   Tier 1 if a duplicate net number is possible.
-- `scripts/add_ground_planes.js:203-213`: `processPcbFile` returns `false`
-  both for a real failure and for a board whose GND zones already exist, and
-  `main` counts every `false` as a failure and exits 1 (`:271-274`). Decide
-  whether re-running the step on already-poured boards should be a hard
-  failure, and whether any path through `make gen` can reach it. Tier 2.
+- `scripts/add_ground_planes.js:213-254`: `processPcbFile` returns
+  `'added'`, `'skipped'` or `'failed'`, and `main` (`:256-277`) indexes a tally
+  object with the returned string. A fourth return value, or a fall-off-the-end
+  `undefined`, would increment `tally[undefined]` and be counted as neither a
+  failure nor a success. Confirm every path through the function returns one of
+  the three, and that `zonesAlreadyExist` (`:203-206`) cannot report `'skipped'`
+  for a board whose zones exist on only one copper layer. Tier 2.
 - `scripts/fix_edge_cuts.js:19-25`: `calculateArcLength` returns the chord
   between the endpoints, so an arc whose start and end nearly coincide, a
   near-full circle, measures as zero-length and is deleted. The docstring says
@@ -507,7 +528,12 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   removes the first *textual* occurrence of the matched string, not the
   occurrence at the matched index. Two identical zero-length segments at
   different places in the file therefore delete the same text twice. Tier 2 at
-  minimum, Tier 1 if it can delete a segment that should have survived.
+  minimum, Tier 1 if it can delete a segment that should have survived. Note
+  that the pass now counts what its patterns *matched* rather than what it
+  removed, and fails on `totalSeen === 0` (`:94-98`), so a re-run on already
+  clean boards stays quiet while a pattern that stopped fitting Ergogen's
+  output is loud. Confirm `seen` really increments once per matched graphic and
+  not once per removal.
 - `scripts/fix_silkscreen_width.js:51-53` and `:140-177`: `isSilkscreen` tests
   whether `(layer "F.SilkS")` appears anywhere in the extracted block, not
   whether it is the block's own layer; verify a graphic block cannot contain a
@@ -518,12 +544,21 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   matches nothing. Confirm a stroke nested deeper than four levels, or a
   partial non-match where the forward scan stops recognising one construct,
   would still be caught by one of them. Tier 1 if a stroke can be missed.
-- `scripts/create_stealth_variants.js:48-55`: `isOnSilkscreenLayer` tests
-  whether the layer string appears anywhere in the extracted block, not
-  whether it is the block's own layer. Verify a `gr_text` block cannot contain
-  a nested layer declaration that flips the answer. Tier 1 if it can, because
-  a stealth plate would lose the wrong text or keep text it should not.
-- `scripts/create_stealth_variants.js:88-121`: `usesEmbeddedFace` scans only
+- `scripts/create_stealth_variants.js:69-72`: `isOnSilkscreenLayer` tests
+  whether a `(layer "F.SilkS")` token appears anywhere in the extracted block,
+  not whether it is the block's own layer. Verify a `gr_text` block cannot
+  contain a nested layer declaration that flips the answer. Tier 1 if it can,
+  because a stealth plate would lose the wrong text or keep text it should not.
+- `scripts/create_stealth_variants.js:27-66` and `:80-86`: `extractSexpBlock`
+  now tracks string literals, so a label containing `(` or `)` no longer
+  swallows or truncates the block, and `countSilkscreenTexts` is an independent
+  regex backstop that the post-conditions at `:176-186` check against: a
+  surviving silkscreen text, or a run that removed nothing, fails the step.
+  Confirm the backstop regex really is independent (it must not call
+  `extractSexpBlock`) and that its "next layer token not separated by another
+  `gr_text`" heuristic cannot miss a text whose block nests one. Tier 1 if a
+  stealth plate can ship with lettering while the step reports success.
+- `scripts/create_stealth_variants.js:122-152`: `usesEmbeddedFace` scans only
   `gr_text` and `fp_text`, and `removeEmbeddedFonts` finds the block by the
   literal `\n\t(embedded_files` and rewrites the literal
   `(embedded_fonts yes)`. Check what happens when a board has an embedded file
@@ -536,23 +571,24 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   arithmetic against both flag spellings and confirm the early-return test at
   `:55` cannot report success on a board where the flag is absent. Tier 1 if a
   board can be reported as embedded without carrying a font.
-- `scripts/check_zone_fills.py:47` and `:67-73`: the check compares filled
+- `scripts/check_zone_fills.py:47` and `:67-71`: the check compares filled
   *area* with a 1e-6 relative tolerance. Two different pours with the same
   total area would compare equal. Assess whether that is reachable given what
   the custom rules change, and whether the tolerance is loose enough to
   absorb the collinear-vertex churn the docstring describes. Tier 2.
-- `scripts/setup_kicad_project.js:453-457`: when the `pcbs/*/*.kicad_pcb` glob
-  returns nothing the step exits 0 without writing a single `.kicad_pro`. This
-  is the one remaining silent-success path in the pipeline, and `make check`
-  would not notice it: the reproducibility comparison snapshots the existing
-  project files, regenerates nothing, and finds them unchanged. Tier 2, Tier 1
-  if any realistic layout change can empty that glob.
+- `scripts/setup_kicad_project.js:453-458`: an empty `pcbs/*/*.kicad_pcb` glob
+  is now an error, because `make check` snapshots the existing project files
+  and would read "regenerated nothing" as "everything reproduces". The path that
+  bypasses it is the single-file argument form at `:441-445`, which neither the
+  glob guard nor the tally covers. Confirm nothing in `make gen` or `make check`
+  reaches that branch with a path that does not exist, since `setupProjectFile`
+  returns `false` on a missing file and the caller only exits 1. Tier 2.
 - `scripts/kicad_config.js:22-70`: `applyErgogenUnits` sets `track_width` per
   net class from `NET_CLASS_TRACK_UNITS` (`:17-20`) and exits when a YAML net
   class has no mapping (`:44-47`), so adding a net class to the YAML alone is
   a hard failure by design. Confirm every class in
   `scripts/kicad_config.yaml:17-30` has a mapping, that the vias the
-  footprints emit (`ergogen/config.yaml:1587-1588` and the other `via_size` /
+  footprints emit (`ergogen/config.yaml:1641-1642` and the other `via_size` /
   `via_drill` sites) use the same units, and that the silkscreen fill-in at
   `:63-67` matches what the boards actually carry. Tier 2.
 - `scripts/convert_jscad.js:45-61`: `outputRelPath` is the whole
@@ -570,74 +606,88 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
 - `scripts/kicad_python.js:24-30`: on Linux the "patterns" are literal paths,
   not globs, so the version-sorting and `python3.x` filtering at `:41-51` do
   no work there. Verify the system `python3` is the one that can import
-  `pcbnew`, and that the `import pcbnew` probe at `:55` is what actually
+  `pcbnew`, and that the `import pcbnew` probe at `:54` is what actually
   selects it. Tier 2.
 - `ergogen/config.yaml`: verify the 38 and 42 variants of each part stay
   consistent, that `_left` and `_m_right` differ only by the mirror, and that
   the mounting hole positions (`hole1_x`..`hole5_e_y` at lines 68-79,
   `mcu_hole1_*` / `mcu_hole2_*` at 105-108) agree between the PCB, the top
-  plate, the back plate, and the case posts (`_posts_38` at 1435, `_posts_42`
-  at 1452). Tier 1 on a mismatch, since screws would not line up.
-- `ergogen/config.yaml:498-529`: the `_choc_v2_*` outlines are the clearances
-  a Choc v2 switch needs that a v1 does not, and three of them are bridges cut
-  to remove a knife edge where two pockets cross at a shallow angle: the boss
-  pocket's socket-facing rectangle (`:501-503`, `:507-509`, sized
-  `choc_v2_pocket_r` by `socket_top_block_y`), the diode bridge
-  (`_choc_v2_post_bridge`, `:513-516`) and the stabilizer (`:522-529`).
-  Verify each bridge still lands inside the shape it joins rather than
-  stepping past its edge, given the named corner units they are built from
-  (`socket_block_x`, `socket_block_y`, `socket_top_block_y` at `:143-145`,
-  `solder_*` at `:134-139`). Tier 1 if a bridge reintroduces sub-0.4mm
-  material or breaks the pocket boundary.
+  plate, the back plate, the case posts (`_posts_38` at 1521, `_posts_42` at
+  1532) and the bores through them (`_post_holes_core` at 879,
+  `_post_holes_42` at 897). Tier 1 on a mismatch, since screws would not line
+  up. `_posts_42` composes `_posts_38` and re-adds the unclipped pinky pair,
+  while `_post_holes_42` is written out as its own hole set; confirm the two
+  still describe the same five positions.
+- `ergogen/config.yaml:500-539`: the `_choc_v2_*` outlines are the clearances
+  a Choc v2 switch needs that a v1 does not, and two of them are bridges cut to
+  remove a knife edge where two pockets cross at a shallow angle: the boss
+  pocket's socket-facing rectangle (`:508-510` and `:514-516`, sized
+  `choc_v2_pocket_r` by `socket_top_block_y`) and the diode bridge
+  (`_choc_v2_post_bridge`, `:523-526`, sized `diode_w + cutout_padding` so its
+  side edges are collinear with the diode pocket's). The stabilizer
+  (`:532-539`) is a plain circle cut to socket depth with the boss. Verify each
+  bridge still lands flush with the shape it joins rather than stepping past
+  its edge or stopping short of it, given the named corner units they are built
+  from (`socket_block_x`, `socket_block_y`, `socket_top_block_y` at `:144-146`,
+  `solder_*` at `:134-140`, `diode_w` and `cutout_padding`). Tier 1 if a bridge
+  reintroduces sub-0.4mm material or breaks the pocket boundary. Judge these by
+  the angle at which two edges meet, not by the narrowest span across the
+  material: a span measured through a clean 90-degree corner vanishes at the
+  vertex and reads as a defect that is not there.
 
 **Write integrity**
 
 - Every text-level post-processing script reads a `.kicad_pcb`, edits a
   string, and writes it back to the same path with no temp file and no atomic
   rename (`fix_edge_cuts.js:73`, `fix_silkscreen_width.js:193`,
-  `add_ground_planes.js:246`, `create_stealth_variants.js:143`). An
+  `add_ground_planes.js:251`, `create_stealth_variants.js:189` and `:201`). An
   interrupted or throwing write leaves a truncated board that the next step
   reads as valid. Assess whether this matters given the files are regenerable,
   and whether `pcbs/temporal/` is ever a target. Tier 2, Tier 1 for anything
   that can truncate the hand-routed board.
-- `scripts/embed_fonts.py:71-82` saves each board through pcbnew, rewrites it
+- `scripts/embed_fonts.py:69-90` saves each board through pcbnew, rewrites it
   as text, then loads and saves it again. Three writes to one path, with a
   text edit sandwiched between two pcbnew saves. Confirm a failure in the
   middle cannot leave a board that later steps accept, and that the pcbnew
   round-trip does not undo `fix_silkscreen_width.js`'s widening (no committed
   board carries a sub-0.16mm silkscreen stroke today, so if it does undo it,
   something else is restoring the widths). Tier 1 if it can.
-- `scripts/via_stitching.js:59-67` mutates the loaded config object in place
+- `scripts/via_stitching.js:65-73` mutates the loaded config object in place
   when a CLI step override is passed. `loadKicadConfig` caches and returns the
   same object to every caller, so within one process the override would leak.
   Today only one script runs per process; confirm nothing else in the pipeline
   depends on that. Tier 2.
-- Every step in `Makefile:96-106` now has a non-zero exit path
+- Every step in `Makefile:96-106` has a non-zero exit path
   (`fix_edge_cuts.js:94-98`, `fix_silkscreen_width.js:199-209`,
-  `add_ground_planes.js:271-274`, `create_text_keepouts.js:80-83`,
-  `via_stitching.js:77-79`, `fill_zones.js:54-57`, `embed_fonts.js:49-53`,
+  `add_ground_planes.js:273-276`, `create_text_keepouts.js:94-103`,
+  `via_stitching.js:83-94`, `fill_zones.js:54-57`, `embed_fonts.js:49-53`,
   `copy_pcb_if_missing.sh:5` via `set -e`,
-  `setup_kicad_project.js:474-475`, `create_stealth_variants.js:186-189`).
-  What differs is what each treats as *nothing to do*: some assert their
-  patterns matched something across the whole board set, others accept an
-  empty result. Compare the guards and flag the ones where a pattern that
-  stopped matching would read as success; flag it once, not per file. Tier 2.
-- `Makefile:209-221` installs an `EXIT` trap that restores `temporal.json`,
-  `jlcpcb/` and the project files from a snapshot, and `:239-241` installs a
-  second trap in a later recipe line. Confirm the first trap cannot be
-  displaced before it has run, and that a failure between `cp` and `trap`
-  cannot leave the tree with regenerated artifacts staged as if they were
-  committed. Tier 1 if a failed `make check` can leave the working tree
+  `setup_kicad_project.js:476-479`, `create_stealth_variants.js:178-186` and
+  `:232-235`), and most now also assert that their patterns matched something
+  rather than accepting an empty result: `fix_edge_cuts` on `totalSeen`,
+  `fix_silkscreen_width` on `totalGraphics`, `via_stitching` on a via count of
+  zero, `create_text_keepouts` on a configured pattern that hit nothing,
+  `create_stealth_variants` on a run that removed no text, `setup_kicad_project`
+  on an empty glob, and `generate_jlcpcb_files` on an assembly part or parent
+  footprint that matched nothing. Compare the remaining guards against those and
+  flag any step where a pattern that stopped matching would still read as
+  success; flag it once, not per file. Tier 2.
+- `Makefile:210-222` installs an `EXIT` trap that restores `temporal.json`,
+  `jlcpcb/`, the project files and the stealth boards from a snapshot, and
+  `:245-247` installs a second trap in a later recipe line. Confirm the first
+  trap cannot be displaced before it has run, and that a failure between `cp`
+  and `trap` cannot leave the tree with regenerated artifacts staged as if they
+  were committed. Tier 1 if a failed `make check` can leave the working tree
   modified.
 
 **Paths and portability**
 
 - The `Makefile` branches on `uname -s` for `SED_I`, `KICAD_USER_DIR` and the
   package installer (`:13-25`), while `scripts/kicad_python.js:11-31` and
-  `scripts/via_stitching.py:128-154` each carry their own platform switch with
+  `scripts/via_stitching.py:128-155` each carry their own platform switch with
   a different set of search paths. Verify the three agree about where KiCad
   and its plugins live on each platform, and flag paths that no longer exist
-  for KiCad 10. Note that `via_stitching.py:152-153` searches both
+  for KiCad 10. Note that `via_stitching.py:153-154` searches both
   `~/.local/share/kicad` and `~/.config/kicad` on Linux while the Makefile
   writes only to the former. Tier 2.
 - `.github/workflows/check.yml` runs `make check` in the `kicad/kicad:10.0`
@@ -659,21 +709,29 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
 - The quantities in `docs/bom.md` must match what the build produces: the
   diode count against the `switch_choc_v1_v2` footprint count on the board and
   against `jlcpcb/temporal_BOM.csv`; the jumper resistor count against the
-  `embedded_resistors` positions in `scripts/kicad_config.yaml:112-142`; M2
+  `embedded_resistors` positions in `scripts/kicad_config.yaml:111-142`; M2
   insert and screw counts against the mounting holes and posts in
   `ergogen/config.yaml`. Today `docs/bom.md:152-153` claims 21 diodes and 30
   jumpers per board, and the generated BOM carries `D1`-`D21` and `JR1`-`JR30`;
   re-derive rather than trusting that. Tier 1 on a mismatch, since a user
   orders parts from this table.
+- The M2 heat-set insert is the one part whose *dimensions*, not just its
+  count, are shared between the doc and the config: `docs/bom.md:30` specifies
+  a 3mm OD by 3mm insert and `:36` warns against anything wider, while
+  `ergogen/config.yaml:183` sets `m2_insert_height: 3` with a comment pointing
+  back at that table and `:187` gives the bore half a millimetre of relief past
+  it. `m2_insert_outer_diameter` is derived from `pcb_hole_diameter`, so check
+  it against the 3mm OD the doc tells the builder to buy. Tier 1 on a mismatch,
+  since a builder would order an insert that does not seat.
 - Three places document the `cases/` tree and the one-case-fits-everything
   claim, and they must agree with each other and with what `convert_jscad.js`
   writes: `docs/bom.md:79-100`, `cases/README.md`, and
   `docs/build-guide.md:35-38`. Check each tree against the actual output of
   `outputRelPath`, and each floor-thickness claim (2.35mm, every pocket blind,
   solid bottom face) against `bottom_thickness` at
-  `ergogen/config.yaml:173` and the pocket depths at `:168-172`. Tier 2, Tier
-  1 if a builder would print the wrong file or a case with a hole it should
-  not have.
+  `ergogen/config.yaml:175`, the pocket depths at `:170-174` and the M2 bore
+  at `:1412-1424`, which is the deepest of them. Tier 2, Tier 1 if a builder
+  would print the wrong file or a case with a hole it should not have.
 - `docs/build-guide.md` describes jumper locations, key configurations, and a
   left/right identification step that tells the user to look for "Back Left"
   or "Back Right" above the MCU area (`:62`). Verify the described
@@ -684,7 +742,7 @@ comment of `ergogen/config.yaml` (lines 1-11), `pcbs/temporal/README.md`,
   `ergogen/footprints/ceoloide/mcu_nice_nano.js:841` and `:850` ("Back", one
   per silkscreen layer), `:844` ("Right", F.SilkS) and `:853` ("Left",
   B.SilkS). Tier 2.
-- `README.md:69-90` describes what `make gen` and `make check` do. Compare
+- `README.md:68-89` describes what `make gen` and `make check` do. Compare
   against the actual targets; a step added to `Makefile:96-106` and not
   described here is how a contributor learns the pipeline wrong. Tier 2.
 - `pcbs/temporal/README.md` is written by the heredoc at
@@ -713,10 +771,14 @@ Python side has its own copy: the `WXSUPPRESS_SIZER_FLAGS_CHECK` /
 `import pcbnew` / `wx.Log.SetLogLevel(0)` / `wx.App()` preamble is repeated in
 `embed_fonts.py`, `check_zone_fills.py`, `fill_zones.py` and
 `via_stitching.py`, with `create_text_keepouts.py` doing a fifth variant. The
-balanced s-expression walker is a third: `fix_silkscreen_width.js:33-49` and
-`create_stealth_variants.js:22-46` are the same algorithm with different
-return shapes. Assess whether one helper on any of the three would reduce the
-surface or just move it.
+balanced s-expression walker is a third, and the two copies have since
+diverged: `create_stealth_variants.js:27-66` tracks string literals so a label
+containing a parenthesis cannot close the block early, while
+`fix_silkscreen_width.js:33-49` still counts every `(` and `)` in the file.
+Decide first whether that difference is a defect in the second copy (a
+silkscreen graphic carries no string that could contain a paren, so it may be
+safe by construction rather than by design) and only then whether one shared
+helper across the three shapes would reduce the surface or just move it.
 
 **Refactoring opportunities**
 
@@ -736,23 +798,26 @@ surface or just move it.
 
 This repo has no test suite and no test framework, and for most of it that is
 the right call: the verification that matters is DRC on the generated boards
-and a visual check in a slicer. `make check` (`Makefile:177-265`) is the
+and a visual check in a slicer. `make check` (`Makefile:178-271`) is the
 harness, and a new mechanical check belongs there rather than in a unit test
 runner. Do not propose a test framework for the KiCad-mutating scripts.
 
 Do assess the coverage gap between what `make check` decides and what only
 judgment currently catches, and propose at most one new check where the payoff
 is clear. The uncovered logic that carries real risk: the coordinate and
-rotation math in `generate_jlcpcb_files.js:105-117` and `:235-257`, the mirror
+rotation math in `generate_jlcpcb_files.js:124-140` and `:254-276`, the mirror
 math in `generate_layout.js:150-165`, the arc-extreme math in
 `add_ground_planes.js:24-56`, the s-expression block extraction in
-`create_stealth_variants.js:22-46` and `fix_silkscreen_width.js:33-49`, and
+`create_stealth_variants.js:27-66` and `fix_silkscreen_width.js:33-49`, and
 the name-to-directory mapping in `convert_jscad.js:45-61`. Also uncovered:
 nothing asserts that a value the YAML owns has not been duplicated as a
 literal elsewhere, nothing compares the `.kicad_pro` keys outside
 `check_kicad_pro.js`'s `OWNED_PATHS`, and nothing regenerates the STLs, so
 `cases/` can fall behind `ergogen/config.yaml` in a way `make check` will not
-see.
+see. The case floor is the sharpest instance of that last gap: the pocket
+depths and the M2 bore are the only geometry whose correctness is a *budget*
+(`m2_insert_hole_depth` against `m2_insert_post_height + bottom_thickness`),
+and nothing mechanical checks it.
 
 - Significant production behavior with no test at all, especially the core
   invariants above and every branch of the logic named under Correctness.
@@ -781,7 +846,11 @@ are never findings. Everything below is what no configured rule decides.
   pattern and the dominant risk. Where a script already has access to KiCad's
   Python API, check whether the text path exists for a reason (staying ahead
   of a pcbnew reflow, reaching a construct with no Python setter, as
-  `embed_fonts.py:72-73` documents) or is just older.
+  `embed_fonts.py:72-73` documents) or is just older. The UUID derivation in
+  `convert_svg_to_footprint.js:115-128` is the same shape: a hand-rolled hash
+  mixed into four fields because one 32-bit value left every field but the last
+  reading zeros. Confirm it still yields distinct UUIDs across the seeds the
+  artwork footprints actually use.
 - `require` is used throughout with CommonJS; `package.json` declares no
   `type` and `eslint.config.js:8` sets `sourceType: 'commonjs'`. Flag any file
   that mixes in ESM syntax.
@@ -790,25 +859,33 @@ are never findings. Everything below is what no configured rule decides.
 
 **Python idioms**
 
-- `scripts/create_text_keepouts.py:26-31` swallows any wx initialization
+- `scripts/create_text_keepouts.py:28-33` swallows any wx initialization
   failure with `except Exception: pass`, and is the only one of the five
   Python scripts to do so; the other four exit on a failed `import wx`.
   Determine what a missing `wx.App` costs the pcbnew calls below it, and
   whether the silent path can produce an empty keepout set that still reads as
   success. Tier 2.
-- `scripts/create_text_keepouts.py:99-101` and `:151-158`: a text whose
-  outline is empty, or whose outlines all fall below three points at `:120`,
+- `scripts/create_text_keepouts.py:107-109` and `:162-168`: a text whose
+  outline is empty, or whose outlines all fall below three points at `:128`,
   prints to stderr, has its group removed, and does not increment
-  `created_groups` (`:160`), so `create_text_keepouts.js:64-68` fails the step
+  `created_groups` (`:168`), so `create_text_keepouts.js:64-68` fails the step
   when a board created fewer groups than it matched texts. Confirm that
   pairing has no hole: a text that matched a pattern must either get a keepout
   or fail the build. Tier 1 if a text the config named can be buried while the
-  check passes.
-- `scripts/check_zone_fills.py:75-77` and `embed_fonts.py:89-91` catch every
+  check passes. A second, independent gate now covers the case the first cannot
+  see: `create_text_keepouts.py:86` counts hits per pattern and
+  `create_text_keepouts.js:80-103` fails any `text_keepouts.patterns` entry that
+  matched no text on any board, since a pattern that stopped matching takes its
+  board's `matched` count down with it and leaves the per-board check quiet.
+  Confirm the aggregation covers every configured pattern, including one that
+  appears on several boards.
+- `scripts/check_zone_fills.py:76-78` and `embed_fonts.py:89-91` catch every
   exception and return `-1`, which their JS wrappers do surface as an error.
   Confirm the wrappers actually distinguish `-1` from a legitimate zero
-  (`check_zone_fills.js:47-51`, `embed_fonts.js:41-53`). Tier 2 if a real
-  failure can read as a pass.
+  (`check_zone_fills.js:46-51`, `embed_fonts.js:41-52`), and that
+  `via_stitching.js:42-51` does the same now that an unparseable plugin log
+  also returns `-1` and a count of zero is its own error (`:90-94`). Tier 2 if
+  a real failure can read as a pass.
 - `scripts/fill_zones.py` and `via_stitching.py` take one board per process
   while `create_text_keepouts.py`, `embed_fonts.py` and `check_zone_fills.py`
   take many. The multi-board scripts exist because a second `wx.App()` in one
@@ -828,7 +905,7 @@ After the area agents report, trace each core invariant end to end across
 boundaries, which no single agent could do:
 
 1. **Geometry authorship (invariant 1).** Start from `units:` in
-   `ergogen/config.yaml:24-193`. Pick the dimensions that appear in more than
+   `ergogen/config.yaml:24-199`. Pick the dimensions that appear in more than
    one artifact (`pcb_thickness`, `bottom_thickness`, `socket_depth`,
    `choc_under_to_pcb`, `wall_thickness`, `silk_line_width`, the `copper_*`
    values, the `hole*_x` / `hole*_y` positions) and follow each into the
@@ -840,7 +917,7 @@ boundaries, which no single agent could do:
    (`applyErgogenUnits`) are the mechanisms that keep the copper and
    silkscreen geometry in sync; check whether any *other* shared dimension
    needs the same treatment, and whether `unit()`'s "plain numbers only"
-   restriction (`:50-53`) blocks a dimension that should be shared. The
+   restriction (`:48-53`) blocks a dimension that should be shared. The
    floor-thickness numbers are the ones the docs also state in prose, so
    include `docs/bom.md`, `cases/README.md` and `docs/build-guide.md` in the
    grep rather than only the code.
@@ -865,16 +942,19 @@ boundaries, which no single agent could do:
 3. **The hand-routed board (invariant 3).** Grep every script, the Makefile,
    and `copy_pcb_if_missing.sh` for writes whose path can resolve under
    `pcbs/temporal/`, including `pcbnew.SaveBoard` calls in the Python scripts.
-   Enumerate them and confirm each targets only `.kicad_pro` or `.kicad_dru`,
-   never `.kicad_pcb`. Then read `Makefile:268-273` and confirm `clean` cannot
-   remove the directory, including when `PCBS_DIR` is overridden on the
-   command line, since the `! -name temporal` exclusion is a literal rather
-   than a variable. Finally confirm the two `make check` recipe lines that
-   regenerate artifacts (`:209-238`, `:239-265`) restore or discard everything
-   they touch.
+   Enumerate them and confirm each targets only `.kicad_pro`, `.kicad_dru` or
+   a `pcbs/*_stealth/` board, never `pcbs/temporal/temporal.kicad_pcb`. Then
+   read `Makefile:273-279` and confirm `clean` cannot remove the directory,
+   including when `PCBS_DIR` is overridden on the command line, since the
+   `! -name temporal` exclusion is a literal rather than a variable. Finally
+   confirm the two `make check` recipe lines that regenerate artifacts
+   (`:210-244`, `:245-271`) restore or discard everything they touch. The first
+   now regenerates the stealth boards too (`:226`) and restores them from the
+   same snapshot (`:215`, `:221`), so a `create_stealth_variants.js` that wrote
+   outside `pcbs/*_stealth/` would leave the tree modified after a failed run.
 
 4. **Handedness and variants (invariant 4).** List every key in the `cases:`
-   section of `ergogen/config.yaml:1287-1563`; there are 42 today, 11 of them
+   section of `ergogen/config.yaml:1311-1617`; there are 48 today, 11 of them
    exported. For each `_left`, find its `_m_right` and diff their bodies. Then
    run each exported name through `scripts/convert_jscad.js:45-61` by hand and
    confirm the path it produces matches a file currently in `cases/`, and that
@@ -901,13 +981,13 @@ boundaries, which no single agent could do:
 
 6. **Reversibility (invariant 6).** Follow one net, for example `col_ring`,
    from its `column_net` declaration in `points.zones`
-   (`ergogen/config.yaml:218`, and the thumb `col_ring` column at `:256`)
+   (`ergogen/config.yaml:224`, and the thumb `col_ring` column at `:262`)
    through the `switch_choc_v1_v2` footprint's `to:` parameter, into the pads
    and traces that `ergogen/footprints/ceoloide/switch_choc_v1_v2.js` emits on
    each side, and confirm the reversible branch produces a mirror-symmetric
    result. Then confirm `scripts/generate_jlcpcb_files.js` places the same
    parts for both the top and bottom CPL, which is what a reversible board
-   requires, that the guards at `:89-100` and `:283-290` would actually fire
+   requires, that the guards at `:101-119` and `:300-308` would actually fire
    on a single-sided part, and that `docs/build-guide.md`'s left/right
    identification instructions match the silkscreen the config emits.
 
@@ -965,9 +1045,9 @@ On step 3, note where this repo already stands. `make check` runs in CI on
 every push and decides parsing, linting, the config build, DRC at error
 severity, font resolution and embedding, zone-fill currency, and the
 reproducibility of `temporal.json`, `jlcpcb/`, the `.kicad_dru` files, the
-config-owned subtrees of the `.kicad_pro` files, and the gerber zips. That
-leaves lint and `make check` as the two homes for a new automation, and
-`check` is usually the right one.
+two stealth top plates, the config-owned subtrees of the `.kicad_pro` files,
+and the gerber zips. That leaves lint and `make check` as the two homes for a
+new automation, and `check` is usually the right one.
 
 On the lint side, `eslint.config.js` has `no-unused-vars` and `no-undef` on.
 Enabling ESLint's recommended set on top of them currently produces zero
@@ -979,12 +1059,15 @@ that is worth it rather than assuming either way.
 On the `check` side, the gaps a mechanical check could close: nothing asserts
 that a dimension the YAML owns has not been re-typed as a literal in a script
 or a doc; nothing compares the `.kicad_pro` keys outside
-`check_kicad_pro.js`'s `OWNED_PATHS`; nothing catches a post-processing step
-that succeeded over an empty input set; and nothing regenerates the STLs, so
+`check_kicad_pro.js`'s `OWNED_PATHS`; nothing checks the case floor's depth
+budget, so an `m2_insert_height` or `bottom_thickness` change that breaks the
+bore through the bottom face would ship; and nothing regenerates the STLs, so
 `cases/` can fall behind `ergogen/config.yaml` unnoticed (a full STL rebuild
-is minutes, so any proposal here has to say what it would cost). Propose these
-only if the findings actually justify them, and say how many findings each
-subsumes.
+is minutes, so any proposal here has to say what it would cost). The
+empty-input-set gap that used to sit here is mostly closed: most steps in
+`Makefile:96-106` now assert their patterns matched something, so a proposal in
+that direction has to name the step that still does not. Propose these only if
+the findings actually justify them, and say how many findings each subsumes.
 
 ## Step 6: Report
 
