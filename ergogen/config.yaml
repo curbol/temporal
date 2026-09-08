@@ -1385,6 +1385,50 @@ cases:
       extrude: pin_depth
       shift: [0, 0, -pin_depth]
 
+  # Every floor pocket comes out in one subtraction. JSCAD splits the floor polygon
+  # along each cutter wall plane, extended clear across the board, once per boolean,
+  # and leaves reversed coplanar slivers on the cut boundaries. Unioning the cutters
+  # first keeps that to a single split pass and the floor face to one orientation.
+  _floor_cutouts_38_left:
+    - +_m2_nut_depth_cutouts
+    - +_diode_depth_cutouts
+    - +_choc_v2_bridge_cutouts
+    - +_pin_depth_cutouts_left
+    - +_choc_depth_cutouts_left
+    - +_socket_depth_cutouts_left
+
+  _floor_cutouts_38_m_right:
+    - +_m2_nut_depth_cutouts
+    - +_diode_depth_cutouts
+    - +_choc_v2_bridge_cutouts
+    - +_pin_depth_cutouts_m_right
+    - +_choc_depth_cutouts_m_right
+    - +_socket_depth_cutouts_m_right
+
+  _floor_cutouts_42_left:
+    - +_m2_nut_depth_cutouts
+    - +_diode_depth_cutouts
+    - +_choc_v2_bridge_cutouts
+    - +_choc_v2_bridge_pinky_cutouts
+    - +_pin_depth_cutouts_left
+    - +_pin_depth_pinky_cutouts_left
+    - +_choc_depth_cutouts_left
+    - +_choc_depth_pinky_cutouts_left
+    - +_socket_depth_cutouts_left
+    - +_socket_depth_pinky_cutouts_left
+
+  _floor_cutouts_42_m_right:
+    - +_m2_nut_depth_cutouts
+    - +_diode_depth_cutouts
+    - +_choc_v2_bridge_cutouts
+    - +_choc_v2_bridge_pinky_cutouts
+    - +_pin_depth_cutouts_m_right
+    - +_pin_depth_pinky_cutouts_m_right
+    - +_choc_depth_cutouts_m_right
+    - +_choc_depth_pinky_cutouts_m_right
+    - +_socket_depth_cutouts_m_right
+    - +_socket_depth_pinky_cutouts_m_right
+
   _shell_42:
     - what: outline
       name: _case_outer_42
@@ -1466,28 +1510,14 @@ cases:
     - +_posts_42
     - +_mcu_catch
     - -_wall_cutouts
-    - -_m2_nut_depth_cutouts
-    - -_diode_depth_cutouts
-    - -_choc_v2_bridge_cutouts
-    - -_choc_v2_bridge_pinky_cutouts
 
   _temporal_42_left:
     - +_temporal_42_1
-    - -_pin_depth_cutouts_left
-    - -_pin_depth_pinky_cutouts_left
-    - -_choc_depth_cutouts_left
-    - -_choc_depth_pinky_cutouts_left
-    - -_socket_depth_cutouts_left
-    - -_socket_depth_pinky_cutouts_left
+    - -_floor_cutouts_42_left
 
   _temporal_42_m_right:
     - +_temporal_42_1
-    - -_pin_depth_cutouts_m_right
-    - -_pin_depth_pinky_cutouts_m_right
-    - -_choc_depth_cutouts_m_right
-    - -_choc_depth_pinky_cutouts_m_right
-    - -_socket_depth_cutouts_m_right
-    - -_socket_depth_pinky_cutouts_m_right
+    - -_floor_cutouts_42_m_right
 
   temporal_42_left:
     - +_temporal_42_left
@@ -1520,21 +1550,14 @@ cases:
     - +_posts_38
     - +_mcu_catch
     - -_wall_cutouts
-    - -_m2_nut_depth_cutouts
-    - -_diode_depth_cutouts
-    - -_choc_v2_bridge_cutouts
 
   _temporal_38_left:
     - +_temporal_38_1
-    - -_pin_depth_cutouts_left
-    - -_choc_depth_cutouts_left
-    - -_socket_depth_cutouts_left
+    - -_floor_cutouts_38_left
 
   _temporal_38_m_right:
     - +_temporal_38_1
-    - -_pin_depth_cutouts_m_right
-    - -_choc_depth_cutouts_m_right
-    - -_socket_depth_cutouts_m_right
+    - -_floor_cutouts_38_m_right
 
   temporal_38_left:
     - +_temporal_38_left
