@@ -242,9 +242,14 @@ check:
 		exit 1; \
 	fi; \
 	echo "✓ Derived artifacts reproduce"
+# Every exporter stamp differs between the machine that committed the zips and
+# the one re-exporting them. The .gbr and .drl files carry the KiCad build on a
+# GenerationSoftware line, but the .gbrjob is JSON, so its build sits one level
+# in on a "Version" line of its own and needs matching separately.
 	@set -e; \
 	TMP=$$(mktemp -d); \
 	trap 'rm -rf "$$TMP"' EXIT; \
+	VOLATILE='/CreationDate|Created by KiCad|GenerationSoftware|"Version"|DRILL file KiCad/d'; \
 	STALE=""; \
 	for pcb in $(PCBS_DIR)/*/*.kicad_pcb; do \
 		case "$$(basename $$pcb)" in _autosave-*) continue;; esac; \
@@ -258,8 +263,8 @@ check:
 			b=$$(basename "$$f"); \
 			o="$$TMP/old/$$name/$$b"; \
 			[ -f "$$o" ] || { STALE="$$STALE $$name.zip"; break; }; \
-			sed -E '/CreationDate|Created by KiCad|GenerationSoftware|DRILL file KiCad/d' "$$f" >"$$TMP/a"; \
-			sed -E '/CreationDate|Created by KiCad|GenerationSoftware|DRILL file KiCad/d' "$$o" >"$$TMP/b"; \
+			sed -E "$$VOLATILE" "$$f" >"$$TMP/a"; \
+			sed -E "$$VOLATILE" "$$o" >"$$TMP/b"; \
 			diff -q "$$TMP/a" "$$TMP/b" >/dev/null || { STALE="$$STALE $$name.zip"; break; }; \
 		done; \
 	done; \
