@@ -38,7 +38,13 @@ function addViaStitching(filepath, pythonPath, config) {
     // Parse the number of vias from the plugin output
     // Format: "Done. 31 vias placed. You have to refill all your pcb's areas/zones !!!"
     const match = output.match(/(\d+) vias placed/);
-    return match ? parseInt(match[1], 10) : 0;
+
+    if (!match) {
+      console.error(`Error: could not read a via count from the plugin output: ${output.trim()}`);
+      return -1;
+    }
+
+    return parseInt(match[1], 10);
   } catch (err) {
     console.error(`Error: could not add via stitching: ${err.message}`);
     return -1;
@@ -75,6 +81,15 @@ function main() {
 
   const viasAdded = addViaStitching(temporalPcb, pythonPath, config);
   if (viasAdded < 0) {
+    process.exit(1);
+  }
+
+  // FillArea reports its count only through the wx log, so a reworded log line or a
+  // version shim that stopped applying both leave the board unstitched while every
+  // later step still succeeds.
+  if (viasAdded === 0) {
+    console.error('Error: via stitching placed no vias on temporal.kicad_pcb');
+    console.error('Check that the ViaStitching plugin still reports "<n> vias placed".');
     process.exit(1);
   }
 

@@ -173,7 +173,8 @@ gerbers:
 # Verify the sources parse, the config builds, the boards pass DRC with every
 # silkscreen face resolving, the pours in pcbs/ still match the current DRC rules,
 # and every committed derived artifact still matches what its source produces:
-# temporal.json, the JLCPCB files, the KiCad project and rule files, and the gerbers
+# temporal.json, the JLCPCB files, the KiCad project and rule files, the stealth
+# top plates, and the gerbers
 check:
 	@set -e; \
 	for f in scripts/*.js ergogen/footprints/ceoloide/*.js; do node --check "$$f"; done; \
@@ -211,7 +212,7 @@ check:
 	trap 'rm -rf "$$SNAPSHOT"' EXIT; \
 	cp temporal.json "$$SNAPSHOT/"; \
 	cp -r $(JLCPCB_DIR) "$$SNAPSHOT/"; \
-	for f in $(PCBS_DIR)/*/*.kicad_dru $(PCBS_DIR)/*/*.kicad_pro; do \
+	for f in $(PCBS_DIR)/*/*.kicad_dru $(PCBS_DIR)/*/*.kicad_pro $(PCBS_DIR)/*_stealth/*.kicad_pcb; do \
 		mkdir -p "$$SNAPSHOT/proj/$$(basename $$(dirname $$f))"; \
 		cp "$$f" "$$SNAPSHOT/proj/$$(basename $$(dirname $$f))/"; \
 	done; \
@@ -222,12 +223,17 @@ check:
 	node scripts/generate_layout.js >/dev/null; \
 	$(MAKE) --no-print-directory assembly >/dev/null; \
 	node scripts/setup_kicad_project.js >/dev/null; \
+	node scripts/create_stealth_variants.js >/dev/null; \
 	STALE=""; \
 	diff -q "$$SNAPSHOT/temporal.json" temporal.json >/dev/null || STALE="temporal.json"; \
 	diff -rq "$$SNAPSHOT/$(JLCPCB_DIR)" $(JLCPCB_DIR) >/dev/null || STALE="$$STALE $(JLCPCB_DIR)/"; \
 	for dru in $(PCBS_DIR)/*/*.kicad_dru; do \
 		diff -q "$$SNAPSHOT/proj/$$(basename $$(dirname $$dru))/$$(basename $$dru)" "$$dru" >/dev/null \
 			|| STALE="$$STALE $$dru"; \
+	done; \
+	for pcb in $(PCBS_DIR)/*_stealth/*.kicad_pcb; do \
+		diff -q "$$SNAPSHOT/proj/$$(basename $$(dirname $$pcb))/$$(basename $$pcb)" "$$pcb" >/dev/null \
+			|| STALE="$$STALE $$pcb"; \
 	done; \
 	node scripts/check_kicad_pro.js "$$SNAPSHOT/proj" || STALE="$$STALE .kicad_pro"; \
 	if [ -n "$$STALE" ]; then \

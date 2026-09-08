@@ -119,8 +119,12 @@ module.exports = {
         hash = ((hash << 5) - hash) + char;
         hash = hash & hash; // Convert to 32-bit integer
       }
-      const hex = Math.abs(hash).toString(16).padStart(32, '0');
-      return \`\${hex.substring(0, 8)}-\${hex.substring(4, 8)}-\${hex.substring(8, 12)}-\${hex.substring(12, 16)}-\${hex.substring(16, 28)}\`;
+      // A 32-bit hash left-padded to 32 hex digits leaves every field but the last
+      // reading zeros, so two seeds differing late collide outright. Mix four
+      // rotations of it instead, one per field.
+      const word = (n) => (Math.imul(hash ^ n, 0x45d9f3b) >>> 0).toString(16).padStart(8, '0');
+      const hex = word(1) + word(2) + word(3) + word(4);
+      return \`\${hex.substring(0, 8)}-\${hex.substring(8, 12)}-\${hex.substring(12, 16)}-\${hex.substring(16, 20)}-\${hex.substring(20, 32)}\`;
     };
 
     // Parse position and rotation from p.at string

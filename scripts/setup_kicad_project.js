@@ -452,8 +452,11 @@ async function main() {
 
     const pcbFiles = await glob(`${pcbsDir}/*/*.kicad_pcb`, { ignore: '**/_autosave-*' });
 
+    // make check regenerates the project files to compare them, so writing nothing
+    // would read as "everything reproduces" rather than as a failure.
     if (pcbFiles.length === 0) {
-      process.exit(0);
+      console.error(`Error: no .kicad_pcb files found under ${pcbsDir}/*/`);
+      process.exit(1);
     }
 
     let successCount = 0;

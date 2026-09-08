@@ -66,8 +66,20 @@ function parseKiCadPCB(pcbPath, assemblyParts) {
     };
   });
 
-  return parseFootprints(pcbPath)
-    .filter(fp => footprintMap[fp.name])
+  const matched = parseFootprints(pcbPath).filter(fp => footprintMap[fp.name]);
+
+  // A configured name that matches nothing would drop its whole part class from
+  // the BOM and the CPL while the other classes keep the output non-empty.
+  const unmatched = Object.keys(footprintMap)
+    .filter(name => !matched.some(fp => fp.name === name));
+
+  if (unmatched.length > 0) {
+    console.error(`Error: no footprint on ${pcbPath} matches: ${unmatched.join(', ')}`);
+    console.error('Check jlcpcb.assembly_parts in scripts/kicad_config.yaml against the board.');
+    process.exit(1);
+  }
+
+  return matched
     .map(fp => ({
       designator: fp.reference,
       footprint: fp.name,
@@ -88,6 +100,13 @@ function parseKiCadPCB(pcbPath, assemblyParts) {
  */
 function findParentFootprints(pcbPath, parentFootprintName) {
   const parents = parseFootprints(pcbPath).filter(fp => fp.name === parentFootprintName);
+
+  if (parents.length === 0) {
+    console.error(`Error: no ${parentFootprintName} on ${pcbPath} to place jumper resistors on`);
+    console.error('Check jlcpcb.embedded_resistors in scripts/kicad_config.yaml against the board.');
+    process.exit(1);
+  }
+
   const singleSided = parents.filter(fp => !(fp.onFront && fp.onBack));
 
   if (singleSided.length > 0) {

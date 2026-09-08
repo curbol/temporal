@@ -73,12 +73,32 @@ function main() {
     }
   }
 
+  // The text lives in ergogen/config.yaml and the pattern in kicad_config.yaml, with
+  // nothing tying the two together. A pattern that stopped matching takes its
+  // board's `matched` count down with it, so the per-board check above stays quiet
+  // while the pour fills over the lettering it was meant to protect.
+  const patternHits = Object.fromEntries(TEXT_PATTERNS.map(pattern => [pattern, 0]));
+
+  for (const result of Object.values(results)) {
+    for (const [pattern, count] of Object.entries(result.patterns ?? {})) {
+      patternHits[pattern] = (patternHits[pattern] ?? 0) + count;
+    }
+  }
+
+  const unmatched = TEXT_PATTERNS.filter(pattern => patternHits[pattern] === 0);
+
   if (totalKeepouts > 0) {
     console.log(`✓ Created ${totalKeepouts} text keepout(s) [${keepoutCounts.join(', ')}]`);
   }
 
   if (failed > 0) {
     console.error(`Error: ${failed} PCB file(s) failed text keepout processing`);
+    process.exit(1);
+  }
+
+  if (unmatched.length > 0) {
+    console.error(`Error: text_keepouts patterns matched no text on any board: ${unmatched.join(', ')}`);
+    console.error('Check text_keepouts.patterns in scripts/kicad_config.yaml against the text in ergogen/config.yaml.');
     process.exit(1);
   }
 }

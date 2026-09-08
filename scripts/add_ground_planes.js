@@ -205,11 +205,16 @@ function zonesAlreadyExist(content) {
   return zonePattern.test(content);
 }
 
+/**
+ * 'added', 'skipped' for a board that already carries GND zones, or 'failed'.
+ * Re-running this step alone is supported, so an already-poured board is not an
+ * error; only a board that should have been poured and was not.
+ */
 function processPcbFile(filepath, zoneConfig) {
   let content = fs.readFileSync(filepath, 'utf-8');
 
   if (zonesAlreadyExist(content)) {
-    return false;
+    return 'skipped';
   }
 
   let gndNet = findGndNet(content);
@@ -219,7 +224,7 @@ function processPcbFile(filepath, zoneConfig) {
     [content, netNumber] = createGndNet(content);
     if (netNumber === null) {
       console.error(`Error: could not create a GND net in ${path.basename(filepath)}`);
-      return false;
+      return 'failed';
     }
     netName = 'GND';
   } else {
@@ -229,7 +234,7 @@ function processPcbFile(filepath, zoneConfig) {
   const points = calculateBoundingBox(content, 2.0);
   if (points.length === 0) {
     console.error(`Error: no Edge.Cuts outline in ${path.basename(filepath)}`);
-    return false;
+    return 'failed';
   }
 
   const frontZone = createZoneDefinition(netNumber, netName, 'F.Cu', points, generateUUID(), zoneConfig);
@@ -238,14 +243,14 @@ function processPcbFile(filepath, zoneConfig) {
   const lastParen = content.lastIndexOf(')');
   if (lastParen === -1) {
     console.error(`Error: malformed PCB file ${path.basename(filepath)}`);
-    return false;
+    return 'failed';
   }
 
   const modifiedContent = content.slice(0, lastParen) + `\n${frontZone}\n${backZone}\n` + content.slice(lastParen);
 
   fs.writeFileSync(filepath, modifiedContent, 'utf-8');
 
-  return true;
+  return 'added';
 }
 
 function main() {
@@ -254,22 +259,19 @@ function main() {
 
   const pcbFiles = ergogenOutputPcbs();
 
-  let processed = 0;
-  let failed = 0;
+  const tally = { added: 0, skipped: 0, failed: 0 };
+
   for (const pcbFile of pcbFiles) {
-    if (processPcbFile(pcbFile, zoneConfig)) {
-      processed++;
-    } else {
-      failed++;
-    }
+    tally[processPcbFile(pcbFile, zoneConfig)]++;
   }
 
-  if (processed > 0) {
-    console.log(`✓ Added GND zones to ${processed} PCB files`);
+  if (tally.added > 0 || tally.skipped > 0) {
+    const skipped = tally.skipped > 0 ? `, ${tally.skipped} already had them` : '';
+    console.log(`✓ Added GND zones to ${tally.added} PCB files${skipped}`);
   }
 
-  if (failed > 0) {
-    console.error(`Error: ${failed} of ${pcbFiles.length} PCB files did not get GND zones`);
+  if (tally.failed > 0) {
+    console.error(`Error: ${tally.failed} of ${pcbFiles.length} PCB files did not get GND zones`);
     process.exit(1);
   }
 }

@@ -19,18 +19,34 @@ const PCBS_DIR = path.join(__dirname, '..', 'pcbs');
 const SOURCE_PCBS = pcbNames().filter(name => name.startsWith('top_plate_'));
 const SILKSCREEN_LAYERS = ['F.SilkS', 'B.SilkS'];
 
+/**
+ * Parentheses inside string literals are text, not structure: a label reading
+ * "Temporal :)" would otherwise close the block early, and one reading
+ * "Rev 2 (alpha" would swallow the rest of the file.
+ */
 function extractSexpBlock(content, startIndex) {
   if (content[startIndex] !== '(') {
     return null;
   }
 
   let depth = 0;
+  let inString = false;
   let i = startIndex;
 
   while (i < content.length) {
-    if (content[i] === '(') {
+    const char = content[i];
+
+    if (inString) {
+      if (char === '\\') {
+        i++;
+      } else if (char === '"') {
+        inString = false;
+      }
+    } else if (char === '"') {
+      inString = true;
+    } else if (char === '(') {
       depth++;
-    } else if (content[i] === ')') {
+    } else if (char === ')') {
       depth--;
       if (depth === 0) {
         return {
@@ -39,19 +55,34 @@ function extractSexpBlock(content, startIndex) {
         };
       }
     }
+
     i++;
   }
 
   return null;
 }
 
+/**
+ * Ergogen writes `(layer "F.SilkS" )` and pcbnew writes `(layer "F.SilkS")`, so the
+ * quoting and the trailing space are both optional here.
+ */
 function isOnSilkscreenLayer(block) {
-  for (const layer of SILKSCREEN_LAYERS) {
-    if (block.includes(`(layer "${layer}")`) || block.includes(`(layer ${layer})`)) {
-      return true;
-    }
-  }
-  return false;
+  return SILKSCREEN_LAYERS.some(layer =>
+    new RegExp(`\\(layer\\s+"?${layer.replace('.', '\\.')}"?\\s*\\)`).test(block));
+}
+
+/**
+ * Silkscreen texts still present, counted without the block parser above. If that
+ * parser stops recognising a text, checking its own output would report success, so
+ * this backstop matches each gr_text against the next layer token that is not
+ * separated from it by another gr_text.
+ */
+function countSilkscreenTexts(content) {
+  const pattern = new RegExp(
+    `\\(gr_text\\b(?:(?!\\(gr_text)[\\s\\S])*?\\(layer\\s+"?(?:${SILKSCREEN_LAYERS.join('|').replace(/\./g, '\\.')})"?\\s*\\)`,
+    'g');
+
+  return [...content.matchAll(pattern)].length;
 }
 
 function removeSilkscreenText(content) {
@@ -138,6 +169,21 @@ function createStealthVariant(sourceName) {
   const pcbContent = fs.readFileSync(sourcePcbPath, 'utf-8');
   const { content: strippedContent, removedCount } = removeSilkscreenText(pcbContent);
   const stealthContent = removeEmbeddedFonts(strippedContent);
+
+  // The point of the variant is that no silkscreen text survives. A text this pass
+  // failed to recognise would be copied through and the plate would ship with the
+  // branding printed on it, which nothing downstream checks.
+  const survivors = countSilkscreenTexts(stealthContent);
+
+  if (survivors > 0) {
+    console.error(`Error: ${stealthName} still carries ${survivors} silkscreen text(s) after stripping`);
+    return false;
+  }
+
+  if (removedCount === 0) {
+    console.error(`Error: no silkscreen text matched in ${sourcePcbPath}`);
+    return false;
+  }
 
   const stealthPcbPath = path.join(stealthDir, `${stealthName}.kicad_pcb`);
   fs.writeFileSync(stealthPcbPath, stealthContent);

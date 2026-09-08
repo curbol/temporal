@@ -7,8 +7,10 @@ Usage:
     python3 create_text_keepouts.py <gap_mm> <layers> <patterns> <board> [board ...]
 
 <layers> is comma-separated, <patterns> is pipe-separated. Prints a JSON map of
-board path to the number of texts matched and the number that received at least
-one keepout zone, or -1 for a board that failed.
+board path to the number of texts matched, the number that received at least one
+keepout zone, and a per-pattern hit count, or -1 for a board that failed. The
+per-pattern counts let the caller fail a pattern that stopped matching anything,
+which would otherwise leave its lettering to be buried by the pour.
 """
 import sys
 import os
@@ -41,6 +43,7 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
         created_count = 0
         created_groups = 0
         matched_texts = 0
+        pattern_hits = {}
 
         layer_ids = []
         for layer_name in layers:
@@ -74,8 +77,13 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
 
             text_content = drawing.GetText()
 
-            if text_patterns and not any(pattern in text_content for pattern in text_patterns):
+            hit = [pattern for pattern in text_patterns if pattern in text_content]
+
+            if text_patterns and not hit:
                 continue
+
+            for pattern in hit:
+                pattern_hits[pattern] = pattern_hits.get(pattern, 0) + 1
 
             matched_texts += 1
 
@@ -161,13 +169,13 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
 
         pcbnew.SaveBoard(board_path, board)
 
-        return {"matched": matched_texts, "groups": created_groups}
+        return {"matched": matched_texts, "groups": created_groups, "patterns": pattern_hits}
 
     except Exception as err:
         import traceback
         print(f"Error: {err}", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
-        return {"matched": -1, "groups": -1}
+        return {"matched": -1, "groups": -1, "patterns": {}}
 
 def process_all_boards(board_paths, gap_mm, layers, patterns):
     """Process all boards in a single Python session to avoid wx.App issues."""
