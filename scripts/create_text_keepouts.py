@@ -109,7 +109,7 @@ def create_text_keepouts(board_path, gap_mm, layers, text_patterns):
                 continue
 
             if gap_iu != 0:
-                poly_set.Inflate(gap_iu, 32, 5000)
+                poly_set.Inflate(gap_iu, pcbnew.CORNER_STRATEGY_ROUND_ALL_CORNERS, 5000)
 
             # Fracturing removes self-intersections.
             poly_set.Fracture()

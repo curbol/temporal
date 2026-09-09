@@ -302,7 +302,7 @@ module.exports = {
 
       // Row 3: VCC on left side uses wider traces with adjusted routing for clearance
       if (row_num === 3) {
-        // Right side (pad 121, P0.08) → left via: default trace width
+        // Right side (pad 121) → left via: default trace width
         const back_traces_right = `
   (segment (start ${p.eaxy(4.58, base_y)}) (end ${p.eaxy(4.285298, base_y)}) (width ${tw}) (layer "B.Cu"))
   (segment (start ${p.eaxy(4.285298, base_y)}) (end ${p.eaxy(3.659298, base_y - 0.626)}) (width ${tw}) (layer "B.Cu"))
@@ -368,7 +368,9 @@ module.exports = {
       // Generate vias above rows 0-11 (12 vias total, one per row)
       for (let row = 0; row <= 11; row++) {
         const row_y = -12.7 + row * 2.54;
-        const via_offset = 0.55;
+        // Clears the right-side trace, which trace_y_offset shifts to row_y + 0.2, by
+        // the net class clearance. Derived from via_size so a wider via keeps the gap.
+        const via_offset = 0.25 + p.via_size / 2;
         const via_y = row_y - via_offset;
 
         vias += `
@@ -396,10 +398,6 @@ module.exports = {
         ["P9", "P10"],
       ];
 
-      const invert = (p.side == "B" && !p.reverse_mount && !p.reversible) ||
-        (p.side == "F" && p.reverse_mount && !p.reversible) ||
-        (!p.reverse_mount && p.reversible);
-
       let vias = "";
       for (let row = 0; row < pin_names.length; row++) {
         // Only generate vias for reversible rows that need jumpers
@@ -407,8 +405,8 @@ module.exports = {
           continue;
         }
 
-        const pin_name_left = pin_names[row][invert ? 1 : 0];
-        const pin_name_right = pin_names[row][invert ? 0 : 1];
+        const pin_name_left = pin_names[row][invert_pins ? 1 : 0];
+        const pin_name_right = pin_names[row][invert_pins ? 0 : 1];
         const net_left_index = p[pin_name_left].index;
         const net_right_index = p[pin_name_right].index;
 

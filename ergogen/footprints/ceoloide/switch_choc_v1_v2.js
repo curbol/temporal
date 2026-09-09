@@ -43,9 +43,11 @@
 //    via_drill: default is 0.3
 //      allows to define the size of the drill. Not recommended below 0.3 (JLCPCB minimum),
 //      or above 0.4 (KiCad default), to avoid overlap or DRC errors 
-//    via_separation: default is 1
+//    via_separation: default is 1.6
 //      allows to define the separation between the two vias that connect the switch pads
-//      in reversible footprints.
+//      in reversible footprints. Both vias are squeezed between the centre hole, which
+//      choc_v2_support widens to 5mm, and each other, so the usable window is
+//      3 * via_size - 0.25 to 2.25 - via_size and closes entirely above via_size 0.63.
 //    locked_traces_vias: false
 //      sets the traces and vias as locked in KiCad. Locked objects may not be manipulated
 //      or moved, and cannot be selected unless the Locked Items option is enabled in the
@@ -195,7 +197,7 @@ module.exports = {
     trace_width: 0.25,
     via_size: 0.6,
     via_drill: 0.3,
-    via_separation: 1,
+    via_separation: 1.6,
     locked_traces_vias: false,
     hotswap: true,
     include_plated_holes: false,
@@ -287,11 +289,11 @@ module.exports = {
     `
 
     const choc_v1_led_cutout_marks = `
-    (fp_rect (start -2.65 6.325) (end 2.65 3.075) (layer "Dwgs.User") (width 0.15) (stroke (width 0.15) (type solid)) (fill none))
+    (fp_rect (start -2.65 6.325) (end 2.65 3.075) (layer "Dwgs.User") (stroke (width 0.15) (type solid)) (fill none))
     `
 
     const choc_v2_led_cutout_marks = `
-    (fp_rect (start -2.75 6.405) (end 2.75 3.455) (layer "Dwgs.User") (width 0.15) (stroke (width 0.15) (type solid)) (fill none))
+    (fp_rect (start -2.75 6.405) (end 2.75 3.455) (layer "Dwgs.User") (stroke (width 0.15) (type solid)) (fill none))
     `
 
     const hotswap_common = `
@@ -530,7 +532,8 @@ module.exports = {
     const to_via_hole_limit = -(center_hole_diameter / 2 + 0.25 + p.via_size / 2);
     const to_via_spacing_limit = from_via_y + p.via_size + 0.2;
     const to_via_symmetric_y = via_center_y + p.via_separation / 2;
-    if (to_via_spacing_limit > to_via_hole_limit) {
+    const emits_vias = p.reversible && p.hotswap && p.include_traces_vias && !p.include_plated_holes;
+    if (emits_vias && to_via_spacing_limit > to_via_hole_limit) {
       throw new Error(
         `switch_choc_v1_v2: no room for the "to" via with via_separation=${p.via_separation}` +
         ` and via_size=${p.via_size}. Clearing the ${center_hole_diameter}mm center hole needs` +
@@ -539,7 +542,7 @@ module.exports = {
     }
     /* The "from" via has the same squeeze against the 3mm hotswap hole at (0, -5.95). */
     const from_via_hole_limit = -(5.95 - 1.5 - 0.25 - p.via_size / 2);
-    if (from_via_y < from_via_hole_limit) {
+    if (emits_vias && from_via_y < from_via_hole_limit) {
       throw new Error(
         `switch_choc_v1_v2: via_separation=${p.via_separation} puts the "from" via at` +
         ` y=${from_via_y.toFixed(3)}, inside the hotswap hole clearance at` +
