@@ -13,11 +13,11 @@ const fs = require('fs');
 const path = require('path');
 const { writeDrcRules } = require('./drc_rules');
 const { pcbNames } = require('./ergogen_config');
+const { SILKSCREEN_LAYER_SOURCE, hasSilkscreenLayer } = require('./silkscreen_layers');
 
 const PCBS_DIR = path.join(__dirname, '..', 'pcbs');
 // Every top plate gets a stealth variant, derived from the boards the config declares
 const SOURCE_PCBS = pcbNames().filter(name => name.startsWith('top_plate_'));
-const SILKSCREEN_LAYERS = ['F.SilkS', 'B.SilkS'];
 
 /**
  * Parentheses inside string literals are text, not structure: a label reading
@@ -63,15 +63,6 @@ function extractSexpBlock(content, startIndex) {
 }
 
 /**
- * Ergogen writes `(layer "F.SilkS" )` and pcbnew writes `(layer "F.SilkS")`, so the
- * quoting and the trailing space are both optional here.
- */
-function isOnSilkscreenLayer(block) {
-  return SILKSCREEN_LAYERS.some(layer =>
-    new RegExp(`\\(layer\\s+"?${layer.replace('.', '\\.')}"?\\s*\\)`).test(block));
-}
-
-/**
  * Silkscreen texts still present, counted without the block parser above. If that
  * parser stops recognising a text, checking its own output would report success, so
  * this backstop matches each gr_text against the next layer token that is not
@@ -79,7 +70,7 @@ function isOnSilkscreenLayer(block) {
  */
 function countSilkscreenTexts(content) {
   const pattern = new RegExp(
-    `\\(gr_text\\b(?:(?!\\(gr_text)[\\s\\S])*?\\(layer\\s+"?(?:${SILKSCREEN_LAYERS.join('|').replace(/\./g, '\\.')})"?\\s*\\)`,
+    `\\(gr_text\\b(?:(?!\\(gr_text)[\\s\\S])*?${SILKSCREEN_LAYER_SOURCE}`,
     'g');
 
   return [...content.matchAll(pattern)].length;
@@ -98,7 +89,7 @@ function removeSilkscreenText(content) {
       const blockStart = i + whitespace.length;
       const extracted = extractSexpBlock(content, blockStart);
 
-      if (extracted && isOnSilkscreenLayer(extracted.block)) {
+      if (extracted && hasSilkscreenLayer(extracted.block)) {
         // The leading whitespace is dropped too, having never been copied out.
         i = extracted.endIndex;
         removedCount++;
@@ -148,7 +139,7 @@ function removeEmbeddedFonts(content) {
     }
   }
 
-  return content.replace('(embedded_fonts yes)', '(embedded_fonts no)');
+  return content.replace('\n\t(embedded_fonts yes)', '\n\t(embedded_fonts no)');
 }
 
 function createStealthVariant(sourceName) {

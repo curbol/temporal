@@ -19,8 +19,7 @@
 
 const fs = require('fs');
 const { ergogenOutputPcbs, unit } = require('./ergogen_config');
-
-const SILKSCREEN_LAYERS = ['F.SilkS', 'B.SilkS'];
+const { hasSilkscreenLayer } = require('./silkscreen_layers');
 const GRAPHIC_START = /\((?:fp|gr)_(?:line|arc|circle|rect|poly)\s/g;
 
 // A stroke is one level inside its graphic; the rest is headroom for a nesting the
@@ -46,10 +45,6 @@ function extractBlock(content, startIndex) {
   }
 
   return null;
-}
-
-function isSilkscreen(block) {
-  return SILKSCREEN_LAYERS.some(layer => block.includes(`(layer "${layer}")`));
 }
 
 /**
@@ -89,7 +84,7 @@ function widenStrokes(content, minWidth) {
 
     const block = extractBlock(content, match.index);
 
-    if (block === null || !isSilkscreen(block)) {
+    if (block === null || !hasSilkscreenLayer(block)) {
       continue;
     }
 
@@ -165,7 +160,7 @@ function residualStrokes(content, minWidth) {
         continue;
       }
 
-      if (isSilkscreen(block)) {
+      if (hasSilkscreenLayer(block)) {
         residual.push(match[1]);
       }
 
