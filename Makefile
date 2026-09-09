@@ -13,12 +13,10 @@ ASSETS_DIR := assets
 # Platform-specific tooling
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-SED_I := sed -i ''
 KICAD_USER_DIR := $(HOME)/Documents/KiCad
 PKG_INSTALL := brew install --cask
 FONT_INSTALL := brew install --cask font-maple-mono-nf
 else
-SED_I := sed -i
 KICAD_USER_DIR := $(HOME)/.local/share/kicad
 PKG_INSTALL := sudo pacman -S --needed
 FONT_INSTALL := yay -S --needed maplemono-nf
@@ -65,18 +63,7 @@ deps:
 			rm -rf "$$TEMP_DIR"; \
 			echo "ViaStitching plugin installed to $$KICAD_PLUGINS"; \
 		fi; \
-		FILL_AREA="$$KICAD_PLUGINS/ViaStitching/FillArea.py"; \
-		$(SED_I) 's/dist = self.clearance + self.size \/ 2 + via.GetWidth() \/ 2/via_width = via.GetFrontWidth() if hasattr(via, "GetFrontWidth") else via.GetWidth()\n        dist = self.clearance + self.size \/ 2 + via_width \/ 2/' "$$FILL_AREA"; \
-		$(SED_I) 's/clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track.GetWidth() \/ 2)/track_width = track.GetFrontWidth() if (isinstance(track, PCB_VIA) and hasattr(track, "GetFrontWidth")) else track.GetWidth()\n            clearance = max(track.GetOwnClearance(UNDEFINED_LAYER, ""), self.clearance, max_target_area_clearance) + (self.size \/ 2) + (track_width \/ 2)/' "$$FILL_AREA"; \
-		MISSING=""; \
-		grep -q 'via_width = via.GetFrontWidth()' "$$FILL_AREA" || MISSING="$$MISSING via-width"; \
-		grep -q 'track_width = track.GetFrontWidth()' "$$FILL_AREA" || MISSING="$$MISSING track-width"; \
-		if [ -n "$$MISSING" ]; then \
-			echo "Error: ViaStitching KiCad 10 patch did not apply ($$MISSING) in $$FILL_AREA." >&2; \
-			echo "Upstream FillArea.py has changed; update the sed patterns in the deps target." >&2; \
-			exit 1; \
-		fi; \
-		echo "ViaStitching KiCad 10 compatibility patches verified"; \
+		python3 "$(CURDIR)/scripts/patch_fill_area.py" "$$KICAD_PLUGINS/ViaStitching/FillArea.py" || exit 1; \
 	fi
 
 # Generate keyboard PCBs and cases
