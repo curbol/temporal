@@ -167,4 +167,4 @@ orders, one per CPL file. A single order using one CPL gives you two identical
 halves.
 
 > [!NOTE]
-> Hotswap sockets are absent from the assembly files because JLCPCB cannot place them.
+> Hotswap sockets are not in the assembly files, so they still need hand-soldering.
