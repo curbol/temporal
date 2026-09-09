@@ -1,6 +1,6 @@
 # Temporal, by Curtis Bollinger - @curbol
 # https://github.com/curbol/temporal
-# v1 - Jan 2026
+# v1 - Sep 2026
 #
 # Key configurations: 36-42 keys depending on breakoffs and encoders
 #   - Full pinky column: 42/41/40 keys (0/1/2 encoders)
@@ -144,6 +144,7 @@ units:
   socket_block_x: 2.15 # Bottom block, edge nearest the switch centre
   socket_block_y: 1.15 # Bottom block, lower edge
   socket_top_block_y: 3.35 # Top block, lower edge
+  socket_block_top_y: socket_block_y + 5.4 # Bottom block, upper edge
 
   # Diode
   diode_y: -3.864
@@ -345,8 +346,9 @@ outlines:
       fillet: cutout_fillet - 0.07
   _socket_left_bottom_block:
     - what: rectangle # Bottom block
-      size: [5.2, 5.4]
-      adjust.shift: [socket_block_x + 2.6, socket_block_y + 2.7]
+      size: [5.2, socket_block_top_y - socket_block_y]
+      adjust.shift:
+        [socket_block_x + 2.6, (socket_block_y + socket_block_top_y) / 2]
     - what: rectangle # Bottom pad
       size: [3.2, 3.2]
       adjust.shift: [8.3, 3.75]
@@ -355,22 +357,22 @@ outlines:
     - +_socket_left_top_block
     - +_socket_left_bottom_block
     - what: rectangle # Center
-      size: [1, 3.2]
-      adjust.shift: [2.25, 4.95]
+      size: [1, socket_block_top_y - socket_top_block_y]
+      adjust.shift: [2.25, (socket_top_block_y + socket_block_top_y) / 2]
     - what: rectangle # Top curve
       size: [0.7 - nudge, 0.7 - nudge]
-      adjust.shift: [2.35, 6.55]
+      adjust.shift: [2.35, socket_block_top_y]
     - what: circle
       operation: subtract
       radius: 0.35
-      adjust.shift: [2.7, 6.9]
+      adjust.shift: [2.7, socket_block_top_y + 0.35]
     - what: rectangle # Bottom curve
       size: [2.7 - nudge, 2.7 - nudge]
-      adjust.shift: [2.15, 3.35]
+      adjust.shift: [socket_block_x, socket_top_block_y]
     - what: circle
       operation: subtract
       radius: 1.35
-      adjust.shift: [0.8, 2]
+      adjust.shift: [(socket_block_x - 1.35), socket_top_block_y - 1.35]
 
   _socket_m_right_top_block:
     - what: rectangle # Top block
@@ -387,8 +389,9 @@ outlines:
       fillet: cutout_fillet - 0.07
   _socket_m_right_bottom_block:
     - what: rectangle # Bottom block
-      size: [5.2, 5.4]
-      adjust.shift: [-(socket_block_x + 2.6), socket_block_y + 2.7]
+      size: [5.2, socket_block_top_y - socket_block_y]
+      adjust.shift:
+        [-(socket_block_x + 2.6), (socket_block_y + socket_block_top_y) / 2]
     - what: rectangle # Bottom pad
       size: [3.2, 3.2]
       adjust.shift: [-8.3, 3.75]
@@ -397,22 +400,22 @@ outlines:
     - +_socket_m_right_top_block
     - +_socket_m_right_bottom_block
     - what: rectangle # Center
-      size: [1, 3.2]
-      adjust.shift: [-2.25, 4.95]
+      size: [1, socket_block_top_y - socket_top_block_y]
+      adjust.shift: [-2.25, (socket_top_block_y + socket_block_top_y) / 2]
     - what: rectangle # Top curve
       size: [0.7 - nudge, 0.7 - nudge]
-      adjust.shift: [-2.35, 6.55]
+      adjust.shift: [-2.35, socket_block_top_y]
     - what: circle
       operation: subtract
       radius: 0.35
-      adjust.shift: [-2.7, 6.9]
+      adjust.shift: [-2.7, socket_block_top_y + 0.35]
     - what: rectangle # Bottom curve
       size: [2.7 - nudge, 2.7 - nudge]
-      adjust.shift: [-2.15, 3.35]
+      adjust.shift: [-socket_block_x, socket_top_block_y]
     - what: circle
       operation: subtract
       radius: 1.35
-      adjust.shift: [-0.8, 2]
+      adjust.shift: [-(socket_block_x - 1.35), socket_top_block_y - 1.35]
 
   _solder_pin:
     - what: circle
@@ -798,15 +801,11 @@ outlines:
         rotate: -90
 
   # MCU Catch
-  _mcu_catch_slice:
+  _mcu_catch_profile:
     - what: circle
       radius: mcu_catch_radius
-    - what: rectangle
-      operation: subtract
-      size: [mcu_catch_radius * 2, mcu_catch_radius * 3]
-      adjust.shift: [mcu_catch_radius + wall_thickness / 2, 0]
   _mcu_catch:
-    - name: _mcu_catch_slice
+    - name: _mcu_catch_profile
       where:
         ref: finger_inner_home
         shift: [mcu_x + mcu_area_w / 2, reset_y]
@@ -887,10 +886,6 @@ outlines:
       where: *hole4_pos
     - name: _post_hole
       where: *hole5_pos
-
-  _posts_holes_pinky:
-    - name: _post_hole
-      where: *hole5_e_pos
 
   # The 42 plate drills hole 5_e where the 38 plate drills hole 5, so the post at
   # hole 5 stays solid on a 42 case. Five inserts per side either way.
@@ -1339,7 +1334,6 @@ cases:
       name: _socket_depth_pinky_m_right
       extrude: socket_depth
       shift: [0, 0, -socket_depth]
-
 
   # M2 nut depth
   _m2_nut_depth_cutouts:
