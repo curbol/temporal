@@ -559,13 +559,13 @@ outlines:
   _mcu_jumpers_trench:
     - what: rectangle
       size: [1.9, 29.55]
-      adjust.shift: [2.59, -0.025]
+      adjust.shift: [2.59, 0]
       fillet: cutout_fillet
   _mcu_jumpers:
     - name: _mcu_jumpers_trench
-      adjust: { shift: [-mcu_pin_spacing, -1.25] }
+      adjust: { shift: [-mcu_pin_spacing, -1.275] }
     - name: _mcu_jumpers_trench
-      adjust: { shift: [mcu_pin_spacing, -1.25], rotate: 180 }
+      adjust: { shift: [mcu_pin_spacing, -1.275], rotate: 180 }
 
   _display_pins:
     - what: circle
