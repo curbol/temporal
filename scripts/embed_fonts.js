@@ -10,11 +10,30 @@
 
 const path = require('path');
 const { execSync } = require('child_process');
-const { ergogenOutputPcbs } = require('./ergogen_config');
+const { ergogenOutputPcbs, OUTPUT_PCBS_DIR } = require('./ergogen_config');
 const { getKiCadPythonOrThrow } = require('./kicad_python');
 
+/**
+ * embed_fonts.py rewrites each board through pcbnew and again as text, so a path
+ * that reached pcbs/temporal would truncate hand routing that cannot be regenerated.
+ */
+function resolveGeneratedBoards(args) {
+  return args.map(arg => {
+    const resolved = path.resolve(arg);
+
+    if (path.dirname(resolved) !== path.resolve(OUTPUT_PCBS_DIR)) {
+      console.error(`Error: ${arg} is not a board in ${OUTPUT_PCBS_DIR}`);
+      process.exit(1);
+    }
+
+    return resolved;
+  });
+}
+
 function main() {
-  const pcbFiles = process.argv.length > 2 ? process.argv.slice(2) : ergogenOutputPcbs();
+  const pcbFiles = process.argv.length > 2
+    ? resolveGeneratedBoards(process.argv.slice(2))
+    : ergogenOutputPcbs();
 
   let pythonPath;
   try {

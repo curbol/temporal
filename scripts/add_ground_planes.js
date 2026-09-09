@@ -186,7 +186,10 @@ function createGndNet(content) {
   const matches = [...netTable.matchAll(netsPattern)];
 
   if (matches.length === 0) {
-    console.error('Error: no nets section in PCB file');
+    console.error('Error: no numbered net table in the PCB file');
+    console.error('This pass reads the raw Ergogen output. Once a later step has saved');
+    console.error("the board through pcbnew, KiCad rewrites nets as (net \"GND\") and drops");
+    console.error("the table, so re-run the whole pipeline with 'make gen' instead.");
     return [content, null];
   }
 
@@ -207,8 +210,9 @@ function zonesAlreadyExist(content) {
 
 /**
  * 'added', 'skipped' for a board that already carries GND zones, or 'failed'.
- * Re-running this step alone is supported, so an already-poured board is not an
- * error; only a board that should have been poured and was not.
+ * Re-running is supported against the raw Ergogen output this pass reads, so a board
+ * poured by an earlier run in the same pipeline is not an error; only a board that
+ * should have been poured and was not.
  */
 function processPcbFile(filepath, zoneConfig) {
   let content = fs.readFileSync(filepath, 'utf-8');

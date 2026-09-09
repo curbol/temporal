@@ -38,6 +38,9 @@ async function processSTL(inputPath, outputPath, mirror = false) {
   }
 }
 
+// Parts that fit either hand, so they are not foldered by key count
+const SHARED_PARTS = new Set(['mcu_cover']);
+
 /**
  * Where a case STL belongs under cases/. Half-cases are foldered by key count, which
  * with the kickstand choice is all that separates them. Shared parts stay at the top.
@@ -57,7 +60,13 @@ function outputRelPath(baseName) {
     return path.join(plate[1], 'top_plate.stl');
   }
 
-  return `${baseName}.stl`;
+  if (SHARED_PARTS.has(baseName)) {
+    return `${baseName}.stl`;
+  }
+
+  console.error(`Error: no cases/ path for "${baseName}"`);
+  console.error('Add it to outputRelPath in scripts/convert_jscad.js, or to SHARED_PARTS if it fits both hands.');
+  process.exit(1);
 }
 
 async function main() {

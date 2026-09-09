@@ -56,10 +56,6 @@ function generateLayout() {
       row: data.meta?.row || null,
     };
 
-    if (name === ENCODER_KEY) {
-      key.type = 'encoder';
-    }
-
     keys.push(key);
   }
 
@@ -86,6 +82,27 @@ function assertNamesResolve(keys, rowMap, colMapLeft) {
   if (unmapped.length > 0) {
     console.error('Error: ergogen/config.yaml names that scripts/generate_layout.js does not map:');
     [...new Set(unmapped)].forEach(name => console.error(`  ${name}`));
+    process.exit(1);
+  }
+
+  // Two keys on one matrix position would bind one of them to the slot the firmware
+  // scans for the other, and the layout alone gives no sign of it.
+  const seen = new Map();
+  const collisions = [];
+
+  for (const key of keys) {
+    const slot = `${rowMap[key.row]},${colMapLeft[key.columnNet]}`;
+
+    if (seen.has(slot)) {
+      collisions.push(`${seen.get(slot)} and ${key.name} both map to row ${key.row}, ${key.columnNet}`);
+    } else {
+      seen.set(slot, key.name);
+    }
+  }
+
+  if (collisions.length > 0) {
+    console.error('Error: two keys share a matrix position:');
+    collisions.forEach(entry => console.error(`  ${entry}`));
     process.exit(1);
   }
 }
