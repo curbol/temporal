@@ -7,10 +7,14 @@ Usage:
     python3 check_zone_fills.py <board> [board ...]
 
 The pours in pcbs/ are filled once, when the board is first copied out of
-ergogen/output. Nothing refills them afterwards, so a later edit to the zone or
-custom-rule settings changes the generated boards while the copies keep the old
-pour. This loads each board, refills it in memory, and compares the filled area
-of every zone; nothing is written back, so the hand-routed board is untouched.
+ergogen/output. Nothing refills them afterwards, so a later edit to the custom DRC
+rules changes the generated boards while the copies keep the old pour. This loads
+each board, refills it in memory, and compares the filled area of every zone;
+nothing is written back, so the hand-routed board is untouched.
+
+Only the custom rules are covered. add_ground_planes.js writes the zones: settings
+into the (zone ...) block itself, so refilling reads them back off the board and
+the area cannot move; scripts/check_zone_settings.js compares those separately.
 
 Areas are compared with a tolerance, because the same pour can serialize with a
 different number of collinear vertices without covering different copper.

@@ -171,7 +171,8 @@ gerbers:
 	fi
 
 # Verify the sources parse, the config builds, the boards pass DRC with every
-# silkscreen face resolving, the pours in pcbs/ still match the current DRC rules,
+# silkscreen face resolving, the pours in pcbs/ still match the current DRC rules
+# and zone settings,
 # and every committed derived artifact still matches what its source produces:
 # temporal.json, the JLCPCB files, the KiCad project and rule files, the stealth
 # top plates, and the gerbers
@@ -207,6 +208,7 @@ check:
 	done; \
 	echo "✓ Boards carry their own silkscreen fonts"
 	@node scripts/check_zone_fills.js
+	@node scripts/check_zone_settings.js
 	@set -e; \
 	SNAPSHOT=$$(mktemp -d); \
 	trap 'rm -rf "$$SNAPSHOT"' EXIT; \

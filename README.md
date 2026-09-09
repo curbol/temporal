@@ -87,7 +87,7 @@ This will:
 make check
 ```
 
-Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, and the pours in `pcbs/` still match the custom DRC rules. It then regenerates each committed derived artifact and diffs it against what is checked in: `temporal.json`, `jlcpcb/`, the `.kicad_pro` and `.kicad_dru` files, and the gerber zips. This is what CI runs on every push.
+Confirms the sources parse and lint, `ergogen/config.yaml` builds, every committed board passes DRC and carries its own silkscreen font, and the pours in `pcbs/` still match the custom DRC rules and the zone settings. It then regenerates each committed derived artifact and diffs it against what is checked in: `temporal.json`, `jlcpcb/`, the `.kicad_pro` and `.kicad_dru` files, the `top_plate_*_stealth` boards, and the gerber zips. This is what CI runs on every push.
 
 ## Influences
 
